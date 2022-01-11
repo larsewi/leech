@@ -20,6 +20,7 @@
 *.lib
 *.a
 *.la
+*.lai
 *.lo
 
 # Shared objects (inc. Windows DLLs)
@@ -85,6 +86,7 @@ autom4te.cache
 # https://www.gnu.org/software/libtool/
 
 /ltmain.sh
+libtool
 
 # http://www.gnu.org/software/texinfo
 
@@ -107,4 +109,4 @@ Makefile
 .vscode
 
 # Binaries
-src/leech
+simulate

@@ -1,5 +1,6 @@
 #! /bin/sh
 
-aclocal \
-&& automake --add-missing \
-&& autoconf
+set -e
+
+echo "$0: Running autoreconf ..."
+autoreconf --force --install -I m4  ||  exit

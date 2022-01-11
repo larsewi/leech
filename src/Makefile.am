@@ -1,7 +1,6 @@
-bin_PROGRAMS = leech
+noinst_PROGRAMS = simulate
+simulate_SOURCES = main.c
+simulate_LDADD = libleech.la
 
-AM_CXXFLAGS = $(INTI_CFLAGS)
-
-leech_SOURCES = main.c
-
-# leech_LDADD = $(INTI_LIBS)
+lib_LTLIBRARIES = libleech.la
+libleech_la_SOURCES = leech.c

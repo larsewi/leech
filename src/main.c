@@ -1,7 +1,8 @@
 #include <stdio.h>
+#include <leech.h>
 
 int main(void)
 {
-    printf("Hello World!\n");
+    PrintHello();
     return 0;
 }
