@@ -86,7 +86,7 @@ autom4te.cache
 # https://www.gnu.org/software/libtool/
 
 /ltmain.sh
-libtool
+/libtool
 
 # http://www.gnu.org/software/texinfo
 
@@ -109,4 +109,5 @@ Makefile
 .vscode
 
 # Binaries
-simulate
+collector
+emitter

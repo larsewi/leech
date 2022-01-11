@@ -1,8 +1,17 @@
 AC_INIT(leech, 0.1.0)
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([src/leech.c])
 AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE([foreign])
+
+AC_ARG_ENABLE([simulate],
+[  --enable-simulate    Turn on debugging],
+[case "${enableval}" in
+  yes) simulate=true ;;
+  no)  simulate=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-simulate]) ;;
+esac],[simulate=false])
+AM_CONDITIONAL([SIMULATE], [test x$simulate = xtrue])
 
 AC_PROG_CC
 LT_INIT

@@ -3,6 +3,6 @@
 
 int main(void)
 {
-    PrintHello();
+    PrintHello(__BASE_FILE__);
     return 0;
 }

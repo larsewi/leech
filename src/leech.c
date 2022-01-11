@@ -2,7 +2,7 @@
 
 #include "leech.h"
 
-void PrintHello()
+void PrintHello(const char *from)
 {
-    printf("Hello world!\n");
+    printf("Hello from %s!\n", from);
 }
