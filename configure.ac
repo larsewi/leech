@@ -5,7 +5,7 @@ AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([foreign])
 
 AC_ARG_ENABLE([simulate],
-[  --enable-simulate    Turn on debugging],
+[  --enable-simulate       build binaries for simulation],
 [case "${enableval}" in
   yes) simulate=true ;;
   no)  simulate=false ;;
