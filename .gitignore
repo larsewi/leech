@@ -109,5 +109,4 @@ Makefile
 .vscode
 
 # Binaries
-collector
-emitter
+node
