@@ -1,35 +1,47 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include <leech.h>
 
-enum {
-    LOG_LEVEL_NONE,
-    LOG_LEVEL_ERROR,
-    LOG_LEVEL_WARNING,
-    LOG_LEVEL_INFO,
-    LOG_LEVEL_VERBOSE,
-    LOG_LEVEL_DEBUG,
-};
-
-static int LOG_LEVEL = LOG_LEVEL_INFO;
 static char *BOOTSTRAP_ADDRESS = NULL;
+static bool LOG_DEBUG = false;
+static bool LOG_VERBOSE = false;
 
 static void CheckOpts(int argc, char *argv[]);
 
 int main(int argc, char *argv[])
 {
     CheckOpts(argc, argv);
-    PrintHello(__BASE_FILE__);
+
+    LCH_DebugMessenger debugMessenger = {0};
+    debugMessenger.severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT
+                            | LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT
+                            | LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
+    if (LOG_VERBOSE)
+    {
+        debugMessenger.severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
+    }
+    if (LOG_DEBUG)
+    {
+        debugMessenger.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
+    }
+    debugMessenger.callback = LCH_DebugMessengerCallback;
+
+    LCH_Instance instance = {0};
+    instance.debugMessenger = &debugMessenger;
+
+    LCH_TestFunc(&instance);
+
     return 0;
 }
 
 static void CheckOpts(int argc, char *argv[])
 {
     int opt;
-    while ((opt = getopt(argc, argv, "b:hl:")) != -1)
+    while ((opt = getopt(argc, argv, "b:vdh")) != -1)
     {
         switch (opt)
         {
@@ -37,26 +49,21 @@ static void CheckOpts(int argc, char *argv[])
             BOOTSTRAP_ADDRESS = optarg;
             break;
 
+        case 'd':
+            LOG_DEBUG = true;
+            break;
+
+        case 'v':
+            LOG_VERBOSE = true;
+            break;
+
         case 'h':
-            printf("%s: [OPTION]...", argv[0]);
+            printf("%s: [OPTION]...\n", argv[0]);
             exit(EXIT_SUCCESS);
             break;
 
-        case 'l':
-            const char *log_levels[] = {
-                "none", "error", "warning", "info", "verbose", "debug"
-            };
-            for (int lvl = LOG_LEVEL_DEBUG; lvl <= LOG_LEVEL_NONE; lvl++)
-            {
-                if (strcasecmp(optarg, log_levels[lvl]) == 0)
-                {
-                    LOG_LEVEL = lvl;
-                }
-            }
-            break;
-
         default:
-            fprintf(stderr, "%s: [OPTION]...", argv[0]);
+            fprintf(stderr, "Bad option '%c'\n", (char) opt);
             exit(EXIT_FAILURE);
             break;
         }
