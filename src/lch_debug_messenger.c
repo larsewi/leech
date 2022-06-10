@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "lch_debug_messenger.h"
 #include "lch_utils.h"
@@ -11,6 +11,24 @@
 #define LCH_COLOR_BLUE "\x1b[34m"
 #define LCH_COLOR_CYAN "\x1b[36m"
 #define LCH_COLOR_RESET "\x1b[0m"
+
+struct LCH_DebugMessenger {
+  unsigned char severity;
+  void (*callback)(unsigned char, const char *);
+};
+
+LCH_DebugMessenger *
+LCH_DebugMessengerCreate(const LCH_DebugMessengerCreateInfo *const createInfo) {
+  LCH_DebugMessenger *debugMessenger = malloc(sizeof(LCH_DebugMessenger));
+  debugMessenger->severity = createInfo->severity;
+  debugMessenger->callback = createInfo->callback;
+  return debugMessenger;
+}
+
+void LCH_DebugMessengerDestroy(LCH_DebugMessenger **debugMessenger) {
+  free(*debugMessenger);
+  *debugMessenger = NULL;
+}
 
 void LCH_DebugMessengerCallback(unsigned char severity, const char *message) {
   assert(message != NULL);
@@ -44,26 +62,17 @@ void LCH_DebugMessengerCallback(unsigned char severity, const char *message) {
   assert(rc >= 0);
 }
 
-void LCH_DebugMessengerLogMessage(const LCH_DebugMessenger *debugMessenger,
-                                  unsigned char severity, const char *format,
-                                  ...) {
-  if (debugMessenger == NULL) {
-    return;
-  }
-  if ((debugMessenger->severity & severity) == 0) {
+void LCH_DebugMessengerLogMessageV(const LCH_DebugMessenger *debugMessenger,
+                                   unsigned char severity, const char *format,
+                                   va_list ap) {
+  if (debugMessenger == NULL || (debugMessenger->severity & severity) == 0) {
     return;
   }
   assert(debugMessenger->callback != NULL);
 
-  va_list ap;
-  va_start(ap, format);
-
   char message[LCH_BUFFER_SIZE];
   int size = vsnprintf(message, sizeof(message), format, ap);
   assert(size >= 0);
-
-  va_end(ap);
-
   if ((unsigned long)size >= sizeof(message)) {
     LCH_DebugMessengerLogMessage(
         debugMessenger, LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT,
@@ -71,4 +80,13 @@ void LCH_DebugMessengerLogMessage(const LCH_DebugMessenger *debugMessenger,
   }
 
   debugMessenger->callback(severity, message);
+}
+
+void LCH_DebugMessengerLogMessage(const LCH_DebugMessenger *debugMessenger,
+                                  unsigned char severity, const char *format,
+                                  ...) {
+  va_list ap;
+  va_start(ap, format);
+  LCH_DebugMessengerLogMessageV(debugMessenger, severity, format, ap);
+  va_end(ap);
 }

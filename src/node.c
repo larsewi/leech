@@ -11,28 +11,31 @@ static bool LOG_DEBUG = false;
 static bool LOG_VERBOSE = false;
 
 static void CheckOpts(int argc, char *argv[]);
+static LCH_DebugMessenger *CreateDebugMessenger(void);
+static LCH_Instance *CreateInstance(LCH_DebugMessenger *debugMessenger);
 
 int main(int argc, char *argv[]) {
+  int rc = EXIT_FAILURE;
+  LCH_DebugMessenger *debugMessenger = NULL;
+  LCH_Instance *instance = NULL;
+
   CheckOpts(argc, argv);
 
-  LCH_DebugMessenger debugMessenger = {0};
-  debugMessenger.severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
-                            LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
-                            LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
-  if (LOG_VERBOSE) {
-    debugMessenger.severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
+  if ((debugMessenger = CreateDebugMessenger()) == NULL) {
+    goto exit_failure;
   }
-  if (LOG_DEBUG) {
-    debugMessenger.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
+
+  if ((instance = CreateInstance(debugMessenger)) == NULL) {
+    goto exit_failure;
   }
-  debugMessenger.callback = LCH_DebugMessengerCallback;
 
-  LCH_Instance instance = {0};
-  instance.debugMessenger = &debugMessenger;
+  LCH_TestFunc(instance);
 
-  LCH_TestFunc(&instance);
-
-  return 0;
+  rc = EXIT_SUCCESS;
+exit_failure:
+  LCH_InstanceDestroy(&instance);
+  LCH_DebugMessengerDestroy(&debugMessenger);
+  return rc;
 }
 
 static void CheckOpts(int argc, char *argv[]) {
@@ -62,4 +65,26 @@ static void CheckOpts(int argc, char *argv[]) {
       break;
     }
   }
+}
+
+static LCH_DebugMessenger *CreateDebugMessenger(void) {
+  LCH_DebugMessengerCreateInfo createInfo = {0};
+  createInfo.severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
+                        LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
+                        LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
+  if (LOG_VERBOSE) {
+    createInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
+  }
+  if (LOG_DEBUG) {
+    createInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
+  }
+  createInfo.callback = LCH_DebugMessengerCallback;
+  return LCH_DebugMessengerCreate(&createInfo);
+}
+
+static LCH_Instance *CreateInstance(LCH_DebugMessenger *debugMessenger) {
+  LCH_InstanceCreateInfo createInfo = {0};
+  createInfo.instanceID = BOOTSTRAP_ADDRESS;
+  createInfo.debugMessenger = debugMessenger;
+  return LCH_InstanceCreate(&createInfo);
 }
