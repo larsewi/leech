@@ -3,16 +3,13 @@
 
 #include <assert.h>
 
-#include "lch_instance.h"
 #include "lch_debug_messenger.h"
+#include "lch_instance.h"
 
-
-typedef struct LCH_Table
-{
-    char **header;
-    char **rows;
+typedef struct LCH_Table {
+  char **header;
+  char **rows;
 } LCH_Table;
-
 
 void LCH_TestFunc(const LCH_Instance *instance);
 
