@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <ctype.h>
 #include <leech.h>
 #include <stdbool.h>
@@ -6,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-static char *BOOTSTRAP_ADDRESS = NULL;
+static char *BOOTSTRAP_ADDRESS = "127.0.0.1";
 static bool LOG_DEBUG = false;
 static bool LOG_VERBOSE = false;
 
@@ -33,8 +34,8 @@ int main(int argc, char *argv[]) {
 
   rc = EXIT_SUCCESS;
 exit_failure:
-  LCH_InstanceDestroy(&instance);
-  LCH_DebugMessengerDestroy(&debugMessenger);
+  LCH_InstanceDestroy(instance);
+  LCH_DebugMessengerDestroy(debugMessenger);
   return rc;
 }
 
@@ -45,22 +46,17 @@ static void CheckOpts(int argc, char *argv[]) {
     case 'b':
       BOOTSTRAP_ADDRESS = optarg;
       break;
-
     case 'd':
       LOG_DEBUG = true;
       break;
-
     case 'v':
       LOG_VERBOSE = true;
       break;
-
     case 'h':
-      printf("%s: [OPTION]...\n", argv[0]);
+      // TODO: print help message
       exit(EXIT_SUCCESS);
       break;
-
     default:
-      fprintf(stderr, "Bad option '%c'\n", (char)opt);
       exit(EXIT_FAILURE);
       break;
     }
@@ -78,7 +74,7 @@ static LCH_DebugMessenger *CreateDebugMessenger(void) {
   if (LOG_DEBUG) {
     createInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
   }
-  createInfo.callback = LCH_DebugMessengerCallback;
+  createInfo.callback = &LCH_DebugMessengerCallback;
   return LCH_DebugMessengerCreate(&createInfo);
 }
 
