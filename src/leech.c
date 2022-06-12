@@ -16,17 +16,6 @@
 #define LCH_COLOR_BLUE "\x1b[34m"
 #define LCH_COLOR_RESET "\x1b[0m"
 
-#define LCH_LOG_DEBUG(instance, ...)                                           \
-  LCH_LogMessage(instance, LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT, __VA_ARGS__)
-#define LCH_LOG_VERBOSE(instance, ...)                                         \
-  LCH_LogMessage(instance, LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT, __VA_ARGS__)
-#define LCH_LOG_INFO(instance, ...)                                            \
-  LCH_LogMessage(instance, LCH_DEBUG_MESSAGE_TYPE_INFO_BIT, __VA_ARGS__)
-#define LCH_LOG_WARNING(instance, ...)                                         \
-  LCH_LogMessage(instance, LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT, __VA_ARGS__)
-#define LCH_LOG_ERROR(instance, ...)                                           \
-  LCH_LogMessage(instance, LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT, __VA_ARGS__)
-
 typedef struct LCH_DebugMessenger {
   unsigned char severity;
   void (*messageCallback)(unsigned char, const char *);
@@ -34,8 +23,8 @@ typedef struct LCH_DebugMessenger {
 
 typedef struct LCH_Table {
   char *locator;
-  bool (*readCallback)(const char *, char ****);
-  bool (*writeCallback)(const char *, char ****);
+  bool (*readCallback)(LCH_Instance *, const char *, char ****);
+  bool (*writeCallback)(LCH_Instance *, const char *, char ****);
 } LCH_Table;
 
 struct LCH_Instance {
@@ -52,9 +41,6 @@ static void LCH_DebugMessengerDestroy(LCH_DebugMessenger *debugMessenger);
 
 static LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo);
 static void LCH_TableDestroy(LCH_Table *table);
-
-static void LCH_LogMessage(const LCH_Instance *instance, unsigned char severity,
-                           const char *format, ...);
 
 LCH_Instance *
 LCH_InstanceCreate(const LCH_InstanceCreateInfo *const createInfo) {
@@ -200,8 +186,8 @@ static void LCH_TableDestroy(LCH_Table *table) {
   free(table);
 }
 
-static void LCH_LogMessage(const LCH_Instance *instance, unsigned char severity,
-                           const char *format, ...) {
+void LCH_LogMessage(const LCH_Instance *instance, unsigned char severity,
+                    const char *format, ...) {
   assert(instance != NULL);
   if (instance->debugMessenger == NULL ||
       (instance->debugMessenger->severity & severity) == 0) {

@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 
     // Remove:
     char ****table = NULL;
-    if (!createInfo.readCallback(createInfo.locator, table)){
+    if (!createInfo.readCallback(instance, createInfo.locator, table)) {
       printf("Failed\n");
       goto exit_failure;
     }
