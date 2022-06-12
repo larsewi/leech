@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,8 +34,8 @@ typedef struct LCH_DebugMessenger {
 
 typedef struct LCH_Table {
   char *locator;
-  void (*readCallback)(char *);
-  void (*writeCallback)(char *);
+  bool (*readCallback)(const char *, char ****);
+  bool (*writeCallback)(const char *, char ****);
 } LCH_Table;
 
 struct LCH_Instance {
@@ -122,9 +123,6 @@ bool LCH_TableAdd(LCH_Instance *instance, LCH_TableCreateInfo *createInfo) {
 
   return true;
 }
-
-void LCH_TableReadCallbackCSV(char *filename) {}
-void LCH_TableWriteCallbackCSV(char *filename) {}
 
 void LCH_DebugMessengerCallbackDefault(unsigned char severity,
                                        const char *message) {

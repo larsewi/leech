@@ -22,8 +22,8 @@ typedef struct LCH_DebugMessengerCreateInfo {
 
 typedef struct LCH_TableCreateInfo {
   char *locator;
-  void (*readCallback)(char *);
-  void (*writeCallback)(char *);
+  bool (*readCallback)(const char *, char ****);
+  bool (*writeCallback)(const char *, char ****);
 } LCH_TableCreateInfo;
 
 LCH_Instance *
@@ -36,7 +36,5 @@ bool LCH_TableAdd(LCH_Instance *instance, LCH_TableCreateInfo *createInfo);
 
 void LCH_DebugMessengerCallbackDefault(unsigned char severity,
                                        const char *message);
-void LCH_TableReadCallbackCSV(char *filename);
-void LCH_TableWriteCallbackCSV(char *filename);
 
 #endif // _LEECH_H

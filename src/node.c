@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <leech.h>
+#include <leech_csv.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,6 +28,7 @@ int main(int argc, char *argv[]) {
         .workDir = ".leech/",
     };
     if ((instance = LCH_InstanceCreate(&createInfo)) == NULL) {
+      fprintf(stderr, "LCH_InstanceCreate\n");
       goto exit_failure;
     }
   }
@@ -45,17 +47,26 @@ int main(int argc, char *argv[]) {
       createInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
     }
     if (!LCH_DebugMessengerAdd(instance, &createInfo)) {
+      fprintf(stderr, "LCH_DebugMessengerAdd\n");
       goto exit_failure;
     }
   }
 
   { // Add CSV table
     LCH_TableCreateInfo createInfo = {
-        .locator = ".leech/",
+        .locator = "example.csv",
         .readCallback = LCH_TableReadCallbackCSV,
         .writeCallback = LCH_TableWriteCallbackCSV,
     };
     if (!LCH_TableAdd(instance, &createInfo)) {
+      fprintf(stderr, "LCH_TableAdd\n");
+      goto exit_failure;
+    }
+
+    // Remove:
+    char ****table = NULL;
+    if (!createInfo.readCallback(createInfo.locator, table)){
+      printf("Failed\n");
       goto exit_failure;
     }
   }
