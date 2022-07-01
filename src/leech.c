@@ -25,6 +25,8 @@ typedef struct LCH_Table {
   char *locator;
   bool (*readCallback)(LCH_Instance *, const char *, char ****);
   bool (*writeCallback)(LCH_Instance *, const char *, char ****);
+  LCH_TableHeader *header;
+  LCH_TableRecord **records;
 } LCH_Table;
 
 struct LCH_Instance {

@@ -37,6 +37,14 @@ typedef struct LCH_TableCreateInfo {
   bool (*writeCallback)(LCH_Instance *, const char *, char ****);
 } LCH_TableCreateInfo;
 
+typedef struct LCH_TableHeader {
+
+} LCH_TableHeader;
+
+typedef struct LCH_TableRecord {
+
+} LCH_TableRecord;
+
 LCH_Instance *
 LCH_InstanceCreate(const LCH_InstanceCreateInfo *const createInfo);
 void LCH_InstanceDestroy(LCH_Instance *instance);
