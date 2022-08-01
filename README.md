@@ -10,3 +10,10 @@ $ git clean -fx && ./autogen.sh && ./configure --enable-simulate
 $ clang-format -i src/*.h src/*.c && make
 $ libtool --mode=execute gdb --args ./src/node -dv
 ```
+
+```mermaid
+  graph TD;
+      C1-->S;
+      C2-->S;
+      C3-->S;
+```
