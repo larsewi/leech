@@ -22,9 +22,10 @@ typedef struct LCH_DebugMessenger {
 } LCH_DebugMessenger;
 
 typedef struct LCH_Table {
-  char *locator;
-  bool (*readCallback)(LCH_Instance *, const char *, char ****);
-  bool (*writeCallback)(LCH_Instance *, const char *, char ****);
+  char *readLocator;
+  bool (*readCallback)(const LCH_Instance *);
+  char *writeLocator;
+  bool (*writeCallback)(const LCH_Instance *);
   LCH_TableHeader *header;
   LCH_TableRecord **records;
 } LCH_Table;
@@ -88,7 +89,7 @@ bool LCH_DebugMessengerAdd(LCH_Instance *instance,
 }
 
 bool LCH_TableAdd(LCH_Instance *instance, LCH_TableCreateInfo *createInfo) {
-  if (instance == NULL || createInfo == NULL || createInfo->locator == NULL ||
+  if (instance == NULL || createInfo == NULL || createInfo->readLocator == NULL || createInfo->writeLocator != NULL ||
       createInfo->readCallback == NULL || createInfo->writeCallback == NULL) {
     LCH_LOG_ERROR(instance, "%s: Bad input", __func__);
     return false;
@@ -103,10 +104,12 @@ bool LCH_TableAdd(LCH_Instance *instance, LCH_TableCreateInfo *createInfo) {
   instance->tables[i] = malloc(sizeof(LCH_Table));
   assert(instance->tables[i] != NULL);
 
-  instance->tables[i]->locator = strdup(createInfo->locator);
-  assert(instance->tables[i]->locator != NULL);
-
   instance->tables[i]->readCallback = createInfo->readCallback;
+  instance->tables[i]->readLocator = strdup(createInfo->readLocator);
+  assert(instance->tables[i]->readLocator != NULL);
+
+  instance->tables[i]->writeLocator = strdup(createInfo->writeLocator);
+  assert(instance->tables[i]->writeLocator != NULL);
   instance->tables[i]->writeCallback = createInfo->writeCallback;
 
   return true;
@@ -168,11 +171,14 @@ static LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
   assert(table != NULL);
   memset(table, 0, sizeof(LCH_Table));
 
-  table->locator = strdup(createInfo->locator);
-  assert(table->locator != NULL);
+  table->readLocator = strdup(createInfo->readLocator);
+  assert(table->readLocator != NULL);
 
   table->readCallback = createInfo->readCallback;
   assert(table->readCallback != NULL);
+
+  table->writeLocator = strdup(createInfo->writeLocator);
+  assert(table->writeLocator != NULL);
 
   table->writeCallback = createInfo->writeCallback;
   assert(table->writeCallback != NULL);
@@ -184,7 +190,8 @@ static void LCH_TableDestroy(LCH_Table *table) {
   if (table == NULL) {
     return;
   }
-  free(table->locator);
+  free(table->readLocator);
+  free(table->writeLocator);
   free(table);
 }
 

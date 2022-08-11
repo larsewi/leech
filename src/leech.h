@@ -32,9 +32,10 @@ typedef struct LCH_DebugMessengerCreateInfo {
 } LCH_DebugMessengerCreateInfo;
 
 typedef struct LCH_TableCreateInfo {
-  char *locator;
-  bool (*readCallback)(LCH_Instance *, const char *, char ****);
-  bool (*writeCallback)(LCH_Instance *, const char *, char ****);
+  char *readLocator;
+  bool (*readCallback)(const LCH_Instance *);
+  char *writeLocator;
+  bool (*writeCallback)(const LCH_Instance *);
 } LCH_TableCreateInfo;
 
 typedef struct LCH_TableHeader {
