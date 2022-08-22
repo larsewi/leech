@@ -89,7 +89,9 @@ bool LCH_DebugMessengerAdd(LCH_Instance *instance,
 }
 
 bool LCH_TableAdd(LCH_Instance *instance, LCH_TableCreateInfo *createInfo) {
-  if (instance == NULL || createInfo == NULL || createInfo->readLocator == NULL || createInfo->writeLocator != NULL ||
+  assert(instance != NULL);
+  assert(createInfo != NULL);
+  if (createInfo->readLocator == NULL || createInfo->writeLocator == NULL ||
       createInfo->readCallback == NULL || createInfo->writeCallback == NULL) {
     LCH_LOG_ERROR(instance, "%s: Bad input", __func__);
     return false;

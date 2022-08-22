@@ -1,9 +1,8 @@
 if SIMULATE
-    noinst_PROGRAMS = node
+    noinst_PROGRAMS = simulate
+    simulate_SOURCES = server.c common.c
+    simulate_LDADD = libleech.la libleech_csv.la
 endif
-
-node = node.c
-node_LDADD = libleech.la libleech_csv.la
 
 lib_LTLIBRARIES = libleech.la libleech_csv.la
 libleech_la_SOURCES = leech.c

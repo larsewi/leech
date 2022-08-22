@@ -21,43 +21,44 @@
    (ch >= 0x2D && ch <= 0x7E));
 
 bool LCH_TableReadCallbackCSV(const LCH_Instance *instance) {
-  FILE *file = fopen(filename, "r");
-  if (file == NULL) {
-    LCH_LOG_ERROR(instance, "fopen: %s", strerror(errno));
-    return false;
-  }
+  // FILE *file = fopen(filename, "r");
+  // if (file == NULL) {
+  //   LCH_LOG_ERROR(instance, "fopen: %s", strerror(errno));
+  //   return false;
+  // }
 
-  if (fseek(file, 0, SEEK_END) < 0) {
-    LCH_LOG_ERROR(instance, "fseek: %s", strerror(errno));
-    return false;
-  }
+  // if (fseek(file, 0, SEEK_END) < 0) {
+  //   LCH_LOG_ERROR(instance, "fseek: %s", strerror(errno));
+  //   return false;
+  // }
 
-  const long size = ftell(file);
-  if (size < 0) {
-    LCH_LOG_ERROR(instance, "ftell: %s", strerror(errno));
-    return false;
-  }
+  // const long size = ftell(file);
+  // if (size < 0) {
+  //   LCH_LOG_ERROR(instance, "ftell: %s", strerror(errno));
+  //   return false;
+  // }
 
-  if (fseek(file, 0, SEEK_SET) < 0) {
-    LCH_LOG_ERROR(instance, "fseek: %s", strerror(errno));
-    return false;
-  }
+  // if (fseek(file, 0, SEEK_SET) < 0) {
+  //   LCH_LOG_ERROR(instance, "fseek: %s", strerror(errno));
+  //   return false;
+  // }
 
-  char *buffer = malloc(size + 1);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR(instance, "malloc: %s", strerror(errno));
-    return NULL;
-  }
-  buffer[size] = '\0';
+  // char *buffer = malloc(size + 1);
+  // if (buffer == NULL) {
+  //   LCH_LOG_ERROR(instance, "malloc: %s", strerror(errno));
+  //   return NULL;
+  // }
+  // buffer[size] = '\0';
 
-  if (fread(buffer, 1, size, file) != size) {
-    LCH_LOG_ERROR(instance, "fread: %s", strerror(errno));
-    return false;
-  }
-  LCH_LOG_DEBUG(instance, "Read '%s' (%d Byte%s) with content:\n%s", filename,
-                size, (size == 1) ? "" : "s", buffer);
+  // if (fread(buffer, 1, size, file) != size) {
+  //   LCH_LOG_ERROR(instance, "fread: %s", strerror(errno));
+  //   return false;
+  // }
+  // LCH_LOG_DEBUG(instance, "Read '%s' (%d Byte%s) with content:\n%s",
+  // filename,
+  //               size, (size == 1) ? "" : "s", buffer);
 
-  return true;
+  // return true;
 }
 
 bool LCH_TableWriteCallbackCSV(const LCH_Instance *instance) {}
