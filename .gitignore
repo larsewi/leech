@@ -110,3 +110,4 @@ Makefile
 
 # Binaries
 src/simulate
+src/.libs/simulate
