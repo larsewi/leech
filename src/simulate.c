@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
         continue;
       }
       if (pfd->fd == server_sock) {
-        rc = read(server_sock, buffer, BUFSIZ);
-        if (rc == -1) {
+        ssize_t siz = read(server_sock, buffer, BUFSIZ);
+        if (siz < 0) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           perror("read");
@@ -77,13 +77,20 @@ int main(int argc, char *argv[]) {
         printf("Handle server sock: %s\n", buffer);
       }
       else if (pfd->fd == 0) {
-        rc = read(STDIN_FILENO, buffer, BUFSIZ);
-        if (rc == -1) {
+        ssize_t siz = read(STDIN_FILENO, buffer, BUFSIZ);
+        if (siz == 0) {
+          printf("Exited by user\n");
+          SHOULD_RUN = false;
+          continue;
+        }
+        if (siz < 0) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           perror("read");
         }
-        printf("Handle stdin fd: %s\n", buffer);
+
+        buffer[siz] = '\0';
+        printf("Handle stdin fd: %s", buffer);
       }
     }
   }

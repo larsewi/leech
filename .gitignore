@@ -109,4 +109,4 @@ Makefile
 .vscode
 
 # Binaries
-node
+simulate
