@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
           .events = POLLIN,
       },
   };
-  
+
   char buffer[BUFSIZ];
   ssize_t size;
   while (SHOULD_RUN) {
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
       }
 
       if (pfd->fd == server_sock) {
-        size = read(server_sock, (void *) buffer, BUFSIZ);
+        size = read(server_sock, (void *)buffer, BUFSIZ);
         if (size < 0) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
       }
 
       else if (pfd->fd == STDIN_FILENO) {
-        size = read(STDIN_FILENO, (void *) buffer, BUFSIZ);
+        size = read(STDIN_FILENO, (void *)buffer, BUFSIZ);
         if (size < 0) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
