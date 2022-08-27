@@ -58,10 +58,10 @@ bool LCH_TableReadCallbackCSV(const LCH_Instance *instance) {
   // filename,
   //               size, (size == 1) ? "" : "s", buffer);
 
-  // return true;
+  return true;
 }
 
-bool LCH_TableWriteCallbackCSV(const LCH_Instance *instance) {}
+bool LCH_TableWriteCallbackCSV(const LCH_Instance *instance) { return true; }
 
 static bool isComma(const char *buffer, long at) { return buffer[at] == 0x2C; }
 

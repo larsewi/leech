@@ -52,7 +52,7 @@ LCH_InstanceCreate(const LCH_InstanceCreateInfo *const createInfo) {
     return NULL;
   }
 
-  LCH_Instance *instance = malloc(sizeof(LCH_Instance));
+  LCH_Instance *instance = (LCH_Instance *) malloc(sizeof(LCH_Instance));
   assert(instance != NULL);
   memset(instance, 0, sizeof(LCH_Instance));
 
@@ -100,10 +100,10 @@ bool LCH_TableAdd(LCH_Instance *instance, LCH_TableCreateInfo *createInfo) {
   int i = (instance->numTables)++;
 
   instance->tables =
-      realloc(instance->tables, sizeof(LCH_Table *) * instance->numTables);
+      (LCH_Table **) realloc(instance->tables, sizeof(LCH_Table *) * instance->numTables);
   assert(instance->tables != NULL);
 
-  instance->tables[i] = malloc(sizeof(LCH_Table));
+  instance->tables[i] = (LCH_Table *) malloc(sizeof(LCH_Table));
   assert(instance->tables[i] != NULL);
 
   instance->tables[i]->readCallback = createInfo->readCallback;
@@ -153,7 +153,7 @@ LCH_DebugMessengerCreate(const LCH_DebugMessengerCreateInfo *const createInfo) {
   assert(createInfo != NULL);
   assert(createInfo->messageCallback != NULL);
 
-  LCH_DebugMessenger *debugMessenger = malloc(sizeof(LCH_DebugMessenger));
+  LCH_DebugMessenger *debugMessenger = (LCH_DebugMessenger *) malloc(sizeof(LCH_DebugMessenger));
   assert(debugMessenger != NULL);
   memset(debugMessenger, 0, sizeof(LCH_DebugMessenger));
 
@@ -169,7 +169,7 @@ static void LCH_DebugMessengerDestroy(LCH_DebugMessenger *debugMessenger) {
 static LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
   assert(createInfo != NULL);
 
-  LCH_Table *table = malloc(sizeof(LCH_Table));
+  LCH_Table *table = (LCH_Table *) malloc(sizeof(LCH_Table));
   assert(table != NULL);
   memset(table, 0, sizeof(LCH_Table));
 
