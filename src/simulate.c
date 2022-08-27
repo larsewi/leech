@@ -21,8 +21,9 @@ static bool LOG_DEBUG = false;
 static bool LOG_VERBOSE = false;
 
 static void CheckOptions(int argc, char *argv[]);
-static int CreateServerSocket();
 LCH_Instance *SetupInstance();
+static int CreateServerSocket();
+static bool ParseCommand(LCH_Instance *instance, const char *buffer);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -48,53 +49,59 @@ int main(int argc, char *argv[]) {
           .events = POLLIN,
       },
   };
-
+  
   char buffer[BUFSIZ];
+  ssize_t size;
   while (SHOULD_RUN) {
-    int rc = poll(pfds, LENGTH(pfds), -1);
-    if (rc == -1) {
+    int ret = poll(pfds, LENGTH(pfds), -1);
+    if (ret == -1) {
+      perror("poll");
       close(server_sock);
       LCH_InstanceDestroy(instance);
-      perror("poll");
       return EXIT_FAILURE;
     }
 
     for (int i = 0; i < LENGTH(pfds); i++) {
       struct pollfd *pfd = pfds + i;
-      if (pfd->revents == STDIN_FILENO) {
-        continue;
-      }
       if (pfd->revents != POLLIN) {
         continue;
       }
+
       if (pfd->fd == server_sock) {
-        ssize_t siz = read(server_sock, buffer, BUFSIZ);
-        if (siz < 0) {
+        size = read(server_sock, (void *) buffer, BUFSIZ);
+        if (size < 0) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           perror("read");
+          return EXIT_FAILURE;
         }
         printf("Handle server sock: %s\n", buffer);
       }
-      else if (pfd->fd == 0) {
-        ssize_t siz = read(STDIN_FILENO, buffer, BUFSIZ);
-        if (siz == 0) {
-          printf("Exited by user\n");
-          SHOULD_RUN = false;
-          continue;
-        }
-        if (siz < 0) {
+
+      else if (pfd->fd == STDIN_FILENO) {
+        size = read(STDIN_FILENO, (void *) buffer, BUFSIZ);
+        if (size < 0) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           perror("read");
+          return EXIT_FAILURE;
         }
-
-        buffer[siz] = '\0';
-        printf("Handle stdin fd: %s", buffer);
+        if (size == 0) {
+          printf("Exited by user\n");
+          SHOULD_RUN = false;
+          break;
+        }
+        buffer[size] = '\0';
+        if (!ParseCommand(instance, buffer)) {
+          close(server_sock);
+          LCH_InstanceDestroy(instance);
+          return EXIT_FAILURE;
+        }
       }
     }
   }
 
+  close(server_sock);
   LCH_InstanceDestroy(instance);
   return EXIT_SUCCESS;
 }
@@ -228,4 +235,8 @@ static int CreateServerSocket() {
   fprintf(stderr, "Failed to bind\n");
 
   return -1;
+}
+
+static bool ParseCommand(LCH_Instance *instance, const char *buffer) {
+  return true;
 }
