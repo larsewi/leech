@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
       },
   };
 
-  char inputbuf[BUFSIZ];
+  char buffer[BUFSIZ];
   while (SHOULD_RUN) {
     int rc = poll(pfds, LENGTH(pfds), -1);
     if (rc == -1) {
@@ -68,22 +68,22 @@ int main(int argc, char *argv[]) {
         continue;
       }
       if (pfd->fd == server_sock) {
-        rc = read(server_sock, inputbuf, BUFSIZ);
+        rc = read(server_sock, buffer, BUFSIZ);
         if (rc == -1) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           perror("read");
         }
-        printf("Handle server sock: %s\n", inputbuf);
+        printf("Handle server sock: %s\n", buffer);
       }
       else if (pfd->fd == 0) {
-        ssize_t siz = getline(inputbuf, BUFSIZ, stdin);
-        if (siz < 0 || siz >= BUFSIZ) {
+        rc = read(STDIN_FILENO, buffer, BUFSIZ);
+        if (rc == -1) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           perror("read");
         }
-        printf("Handle stdin fd: %s\n", inputbuf);
+        printf("Handle stdin fd: %s\n", buffer);
       }
     }
   }
