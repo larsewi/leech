@@ -1,6 +1,6 @@
 if SIMULATE
     noinst_PROGRAMS = simulate
-    simulate_SOURCES = server.c common.c
+    simulate_SOURCES = simulate.c
     simulate_LDADD = libleech.la libleech_csv.la
 endif
 

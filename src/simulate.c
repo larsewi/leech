@@ -8,11 +8,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "common.h"
-
 #define PORT "2022"
 #define WORK_DIR ".leech/"
 #define BACKLOG 10
+#define MAX_EVENTS 10
 #define BUFSIZE 4096
 #define LENGTH(x) (sizeof(x) / sizeof(*x))
 
@@ -23,6 +22,7 @@ static bool LOG_VERBOSE = false;
 
 static void CheckOptions(int argc, char *argv[]);
 static int CreateServerSocket();
+LCH_Instance *SetupInstance();
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -44,10 +44,49 @@ int main(int argc, char *argv[]) {
           .events = POLLIN,
       },
       {
-          .fd = stdin,
+          .fd = STDIN_FILENO,
           .events = POLLIN,
       },
   };
+
+  char inputbuf[BUFSIZ];
+  while (SHOULD_RUN) {
+    int rc = poll(pfds, LENGTH(pfds), -1);
+    if (rc == -1) {
+      close(server_sock);
+      LCH_InstanceDestroy(instance);
+      perror("poll");
+      return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < LENGTH(pfds); i++) {
+      struct pollfd *pfd = pfds + i;
+      if (pfd->revents == STDIN_FILENO) {
+        continue;
+      }
+      if (pfd->revents != POLLIN) {
+        continue;
+      }
+      if (pfd->fd == server_sock) {
+        rc = read(server_sock, inputbuf, BUFSIZ);
+        if (rc == -1) {
+          close(server_sock);
+          LCH_InstanceDestroy(instance);
+          perror("read");
+        }
+        printf("Handle server sock: %s\n", inputbuf);
+      }
+      else if (pfd->fd == 0) {
+        ssize_t siz = getline(inputbuf, BUFSIZ, stdin);
+        if (siz < 0 || siz >= BUFSIZ) {
+          close(server_sock);
+          LCH_InstanceDestroy(instance);
+          perror("read");
+        }
+        printf("Handle stdin fd: %s\n", inputbuf);
+      }
+    }
+  }
 
   LCH_InstanceDestroy(instance);
   return EXIT_SUCCESS;
