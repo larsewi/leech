@@ -1,8 +1,8 @@
 #ifndef _LEECH_UTILS_H
 #define _LEECH_UTILS_H
 
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef enum LCH_Type {
   LCH_ARRAY,

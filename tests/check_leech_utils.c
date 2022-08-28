@@ -1,17 +1,15 @@
+#include "../src/leech_utils.h"
 #include <check.h>
 #include <stdlib.h>
-#include "../src/leech_utils.h"
 
-START_TEST(test_LCH_ArrayCreate)
-{
+START_TEST(test_LCH_ArrayCreate) {
   LCH_Array *array = LCH_ArrayCreate();
   ck_assert_ptr_nonnull(array);
   LCH_ArrayDestroy(array);
 }
 END_TEST
 
-START_TEST(test_LCH_ArrayLength)
-{
+START_TEST(test_LCH_ArrayLength) {
   LCH_Array *array = LCH_ArrayCreate();
   ck_assert_int_eq(LCH_ArrayLength(array), 0);
   for (int i = 0; i < 8; i++) {
@@ -22,8 +20,7 @@ START_TEST(test_LCH_ArrayLength)
 }
 END_TEST
 
-Suite *leech_utils_suite(void)
-{
+Suite *leech_suite(void) {
   Suite *s = suite_create("Utils");
 
   /* Array test case */
@@ -35,13 +32,12 @@ Suite *leech_utils_suite(void)
   return s;
 }
 
-int main(void)
-{
+int main(void) {
   int number_failed;
   Suite *s;
   SRunner *sr;
 
-  s = leech_utils_suite();
+  s = leech_suite();
   sr = srunner_create(s);
 
   srunner_run_all(sr, CK_NORMAL);

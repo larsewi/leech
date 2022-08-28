@@ -109,11 +109,11 @@ Makefile
 
 .vscode
 
+src/.libs/*
 src/simulate
-src/.libs/simulate
 
-tests/.libs/check_leech_utils
+tests/.libs/*
+tests/*.log
+tests/*.trs
+tests/check_leech
 tests/check_leech_utils
-tests/check_leech_utils.log
-tests/check_leech_utils.trs
-tests/test-suite.log
