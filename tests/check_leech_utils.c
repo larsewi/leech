@@ -14,10 +14,10 @@ START_TEST(test_LCH_ArrayLength)
 {
   LCH_Array *array = LCH_ArrayCreate();
   ck_assert_int_eq(LCH_ArrayLength(array), 0);
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 8; i++) {
     LCH_ArrayAppendNumber(array, i);
   }
-  ck_assert_int_eq(LCH_ArrayLength(array), 3);
+  ck_assert_int_eq(LCH_ArrayLength(array), 8);
   LCH_ArrayDestroy(array);
 }
 END_TEST
