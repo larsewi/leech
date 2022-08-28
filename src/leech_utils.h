@@ -24,6 +24,12 @@ bool LCH_ArrayAppendString(LCH_Array *array, char *data);
 bool LCH_ArrayAppendNumber(LCH_Array *array, long data);
 bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data);
 
+bool ArrayGetArray(LCH_Array *array, size_t index, LCH_Array **data);
+bool ArrayGetObject(LCH_Array *array, size_t index, LCH_Object **data);
+bool ArrayGetString(LCH_Array *array, size_t index, char **data);
+bool ArrayGetNumber(LCH_Array *array, size_t index, long *data);
+bool ArrayGetBoolean(LCH_Array *array, size_t index, bool *data);
+
 void LCH_ArrayDestroy(LCH_Array *array);
 
 unsigned long LCH_Hash(unsigned char *str);

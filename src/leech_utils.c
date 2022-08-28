@@ -114,7 +114,7 @@ bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data) {
   return ArrayAppend(array, (void *) &data, LCH_BOOLEAN);
 }
 
-bool ArrayGet(LCH_Array *array, size_t index, LCH_Type type, void **data) {
+bool ArrayGet(LCH_Array *array, size_t index, void **data, LCH_Type type) {
   assert(array != NULL);
   assert(array->buffer != NULL);
   assert(index < array->length);
@@ -137,14 +137,34 @@ bool ArrayGet(LCH_Array *array, size_t index, LCH_Type type, void **data) {
     *data = (void *) item->string;
     break;
   case LCH_NUMBER:
-    /* code */
+    (*(long *) data) = item->number;
     break;
   case LCH_BOOLEAN:
-    /* code */
+    (*(bool *) data) = item->boolean;
     break;
   }
 
   return true;
+}
+
+bool ArrayGetArray(LCH_Array *array, size_t index, LCH_Array **data) {
+  return ArrayGet(array, index, (void **) data, LCH_ARRAY);
+}
+
+bool ArrayGetObject(LCH_Array *array, size_t index, LCH_Object **data) {
+  return ArrayGet(array, index, (void **) data, LCH_OBJECT);
+}
+
+bool ArrayGetString(LCH_Array *array, size_t index, char **data) {
+  return ArrayGet(array, index, (void **) data, LCH_STRING);
+}
+
+bool ArrayGetNumber(LCH_Array *array, size_t index, long *data) {
+  return ArrayGet(array, index, (void **) data, LCH_NUMBER);
+}
+
+bool ArrayGetBoolean(LCH_Array *array, size_t index, bool *data) {
+  return ArrayGet(array, index, (void **) data, LCH_BOOLEAN);
 }
 
 void LCH_ArrayDestroy(LCH_Array *array) {
