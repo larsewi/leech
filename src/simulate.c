@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <string.h>
 
 #define PORT "2022"
 #define WORK_DIR ".leech/"
@@ -134,10 +135,23 @@ static void CheckOptions(int argc, char *argv[]) {
 LCH_Instance *SetupInstance() {
   LCH_Instance *instance = NULL;
   { // Create instance
+    char *instanceID = strdup(UNIQUE_ID);
+    if (instanceID == NULL) {
+      perror("strdup");
+      return NULL;
+    }
+
+    char *workDir = strdup(WORK_DIR);
+    if (workDir == NULL) {
+      perror("strdup");
+      return NULL;
+    }
+
     LCH_InstanceCreateInfo createInfo = {
-        .instanceID = UNIQUE_ID,
-        .workDir = WORK_DIR,
+        .instanceID = instanceID,
+        .workDir = workDir,
     };
+
     instance = LCH_InstanceCreate(&createInfo);
     if (instance == NULL) {
       fprintf(stderr, "LCH_InstanceCreate\n");
@@ -166,12 +180,25 @@ LCH_Instance *SetupInstance() {
   }
 
   { // Add CSV table
+    char *readLocator = strdup("client/example.csv");
+    if (readLocator == NULL) {
+      perror("strdup");
+      return NULL;
+    }
+
+    char *writeLocator = strdup("server/example.csv");
+    if (writeLocator == NULL) {
+      perror("strdup");
+      return NULL;
+    }
+
     LCH_TableCreateInfo createInfo = {
-        .readLocator = "client/example.csv",
+        .readLocator = readLocator,
         .readCallback = LCH_TableReadCallbackCSV,
-        .writeLocator = "server/example.csv",
+        .writeLocator = writeLocator,
         .writeCallback = LCH_TableWriteCallbackCSV,
     };
+
     if (!LCH_TableAdd(instance, &createInfo)) {
       fprintf(stderr, "LCH_TableAdd\n");
       LCH_InstanceDestroy(instance);

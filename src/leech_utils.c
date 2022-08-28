@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <assert.h>
 
 #include "leech_utils.h"
@@ -22,12 +21,12 @@ typedef struct LCH_List
 LCH_List *LCH_ListCreate() {
   LCH_List *list = (LCH_List *) malloc(sizeof(LCH_List));
   if (list == NULL) {
-    return;
+    return NULL;
   }
 
   list->length = 0;
   list->capacity = 8;
-  list->array = reallocarray(NULL, list->capacity, sizeof(LCH_ListItem *));
+  list->array = (LCH_ListItem **) reallocarray(NULL, list->capacity, sizeof(LCH_ListItem *));
 
   if (list->array == NULL) {
     free(list);
@@ -49,7 +48,7 @@ bool LCH_ListAppend(LCH_List *list, void *data, void (*destroy)(void *)) {
   // Increase capacity if needed
   if (list->length >= list->capacity) {
     list->capacity *= 2;
-    LCH_ListItem **array = reallocarray(list->array, list->capacity, sizeof(LCH_ListItem *));
+    LCH_ListItem **array = (LCH_ListItem **) reallocarray(list->array, list->capacity, sizeof(LCH_ListItem *));
     if (array == NULL) {
       return NULL;
     }
