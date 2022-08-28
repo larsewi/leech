@@ -1,93 +1,177 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "leech_utils.h"
 
-typedef struct LCH_ListItem
-{
-  void *data;
-  void (*destroy)(void *);
-} LCH_ListItem;
-
-
-typedef struct LCH_List
-{
+typedef struct LCH_Array {
   size_t length;
   size_t capacity;
-  LCH_ListItem **array;
-} LCH_List;
+  LCH_Item **buffer;
+} LCH_Array;
 
-LCH_List *LCH_ListCreate() {
-  LCH_List *list = (LCH_List *) malloc(sizeof(LCH_List));
-  if (list == NULL) {
+typedef struct LCH_Object {
+  /* data */
+};
+
+typedef struct LCH_Item {
+  union {
+    LCH_Array *array;
+    LCH_Object *object;
+    char *string;
+    long number;
+    bool boolean;
+  };
+  LCH_Type type;
+} LCH_Item;
+
+LCH_Array *LCH_ArrayCreate() {
+  LCH_Array *array = (LCH_Array *)malloc(sizeof(LCH_Array));
+  if (array == NULL) {
     return NULL;
   }
 
-  list->length = 0;
-  list->capacity = 8;
-  list->array = (LCH_ListItem **) reallocarray(NULL, list->capacity, sizeof(LCH_ListItem *));
+  array->length = 0;
+  array->capacity = 8;
+  array->buffer =
+      (LCH_Item **)reallocarray(NULL, array->capacity, sizeof(LCH_Item *));
 
-  if (list->array == NULL) {
-    free(list);
+  if (array->buffer == NULL) {
+    free(array);
     return NULL;
   }
-  return list;
+  return array;
 }
 
-bool LCH_ListLength(LCH_List *list) {
-  assert(list != NULL);
-  return list->length;
+size_t LCH_ArrayLength(LCH_Array *array) {
+  assert(array != NULL);
+  return array->length;
 }
 
-bool LCH_ListAppend(LCH_List *list, void *data, void (*destroy)(void *)) {
-  assert(list != NULL);
-  assert(list->array != NULL);
-  assert(list->capacity >= list->length);
+static bool ArrayAppend(LCH_Array *array, void *data, LCH_Type type) {
+  assert(array != NULL);
+  assert(array->buffer != NULL);
+  assert(array->capacity >= array->length);
 
-  // Increase capacity if needed
-  if (list->length >= list->capacity) {
-    list->capacity *= 2;
-    LCH_ListItem **array = (LCH_ListItem **) reallocarray(list->array, list->capacity, sizeof(LCH_ListItem *));
-    if (array == NULL) {
+  // Increase buffer capacity if needed
+  if (array->length >= array->capacity) {
+    array->capacity *= 2;
+    LCH_Item **buffer = (LCH_Item **)reallocarray(
+        array->buffer, array->capacity, sizeof(LCH_Item *));
+    if (buffer == NULL) {
       return NULL;
     }
-    list->array == array;
+    array->buffer == buffer;
   }
 
   // Create list item
-  LCH_ListItem *item = (LCH_ListItem *) malloc(sizeof(LCH_ListItem));
+  LCH_Item *item = (LCH_Item *)malloc(sizeof(LCH_Item));
   if (item == NULL) {
     return false;
   }
-  item->data = data;
-  item->destroy = destroy;
-  list->array[list->length++] = item;
+
+  switch (type) {
+  case LCH_ARRAY:
+    item->array = (LCH_Array *)data;
+    break;
+  case LCH_OBJECT:
+    item->object = (LCH_Object *)data;
+    break;
+  case LCH_STRING:
+    item->string = (char *)data;
+    break;
+  case LCH_NUMBER:
+    item->number = (*(long *)data);
+    break;
+  case LCH_BOOLEAN:
+    item->boolean = (*(bool *)data);
+    break;
+  }
+
+  item->type = type;
+  array->buffer[array->length++] = item;
 
   return true;
 }
 
-void *LCH_ListGet(LCH_List *list, size_t index) {
-  assert(list != NULL);
-  assert(list->array != NULL);
-  assert(index >= list->length);
-  return list->array[index];
+bool LCH_ArrayAppendArray(LCH_Array *array, LCH_Array *data) {
+  return ArrayAppend(array, (void *) data, LCH_ARRAY);
 }
 
-void LCH_ListDestroy(LCH_List *list) {
-  assert(list != NULL);
-  assert(list->array != NULL);
+bool LCH_ArrayAppendObject(LCH_Array *array, LCH_Object *data) {
+  return ArrayAppend(array, (void *) data, LCH_OBJECT);
+}
 
-  for (int i = 0; i < list->length; i++) {
-    LCH_ListItem *item = list->array[i];
-    if (item->destroy != NULL) {
-      item->destroy(item->data);
-    }
-    free(item);
+bool LCH_ArrayAppendString(LCH_Array *array, char *data) {
+  return ArrayAppend(array, (void *) data, LCH_STRING);
+}
+
+bool LCH_ArrayAppendNumber(LCH_Array *array, long data) {
+  return ArrayAppend(array, (void *) &data, LCH_NUMBER);
+}
+
+bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data) {
+  return ArrayAppend(array, (void *) &data, LCH_BOOLEAN);
+}
+
+bool ArrayGet(LCH_Array *array, size_t index, LCH_Type type, void **data) {
+  assert(array != NULL);
+  assert(array->buffer != NULL);
+  assert(index < array->length);
+
+  LCH_Item *item = array->buffer[index];
+  assert(item != NULL);
+  if (item->type != type) {
+    return false;
   }
-  free(list->array);
-  free(list);
+
+  switch (type)
+  {
+  case LCH_ARRAY:
+    *data = (void *) item->array;
+    break;
+  case LCH_OBJECT:
+    *data = (void *) item->object;
+    break;
+  case LCH_STRING:
+    *data = (void *) item->string;
+    break;
+  case LCH_NUMBER:
+    /* code */
+    break;
+  case LCH_BOOLEAN:
+    /* code */
+    break;
+  }
+
+  return true;
 }
+
+void LCH_ArrayDestroy(LCH_Array *array) {
+  assert(array != NULL);
+  assert(array->buffer != NULL);
+
+  for (int i = 0; i < array->length; i++) {
+    LCH_Item *item = array->buffer[i];
+    switch (item->type) {
+    case LCH_ARRAY:
+      LCH_ArrayDestroy(item->array);
+      break;
+    case LCH_OBJECT:
+      LCH_ObjectDestroy(item->object);
+      break;
+    case LCH_STRING:
+      free(item->string);
+      break;
+    default:
+      break;
+    }
+  }
+  free(array->buffer);
+  free(array);
+}
+
+void LCH_ObjectDestroy(LCH_Object *object) {}
 
 unsigned long LCH_Hash(unsigned char *str) {
   unsigned long hash = 5381;
@@ -99,33 +183,37 @@ unsigned long LCH_Hash(unsigned char *str) {
 }
 
 static bool IsDelimitor(char ch, const char *del) {
-  for (int i = 0; i < strlen(del); i++) {
-    if (ch == del[i]) {
-      return true;
-    }
-  }
-  return false;
+  return strchr(del, ch) != NULL;
 }
 
-char **LCH_SplitStringCreate(const char *str, const char *del) {
-  char **split = NULL;
-  size_t len = strlen(str), from = 0, count = 0;
-  bool last_del = false;
+LCH_Array *LCH_SplitString(const char *str, const char *del) {
+  LCH_Array *list = LCH_ArrayCreate();
+  size_t len = strlen(str), from = 0;
+  bool is_delim, was_delim = true;
 
-  for (size_t i = 0; i < len; i++)
-  {
-    if (IsDelimitor(str[i], del)) {
-      if (last_del) {
+  for (size_t to = 0; to < len; to++) {
+    is_delim = IsDelimitor(str[to], del);
+    if (is_delim) {
+      if (was_delim) {
         continue;
-      } else {
-        count += 1;
+      }
+      assert(to > from);
+      char *s = strndup(str + from, to - from);
+      if (s == NULL) {
+        LCH_ArrayDestroy(list);
+        return NULL;
+      }
+      if (!ArrayAppend(list, (void *)s, LCH_STRING)) {
+        LCH_ArrayDestroy(list);
+        return NULL;
+      }
+    } else {
+      if (was_delim) {
+        from = to;
       }
     }
-    else {
-      if (last_del) {
-      }
-      else {
-      }
-    }
+    was_delim = is_delim;
   }
+
+  return list;
 }

@@ -4,10 +4,10 @@
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <string.h>
 
 #define PORT "2022"
 #define WORK_DIR ".leech/"

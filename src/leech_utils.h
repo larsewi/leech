@@ -3,17 +3,28 @@
 
 #include <stdbool.h>
 
-typedef struct LCH_List LCH_List;
+typedef enum LCH_Type {
+  LCH_ARRAY,
+  LCH_OBJECT,
+  LCH_STRING,
+  LCH_NUMBER,
+  LCH_BOOLEAN,
+} LCH_Type;
 
-LCH_List *LCH_ListCreate();
+typedef struct LCH_Array LCH_Array;
+typedef struct LCH_Object LCH_Object;
 
-bool LCH_ListLength(LCH_List *list);
+LCH_Array *LCH_ArrayCreate();
 
-bool LCH_ListAppend(LCH_List *list, void *data, void (*destroy)(void *));
+size_t LCH_ArrayLength(LCH_Array *array);
 
-void *LCH_ListGet(LCH_List *list, size_t index);
+bool LCH_ArrayAppendArray(LCH_Array *array, LCH_Array *data);
+bool LCH_ArrayAppendObject(LCH_Array *array, LCH_Object *data);
+bool LCH_ArrayAppendString(LCH_Array *array, char *data);
+bool LCH_ArrayAppendNumber(LCH_Array *array, long data);
+bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data);
 
-void LCH_ListDestroy(LCH_List *list);
+void LCH_ArrayDestroy(LCH_Array *array);
 
 unsigned long LCH_Hash(unsigned char *str);
 
