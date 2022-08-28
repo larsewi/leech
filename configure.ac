@@ -3,6 +3,7 @@ AC_CONFIG_SRCDIR([src/leech.c])
 AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE([foreign])
+AM_PATH_CHECK
 
 AC_ARG_ENABLE([simulate],
 [  --enable-simulate       build binaries for simulation],

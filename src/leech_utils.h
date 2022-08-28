@@ -34,6 +34,6 @@ bool ArrayGetBoolean(LCH_Array *array, size_t index, bool *data);
 void LCH_ArrayDestroy(LCH_Array *array);
 void LCH_ObjectDestroy(LCH_Object *object);
 
-unsigned long LCH_Hash(unsigned char *str);
+unsigned long LCH_Hash(char *str);
 
 #endif // _LEECH_UTILS_H

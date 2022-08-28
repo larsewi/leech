@@ -192,7 +192,7 @@ void LCH_ArrayDestroy(LCH_Array *array) {
 
 void LCH_ObjectDestroy(LCH_Object *object) {}
 
-unsigned long LCH_Hash(unsigned char *str) {
+unsigned long LCH_Hash(char *str) {
   unsigned long hash = 5381;
   int c;
   while ((c = *str++) != 0) {
