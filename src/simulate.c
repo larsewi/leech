@@ -1,5 +1,6 @@
 #include <leech.h>
 #include <leech_csv.h>
+#include <leech_utils.h>
 #include <netdb.h>
 #include <poll.h>
 #include <stdio.h>

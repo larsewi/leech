@@ -1,6 +1,7 @@
 #ifndef _LEECH_UTILS_H
 #define _LEECH_UTILS_H
 
+#include <stdlib.h>
 #include <stdbool.h>
 
 typedef enum LCH_Type {
@@ -31,6 +32,7 @@ bool ArrayGetNumber(LCH_Array *array, size_t index, long *data);
 bool ArrayGetBoolean(LCH_Array *array, size_t index, bool *data);
 
 void LCH_ArrayDestroy(LCH_Array *array);
+void LCH_ObjectDestroy(LCH_Object *object);
 
 unsigned long LCH_Hash(unsigned char *str);
 

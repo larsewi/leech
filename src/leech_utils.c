@@ -1,18 +1,7 @@
 #include <assert.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "leech_utils.h"
-
-typedef struct LCH_Array {
-  size_t length;
-  size_t capacity;
-  LCH_Item **buffer;
-} LCH_Array;
-
-typedef struct LCH_Object {
-  /* data */
-};
 
 typedef struct LCH_Item {
   union {
@@ -24,6 +13,16 @@ typedef struct LCH_Item {
   };
   LCH_Type type;
 } LCH_Item;
+
+typedef struct LCH_Array {
+  size_t length;
+  size_t capacity;
+  LCH_Item **buffer;
+} LCH_Array;
+
+typedef struct LCH_Object {
+  /* data */
+};
 
 LCH_Array *LCH_ArrayCreate() {
   LCH_Array *array = (LCH_Array *)malloc(sizeof(LCH_Array));
