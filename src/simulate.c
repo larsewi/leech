@@ -23,7 +23,7 @@ static bool LOG_VERBOSE = false;
 static void CheckOptions(int argc, char *argv[]);
 LCH_Instance *SetupInstance();
 static int CreateServerSocket();
-static bool ParseCommand(LCH_Instance *instance, const char *buffer);
+static bool ParseCommand(LCH_Instance *instance, const char *command);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -237,6 +237,6 @@ static int CreateServerSocket() {
   return -1;
 }
 
-static bool ParseCommand(LCH_Instance *instance, const char *buffer) {
+static bool ParseCommand(LCH_Instance *instance, const char *command) {
   return true;
 }
