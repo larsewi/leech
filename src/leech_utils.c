@@ -3,6 +3,10 @@
 
 #include "leech_utils.h"
 
+#define INITIAL_CAPACITY 8
+#define LOAD_FACTOR 0.75f
+
+
 typedef struct LCH_Item {
   union {
     LCH_Array *array;
@@ -31,7 +35,7 @@ LCH_Array *LCH_ArrayCreate() {
   }
 
   array->length = 0;
-  array->capacity = 8;
+  array->capacity = INITIAL_CAPACITY;
   array->buffer =
       (LCH_Item **)reallocarray(NULL, array->capacity, sizeof(LCH_Item *));
 
