@@ -1,6 +1,6 @@
-#include "../src/leech_utils.h"
 #include <check.h>
-#include <stdlib.h>
+
+#include "../src/utils.h"
 
 START_TEST(test_LCH_ArrayCreate) {
   LCH_Array *array = LCH_ArrayCreate();

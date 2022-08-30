@@ -1,7 +1,7 @@
+#include <assert.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
-#include <assert.h>
 
 #include "debug_messenger.h"
 #include "definitions.h"
@@ -19,8 +19,8 @@ struct LCH_DebugMessenger {
 };
 
 static struct LCH_DebugMessenger DEBUG_MESSENGER = {
-  .severity = 0,
-  .messageCallback = NULL,
+    .severity = 0,
+    .messageCallback = NULL,
 };
 
 void LCH_DebugMessengerInit(const LCH_DebugMessengerInitInfo *const initInfo) {
@@ -29,7 +29,8 @@ void LCH_DebugMessengerInit(const LCH_DebugMessengerInitInfo *const initInfo) {
 }
 
 void LCH_LogMessage(unsigned char severity, const char *format, ...) {
-  if ((DEBUG_MESSENGER.severity & severity) == 0 || DEBUG_MESSENGER.messageCallback == NULL) {
+  if ((DEBUG_MESSENGER.severity & severity) == 0 ||
+      DEBUG_MESSENGER.messageCallback == NULL) {
     return;
   }
 
@@ -52,24 +53,20 @@ void LCH_DebugMessengerCallbackDefault(unsigned char severity,
   int rc = 0;
   switch (severity) {
   case LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT:
-    rc = fprintf(stdout, LCH_COLOR_BLUE "D" LCH_COLOR_RESET ": %s\n",
-                 message);
+    rc = fprintf(stdout, LCH_COLOR_BLUE "D" LCH_COLOR_RESET ": %s\n", message);
     break;
   case LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT:
-    rc = fprintf(stdout, LCH_COLOR_CYAN "V" LCH_COLOR_RESET ": %s\n",
-                 message);
+    rc = fprintf(stdout, LCH_COLOR_CYAN "V" LCH_COLOR_RESET ": %s\n", message);
     break;
   case LCH_DEBUG_MESSAGE_TYPE_INFO_BIT:
-    rc = fprintf(stdout, LCH_COLOR_GREEN "I" LCH_COLOR_RESET ": %s\n",
-                 message);
+    rc = fprintf(stdout, LCH_COLOR_GREEN "I" LCH_COLOR_RESET ": %s\n", message);
     break;
   case LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT:
-    rc = fprintf(stdout, LCH_COLOR_YELLOW "W" LCH_COLOR_RESET ": %s\n",
-                 message);
+    rc =
+        fprintf(stdout, LCH_COLOR_YELLOW "W" LCH_COLOR_RESET ": %s\n", message);
     break;
   case LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT:
-    rc = fprintf(stderr, LCH_COLOR_RED "E" LCH_COLOR_RESET ": %s\n",
-                 message);
+    rc = fprintf(stderr, LCH_COLOR_RED "E" LCH_COLOR_RESET ": %s\n", message);
     break;
   default:
     break;

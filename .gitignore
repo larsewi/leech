@@ -107,8 +107,6 @@ m4/lt~obsolete.m4
 # (which is called by configure script))
 Makefile
 
-.vscode
-
 src/.libs/*
 src/simulate
 
@@ -116,4 +114,4 @@ tests/.libs/*
 tests/*.log
 tests/*.trs
 tests/check_leech
-tests/check_leech_utils
+tests/check_utils

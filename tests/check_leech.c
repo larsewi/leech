@@ -1,6 +1,6 @@
-#include "../src/leech.h"
 #include <check.h>
-#include <stdlib.h>
+
+#include "../src/leech.h"
 
 START_TEST(test_test) { ck_assert(1); }
 END_TEST
