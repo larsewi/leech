@@ -4,8 +4,8 @@
 #include <leech.h>
 #include <stdbool.h>
 
-bool LCH_TableReadCallbackCSV(const LCH_Instance *instance);
+bool LCH_TableReadCallbackCSV();
 
-bool LCH_TableWriteCallbackCSV(const LCH_Instance *instance);
+bool LCH_TableWriteCallbackCSV();
 
 #endif // _LEECH_CSV_H

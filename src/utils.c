@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <string.h>
 
-#include "leech_utils.h"
+#include "utils.h"
 
 #define INITIAL_CAPACITY 8
 #define LOAD_FACTOR 0.75f
@@ -90,7 +90,8 @@ static bool ArrayAppend(LCH_Array *array, void *data, LCH_Type type) {
   }
 
   item->type = type;
-  array->buffer[array->length++] = item;
+  array->buffer[array->length] = item;
+  array->length += 1;
 
   return true;
 }

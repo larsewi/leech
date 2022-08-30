@@ -20,7 +20,7 @@
   ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) ||                 \
    (ch >= 0x2D && ch <= 0x7E));
 
-bool LCH_TableReadCallbackCSV(const LCH_Instance *instance) {
+bool LCH_TableReadCallbackCSV() {
   // FILE *file = fopen(filename, "r");
   // if (file == NULL) {
   //   LCH_LOG_ERROR(instance, "fopen: %s", strerror(errno));
@@ -61,7 +61,7 @@ bool LCH_TableReadCallbackCSV(const LCH_Instance *instance) {
   return true;
 }
 
-bool LCH_TableWriteCallbackCSV(const LCH_Instance *instance) { return true; }
+bool LCH_TableWriteCallbackCSV() { return true; }
 
 static bool isComma(const char *buffer, long at) { return buffer[at] == 0x2C; }
 

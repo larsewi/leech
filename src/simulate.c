@@ -1,6 +1,5 @@
 #include <leech.h>
 #include <leech_csv.h>
-#include <leech_utils.h>
 #include <netdb.h>
 #include <poll.h>
 #include <stdio.h>
@@ -23,12 +22,15 @@ static bool LOG_DEBUG = false;
 static bool LOG_VERBOSE = false;
 
 static void CheckOptions(int argc, char *argv[]);
-LCH_Instance *SetupInstance();
+static void SetupDebugMessenger();
+static LCH_Instance *SetupInstance();
 static int CreateServerSocket();
 static bool ParseCommand(LCH_Instance *instance, const char *command);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
+
+  SetupDebugMessenger();
 
   LCH_Instance *instance = SetupInstance();
   if (instance == NULL) {
@@ -133,7 +135,23 @@ static void CheckOptions(int argc, char *argv[]) {
   }
 }
 
-LCH_Instance *SetupInstance() {
+static void SetupDebugMessenger() {
+  LCH_DebugMessengerInitInfo initInfo = {
+      .severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
+                  LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
+                  LCH_DEBUG_MESSAGE_TYPE_INFO_BIT,
+      .messageCallback = &LCH_DebugMessengerCallbackDefault,
+  };
+  if (LOG_VERBOSE) {
+    initInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
+  }
+  if (LOG_DEBUG) {
+    initInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
+  }
+  LCH_DebugMessengerInit(&initInfo);
+}
+
+static LCH_Instance *SetupInstance() {
   LCH_Instance *instance = NULL;
   { // Create instance
     char *instanceID = strdup(UNIQUE_ID);
@@ -160,26 +178,6 @@ LCH_Instance *SetupInstance() {
     }
   }
 
-  { // Add debug messenger
-    LCH_DebugMessengerCreateInfo createInfo = {
-        .severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
-                    LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
-                    LCH_DEBUG_MESSAGE_TYPE_INFO_BIT,
-        .messageCallback = &LCH_DebugMessengerCallbackDefault,
-    };
-    if (LOG_VERBOSE) {
-      createInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
-    }
-    if (LOG_DEBUG) {
-      createInfo.severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
-    }
-    if (!LCH_DebugMessengerAdd(instance, &createInfo)) {
-      fprintf(stderr, "LCH_DebugMessengerAdd\n");
-      LCH_InstanceDestroy(instance);
-      return NULL;
-    }
-  }
-
   { // Add CSV table
     char *readLocator = strdup("client/example.csv");
     if (readLocator == NULL) {
@@ -199,12 +197,6 @@ LCH_Instance *SetupInstance() {
         .writeLocator = writeLocator,
         .writeCallback = LCH_TableWriteCallbackCSV,
     };
-
-    if (!LCH_TableAdd(instance, &createInfo)) {
-      fprintf(stderr, "LCH_TableAdd\n");
-      LCH_InstanceDestroy(instance);
-      return NULL;
-    }
   }
 
   return instance;
