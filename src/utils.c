@@ -1,6 +1,8 @@
 #include <assert.h>
 #include <string.h>
+#include <errno.h>
 
+#include "debug_messenger.h"
 #include "utils.h"
 
 #define INITIAL_CAPACITY 8
@@ -56,13 +58,14 @@ static bool ArrayAppend(LCH_Array *array, void *data, LCH_Type type) {
 
   // Increase buffer capacity if needed
   if (array->length >= array->capacity) {
+    LCH_LOG_DEBUG("LCH_Array exceeded current capacity: Reallocating array buffer");
     array->capacity *= 2;
-    LCH_Item **buffer = (LCH_Item **)reallocarray(
-        array->buffer, array->capacity, sizeof(LCH_Item *));
-    if (buffer == NULL) {
+    array->buffer = (LCH_Item **)reallocarray(array->buffer, array->capacity,
+                                              sizeof(LCH_Item *));
+    if (array->buffer == NULL) {
+      LCH_LOG_ERROR("Failed to reallocate LCH_Array: %s", strerror(errno));
       return NULL;
     }
-    array->buffer == buffer;
   }
 
   // Create list item
@@ -109,11 +112,11 @@ bool LCH_ArrayAppendString(LCH_Array *array, char *data) {
 }
 
 bool LCH_ArrayAppendNumber(LCH_Array *array, long data) {
-  return ArrayAppend(array, (void *)&data, LCH_NUMBER);
+  return ArrayAppend(array, (void *)(&data), LCH_NUMBER);
 }
 
 bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data) {
-  return ArrayAppend(array, (void *)&data, LCH_BOOLEAN);
+  return ArrayAppend(array, (void *)(&data), LCH_BOOLEAN);
 }
 
 bool ArrayGet(LCH_Array *array, size_t index, void **data, LCH_Type type) {
@@ -174,6 +177,7 @@ void LCH_ArrayDestroy(LCH_Array *array) {
 
   for (int i = 0; i < array->length; i++) {
     LCH_Item *item = array->buffer[i];
+    assert(item != NULL);
     switch (item->type) {
     case LCH_ARRAY:
       LCH_ArrayDestroy(item->array);
