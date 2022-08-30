@@ -151,23 +151,23 @@ bool ArrayGet(LCH_Array *array, size_t index, void **data, LCH_Type type) {
   return true;
 }
 
-bool ArrayGetArray(LCH_Array *array, size_t index, LCH_Array **data) {
+bool LCH_ArrayGetArray(LCH_Array *array, size_t index, LCH_Array **data) {
   return ArrayGet(array, index, (void **)data, LCH_ARRAY);
 }
 
-bool ArrayGetObject(LCH_Array *array, size_t index, LCH_Object **data) {
+bool LCH_ArrayGetObject(LCH_Array *array, size_t index, LCH_Object **data) {
   return ArrayGet(array, index, (void **)data, LCH_OBJECT);
 }
 
-bool ArrayGetString(LCH_Array *array, size_t index, char **data) {
+bool LCH_ArrayGetString(LCH_Array *array, size_t index, char **data) {
   return ArrayGet(array, index, (void **)data, LCH_STRING);
 }
 
-bool ArrayGetNumber(LCH_Array *array, size_t index, long *data) {
+bool LCH_ArrayGetNumber(LCH_Array *array, size_t index, long *data) {
   return ArrayGet(array, index, (void **)data, LCH_NUMBER);
 }
 
-bool ArrayGetBoolean(LCH_Array *array, size_t index, bool *data) {
+bool LCH_ArrayGetBoolean(LCH_Array *array, size_t index, bool *data) {
   return ArrayGet(array, index, (void **)data, LCH_BOOLEAN);
 }
 
