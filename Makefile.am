@@ -4,8 +4,14 @@ SUBDIRS = src . tests
 format:
 	clang-format -i src/*.c src/*.h tests/*.c
 
-gdb: src/simulate
-	libtool --mode=execute gdb --args ./src/simulate -dv test-id
+run:
+	./src/simulate $(ARG)
 
-valgrind: src/simulate
-	libtool --mode=execute valgrind --leak-check=full ./src/simulate -dv test-id
+gdb:
+	libtool --mode=execute gdb --args ./src/simulate $(ARG)
+
+valgrind:
+	libtool --mode=execute valgrind --leak-check=full ./src/simulate $(ARG)
+
+super-clean:
+	git clean -fx

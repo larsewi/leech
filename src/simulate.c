@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <assert.h>
 
 #define PORT "2022"
 #define WORK_DIR ".leech/"
@@ -104,6 +105,14 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+
+  LCH_Array *array = LCH_ArrayCreate();
+  assert(LCH_ArrayLength(array) == 0);
+  for (int i = 0; i < 10; i++) {
+    LCH_ArrayAppendNumber(array, i);
+  }
+  assert(LCH_ArrayLength(array) == 10);
+  LCH_ArrayDestroy(array);
 
   close(server_sock);
   LCH_InstanceDestroy(instance);
