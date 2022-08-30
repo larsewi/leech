@@ -23,16 +23,9 @@ LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
     return NULL;
   }
 
-  table->readLocator = strdup(createInfo->readLocator);
-  if (table->readLocator == NULL) {
-    return NULL;
-  }
+  table->readLocator = createInfo->readLocator;
   table->readCallback = createInfo->readCallback;
-
-  table->writeLocator = strdup(createInfo->writeLocator);
-  if (table->writeLocator == NULL) {
-    return NULL;
-  }
+  table->writeLocator = createInfo->writeLocator;
   table->writeCallback = createInfo->writeCallback;
 
   return table;

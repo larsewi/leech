@@ -23,14 +23,8 @@ LCH_InstanceCreate(const LCH_InstanceCreateInfo *const createInfo) {
     return NULL;
   }
 
-  instance->instanceID = strdup(createInfo->instanceID);
-  if (instance->instanceID == NULL) {
-    return NULL;
-  }
-  instance->workDir = strdup(createInfo->workDir);
-  if (instance->workDir = NULL) {
-    return NULL;
-  }
+  instance->instanceID = createInfo->instanceID;
+  instance->workDir = createInfo->workDir;
   instance->tables = NULL;
   instance->numTables = 0;
 

@@ -1,15 +1,27 @@
 # leech
 
-## Install
-To configure, build and install from source; simply use the following command from the project root directory:
-`./autogen.sh && ./configure && make && sudo make install`. To additionally compile binaries for simulation, configure with option `--enable-simulate`. Note: these simulation specific binaries are not installed using `make install`, and will only reside within the project directory.
+## Prerequesites
+`sudo apt-get install build-essential autotools-dev autoconf libtool-bin check valgrind gdb`
 
-## Commands
-```
-$ git clean -fx && ./autogen.sh && ./configure --enable-simulate
-$ clang-format -i src/*.h src/*.c && make
-$ libtool --mode=execute gdb --args ./src/node -dv
-```
+## Configure
+`./autogen.sh`
+`./configure --enable-simulate`
+
+## Build
+`make`
+
+## Install
+`sudo make install`
+
+## Clean
+`git clean -fx`
+
+## Format
+`make format`
+
+## Debug
+`make gdb`
+`make valgrind`
 
 ```mermaid
   graph TD;

@@ -163,6 +163,7 @@ static LCH_Instance *SetupInstance() {
     char *workDir = strdup(WORK_DIR);
     if (workDir == NULL) {
       perror("strdup");
+      free(instanceID);
       return NULL;
     }
 
@@ -174,6 +175,8 @@ static LCH_Instance *SetupInstance() {
     instance = LCH_InstanceCreate(&createInfo);
     if (instance == NULL) {
       fprintf(stderr, "LCH_InstanceCreate\n");
+      free(workDir);
+      free(instanceID);
       return NULL;
     }
   }
@@ -188,6 +191,7 @@ static LCH_Instance *SetupInstance() {
     char *writeLocator = strdup("server/example.csv");
     if (writeLocator == NULL) {
       perror("strdup");
+      free(readLocator);
       return NULL;
     }
 
@@ -197,6 +201,18 @@ static LCH_Instance *SetupInstance() {
         .writeLocator = writeLocator,
         .writeCallback = LCH_TableWriteCallbackCSV,
     };
+
+    LCH_Table *table = LCH_TableCreate(&createInfo);
+    if (table == NULL)
+    {
+      free(writeLocator);
+      free(readLocator);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+
+    // TODO: Add table to instance
+    LCH_TableDestroy(table);
   }
 
   return instance;
