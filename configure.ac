@@ -1,9 +1,9 @@
-AC_INIT(leech, 0.1.0)
+AC_INIT([leech],[0.1.0])
 AC_CONFIG_SRCDIR([src/leech.c])
 AC_CONFIG_MACRO_DIRS([m4])
 
-AM_INIT_AUTOMAKE([foreign])
-AM_PATH_CHECK
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.6])
 
 AC_ARG_ENABLE([simulate],
 [  --enable-simulate       build binaries for simulation],
@@ -14,6 +14,7 @@ AC_ARG_ENABLE([simulate],
 esac],[simulate=false])
 AM_CONDITIONAL([SIMULATE], [test x$simulate = xtrue])
 
+AM_PROG_AR
 AC_PROG_CC
 LT_INIT
 

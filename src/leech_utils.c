@@ -6,7 +6,6 @@
 #define INITIAL_CAPACITY 8
 #define LOAD_FACTOR 0.75f
 
-
 typedef struct LCH_Item {
   union {
     LCH_Array *array;
@@ -26,7 +25,7 @@ typedef struct LCH_Array {
 
 typedef struct LCH_Object {
   /* data */
-};
+} LCH_Object;
 
 LCH_Array *LCH_ArrayCreate() {
   LCH_Array *array = (LCH_Array *)malloc(sizeof(LCH_Array));
@@ -36,8 +35,7 @@ LCH_Array *LCH_ArrayCreate() {
 
   array->length = 0;
   array->capacity = INITIAL_CAPACITY;
-  array->buffer =
-      (LCH_Item **)reallocarray(NULL, array->capacity, sizeof(LCH_Item *));
+  array->buffer = (LCH_Item **)malloc(array->capacity * sizeof(LCH_Item *));
 
   if (array->buffer == NULL) {
     free(array);
