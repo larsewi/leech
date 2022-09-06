@@ -3,7 +3,7 @@
 #include "../src/definitions.h"
 #include "../src/utils.h"
 
-START_TEST(test_Array) {
+START_TEST(test_List) {
   int i, j;
 
   LCH_List *list = LCH_ListCreate();
@@ -53,8 +53,8 @@ END_TEST
 Suite *utils_suite(void) {
   Suite *s = suite_create("Utils");
   {
-    TCase *tc = tcase_create("Array");
-    tcase_add_test(tc, test_Array);
+    TCase *tc = tcase_create("List");
+    tcase_add_test(tc, test_List);
     suite_add_tcase(s, tc);
   }
   {
