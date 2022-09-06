@@ -5,5 +5,6 @@
 #include "instance.h"
 #include "table.h"
 #include "utils.h"
+#include "definitions.h"
 
 #endif // _LEECH_H

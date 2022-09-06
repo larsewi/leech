@@ -46,15 +46,16 @@ LCH_Array *LCH_ArrayCreate() {
   return array;
 }
 
-size_t LCH_ArrayLength(LCH_Array *array) {
+size_t LCH_ArrayLength(const LCH_Array *const array) {
   assert(array != NULL);
   return array->length;
 }
 
-static bool ArrayAppend(LCH_Array *array, void *data, LCH_Type type) {
+static bool ArrayAppend(LCH_Array *const array, const void *const data, const LCH_Type type) {
   assert(array != NULL);
   assert(array->buffer != NULL);
   assert(array->capacity >= array->length);
+  assert(data != NULL);
 
   // Increase buffer capacity if needed
   if (array->length >= array->capacity) {
@@ -99,36 +100,42 @@ static bool ArrayAppend(LCH_Array *array, void *data, LCH_Type type) {
   return true;
 }
 
-bool LCH_ArrayAppendArray(LCH_Array *array, LCH_Array *data) {
+bool LCH_ArrayAppendArray(LCH_Array *const array, const LCH_Array *const data) {
+  assert(array != NULL);
+  assert(data != NULL);
   return ArrayAppend(array, (void *)data, LCH_ARRAY);
 }
 
-bool LCH_ArrayAppendObject(LCH_Array *array, LCH_Object *data) {
+bool LCH_ArrayAppendObject(LCH_Array *const array, const LCH_Object *const data) {
+  assert(array != NULL);
+  assert(data != NULL);
   return ArrayAppend(array, (void *)data, LCH_OBJECT);
 }
 
-bool LCH_ArrayAppendString(LCH_Array *array, char *data) {
+bool LCH_ArrayAppendString(LCH_Array *const array, const char *const data) {
+  assert(array != NULL);
+  assert(data != NULL);
   return ArrayAppend(array, (void *)data, LCH_STRING);
 }
 
-bool LCH_ArrayAppendNumber(LCH_Array *array, long data) {
+bool LCH_ArrayAppendNumber(LCH_Array *const array, const long data) {
+  assert(array != NULL);
   return ArrayAppend(array, (void *)(&data), LCH_NUMBER);
 }
 
-bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data) {
+bool LCH_ArrayAppendBoolean(LCH_Array *const array, const bool data) {
+  assert(array != NULL);
   return ArrayAppend(array, (void *)(&data), LCH_BOOLEAN);
 }
 
-bool ArrayGet(LCH_Array *array, size_t index, void **data, LCH_Type type) {
+void ArrayGet(const LCH_Array *const array, const size_t index, void **data, const LCH_Type type) {
   assert(array != NULL);
   assert(array->buffer != NULL);
   assert(index < array->length);
 
   LCH_Item *item = array->buffer[index];
   assert(item != NULL);
-  if (item->type != type) {
-    return false;
-  }
+  assert(item->type == type);
 
   switch (type) {
   case LCH_ARRAY:
@@ -147,28 +154,41 @@ bool ArrayGet(LCH_Array *array, size_t index, void **data, LCH_Type type) {
     (*(bool *)data) = item->boolean;
     break;
   }
-
-  return true;
 }
 
-bool LCH_ArrayGetArray(LCH_Array *array, size_t index, LCH_Array **data) {
-  return ArrayGet(array, index, (void **)data, LCH_ARRAY);
+LCH_Array *LCH_ArrayGetArray(const LCH_Array *const array, const size_t index) {
+  assert(array != NULL);
+  LCH_Array *data = NULL;
+  ArrayGet(array, index, (void **)(&data), LCH_ARRAY);
+  return data;
 }
 
-bool LCH_ArrayGetObject(LCH_Array *array, size_t index, LCH_Object **data) {
-  return ArrayGet(array, index, (void **)data, LCH_OBJECT);
+LCH_Object *LCH_ArrayGetObject(const LCH_Array *const array, const size_t index) {
+  assert(array != NULL);
+  LCH_Object *data = NULL;
+  ArrayGet(array, index, (void **)(&data), LCH_OBJECT);
+  return data;
 }
 
-bool LCH_ArrayGetString(LCH_Array *array, size_t index, char **data) {
-  return ArrayGet(array, index, (void **)data, LCH_STRING);
+char *LCH_ArrayGetString(const LCH_Array *const array, const size_t index) {
+  assert(array != NULL);
+  char *data = NULL;
+  ArrayGet(array, index, (void **)(&data), LCH_STRING);
+  return data;
 }
 
-bool LCH_ArrayGetNumber(LCH_Array *array, size_t index, long *data) {
-  return ArrayGet(array, index, (void **)data, LCH_NUMBER);
+long LCH_ArrayGetNumber(const LCH_Array *const array, const size_t index) {
+  assert(array != NULL);
+  long data;
+  ArrayGet(array, index, (void **)(&data), LCH_NUMBER);
+  return data;
 }
 
-bool LCH_ArrayGetBoolean(LCH_Array *array, size_t index, bool *data) {
-  return ArrayGet(array, index, (void **)data, LCH_BOOLEAN);
+bool LCH_ArrayGetBoolean(const LCH_Array *const array, const size_t index) {
+  assert(array != NULL);
+  bool data;
+  ArrayGet(array, index, (void **)(&data), LCH_BOOLEAN);
+  return data;
 }
 
 void LCH_ArrayDestroy(LCH_Array *array) {

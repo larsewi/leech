@@ -27,6 +27,7 @@ static void SetupDebugMessenger();
 static LCH_Instance *SetupInstance();
 static int CreateServerSocket();
 static bool ParseCommand(LCH_Instance *instance, const char *command);
+static bool BootstrapCommand(LCH_Array *array);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -66,7 +67,7 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
 
-    for (int i = 0; i < LENGTH(pfds); i++) {
+    for (int i = 0; i < LCH_LENGTH(pfds); i++) {
       struct pollfd *pfd = pfds + i;
       if (pfd->revents != POLLIN) {
         continue;
@@ -92,7 +93,6 @@ int main(int argc, char *argv[]) {
           return EXIT_FAILURE;
         }
         if (size == 0) {
-          printf("Exited by user\n");
           SHOULD_RUN = false;
           break;
         }
@@ -274,26 +274,38 @@ static int CreateServerSocket() {
 }
 
 static bool ParseCommand(LCH_Instance *instance, const char *str) {
-  LCH_Array *array = LCH_SplitString(str," \t");
-  size_t len = LCH_ArrayLength(array);
+  LCH_Array *array = LCH_SplitString(str, " \t\n");
 
+  size_t len = LCH_ArrayLength(array);
   if (len == 0) {
+    LCH_ArrayDestroy(array);
     return true;
   }
 
-  for (size_t i = 0; i < len; i++) {
-    char *s;
-    if (!LCH_ArrayGetString(array, i, &s)) {
+  char *cmd = LCH_ArrayGetString(array, 0);
+  if (strcmp(cmd, "exit") == 0) {
+    SHOULD_RUN = false;
+  }
+  else if (strcmp(cmd, "bootstrap") == 0) {
+    if (!BootstrapCommand(array)) {
       LCH_ArrayDestroy(array);
       return false;
     }
-    printf("%s\n", s);
   }
-
+  printf("Bad command '%s'", cmd);
   LCH_ArrayDestroy(array);
   return true;
 }
 
-static bool ExitCommand() {
+static bool BootstrapCommand(LCH_Array *array) {
+  size_t len = LCH_ArrayLength(array);
+  if (len < 2) {
+    printf("Missing required argument 'ip_address'\n");
+    LCH_ArrayDestroy(array);
+    return true;
+  }
 
+  char *ip_addr = LCH_ArrayGetString(array, 1);
+  printf("%s\n", ip_addr);
+  return true;
 }
