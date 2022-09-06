@@ -274,5 +274,18 @@ static int CreateServerSocket() {
 }
 
 static bool ParseCommand(LCH_Instance *instance, const char *command) {
+  LCH_Array *array = LCH_SplitString(command," \t");
+  size_t len = LCH_ArrayLength(array);
+
+  for (size_t i = 0; i < len; i++) {
+    char *str;
+    if (!LCH_ArrayGetString(array, i, &str)) {
+      LCH_ArrayDestroy(array);
+      return false;
+    }
+    printf("%s\n", str);
+  }
+
+  LCH_ArrayDestroy(array);
   return true;
 }
