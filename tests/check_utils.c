@@ -6,51 +6,22 @@
 START_TEST(test_Array) {
   int i, j;
 
-  LCH_Array *array = LCH_ArrayCreate();
-  ck_assert_ptr_nonnull(array);
-  ck_assert_int_eq(LCH_ArrayLength(array), 0);
+  LCH_List *list = LCH_ListCreate();
+  ck_assert_ptr_nonnull(list);
 
-  ck_assert(LCH_ArrayAppendArray(array, LCH_ArrayCreate()));
-  // TODO: ck_assert(LCH_ArrayAppendObject(array, LCH_ObjectCreate()));
-  ck_assert(LCH_ArrayAppendString(array, strdup("Hello World!")));
-  ck_assert(LCH_ArrayAppendNumber(array, 1337));
-  ck_assert(LCH_ArrayAppendBoolean(array, true));
+  ck_assert_int_eq(LCH_ListLength(list), 0);
+  for (int i = 0; i < 10; i++) {
+    int *data = malloc(sizeof(int));
+    *data = i;
+    ck_assert(LCH_ListAppend(list, (void *)data));
+  }
+  ck_assert_int_eq(LCH_ListLength(list), 10);
 
-  {
-    LCH_Array *get = LCH_ArrayGetArray(array, i++);
-    ck_assert_ptr_nonnull(get);
-    ck_assert_int_eq(LCH_ArrayLength(get), 0);
+  for (int i = 0; i < 10; i++) {
+    ck_assert_int_eq(*(int *) LCH_ListGet(list, 0), 0);
   }
 
-  // TODO
-  // {
-  //   LCH_Object *get = LCH_ArrayGetObject(array, 1);
-  //   ck_assert_ptr_nonnull(get);
-  // }
-
-  {
-    char *get = LCH_ArrayGetString(array, i++);
-    ck_assert_ptr_nonnull(get);
-    ck_assert_str_eq(get, "Hello World!");
-  }
-
-  {
-    long get = LCH_ArrayGetNumber(array, i++);
-    ck_assert_int_eq(get, 1337);
-  }
-
-  {
-    bool get = LCH_ArrayGetBoolean(array, i++);
-    ck_assert(get);
-  }
-
-  /* Test realloc array functionallity */
-  for (j = 0; j < 10; j++) {
-    ck_assert(LCH_ArrayAppendNumber(array, i));
-  }
-  ck_assert_int_eq(LCH_ArrayLength(array), i + j);
-
-  LCH_ArrayDestroy(array);
+  LCH_ListDestroy(list);
 }
 END_TEST
 
@@ -63,19 +34,19 @@ START_TEST(test_SplitString) {
   };
 
   for (int i = 0; i < LCH_LENGTH(strs); i++) {
-    LCH_Array *array = LCH_SplitString(strs[i], " \t");
-    ck_assert_ptr_nonnull(array);
-    ck_assert_int_eq(LCH_ArrayLength(array), 3);
-    ck_assert_str_eq(LCH_ArrayGetString(array, 0), "one");
-    ck_assert_str_eq(LCH_ArrayGetString(array, 1), "two");
-    ck_assert_str_eq(LCH_ArrayGetString(array, 2), "three");
-    LCH_ArrayDestroy(array);
+    LCH_List *list = LCH_SplitString(strs[i], " \t");
+    ck_assert_ptr_nonnull(list);
+    ck_assert_int_eq(LCH_ListLength(list), 3);
+    ck_assert_str_eq((char *) LCH_ListGet(list, 0), "one");
+    ck_assert_str_eq((char *) LCH_ListGet(list, 1), "two");
+    ck_assert_str_eq((char *) LCH_ListGet(list, 2), "three");
+    LCH_ListDestroy(list);
   }
 
-  LCH_Array *array = LCH_SplitString("", " \t");
-  ck_assert_ptr_nonnull(array);
-  ck_assert_int_eq(LCH_ArrayLength(array), 0);
-  LCH_ArrayDestroy(array);
+  LCH_List *list = LCH_SplitString("", " \t");
+  ck_assert_ptr_nonnull(list);
+  ck_assert_int_eq(LCH_ListLength(list), 0);
+  LCH_ListDestroy(list);
 }
 END_TEST
 

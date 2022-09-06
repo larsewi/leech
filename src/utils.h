@@ -4,39 +4,24 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef enum LCH_Type {
-  LCH_ARRAY,
-  LCH_OBJECT,
-  LCH_STRING,
-  LCH_NUMBER,
-  LCH_BOOLEAN,
-} LCH_Type;
 
-typedef struct LCH_Buffer LCH_Array;
-typedef struct LCH_Buffer LCH_Object;
+typedef struct LCH_Buffer LCH_List;
+typedef struct LCH_Buffer LCH_Dict;
 
-LCH_Array *LCH_ArrayCreate();
-LCH_Object *LCH_ObjectCreate();
+LCH_List *LCH_ListCreate();
+LCH_Dict *LCH_DictCreate();
 
-size_t LCH_ArrayLength(const LCH_Array *array);
-size_t LCH_ObjectLength(const LCH_Object *object);
+size_t LCH_ListLength(const LCH_List *list);
+size_t LCH_DictLength(const LCH_Dict *dict);
 
-bool LCH_ArrayAppendArray(LCH_Array *array, const LCH_Array *data);
-bool LCH_ArrayAppendObject(LCH_Array *array, const LCH_Object *data);
-bool LCH_ArrayAppendString(LCH_Array *array, const char *data);
-bool LCH_ArrayAppendNumber(LCH_Array *array, long data);
-bool LCH_ArrayAppendBoolean(LCH_Array *array, bool data);
+bool LCH_ListAppend(LCH_List *list, void *data);
 
-LCH_Array *LCH_ArrayGetArray(const LCH_Array *array, size_t index);
-LCH_Object *LCH_ArrayGetObject(const LCH_Array *array, size_t index);
-char *LCH_ArrayGetString(const LCH_Array *array, size_t index);
-long LCH_ArrayGetNumber(const LCH_Array *array, size_t index);
-bool LCH_ArrayGetBoolean(const LCH_Array *array, size_t index);
+void *LCH_ListGet(const LCH_List *list, size_t index);
 
-void LCH_ArrayDestroy(LCH_Array *array);
-void LCH_ObjectDestroy(LCH_Object *object);
+void LCH_ListDestroy(LCH_List *list);
+void LCH_DictDestroy(LCH_Dict *dict);
 
-LCH_Array *LCH_SplitString(const char *str, const char *del);
+LCH_List *LCH_SplitString(const char *str, const char *del);
 
 unsigned long LCH_Hash(char *str);
 
