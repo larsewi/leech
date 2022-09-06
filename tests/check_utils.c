@@ -105,6 +105,12 @@ START_TEST(test_SplitString) {
     ck_assert_str_eq(str1, "three");
     LCH_ArrayDestroy(array);
   }
+  {
+    char *str1, str2[] = "";
+    LCH_Array *array = LCH_SplitString(str2, " \t");
+    ck_assert_int_eq(LCH_ArrayLength(array), 0);
+    LCH_ArrayDestroy(array);
+  }
 }
 END_TEST
 
