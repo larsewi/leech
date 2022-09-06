@@ -207,17 +207,13 @@ unsigned long LCH_Hash(char *str) {
   return hash;
 }
 
-static bool IsDelimitor(char ch, const char *del) {
-  return strchr(del, ch) != NULL;
-}
-
 LCH_Array *LCH_SplitString(const char *str, const char *del) {
   LCH_Array *list = LCH_ArrayCreate();
-  size_t len = strlen(str), from = 0;
+  size_t to, from = 0, len = strlen(str);
   bool is_delim, was_delim = true;
 
-  for (size_t to = 0; to < len; to++) {
-    is_delim = IsDelimitor(str[to], del);
+  for (to = 0; to < len; to++) {
+    is_delim = strchr(del, str[to]) != NULL;
     if (is_delim) {
       if (was_delim) {
         continue;
@@ -238,6 +234,18 @@ LCH_Array *LCH_SplitString(const char *str, const char *del) {
       }
     }
     was_delim = is_delim;
+  }
+
+  if (from < to && !is_delim) {
+    char *s = strndup(str + from, to - from);
+    if (s == NULL) {
+      LCH_ArrayDestroy(list);
+      return NULL;
+    }
+    if (!ArrayAppend(list, (void *)s, LCH_STRING)) {
+      LCH_ArrayDestroy(list);
+      return NULL;
+    }
   }
 
   return list;

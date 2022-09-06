@@ -2,7 +2,7 @@
 
 #include "../src/utils.h"
 
-START_TEST(test_LCH_Array) {
+START_TEST(test_Array) {
   int i, j;
 
   LCH_Array *array = LCH_ArrayCreate();
@@ -56,11 +56,70 @@ START_TEST(test_LCH_Array) {
 }
 END_TEST
 
+START_TEST(test_SplitString) {
+  {
+    char *str1, str2[] = "one two\tthree";
+    LCH_Array *array = LCH_SplitString(str2, " \t");
+    ck_assert_int_eq(LCH_ArrayLength(array), 3);
+    LCH_ArrayGetString(array, 0, &str1);
+    ck_assert_str_eq(str1, "one");
+    LCH_ArrayGetString(array, 1, &str1);
+    ck_assert_str_eq(str1, "two");
+    LCH_ArrayGetString(array, 2, &str1);
+    ck_assert_str_eq(str1, "three");
+    LCH_ArrayDestroy(array);
+  }
+  {
+    char *str1, str2[] = "\t one two\tthree";
+    LCH_Array *array = LCH_SplitString(str2, " \t");
+    ck_assert_int_eq(LCH_ArrayLength(array), 3);
+    LCH_ArrayGetString(array, 0, &str1);
+    ck_assert_str_eq(str1, "one");
+    LCH_ArrayGetString(array, 1, &str1);
+    ck_assert_str_eq(str1, "two");
+    LCH_ArrayGetString(array, 2, &str1);
+    ck_assert_str_eq(str1, "three");
+    LCH_ArrayDestroy(array);
+  }
+  {
+    char *str1, str2[] = "one two\tthree\t ";
+    LCH_Array *array = LCH_SplitString(str2, " \t");
+    ck_assert_int_eq(LCH_ArrayLength(array), 3);
+    LCH_ArrayGetString(array, 0, &str1);
+    ck_assert_str_eq(str1, "one");
+    LCH_ArrayGetString(array, 1, &str1);
+    ck_assert_str_eq(str1, "two");
+    LCH_ArrayGetString(array, 2, &str1);
+    ck_assert_str_eq(str1, "three");
+    LCH_ArrayDestroy(array);
+  }
+  {
+    char *str1, str2[] = " \t one two \tthree\t\t ";
+    LCH_Array *array = LCH_SplitString(str2, " \t");
+    ck_assert_int_eq(LCH_ArrayLength(array), 3);
+    LCH_ArrayGetString(array, 0, &str1);
+    ck_assert_str_eq(str1, "one");
+    LCH_ArrayGetString(array, 1, &str1);
+    ck_assert_str_eq(str1, "two");
+    LCH_ArrayGetString(array, 2, &str1);
+    ck_assert_str_eq(str1, "three");
+    LCH_ArrayDestroy(array);
+  }
+}
+END_TEST
+
 Suite *utils_suite(void) {
   Suite *s = suite_create("Utils");
-  TCase *tc = tcase_create("Array");
-  tcase_add_test(tc, test_LCH_Array);
-  suite_add_tcase(s, tc);
+  {
+    TCase *tc = tcase_create("Array");
+    tcase_add_test(tc, test_Array);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("SplitString");
+    tcase_add_test(tc, test_SplitString);
+    suite_add_tcase(s, tc);
+  }
   return s;
 }
 

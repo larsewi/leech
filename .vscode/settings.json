@@ -5,7 +5,8 @@
         "check.h": "c",
         "leech_utils.h": "c",
         "stdlib.h": "c",
-        "instance.h": "c"
+        "instance.h": "c",
+        "utils.h": "c"
     },
     "files.exclude": {
         "**/.git": true,

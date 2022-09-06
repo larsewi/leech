@@ -1,7 +1,7 @@
 # leech
 
 ## Prerequesites
-`sudo apt-get install build-essential automake autoconf libtool check`
+`sudo apt-get install build-essential automake autoconf libtool-bin check`
 
 ## Install
 `./autogen.sh && ./configure --enable-simulate && make && sudo make install`
