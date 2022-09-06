@@ -2,9 +2,9 @@
 #define _LEECH_H
 
 #include "debug_messenger.h"
+#include "definitions.h"
 #include "instance.h"
 #include "table.h"
 #include "utils.h"
-#include "definitions.h"
 
 #endif // _LEECH_H

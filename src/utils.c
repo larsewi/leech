@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <string.h>
 #include <errno.h>
+#include <string.h>
 
 #include "debug_messenger.h"
 #include "utils.h"
@@ -51,7 +51,8 @@ size_t LCH_ArrayLength(const LCH_Array *const array) {
   return array->length;
 }
 
-static bool ArrayAppend(LCH_Array *const array, const void *const data, const LCH_Type type) {
+static bool ArrayAppend(LCH_Array *const array, const void *const data,
+                        const LCH_Type type) {
   assert(array != NULL);
   assert(array->buffer != NULL);
   assert(array->capacity >= array->length);
@@ -59,7 +60,8 @@ static bool ArrayAppend(LCH_Array *const array, const void *const data, const LC
 
   // Increase buffer capacity if needed
   if (array->length >= array->capacity) {
-    LCH_LOG_DEBUG("LCH_Array exceeded current capacity: Reallocating array buffer");
+    LCH_LOG_DEBUG(
+        "LCH_Array exceeded current capacity: Reallocating array buffer");
     array->capacity *= 2;
     array->buffer = (LCH_Item **)reallocarray(array->buffer, array->capacity,
                                               sizeof(LCH_Item *));
@@ -106,7 +108,8 @@ bool LCH_ArrayAppendArray(LCH_Array *const array, const LCH_Array *const data) {
   return ArrayAppend(array, (void *)data, LCH_ARRAY);
 }
 
-bool LCH_ArrayAppendObject(LCH_Array *const array, const LCH_Object *const data) {
+bool LCH_ArrayAppendObject(LCH_Array *const array,
+                           const LCH_Object *const data) {
   assert(array != NULL);
   assert(data != NULL);
   return ArrayAppend(array, (void *)data, LCH_OBJECT);
@@ -128,7 +131,8 @@ bool LCH_ArrayAppendBoolean(LCH_Array *const array, const bool data) {
   return ArrayAppend(array, (void *)(&data), LCH_BOOLEAN);
 }
 
-void ArrayGet(const LCH_Array *const array, const size_t index, void **data, const LCH_Type type) {
+void ArrayGet(const LCH_Array *const array, const size_t index, void **data,
+              const LCH_Type type) {
   assert(array != NULL);
   assert(array->buffer != NULL);
   assert(index < array->length);
@@ -163,7 +167,8 @@ LCH_Array *LCH_ArrayGetArray(const LCH_Array *const array, const size_t index) {
   return data;
 }
 
-LCH_Object *LCH_ArrayGetObject(const LCH_Array *const array, const size_t index) {
+LCH_Object *LCH_ArrayGetObject(const LCH_Array *const array,
+                               const size_t index) {
   assert(array != NULL);
   LCH_Object *data = NULL;
   ArrayGet(array, index, (void **)(&data), LCH_OBJECT);

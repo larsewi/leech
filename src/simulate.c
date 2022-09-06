@@ -27,7 +27,6 @@ static void SetupDebugMessenger();
 static LCH_Instance *SetupInstance();
 static int CreateServerSocket();
 static bool ParseCommand(LCH_Instance *instance, const char *command);
-static bool BootstrapCommand(LCH_Array *array);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -282,30 +281,10 @@ static bool ParseCommand(LCH_Instance *instance, const char *str) {
     return true;
   }
 
-  char *cmd = LCH_ArrayGetString(array, 0);
-  if (strcmp(cmd, "exit") == 0) {
-    SHOULD_RUN = false;
+  for (size_t i = 0; i < len; i++) {
+    printf("%s\n", LCH_ArrayGetString(array, i));
   }
-  else if (strcmp(cmd, "bootstrap") == 0) {
-    if (!BootstrapCommand(array)) {
-      LCH_ArrayDestroy(array);
-      return false;
-    }
-  }
-  printf("Bad command '%s'", cmd);
+
   LCH_ArrayDestroy(array);
-  return true;
-}
-
-static bool BootstrapCommand(LCH_Array *array) {
-  size_t len = LCH_ArrayLength(array);
-  if (len < 2) {
-    printf("Missing required argument 'ip_address'\n");
-    LCH_ArrayDestroy(array);
-    return true;
-  }
-
-  char *ip_addr = LCH_ArrayGetString(array, 1);
-  printf("%s\n", ip_addr);
   return true;
 }

@@ -1,7 +1,7 @@
 #include <check.h>
 
-#include "../src/utils.h"
 #include "../src/definitions.h"
+#include "../src/utils.h"
 
 START_TEST(test_Array) {
   int i, j;
@@ -56,10 +56,10 @@ END_TEST
 
 START_TEST(test_SplitString) {
   const char strs[][LCH_BUFFER_SIZE] = {
-    "one two\tthree",
-    "\t one two\tthree",
-    "one two\tthree\t ",
-    " \t one two \tthree\t\t ",
+      "one two\tthree",
+      "\t one two\tthree",
+      "one two\tthree\t ",
+      " \t one two \tthree\t\t ",
   };
 
   for (int i = 0; i < LCH_LENGTH(strs); i++) {
