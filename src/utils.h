@@ -12,12 +12,14 @@ typedef enum LCH_Type {
   LCH_BOOLEAN,
 } LCH_Type;
 
-typedef struct LCH_Array LCH_Array;
-typedef struct LCH_Object LCH_Object;
+typedef struct LCH_Buffer LCH_Array;
+typedef struct LCH_Buffer LCH_Object;
 
 LCH_Array *LCH_ArrayCreate();
+LCH_Object *LCH_ObjectCreate();
 
 size_t LCH_ArrayLength(const LCH_Array *array);
+size_t LCH_ObjectLength(const LCH_Object *object);
 
 bool LCH_ArrayAppendArray(LCH_Array *array, const LCH_Array *data);
 bool LCH_ArrayAppendObject(LCH_Array *array, const LCH_Object *data);

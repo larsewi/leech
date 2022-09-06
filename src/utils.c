@@ -8,10 +8,12 @@
 #define INITIAL_CAPACITY 8
 #define LOAD_FACTOR 0.75f
 
+typedef struct LCH_Buffer LCH_Buffer;
+
 typedef struct LCH_Item {
+  char *key;
   union {
-    LCH_Array *array;
-    LCH_Object *object;
+    LCH_Buffer *buffer;
     char *string;
     long number;
     bool boolean;
@@ -19,34 +21,47 @@ typedef struct LCH_Item {
   LCH_Type type;
 } LCH_Item;
 
-typedef struct LCH_Array {
+struct LCH_Buffer {
   size_t length;
   size_t capacity;
   LCH_Item **buffer;
-} LCH_Array;
+};
 
-typedef struct LCH_Object {
-  /* data */
-} LCH_Object;
+static LCH_Buffer *LCH_BufferCreate() {
+  LCH_Buffer *buffer = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    return NULL;
+  }
+
+  buffer->length = 0;
+  buffer->capacity = INITIAL_CAPACITY;
+  buffer->buffer = (LCH_Item **)calloc(buffer->capacity, sizeof(LCH_Item *));
+
+  if (buffer->buffer == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    free(buffer);
+    return NULL;
+  }
+
+  LCH_LOG_DEBUG("Created buffer with capacity %d/%d", buffer->length, buffer->capacity);
+  return buffer;
+}
 
 LCH_Array *LCH_ArrayCreate() {
-  LCH_Array *array = (LCH_Array *)malloc(sizeof(LCH_Array));
-  if (array == NULL) {
-    return NULL;
-  }
+  return LCH_BufferCreate();
+}
 
-  array->length = 0;
-  array->capacity = INITIAL_CAPACITY;
-  array->buffer = (LCH_Item **)malloc(array->capacity * sizeof(LCH_Item *));
-
-  if (array->buffer == NULL) {
-    free(array);
-    return NULL;
-  }
-  return array;
+LCH_Object *LCH_ObjectCreate() {
+  return LCH_BufferCreate();
 }
 
 size_t LCH_ArrayLength(const LCH_Array *const array) {
+  assert(array != NULL);
+  return array->length;
+}
+
+size_t LCH_ObjectLength(const LCH_Object *const array) {
   assert(array != NULL);
   return array->length;
 }
@@ -60,29 +75,28 @@ static bool ArrayAppend(LCH_Array *const array, const void *const data,
 
   // Increase buffer capacity if needed
   if (array->length >= array->capacity) {
-    LCH_LOG_DEBUG(
-        "LCH_Array exceeded current capacity: Reallocating array buffer");
-    array->capacity *= 2;
-    array->buffer = (LCH_Item **)reallocarray(array->buffer, array->capacity,
+    array->buffer = (LCH_Item **)reallocarray(array->buffer, array->capacity * 2,
                                               sizeof(LCH_Item *));
+    memset(array->buffer + array->capacity, 0, array->capacity);
+    array->capacity *= 2;
     if (array->buffer == NULL) {
-      LCH_LOG_ERROR("Failed to reallocate LCH_Array: %s", strerror(errno));
+      LCH_LOG_ERROR("Failed to reallocate memory: %s", strerror(errno));
       return NULL;
     }
+    LCH_LOG_DEBUG("Expanded buffer to capacity %d/%d", array->length, array->capacity);
   }
 
   // Create list item
-  LCH_Item *item = (LCH_Item *)malloc(sizeof(LCH_Item));
+  LCH_Item *item = (LCH_Item *)calloc(1, sizeof(LCH_Item));
   if (item == NULL) {
     return false;
   }
 
   switch (type) {
   case LCH_ARRAY:
-    item->array = (LCH_Array *)data;
-    break;
+    // fallthrough
   case LCH_OBJECT:
-    item->object = (LCH_Object *)data;
+    item->buffer = (LCH_Buffer *)data;
     break;
   case LCH_STRING:
     item->string = (char *)data;
@@ -143,10 +157,9 @@ void ArrayGet(const LCH_Array *const array, const size_t index, void **data,
 
   switch (type) {
   case LCH_ARRAY:
-    *data = (void *)item->array;
-    break;
+    // fallthrough
   case LCH_OBJECT:
-    *data = (void *)item->object;
+    *data = (void *)item->buffer;
     break;
   case LCH_STRING:
     *data = (void *)item->string;
@@ -196,19 +209,23 @@ bool LCH_ArrayGetBoolean(const LCH_Array *const array, const size_t index) {
   return data;
 }
 
-void LCH_ArrayDestroy(LCH_Array *array) {
-  assert(array != NULL);
-  assert(array->buffer != NULL);
+static void LCH_BufferDestroy(LCH_Buffer *buffer) {
+  if (buffer == NULL) {
+    return;
+  }
+  assert(buffer->buffer != NULL);
 
-  for (int i = 0; i < array->length; i++) {
-    LCH_Item *item = array->buffer[i];
-    assert(item != NULL);
+  for (size_t i = 0; i < buffer->capacity; i++) {
+    LCH_Item *item = buffer->buffer[i];
+    if (item == NULL) {
+      continue;
+    }
     switch (item->type) {
-    case LCH_ARRAY:
-      LCH_ArrayDestroy(item->array);
-      break;
     case LCH_OBJECT:
-      LCH_ObjectDestroy(item->object);
+      free(item->key);
+      //fallthrough
+    case LCH_ARRAY:
+      LCH_BufferDestroy(item->buffer);
       break;
     case LCH_STRING:
       free(item->string);
@@ -216,12 +233,20 @@ void LCH_ArrayDestroy(LCH_Array *array) {
     default:
       break;
     }
+    free(item);
   }
-  free(array->buffer);
-  free(array);
+  free(buffer->buffer);
+  free(buffer);
 }
 
-void LCH_ObjectDestroy(LCH_Object *object) {}
+
+void LCH_ArrayDestroy(LCH_Array *array) {
+  LCH_BufferDestroy(array);
+}
+
+void LCH_ObjectDestroy(LCH_Object *object) {
+  LCH_BufferDestroy(object);
+}
 
 unsigned long LCH_Hash(char *str) {
   unsigned long hash = 5381;
