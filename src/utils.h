@@ -4,25 +4,26 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-
 typedef struct LCH_Buffer LCH_List;
 typedef struct LCH_Buffer LCH_Dict;
 
 LCH_List *LCH_ListCreate();
 LCH_Dict *LCH_DictCreate();
 
-size_t LCH_ListLength(const LCH_List *list);
-size_t LCH_DictLength(const LCH_Dict *dict);
+size_t LCH_ListLength(const LCH_List *self);
+size_t LCH_DictLength(const LCH_Dict *self);
 
-bool LCH_ListAppend(LCH_List *list, void *data);
+bool LCH_ListAppend(LCH_List *self, void *value, void (*destroy)(void *));
 
-void *LCH_ListGet(const LCH_List *list, size_t index);
+bool LCH_DictSet(LCH_Dict *self, const char *key, void *value,
+                 void (*destroy)(void *));
 
-void LCH_ListDestroy(LCH_List *list);
-void LCH_DictDestroy(LCH_Dict *dict);
+void *LCH_ListGet(const LCH_List *self, size_t index);
+void *LCH_DictGet(const LCH_Dict *self, const char *key);
+
+void LCH_ListDestroy(LCH_List *self);
+void LCH_DictDestroy(LCH_Dict *self);
 
 LCH_List *LCH_SplitString(const char *str, const char *del);
-
-unsigned long LCH_Hash(char *str);
 
 #endif // _LEECH_UTILS_H

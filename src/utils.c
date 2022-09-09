@@ -13,6 +13,7 @@ typedef struct LCH_Buffer LCH_Buffer;
 typedef struct LCH_Item {
   char *key;
   void *value;
+  void (*destroy)(void *);
 } LCH_Item;
 
 struct LCH_Buffer {
@@ -22,61 +23,69 @@ struct LCH_Buffer {
 };
 
 static LCH_Buffer *LCH_BufferCreate() {
-  LCH_Buffer *buffer = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
-  if (buffer == NULL) {
+  LCH_Buffer *self = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
+  if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
-  buffer->length = 0;
-  buffer->capacity = INITIAL_CAPACITY;
-  buffer->buffer = (LCH_Item **)calloc(buffer->capacity, sizeof(LCH_Item *));
+  self->length = 0;
+  self->capacity = INITIAL_CAPACITY;
+  self->buffer = (LCH_Item **)calloc(self->capacity, sizeof(LCH_Item *));
 
-  if (buffer->buffer == NULL) {
+  if (self->buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
-    free(buffer);
+    free(self);
     return NULL;
   }
 
-  LCH_LOG_DEBUG("Created buffer with capacity %d/%d", buffer->length, buffer->capacity);
-  return buffer;
+  LCH_LOG_DEBUG("Created buffer with capacity %d/%d", self->length,
+                self->capacity);
+  return self;
 }
 
-LCH_List *LCH_ListCreate() {
-  return LCH_BufferCreate();
+LCH_List *LCH_ListCreate() { return LCH_BufferCreate(); }
+
+LCH_Dict *LCH_DictCreate() { return LCH_BufferCreate(); }
+
+static size_t LCH_BufferLength(const LCH_Buffer *const self) {
+  assert(self != NULL);
+  return self->length;
 }
 
-LCH_Dict *LCH_DictCreate() {
-  return LCH_BufferCreate();
+size_t LCH_ListLength(const LCH_List *const self) {
+  return LCH_BufferLength(self);
 }
 
-size_t LCH_ListLength(const LCH_List *const list) {
-  assert(list != NULL);
-  return list->length;
+size_t LCH_DictLength(const LCH_Dict *const self) {
+  return LCH_BufferLength(self);
 }
 
-size_t LCH_DictLength(const LCH_Dict *const dict) {
-  assert(dict != NULL);
-  return dict->length;
+static bool ListCapacity(LCH_List *const self) {
+  if (self->length < self->capacity) {
+    return true;
+  }
+  self->buffer = (LCH_Item **)reallocarray(self->buffer, self->capacity * 2,
+                                           sizeof(LCH_Item *));
+  memset(self->buffer + self->capacity, 0, self->capacity);
+  self->capacity *= 2;
+  if (self->buffer == NULL) {
+    LCH_LOG_ERROR("Failed to reallocate memory: %s", strerror(errno));
+    return false;
+  }
+  LCH_LOG_DEBUG("Expanded list capacity %d/%d", self->length, self->capacity);
+  return true;
 }
 
-bool LCH_ListAppend(LCH_List *const list, void *const data) {
-  assert(list != NULL);
-  assert(list->buffer != NULL);
-  assert(list->capacity >= list->length);
-  assert(data != NULL);
+bool LCH_ListAppend(LCH_List *const self, void *const value,
+                    void (*destroy)(void *)) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(self->capacity >= self->length);
+  assert(value != NULL);
 
-  // Increase buffer capacity if needed
-  if (list->length == list->capacity) {
-    list->buffer = (LCH_Item **)reallocarray(list->buffer, list->capacity * 2,
-                                              sizeof(LCH_Item *));
-    memset(list->buffer + list->capacity, 0, list->capacity);
-    list->capacity *= 2;
-    if (list->buffer == NULL) {
-      LCH_LOG_ERROR("Failed to reallocate memory: %s", strerror(errno));
-      return NULL;
-    }
-    LCH_LOG_DEBUG("Expanded buffer to capacity %d/%d", list->length, list->capacity);
+  if (!ListCapacity(self)) {
+    return false;
   }
 
   // Create item
@@ -85,61 +94,145 @@ bool LCH_ListAppend(LCH_List *const list, void *const data) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
   }
-  item->value = data;
+  item->value = value;
+  item->destroy = destroy;
 
   // Insert item into buffer
-  list->buffer[list->length] = item;
-  list->length += 1;
+  self->buffer[self->length] = item;
+  self->length += 1;
 
   return true;
 }
 
+static size_t Hash(const char *const str) {
+  size_t hash = 5381, len = strlen(str);
+  for (size_t i = 0; i < len; i++) {
+    hash = ((hash << 5) + hash) + str[i];
+  }
+  return hash;
+}
 
-void *LCH_ListGet(const LCH_List *const list, const size_t index) {
-  assert(list != NULL);
-  assert(list->buffer != NULL);
-  assert(index < list->length);
+static bool DictCapacity(LCH_Dict *const self) {
+  if (self->length < self->capacity / LOAD_FACTOR) {
+    return true;
+  }
 
-  LCH_Item *item = list->buffer[index];
+  size_t new_capacity = self->capacity * 2;
+  LCH_Item **new_buffer = calloc(new_capacity, sizeof(LCH_Item *));
+  if (new_buffer == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    return false;
+  }
+
+  for (size_t i = 0; i < self->capacity; i++) {
+    if (self->buffer[i] == NULL) {
+      continue;
+    }
+    LCH_Item *item = self->buffer[i];
+
+    long index = Hash(item->key) % new_capacity;
+    while (new_buffer[index] != NULL) {
+      index += 1;
+    }
+    new_buffer[index] = item;
+  }
+
+  self->buffer = new_buffer;
+  self->capacity = new_capacity;
+  LCH_LOG_DEBUG("Expanded dict capacity %d/%d", self->length, self->capacity);
+
+  return true;
+}
+
+bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
+                 void (*destroy)(void *)) {
+  assert(self != NULL);
+  assert(key != NULL);
+
+  if (!DictCapacity(self)) {
+    return false;
+  }
+
+  long index = Hash(key) % self->capacity;
+
+  while (self->buffer[index] != NULL &&
+         strcmp(self->buffer[index]->key, key) != 0) {
+    index++;
+  }
+
+  if (strcmp(self->buffer[index]->key, key) == 0) {
+    LCH_Item *item = self->buffer[index];
+    item->destroy(item->value);
+    item->value = value;
+    item->destroy = destroy;
+    return true;
+  }
+
+  LCH_Item *item = calloc(1, sizeof(LCH_Item));
+  if (item == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    return false;
+  }
+
+  item->key = strdup(key);
+  if (item->key == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    free(item);
+    return false;
+  }
+  item->value = value;
+  item->destroy = destroy;
+
+  self->buffer[index] = item;
+
+  return true;
+}
+
+void *LCH_ListGet(const LCH_List *const self, const size_t index) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(index < self->length);
+
+  LCH_Item *item = self->buffer[index];
   return item->value;
 }
 
-static void LCH_BufferDestroy(LCH_Buffer *buffer) {
-  if (buffer == NULL) {
+void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
+  assert(self != NULL);
+  assert(key != NULL);
+
+  long index = Hash(key) % self->capacity;
+  while (self->buffer[index] != NULL ||
+         strcmp(self->buffer[index]->key, key) == 0) {
+    index += 1;
+  }
+  assert(self->buffer[index] != NULL);
+
+  return self->buffer[index]->value;
+}
+
+static void LCH_BufferDestroy(LCH_Buffer *self) {
+  if (self == NULL) {
     return;
   }
-  assert(buffer->buffer != NULL);
+  assert(self->buffer != NULL);
 
-  for (size_t i = 0; i < buffer->capacity; i++) {
-    LCH_Item *item = buffer->buffer[i];
+  for (size_t i = 0; i < self->capacity; i++) {
+    LCH_Item *item = self->buffer[i];
     if (item == NULL) {
       continue;
     }
     free(item->key);
-    free(item->value);
+    item->destroy(item->value);
     free(item);
   }
-  free(buffer->buffer);
-  free(buffer);
+  free(self->buffer);
+  free(self);
 }
 
+void LCH_ListDestroy(LCH_List *self) { LCH_BufferDestroy(self); }
 
-void LCH_ListDestroy(LCH_List *list) {
-  LCH_BufferDestroy(list);
-}
-
-void LCH_DictDestroy(LCH_Dict *dict) {
-  LCH_BufferDestroy(dict);
-}
-
-unsigned long LCH_Hash(char *str) {
-  unsigned long hash = 5381;
-  int c;
-  while ((c = *str++) != 0) {
-    hash = ((hash << 5) + hash) + c;
-  }
-  return hash;
-}
+void LCH_DictDestroy(LCH_Dict *self) { LCH_BufferDestroy(self); }
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
@@ -158,7 +251,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
         LCH_ListDestroy(list);
         return NULL;
       }
-      if (!LCH_ListAppend(list, (void *)s)) {
+      if (!LCH_ListAppend(list, (void *)s, free)) {
         LCH_ListDestroy(list);
         return NULL;
       }
@@ -176,7 +269,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
       LCH_ListDestroy(list);
       return NULL;
     }
-    if (!LCH_ListAppend(list, (void *)s)) {
+    if (!LCH_ListAppend(list, (void *)s, free)) {
       LCH_ListDestroy(list);
       return NULL;
     }

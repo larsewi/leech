@@ -282,7 +282,7 @@ static bool ParseCommand(LCH_Instance *instance, const char *str) {
   }
 
   for (size_t i = 0; i < len; i++) {
-    printf("%s\n", (char *) LCH_ListGet(list, i));
+    printf("%s\n", (char *)LCH_ListGet(list, i));
   }
 
   LCH_ListDestroy(list);
