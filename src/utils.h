@@ -9,22 +9,22 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct LCH_Buffer LCH_List; ///< List
-typedef struct LCH_Buffer LCH_Dict; ///< Dict
+typedef struct LCH_Buffer LCH_List;
+typedef struct LCH_Buffer LCH_Dict;
 
 /**
  * Create a list.
  * The list is allocated on the heap and must be freed with `LCH_ListDestroy`.
  * @param[out] list pointer to list.
  */
-LCH_List *LCH_ListCreate();
+LCH_List *LCH_ListCreate(void);
 
 /**
  * Create a dict.
  * The dict is allocated on the heap and must be freed with `LCH_DictDestroy`.
  * @param[out] dict pointer to dict.
  */
-LCH_Dict *LCH_DictCreate();
+LCH_Dict *LCH_DictCreate(void);
 
 /**
  * Get number of items in a list.

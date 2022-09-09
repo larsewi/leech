@@ -22,7 +22,7 @@ struct LCH_Buffer {
   LCH_Item **buffer;
 };
 
-static LCH_Buffer *LCH_BufferCreate() {
+static LCH_Buffer *LCH_BufferCreate(void) {
   LCH_Buffer *self = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
   if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
@@ -44,9 +44,9 @@ static LCH_Buffer *LCH_BufferCreate() {
   return self;
 }
 
-LCH_List *LCH_ListCreate() { return LCH_BufferCreate(); }
+LCH_List *LCH_ListCreate(void) { return LCH_BufferCreate(); }
 
-LCH_Dict *LCH_DictCreate() { return LCH_BufferCreate(); }
+LCH_Dict *LCH_DictCreate(void) { return LCH_BufferCreate(); }
 
 static size_t LCH_BufferLength(const LCH_Buffer *const self) {
   assert(self != NULL);
@@ -118,7 +118,7 @@ static bool DictCapacity(LCH_Dict *const self) {
   }
 
   size_t new_capacity = self->capacity * 2;
-  LCH_Item **new_buffer = (LCH_Item **) calloc(new_capacity, sizeof(LCH_Item *));
+  LCH_Item **new_buffer = (LCH_Item **)calloc(new_capacity, sizeof(LCH_Item *));
   if (new_buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
@@ -168,7 +168,7 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     return true;
   }
 
-  LCH_Item *item = (LCH_Item *) calloc(1, sizeof(LCH_Item));
+  LCH_Item *item = (LCH_Item *)calloc(1, sizeof(LCH_Item));
   if (item == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
@@ -235,7 +235,9 @@ static void LCH_BufferDestroy(LCH_Buffer *self) {
       continue;
     }
     free(item->key);
-    item->destroy(item->value);
+    if (item->destroy != NULL) {
+      item->destroy(item->value);
+    }
     free(item);
   }
   free(self->buffer);

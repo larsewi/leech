@@ -5,3 +5,5 @@
 #define LCH_BUFFER_SIZE LCH_KIBIBYTE(4)
 
 #define LCH_LENGTH(x) (sizeof(x) / sizeof(*x))
+
+#define UNUSED(x) (void)x

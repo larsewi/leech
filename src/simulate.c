@@ -9,13 +9,12 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 
 #define PORT "2022"
 #define WORK_DIR ".leech/"
 #define BACKLOG 10
 #define MAX_EVENTS 10
-#define BUFSIZE 4096
-#define LENGTH(x) (sizeof(x) / sizeof(*x))
 
 static char *UNIQUE_ID = NULL;
 static bool SHOULD_RUN = true;
@@ -23,10 +22,12 @@ static bool LOG_DEBUG = false;
 static bool LOG_VERBOSE = false;
 
 static void CheckOptions(int argc, char *argv[]);
-static void SetupDebugMessenger();
-static LCH_Instance *SetupInstance();
-static int CreateServerSocket();
-static bool ParseCommand(LCH_Instance *instance, const char *command);
+static void SetupDebugMessenger(void);
+static LCH_Instance *SetupInstance(void);
+static int CreateServerSocket(void);
+static bool ExitCommand(LCH_Instance *instance, LCH_List *args);
+static LCH_Dict *SetupCommands(void);
+static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands, const char *command);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -55,12 +56,17 @@ int main(int argc, char *argv[]) {
       },
   };
 
-  char buffer[BUFSIZ];
+  LCH_Dict *commands = SetupCommands();
+  if (commands == NULL) {
+    LCH_InstanceDestroy(instance);
+  }
+
+  char buffer[LCH_BUFFER_SIZE];
   ssize_t size;
   while (SHOULD_RUN) {
-    int ret = poll(pfds, LENGTH(pfds), -1);
+    int ret = poll(pfds, LCH_LENGTH(pfds), -1);
     if (ret == -1) {
-      perror("poll");
+      LCH_LOG_ERROR("poll: %s", strerror(errno));
       close(server_sock);
       LCH_InstanceDestroy(instance);
       return EXIT_FAILURE;
@@ -73,22 +79,23 @@ int main(int argc, char *argv[]) {
       }
 
       if (pfd->fd == server_sock) {
+        LCH_LOG_DEBUG("Handling server socket event");
         size = read(server_sock, (void *)buffer, BUFSIZ);
         if (size < 0) {
+          LCH_LOG_ERROR("read: %s", strerror(errno));
           close(server_sock);
           LCH_InstanceDestroy(instance);
-          perror("read");
           return EXIT_FAILURE;
         }
-        printf("Handle server sock: %s\n", buffer);
       }
 
       else if (pfd->fd == STDIN_FILENO) {
+        LCH_LOG_DEBUG("Handling 'stdin' file descriptor event");
         size = read(STDIN_FILENO, (void *)buffer, BUFSIZ);
         if (size < 0) {
+          LCH_LOG_ERROR("read: %s", strerror(errno));
           close(server_sock);
           LCH_InstanceDestroy(instance);
-          perror("read");
           return EXIT_FAILURE;
         }
         if (size == 0) {
@@ -96,7 +103,7 @@ int main(int argc, char *argv[]) {
           break;
         }
         buffer[size] = '\0';
-        if (!ParseCommand(instance, buffer)) {
+        if (!ParseCommand(instance, commands, buffer)) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -135,7 +142,7 @@ static void CheckOptions(int argc, char *argv[]) {
   }
 }
 
-static void SetupDebugMessenger() {
+static void SetupDebugMessenger(void) {
   LCH_DebugMessengerInitInfo initInfo = {
       .severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
                   LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
@@ -151,7 +158,7 @@ static void SetupDebugMessenger() {
   LCH_DebugMessengerInit(&initInfo);
 }
 
-static LCH_Instance *SetupInstance() {
+static LCH_Instance *SetupInstance(void) {
   LCH_Instance *instance = NULL;
   { // Create instance
     char *instanceID = strdup(UNIQUE_ID);
@@ -217,7 +224,7 @@ static LCH_Instance *SetupInstance() {
   return instance;
 }
 
-static int CreateServerSocket() {
+static int CreateServerSocket(void) {
   struct addrinfo hints = {0};
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
@@ -272,17 +279,48 @@ static int CreateServerSocket() {
   return -1;
 }
 
-static bool ParseCommand(LCH_Instance *instance, const char *str) {
+static bool ExitCommand(LCH_Instance *instance, LCH_List *args) {
+  assert(instance == NULL);
+  assert(args == NULL);
+
+  UNUSED(instance);
+  UNUSED(args);
+
+  SHOULD_RUN = false;
+  return true;
+}
+
+static LCH_Dict *SetupCommands(void) {
+  LCH_Dict *commands = LCH_DictCreate();
+  if (commands == NULL) {
+    LCH_LOG_ERROR("LCH_DictCreate: %s", strerror(errno));
+    return NULL;
+  }
+
+  void* fn = *(void**)(&ExitCommand);
+  LCH_DictSet(commands, "exit", fn, NULL);
+
+  return commands;
+}
+
+static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands, const char *str) {
   LCH_List *list = LCH_SplitString(str, " \t\n");
 
-  size_t len = LCH_ListLength(list);
-  if (len == 0) {
+  if (LCH_ListLength(list) == 0); {
     LCH_ListDestroy(list);
     return true;
   }
 
-  for (size_t i = 0; i < len; i++) {
-    printf("%s\n", (char *)LCH_ListGet(list, i));
+  char *command = (char *) LCH_ListGet(list, 0);
+  if (!LCH_DictHasKey(commands, command)) {
+    LCH_ListDestroy(list);
+    return true;
+  }
+
+  bool (*fn)(LCH_Instance *, LCH_List *) = (bool (*)(LCH_Instance *, LCH_List *)) LCH_DictGet(commands, command);
+  if (!fn(instance, commands)) {
+    LCH_ListDestroy(list);
+    return false;
   }
 
   LCH_ListDestroy(list);
