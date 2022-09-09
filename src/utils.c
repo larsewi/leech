@@ -118,7 +118,7 @@ static bool DictCapacity(LCH_Dict *const self) {
   }
 
   size_t new_capacity = self->capacity * 2;
-  LCH_Item **new_buffer = calloc(new_capacity, sizeof(LCH_Item *));
+  LCH_Item **new_buffer = (LCH_Item **) calloc(new_capacity, sizeof(LCH_Item *));
   if (new_buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
@@ -168,7 +168,7 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     return true;
   }
 
-  LCH_Item *item = calloc(1, sizeof(LCH_Item));
+  LCH_Item *item = (LCH_Item *) calloc(1, sizeof(LCH_Item));
   if (item == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
@@ -195,6 +195,18 @@ void *LCH_ListGet(const LCH_List *const self, const size_t index) {
 
   LCH_Item *item = self->buffer[index];
   return item->value;
+}
+
+bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
+  assert(self != NULL);
+  assert(key != NULL);
+
+  long index = Hash(key) % self->capacity;
+  while (self->buffer[index] != NULL ||
+         strcmp(self->buffer[index]->key, key) == 0) {
+    index += 1;
+  }
+  return strcmp(self->buffer[index]->key, key) == 0;
 }
 
 void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
