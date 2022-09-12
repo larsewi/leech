@@ -1,8 +1,10 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "instance.h"
+#include "debug_messenger.h"
 #include "table.h"
 
 struct LCH_Instance {
@@ -20,6 +22,7 @@ LCH_InstanceCreate(const LCH_InstanceCreateInfo *const createInfo) {
 
   LCH_Instance *instance = (LCH_Instance *)malloc(sizeof(LCH_Instance));
   if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 

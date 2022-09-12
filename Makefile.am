@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src . tests
+SUBDIRS = src . simulate tests
 
 format:
 	clang-format -i src/*.c src/*.h tests/*.c

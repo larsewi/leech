@@ -1,9 +1,3 @@
-if SIMULATE
-    noinst_PROGRAMS = simulate
-    simulate_SOURCES = simulate.c
-    simulate_LDADD = libleech.la libleech_csv.la
-endif
-
 lib_LTLIBRARIES = libleech.la libleech_csv.la
 
 libleech_la_SOURCES = \

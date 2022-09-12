@@ -13,9 +13,8 @@ typedef struct LCH_Buffer LCH_Buffer;
 
 typedef struct LCH_Item {
   char *key;
-  void *data_ptr;
+  void *value;
   void (*destroy)(void *);
-  void (*func_ptr)(void *);
 } LCH_Item;
 
 struct LCH_Buffer {
@@ -79,12 +78,11 @@ static bool ListCapacity(LCH_List *const self) {
   return true;
 }
 
-bool LCH_ListAppend(LCH_List *const self, void *const data,
-                    void (*destroy)(void *), void (*func)(void *)) {
+bool LCH_ListAppend(LCH_List *const self, void *const value, void (*destroy)(void *)) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(self->capacity >= self->length);
-  assert(data != NULL);
+  assert(value != NULL);
 
   if (!ListCapacity(self)) {
     return false;
@@ -96,9 +94,8 @@ bool LCH_ListAppend(LCH_List *const self, void *const data,
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
   }
-  item->data_ptr = data;
+  item->value = value;
   item->destroy = destroy;
-  item->func_ptr = func;
 
   // Insert item into buffer
   self->buffer[self->length] = item;
@@ -148,8 +145,7 @@ static bool DictCapacity(LCH_Dict *const self) {
   return true;
 }
 
-bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const data,
-                 void (*destroy)(void *), void (*func)(void *)) {
+bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value, void (*destroy)(void *)) {
   assert(self != NULL);
   assert(key != NULL);
 
@@ -168,10 +164,9 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const data,
   if (self->buffer[index] != NULL) {
     assert(self->buffer[index]->key != NULL);
     LCH_Item *item = self->buffer[index];
-    item->destroy(item->data_ptr);
-    item->data_ptr = data;
+    item->destroy(item->value);
+    item->value = value;
     item->destroy = destroy;
-    item->func_ptr = func;
     return true;
   }
 
@@ -187,9 +182,8 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const data,
     free(item);
     return false;
   }
-  item->data_ptr = data;
+  item->value = value;
   item->destroy = destroy;
-  item->func_ptr = func;
 
   self->buffer[index] = item;
   LCH_LOG_DEBUG("Set entry to dict with key '%s', hash %zu, index %zu", key, hash, index);
@@ -197,16 +191,13 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const data,
   return true;
 }
 
-void *LCH_ListGet(const LCH_List *const self, const size_t index, void (**func)(void *)) {
+void *LCH_ListGet(const LCH_List *const self, const size_t index) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(index < self->length);
 
   LCH_Item *item = self->buffer[index];
-  if (func != NULL) {
-    *func = item->func_ptr;
-  }
-  return item->data_ptr;
+  return item->value;
 }
 
 bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
@@ -226,8 +217,7 @@ bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
   return false;
 }
 
-void *LCH_DictGet(const LCH_Dict *const self, const char *const key,
-                  void (**func)(void *)) {
+void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
   assert(self != NULL);
   assert(key != NULL);
 
@@ -239,11 +229,8 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key,
   }
   assert(self->buffer[index] != NULL);
 
-  if (func != NULL) {
-    *func = self->buffer[index]->func_ptr;
-  }
   LCH_LOG_DEBUG("Get entry from dict with key '%s', hash %zu, index %zu", key, hash, index);
-  return self->buffer[index]->data_ptr;
+  return self->buffer[index]->value;
 }
 
 static void LCH_BufferDestroy(LCH_Buffer *self) {
@@ -259,7 +246,7 @@ static void LCH_BufferDestroy(LCH_Buffer *self) {
     }
     free(item->key);
     if (item->destroy != NULL) {
-      item->destroy(item->data_ptr);
+      item->destroy(item->value);
     }
     free(item);
     LCH_LOG_DEBUG("Destroyed buffer item at index %zu", i);
@@ -292,10 +279,12 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
       assert(to > from);
       char *s = strndup(str + from, to - from);
       if (s == NULL) {
+        LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
         LCH_ListDestroy(list);
         return NULL;
       }
-      if (!LCH_ListAppend(list, (void *)s, free, NULL)) {
+      if (!LCH_ListAppend(list, (void *)s, free)) {
+        free(s);
         LCH_ListDestroy(list);
         return NULL;
       }
@@ -313,7 +302,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
       LCH_ListDestroy(list);
       return NULL;
     }
-    if (!LCH_ListAppend(list, (void *)s, free, NULL)) {
+    if (!LCH_ListAppend(list, (void *)s, free)) {
       LCH_ListDestroy(list);
       return NULL;
     }

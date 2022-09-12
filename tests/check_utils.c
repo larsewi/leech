@@ -14,12 +14,12 @@ START_TEST(test_List) {
     int *data = (int *)malloc(sizeof(int));
     ck_assert_ptr_nonnull(data);
     *data = i;
-    ck_assert(LCH_ListAppend(list, (void *)data, free, NULL));
+    ck_assert(LCH_ListAppend(list, (void *)data, free));
   }
   ck_assert_int_eq(LCH_ListLength(list), 10);
 
   for (int i = 0; i < 10; i++) {
-    ck_assert_int_eq(*(int *)LCH_ListGet(list, 0, NULL), 0);
+    ck_assert_int_eq(*(int *)LCH_ListGet(list, 0), 0);
   }
 
   LCH_ListDestroy(list);
@@ -38,13 +38,13 @@ START_TEST(test_Dict) {
     int *data = (int *)malloc(sizeof(int));
     ck_assert_ptr_nonnull(data);
     *data = i;
-    ck_assert(LCH_DictSet(dict, keys[i], (void *)data, free, NULL));
+    ck_assert(LCH_DictSet(dict, keys[i], (void *)data, free));
   }
   ck_assert_int_eq(LCH_DictLength(dict), LCH_LENGTH(keys));
 
   for (int i = 0; i < LCH_LENGTH(keys); i++) {
     ck_assert(LCH_DictHasKey(dict, keys[i]));
-    int *data = (int *)LCH_DictGet(dict, keys[i], NULL);
+    int *data = (int *)LCH_DictGet(dict, keys[i]);
     ck_assert_int_eq(*data, i);
   }
   ck_assert(!LCH_DictHasKey(dict, "bogus"));
@@ -63,9 +63,9 @@ START_TEST(test_SplitString) {
     LCH_List *list = LCH_SplitString(strs[i], " \t");
     ck_assert_ptr_nonnull(list);
     ck_assert_int_eq(LCH_ListLength(list), 3);
-    ck_assert_str_eq((char *)LCH_ListGet(list, 0, NULL), "one");
-    ck_assert_str_eq((char *)LCH_ListGet(list, 1, NULL), "two");
-    ck_assert_str_eq((char *)LCH_ListGet(list, 2, NULL), "three");
+    ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
+    ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
+    ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
     LCH_ListDestroy(list);
   }
 

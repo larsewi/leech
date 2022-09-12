@@ -11,16 +11,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "commands.h"
+
 #define PORT "2022"
 #define WORK_DIR ".leech/"
 #define BACKLOG 10
 #define MAX_EVENTS 10
-
-typedef struct CommandParams {
-  LCH_Instance *instance;
-  LCH_List *arguments;
-  bool success;
-} CommandParams;
 
 static char *UNIQUE_ID = NULL;
 static bool SHOULD_RUN = true;
@@ -31,11 +27,6 @@ static void CheckOptions(int argc, char *argv[]);
 static void SetupDebugMessenger(void);
 static LCH_Instance *SetupInstance(void);
 static int CreateServerSocket(void);
-static LCH_Dict *SetupCommands(void);
-static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands,
-                         const char *command);
-static void ExitCommand(CommandParams *params);
-static void BootstrapCommand(CommandParams *params);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -64,19 +55,12 @@ int main(int argc, char *argv[]) {
       },
   };
 
-  LCH_Dict *commands = SetupCommands();
-  if (commands == NULL) {
-    close(server_sock);
-    LCH_InstanceDestroy(instance);
-  }
-
   char buffer[LCH_BUFFER_SIZE];
   ssize_t size;
   while (SHOULD_RUN) {
     int ret = poll(pfds, LCH_LENGTH(pfds), -1);
     if (ret == -1) {
       LCH_LOG_ERROR("poll: %s", strerror(errno));
-      LCH_DictDestroy(commands);
       close(server_sock);
       LCH_InstanceDestroy(instance);
       return EXIT_FAILURE;
@@ -93,7 +77,6 @@ int main(int argc, char *argv[]) {
         size = read(server_sock, (void *)buffer, sizeof(buffer));
         if (size < 0) {
           LCH_LOG_ERROR("read: %s", strerror(errno));
-          LCH_DictDestroy(commands);
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -105,7 +88,6 @@ int main(int argc, char *argv[]) {
         size = read(STDIN_FILENO, (void *)buffer, sizeof(buffer));
         if (size < 0) {
           LCH_LOG_ERROR("read: %s", strerror(errno));
-          LCH_DictDestroy(commands);
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -115,8 +97,7 @@ int main(int argc, char *argv[]) {
           break;
         }
         buffer[size] = '\0';
-        if (!ParseCommand(instance, commands, buffer)) {
-          LCH_DictDestroy(commands);
+        if (!ParseCommand(instance, buffer)) {
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -125,7 +106,6 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  LCH_DictDestroy(commands);
   close(server_sock);
   LCH_InstanceDestroy(instance);
   return EXIT_SUCCESS;
@@ -177,13 +157,13 @@ static LCH_Instance *SetupInstance(void) {
   { // Create instance
     char *instanceID = strdup(UNIQUE_ID);
     if (instanceID == NULL) {
-      perror("strdup");
+      LCH_LOG_ERROR("strdup: %s", strerror(errno));
       return NULL;
     }
 
     char *workDir = strdup(WORK_DIR);
     if (workDir == NULL) {
-      perror("strdup");
+      LCH_LOG_ERROR("strdup: %s", strerror(errno));
       free(instanceID);
       return NULL;
     }
@@ -195,7 +175,7 @@ static LCH_Instance *SetupInstance(void) {
 
     instance = LCH_InstanceCreate(&createInfo);
     if (instance == NULL) {
-      fprintf(stderr, "LCH_InstanceCreate\n");
+      LCH_LOG_ERROR("LCH_InstanceCreate: %s", strerror(errno));
       free(workDir);
       free(instanceID);
       return NULL;
@@ -205,13 +185,13 @@ static LCH_Instance *SetupInstance(void) {
   { // Add CSV table
     char *readLocator = strdup("client/example.csv");
     if (readLocator == NULL) {
-      perror("strdup");
+      LCH_LOG_ERROR("strdup: %s", strerror(errno));
       return NULL;
     }
 
     char *writeLocator = strdup("server/example.csv");
     if (writeLocator == NULL) {
-      perror("strdup");
+      LCH_LOG_ERROR("strdup: %s", strerror(errno));
       free(readLocator);
       return NULL;
     }
@@ -247,7 +227,7 @@ static int CreateServerSocket(void) {
   struct addrinfo *info;
   int rc = getaddrinfo(NULL, PORT, &hints, &info);
   if (rc == -1) {
-    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rc));
+    LCH_LOG_ERROR("getaddrinfo: %s", gai_strerror(rc));
     return -1;
   }
 
@@ -256,13 +236,13 @@ static int CreateServerSocket(void) {
   for (ptr = info; ptr != NULL; ptr = ptr->ai_next) {
     int fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
     if (fd == -1) {
-      perror("socket");
+      LCH_LOG_ERROR("socket: %s", strerror(errno));
       continue;
     }
 
     rc = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
     if (rc == -1) {
-      perror("setsockopt");
+      LCH_LOG_ERROR("setsockopt: %s", strerror(errno));
       close(fd);
       freeaddrinfo(info);
       return -1;
@@ -270,7 +250,7 @@ static int CreateServerSocket(void) {
 
     rc = bind(fd, ptr->ai_addr, ptr->ai_addrlen);
     if (rc == -1) {
-      perror("bind");
+      LCH_LOG_ERROR("bind: %s", strerror(errno));
       close(fd);
       continue;
     }
@@ -279,7 +259,7 @@ static int CreateServerSocket(void) {
 
     rc = listen(fd, BACKLOG);
     if (rc == -1) {
-      perror("listen");
+      LCH_LOG_ERROR("listen: %s", strerror(errno));
       close(fd);
       return -1;
     }
@@ -288,69 +268,7 @@ static int CreateServerSocket(void) {
   }
 
   freeaddrinfo(info);
-  fprintf(stderr, "Failed to bind\n");
+  LCH_LOG_ERROR("Failed to bind");
 
   return -1;
-}
-
-static LCH_Dict *SetupCommands(void) {
-  LCH_Dict *commands = LCH_DictCreate();
-  if (commands == NULL) {
-    LCH_LOG_ERROR("LCH_DictCreate: %s", strerror(errno));
-    return NULL;
-  }
-
-  LCH_DictSet(commands, "exit", NULL, NULL, (void (*)(void *)) ExitCommand);
-  LCH_DictSet(commands, "bootstrap", NULL, NULL, (void (*)(void *)) BootstrapCommand);
-
-  return commands;
-}
-
-static bool ParseCommand(LCH_Instance *instance, LCH_Dict *cmds,
-                         const char *str) {
-  LCH_List *args = LCH_SplitString(str, " \t\n");
-
-  if (LCH_ListLength(args) == 0) {
-    LCH_ListDestroy(args);
-    return true;
-  }
-
-  char *cmd_str = (char *)LCH_ListGet(args, 0, NULL);
-  if (!LCH_DictHasKey(cmds, cmd_str)) {
-    LCH_LOG_INFO("Bad command '%s'", cmd_str);
-    LCH_ListDestroy(args);
-    return true;
-  }
-
-  void (*func)(CommandParams *) = NULL;
-  LCH_DictGet(cmds, cmd_str, (void (**)(void *)) &func);
-  assert(func != NULL);
-
-  CommandParams params = {
-    .instance = instance,
-    .arguments = args,
-    .success = false,
-  };
-
-  func(&params);
-  LCH_ListDestroy(args);
-
-  return params.success;
-}
-
-static void ExitCommand(CommandParams *params) {
-  SHOULD_RUN = false;
-  params->success = true;
-}
-
-static void BootstrapCommand(CommandParams *params) {
-  if (LCH_ListLength(params->arguments) < 2) {
-    LCH_LOG_ERROR("Missing argument <ip-address>");
-  }
-  else {
-    char *ip = LCH_ListGet(params->arguments, 1, NULL);
-    LCH_LOG_DEBUG("Bootstrap ip '%s'",ip);
-  }
-
-  params->success = true;
 }

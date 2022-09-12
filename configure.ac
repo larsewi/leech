@@ -5,18 +5,9 @@ AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.6])
 
-AC_ARG_ENABLE([simulate],
-[  --enable-simulate       build binaries for simulation],
-[case "${enableval}" in
-  yes) simulate=true ;;
-  no)  simulate=false ;;
-  *) AC_MSG_ERROR([bad value ${enableval} for --enable-simulate]) ;;
-esac],[simulate=false])
-AM_CONDITIONAL([SIMULATE], [test x$simulate = xtrue])
-
 AM_PROG_AR
 AC_PROG_CC
 LT_INIT
 
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile simulate/Makefile tests/Makefile])
 AC_OUTPUT
