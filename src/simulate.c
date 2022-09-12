@@ -35,6 +35,7 @@ static LCH_Dict *SetupCommands(void);
 static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands,
                          const char *command);
 static void ExitCommand(CommandParams *params);
+static void BootstrapCommand(CommandParams *params);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -300,6 +301,7 @@ static LCH_Dict *SetupCommands(void) {
   }
 
   LCH_DictSet(commands, "exit", NULL, NULL, (void (*)(void *)) ExitCommand);
+  LCH_DictSet(commands, "bootstrap", NULL, NULL, (void (*)(void *)) BootstrapCommand);
 
   return commands;
 }
@@ -338,5 +340,17 @@ static bool ParseCommand(LCH_Instance *instance, LCH_Dict *cmds,
 
 static void ExitCommand(CommandParams *params) {
   SHOULD_RUN = false;
+  params->success = true;
+}
+
+static void BootstrapCommand(CommandParams *params) {
+  if (LCH_ListLength(params->arguments) < 2) {
+    LCH_LOG_ERROR("Missing argument <ip-address>");
+  }
+  else {
+    char *ip = LCH_ListGet(params->arguments, 1, NULL);
+    LCH_LOG_DEBUG("Bootstrap ip '%s'",ip);
+  }
+
   params->success = true;
 }
