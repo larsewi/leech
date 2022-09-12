@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <errno.h>
 #include <leech.h>
 #include <leech_csv.h>
 #include <netdb.h>
@@ -9,12 +10,17 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <errno.h>
 
 #define PORT "2022"
 #define WORK_DIR ".leech/"
 #define BACKLOG 10
 #define MAX_EVENTS 10
+
+typedef struct CommandParams {
+  LCH_Instance *instance;
+  LCH_List *arguments;
+  bool success;
+} CommandParams;
 
 static char *UNIQUE_ID = NULL;
 static bool SHOULD_RUN = true;
@@ -25,9 +31,10 @@ static void CheckOptions(int argc, char *argv[]);
 static void SetupDebugMessenger(void);
 static LCH_Instance *SetupInstance(void);
 static int CreateServerSocket(void);
-static bool ExitCommand(LCH_Instance *instance, LCH_List *args);
 static LCH_Dict *SetupCommands(void);
-static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands, const char *command);
+static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands,
+                         const char *command);
+static void ExitCommand(CommandParams *params);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -58,6 +65,7 @@ int main(int argc, char *argv[]) {
 
   LCH_Dict *commands = SetupCommands();
   if (commands == NULL) {
+    close(server_sock);
     LCH_InstanceDestroy(instance);
   }
 
@@ -67,6 +75,7 @@ int main(int argc, char *argv[]) {
     int ret = poll(pfds, LCH_LENGTH(pfds), -1);
     if (ret == -1) {
       LCH_LOG_ERROR("poll: %s", strerror(errno));
+      LCH_DictDestroy(commands);
       close(server_sock);
       LCH_InstanceDestroy(instance);
       return EXIT_FAILURE;
@@ -80,9 +89,10 @@ int main(int argc, char *argv[]) {
 
       if (pfd->fd == server_sock) {
         LCH_LOG_DEBUG("Handling server socket event");
-        size = read(server_sock, (void *)buffer, BUFSIZ);
+        size = read(server_sock, (void *)buffer, sizeof(buffer));
         if (size < 0) {
           LCH_LOG_ERROR("read: %s", strerror(errno));
+          LCH_DictDestroy(commands);
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -91,9 +101,10 @@ int main(int argc, char *argv[]) {
 
       else if (pfd->fd == STDIN_FILENO) {
         LCH_LOG_DEBUG("Handling 'stdin' file descriptor event");
-        size = read(STDIN_FILENO, (void *)buffer, BUFSIZ);
+        size = read(STDIN_FILENO, (void *)buffer, sizeof(buffer));
         if (size < 0) {
           LCH_LOG_ERROR("read: %s", strerror(errno));
+          LCH_DictDestroy(commands);
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -104,6 +115,7 @@ int main(int argc, char *argv[]) {
         }
         buffer[size] = '\0';
         if (!ParseCommand(instance, commands, buffer)) {
+          LCH_DictDestroy(commands);
           close(server_sock);
           LCH_InstanceDestroy(instance);
           return EXIT_FAILURE;
@@ -112,6 +124,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  LCH_DictDestroy(commands);
   close(server_sock);
   LCH_InstanceDestroy(instance);
   return EXIT_SUCCESS;
@@ -279,17 +292,6 @@ static int CreateServerSocket(void) {
   return -1;
 }
 
-static bool ExitCommand(LCH_Instance *instance, LCH_List *args) {
-  assert(instance == NULL);
-  assert(args == NULL);
-
-  UNUSED(instance);
-  UNUSED(args);
-
-  SHOULD_RUN = false;
-  return true;
-}
-
 static LCH_Dict *SetupCommands(void) {
   LCH_Dict *commands = LCH_DictCreate();
   if (commands == NULL) {
@@ -297,32 +299,44 @@ static LCH_Dict *SetupCommands(void) {
     return NULL;
   }
 
-  void* fn = *(void**)(&ExitCommand);
-  LCH_DictSet(commands, "exit", fn, NULL);
+  LCH_DictSet(commands, "exit", NULL, NULL, (void (*)(void *)) ExitCommand);
 
   return commands;
 }
 
-static bool ParseCommand(LCH_Instance *instance, LCH_Dict *commands, const char *str) {
-  LCH_List *list = LCH_SplitString(str, " \t\n");
+static bool ParseCommand(LCH_Instance *instance, LCH_Dict *cmds,
+                         const char *str) {
+  LCH_List *args = LCH_SplitString(str, " \t\n");
 
-  if (LCH_ListLength(list) == 0); {
-    LCH_ListDestroy(list);
+  if (LCH_ListLength(args) == 0) {
+    LCH_ListDestroy(args);
     return true;
   }
 
-  char *command = (char *) LCH_ListGet(list, 0);
-  if (!LCH_DictHasKey(commands, command)) {
-    LCH_ListDestroy(list);
+  char *cmd_str = (char *)LCH_ListGet(args, 0, NULL);
+  if (!LCH_DictHasKey(cmds, cmd_str)) {
+    LCH_LOG_INFO("Bad command '%s'", cmd_str);
+    LCH_ListDestroy(args);
     return true;
   }
 
-  bool (*fn)(LCH_Instance *, LCH_List *) = (bool (*)(LCH_Instance *, LCH_List *)) LCH_DictGet(commands, command);
-  if (!fn(instance, commands)) {
-    LCH_ListDestroy(list);
-    return false;
-  }
+  void (*func)(CommandParams *) = NULL;
+  LCH_DictGet(cmds, cmd_str, (void (**)(void *)) &func);
+  assert(func != NULL);
 
-  LCH_ListDestroy(list);
-  return true;
+  CommandParams params = {
+    .instance = instance,
+    .arguments = args,
+    .success = false,
+  };
+
+  func(&params);
+  LCH_ListDestroy(args);
+
+  return params.success;
+}
+
+static void ExitCommand(CommandParams *params) {
+  SHOULD_RUN = false;
+  params->success = true;
 }

@@ -5,13 +5,13 @@ format:
 	clang-format -i src/*.c src/*.h tests/*.c
 
 run:
-	./src/simulate testid
+	./src/simulate -d testid
 
 gdb:
-	libtool --mode=execute gdb --args ./src/simulate testid
+	libtool --mode=execute gdb --args ./src/simulate -d testid
 
 valgrind:
-	libtool --mode=execute valgrind --leak-check=full ./src/simulate testid
+	libtool --mode=execute valgrind --leak-check=full ./src/simulate -d testid
 
 super-clean:
 	git clean -fx

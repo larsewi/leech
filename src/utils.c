@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "debug_messenger.h"
+#include "definitions.h"
 #include "utils.h"
 
 #define INITIAL_CAPACITY 8
@@ -12,8 +13,9 @@ typedef struct LCH_Buffer LCH_Buffer;
 
 typedef struct LCH_Item {
   char *key;
-  void *value;
+  void *data_ptr;
   void (*destroy)(void *);
+  void (*func_ptr)(void *);
 } LCH_Item;
 
 struct LCH_Buffer {
@@ -22,7 +24,7 @@ struct LCH_Buffer {
   LCH_Item **buffer;
 };
 
-static LCH_Buffer *LCH_BufferCreate(void) {
+static LCH_Buffer *LCH_BufferCreate() {
   LCH_Buffer *self = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
   if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
@@ -77,12 +79,12 @@ static bool ListCapacity(LCH_List *const self) {
   return true;
 }
 
-bool LCH_ListAppend(LCH_List *const self, void *const value,
-                    void (*destroy)(void *)) {
+bool LCH_ListAppend(LCH_List *const self, void *const data,
+                    void (*destroy)(void *), void (*func)(void *)) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(self->capacity >= self->length);
-  assert(value != NULL);
+  assert(data != NULL);
 
   if (!ListCapacity(self)) {
     return false;
@@ -94,11 +96,13 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return false;
   }
-  item->value = value;
+  item->data_ptr = data;
   item->destroy = destroy;
+  item->func_ptr = func;
 
   // Insert item into buffer
   self->buffer[self->length] = item;
+  LCH_LOG_DEBUG("Appended list item to index %d", self->length);
   self->length += 1;
 
   return true;
@@ -144,8 +148,8 @@ static bool DictCapacity(LCH_Dict *const self) {
   return true;
 }
 
-bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
-                 void (*destroy)(void *)) {
+bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const data,
+                 void (*destroy)(void *), void (*func)(void *)) {
   assert(self != NULL);
   assert(key != NULL);
 
@@ -153,18 +157,21 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     return false;
   }
 
-  long index = Hash(key) % self->capacity;
+  const size_t hash = Hash(key);
+  size_t index = hash % self->capacity;
 
   while (self->buffer[index] != NULL &&
          strcmp(self->buffer[index]->key, key) != 0) {
     index++;
   }
 
-  if (strcmp(self->buffer[index]->key, key) == 0) {
+  if (self->buffer[index] != NULL) {
+    assert(self->buffer[index]->key != NULL);
     LCH_Item *item = self->buffer[index];
-    item->destroy(item->value);
-    item->value = value;
+    item->destroy(item->data_ptr);
+    item->data_ptr = data;
     item->destroy = destroy;
+    item->func_ptr = func;
     return true;
   }
 
@@ -180,47 +187,63 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     free(item);
     return false;
   }
-  item->value = value;
+  item->data_ptr = data;
   item->destroy = destroy;
+  item->func_ptr = func;
 
   self->buffer[index] = item;
+  LCH_LOG_DEBUG("Set entry to dict with key '%s', hash %zu, index %zu", key, hash, index);
 
   return true;
 }
 
-void *LCH_ListGet(const LCH_List *const self, const size_t index) {
+void *LCH_ListGet(const LCH_List *const self, const size_t index, void (**func)(void *)) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(index < self->length);
 
   LCH_Item *item = self->buffer[index];
-  return item->value;
+  if (func != NULL) {
+    *func = item->func_ptr;
+  }
+  return item->data_ptr;
 }
 
 bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
   assert(self != NULL);
   assert(key != NULL);
 
-  long index = Hash(key) % self->capacity;
-  while (self->buffer[index] != NULL ||
-         strcmp(self->buffer[index]->key, key) == 0) {
+  const size_t hash = Hash(key);
+  size_t index = hash % self->capacity;
+  while (self->buffer[index] != NULL) {
+    if (strcmp(self->buffer[index]->key, key) == 0) {
+      LCH_LOG_DEBUG("Found entry in dict with key '%s', hash %zu, index %zu", key, hash, index);
+      return true;
+    }
     index += 1;
   }
-  return strcmp(self->buffer[index]->key, key) == 0;
+  LCH_LOG_DEBUG("Did not find entry in dict with key '%s', hash %zu", key, hash);
+  return false;
 }
 
-void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
+void *LCH_DictGet(const LCH_Dict *const self, const char *const key,
+                  void (**func)(void *)) {
   assert(self != NULL);
   assert(key != NULL);
 
-  long index = Hash(key) % self->capacity;
-  while (self->buffer[index] != NULL ||
-         strcmp(self->buffer[index]->key, key) == 0) {
+  const size_t hash = Hash(key);
+  size_t index = hash % self->capacity;
+  while (self->buffer[index] != NULL &&
+         strcmp(self->buffer[index]->key, key) != 0) {
     index += 1;
   }
   assert(self->buffer[index] != NULL);
 
-  return self->buffer[index]->value;
+  if (func != NULL) {
+    *func = self->buffer[index]->func_ptr;
+  }
+  LCH_LOG_DEBUG("Get entry from dict with key '%s', hash %zu, index %zu", key, hash, index);
+  return self->buffer[index]->data_ptr;
 }
 
 static void LCH_BufferDestroy(LCH_Buffer *self) {
@@ -236,17 +259,24 @@ static void LCH_BufferDestroy(LCH_Buffer *self) {
     }
     free(item->key);
     if (item->destroy != NULL) {
-      item->destroy(item->value);
+      item->destroy(item->data_ptr);
     }
     free(item);
+    LCH_LOG_DEBUG("Destroyed buffer item at index %zu", i);
   }
   free(self->buffer);
   free(self);
 }
 
-void LCH_ListDestroy(LCH_List *self) { LCH_BufferDestroy(self); }
+void LCH_ListDestroy(LCH_List *self) {
+  LCH_BufferDestroy(self);
+  LCH_LOG_DEBUG("Destroyed list");
+}
 
-void LCH_DictDestroy(LCH_Dict *self) { LCH_BufferDestroy(self); }
+void LCH_DictDestroy(LCH_Dict *self) {
+  LCH_BufferDestroy(self);
+  LCH_LOG_DEBUG("Destroyed dict");
+}
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
@@ -265,7 +295,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
         LCH_ListDestroy(list);
         return NULL;
       }
-      if (!LCH_ListAppend(list, (void *)s, free)) {
+      if (!LCH_ListAppend(list, (void *)s, free, NULL)) {
         LCH_ListDestroy(list);
         return NULL;
       }
@@ -283,7 +313,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
       LCH_ListDestroy(list);
       return NULL;
     }
-    if (!LCH_ListAppend(list, (void *)s, free)) {
+    if (!LCH_ListAppend(list, (void *)s, free, NULL)) {
       LCH_ListDestroy(list);
       return NULL;
     }
