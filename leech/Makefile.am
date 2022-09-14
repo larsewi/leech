@@ -1,3 +1,5 @@
+include_HEADERS = $(top_builddir)/leech/leech.h $(top_builddir)/leech/leech_csv.h
+
 lib_LTLIBRARIES = libleech.la libleech_csv.la
 
 libleech_la_SOURCES = \

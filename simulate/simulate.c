@@ -1,7 +1,5 @@
 #include <assert.h>
 #include <errno.h>
-#include <leech.h>
-#include <leech_csv.h>
 #include <netdb.h>
 #include <poll.h>
 #include <stdio.h>
@@ -10,6 +8,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <leech.h>
+#include <leech_csv.h>
 
 #include "commands.h"
 
@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
           return EXIT_FAILURE;
         }
         if (size == 0) {
+          LCH_LOG_DEBUG("Exited by user");
           SHOULD_RUN = false;
           break;
         }

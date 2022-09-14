@@ -1,17 +1,17 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src . simulate tests
+SUBDIRS = leech simulate . tests
 
 format:
-	clang-format -i src/*.c src/*.h tests/*.c
+	clang-format -i leech/*.c leech/*.h simulate/*.c simulate/*.h tests/*.c
 
-run:
-	./src/simulate -d testid
+run: simulate/simulate
+	./simulate/simulate -d testid
 
-gdb:
-	libtool --mode=execute gdb --args ./src/simulate -d testid
+gdb: simulate/simulate
+	libtool --mode=execute gdb --args ./simulate/simulate -d testid
 
-valgrind:
-	libtool --mode=execute valgrind --leak-check=full ./src/simulate -d testid
+valgrind: simulate/simulate
+	libtool --mode=execute valgrind --leak-check=full ./simulate/simulate -d testid
 
 super-clean:
 	git clean -fx

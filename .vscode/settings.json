@@ -31,7 +31,11 @@
         "string_view": "c",
         "utility": "c",
         "typeinfo": "c",
-        "commands.h": "c"
+        "commands.h": "c",
+        "socket.h": "c",
+        "types.h": "c",
+        "leech_csv.h": "c",
+        "leech.h": "c"
     },
     "files.exclude": {
         "**/.git": true,
