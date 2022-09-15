@@ -1,21 +1,17 @@
 #include <assert.h>
 #include <errno.h>
-#include <netdb.h>
+#include <leech.h>
+#include <leech_csv.h>
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/types.h>
 #include <unistd.h>
-#include <leech.h>
-#include <leech_csv.h>
 
 #include "commands.h"
+#include "server.h"
 
-#define PORT "2022"
 #define WORK_DIR ".leech/"
-#define BACKLOG 10
 #define MAX_EVENTS 10
 
 static char *UNIQUE_ID = NULL;
@@ -26,7 +22,6 @@ static bool LOG_VERBOSE = false;
 static void CheckOptions(int argc, char *argv[]);
 static void SetupDebugMessenger(void);
 static LCH_Instance *SetupInstance(void);
-static int CreateServerSocket(void);
 
 int main(int argc, char *argv[]) {
   CheckOptions(argc, argv);
@@ -217,59 +212,4 @@ static LCH_Instance *SetupInstance(void) {
   }
 
   return instance;
-}
-
-static int CreateServerSocket(void) {
-  struct addrinfo hints = {0};
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_PASSIVE;
-
-  struct addrinfo *info;
-  int rc = getaddrinfo(NULL, PORT, &hints, &info);
-  if (rc == -1) {
-    LCH_LOG_ERROR("getaddrinfo: %s", gai_strerror(rc));
-    return -1;
-  }
-
-  struct addrinfo *ptr;
-  int yes = 1;
-  for (ptr = info; ptr != NULL; ptr = ptr->ai_next) {
-    int fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-    if (fd == -1) {
-      LCH_LOG_ERROR("socket: %s", strerror(errno));
-      continue;
-    }
-
-    rc = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-    if (rc == -1) {
-      LCH_LOG_ERROR("setsockopt: %s", strerror(errno));
-      close(fd);
-      freeaddrinfo(info);
-      return -1;
-    }
-
-    rc = bind(fd, ptr->ai_addr, ptr->ai_addrlen);
-    if (rc == -1) {
-      LCH_LOG_ERROR("bind: %s", strerror(errno));
-      close(fd);
-      continue;
-    }
-
-    freeaddrinfo(info);
-
-    rc = listen(fd, BACKLOG);
-    if (rc == -1) {
-      LCH_LOG_ERROR("listen: %s", strerror(errno));
-      close(fd);
-      return -1;
-    }
-
-    return fd;
-  }
-
-  freeaddrinfo(info);
-  LCH_LOG_ERROR("Failed to bind");
-
-  return -1;
 }

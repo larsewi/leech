@@ -78,7 +78,8 @@ static bool ListCapacity(LCH_List *const self) {
   return true;
 }
 
-bool LCH_ListAppend(LCH_List *const self, void *const value, void (*destroy)(void *)) {
+bool LCH_ListAppend(LCH_List *const self, void *const value,
+                    void (*destroy)(void *)) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(self->capacity >= self->length);
@@ -145,7 +146,8 @@ static bool DictCapacity(LCH_Dict *const self) {
   return true;
 }
 
-bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value, void (*destroy)(void *)) {
+bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
+                 void (*destroy)(void *)) {
   assert(self != NULL);
   assert(key != NULL);
 
@@ -186,7 +188,8 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
   item->destroy = destroy;
 
   self->buffer[index] = item;
-  LCH_LOG_DEBUG("Set entry to dict with key '%s', hash %zu, index %zu", key, hash, index);
+  LCH_LOG_DEBUG("Set entry to dict with key '%s', hash %zu, index %zu", key,
+                hash, index);
 
   return true;
 }
@@ -208,12 +211,14 @@ bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
   size_t index = hash % self->capacity;
   while (self->buffer[index] != NULL) {
     if (strcmp(self->buffer[index]->key, key) == 0) {
-      LCH_LOG_DEBUG("Found entry in dict with key '%s', hash %zu, index %zu", key, hash, index);
+      LCH_LOG_DEBUG("Found entry in dict with key '%s', hash %zu, index %zu",
+                    key, hash, index);
       return true;
     }
     index += 1;
   }
-  LCH_LOG_DEBUG("Did not find entry in dict with key '%s', hash %zu", key, hash);
+  LCH_LOG_DEBUG("Did not find entry in dict with key '%s', hash %zu", key,
+                hash);
   return false;
 }
 
@@ -229,7 +234,8 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
   }
   assert(self->buffer[index] != NULL);
 
-  LCH_LOG_DEBUG("Get entry from dict with key '%s', hash %zu, index %zu", key, hash, index);
+  LCH_LOG_DEBUG("Get entry from dict with key '%s', hash %zu, index %zu", key,
+                hash, index);
   return self->buffer[index]->value;
 }
 

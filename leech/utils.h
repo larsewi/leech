@@ -65,7 +65,8 @@ bool LCH_DictHasKey(const LCH_Dict *self, const char *key);
  * @param[in] destroy data destroy function.
  * @return true if success.
  */
-bool LCH_DictSet(LCH_Dict *self, const char *key, void *value, void (*destroy)(void *));
+bool LCH_DictSet(LCH_Dict *self, const char *key, void *value,
+                 void (*destroy)(void *));
 
 /**
  * Get list item.

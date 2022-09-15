@@ -1,10 +1,10 @@
 #include <assert.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
-#include "instance.h"
 #include "debug_messenger.h"
+#include "instance.h"
 #include "table.h"
 
 struct LCH_Instance {

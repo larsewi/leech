@@ -6,9 +6,9 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.6])
 
 AC_ARG_ENABLE(debug,
-              AS_HELP_STRING([--enable-debug], [Enable debugging]),
-              [debug=$enableval],
-              [debug=no])
+                            AS_HELP_STRING([--enable-debug], [Enable debugging]),
+                            [debug=$enableval],
+                            [debug=no])
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 AM_PROG_AR
