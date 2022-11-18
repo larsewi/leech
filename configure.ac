@@ -3,7 +3,7 @@ AC_CONFIG_SRCDIR([leech/leech.c])
 AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.6])
+PKG_CHECK_MODULES([CHECK], [check >= 0.15.2])
 
 AC_ARG_ENABLE(debug,
                             AS_HELP_STRING([--enable-debug], [Enable debugging]),
