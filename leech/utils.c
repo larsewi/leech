@@ -66,7 +66,8 @@ static bool ListCapacity(LCH_List *const self) {
   if (self->length < self->capacity) {
     return true;
   }
-  self->buffer = (LCH_Item **)realloc(self->buffer, self->capacity * 2 * sizeof(LCH_Item *));
+  self->buffer = (LCH_Item **)realloc(self->buffer,
+                                      self->capacity * 2 * sizeof(LCH_Item *));
   memset(self->buffer + self->capacity, 0, self->capacity);
   self->capacity *= 2;
   if (self->buffer == NULL) {

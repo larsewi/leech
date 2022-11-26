@@ -7,6 +7,7 @@ libleech_la_SOURCES = \
         debug_messenger.c \
         instance.c \
         utils.c \
-        table.c
+        table.c \
+        csv.c
 
 libleech_csv_la_SOURCES = leech_csv.c
