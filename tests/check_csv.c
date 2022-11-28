@@ -3,7 +3,7 @@
 #include "../leech/csv.c"
 
 START_TEST(test_NonEscaped) {
-  char buffer[] = "\"MC Cartney, Paul\",1942,\"5'11\"\"\r\n";
+  char buffer[] = "\"MC Cartney, Paul\",1942,\"5'11\"\"\"\r\n";
   size_t from = 0;
   char *non_escaped = NonEscaped(buffer, sizeof(buffer), &from);
   ck_assert_ptr_null(non_escaped);
@@ -24,11 +24,25 @@ START_TEST(test_NonEscaped) {
 }
 END_TEST
 
+START_TEST(test_Escaped) {
+  char buffer[] = "\"MC Cartney, Paul\",1942,\"5'11\"\"\"\r\n";
+  size_t from = 0;
+  char *escaped = Escaped(buffer, sizeof(buffer), &from);
+  ck_assert_ptr_nonnull(escaped);
+  ck_assert_str_eq(escaped, "MC Cartney, Paul");
+}
+END_TEST
+
 Suite *utils_suite(void) {
   Suite *s = suite_create("CSV");
   {
     TCase *tc = tcase_create("NonEscaped");
     tcase_add_test(tc, test_NonEscaped);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("Escaped");
+    tcase_add_test(tc, test_Escaped);
     suite_add_tcase(s, tc);
   }
   return s;

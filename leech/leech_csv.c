@@ -1,112 +1,107 @@
-/**
- * CSV Standard rfc4180
- * https://datatracker.ietf.org/doc/html/rfc4180
- */
-
 #include <assert.h>
 #include <errno.h>
-#include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <csv.h>
 
 #include "leech_csv.h"
+#include "utils.h"
+#include "debug_messenger.h"
 
-#define IS_COMMA(ch) (ch == 0x2C)
-#define IS_CARRIAGE_RETURN(ch) (ch == 0x0D)
-#define IS_DOUBLE_QUOTE(ch) (ch == 0x22)
-#define IS_LINE_FEED(ch) (ch == 0x0A)
-#define IS_TEXT_DATA(ch)                                                       \
-  ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) ||                 \
-   (ch >= 0x2D && ch <= 0x7E));
 
-bool LCH_TableReadCallbackCSV() {
-  // FILE *file = fopen(filename, "r");
-  // if (file == NULL) {
-  //     LCH_LOG_ERROR(instance, "fopen: %s", strerror(errno));
-  //     return false;
-  // }
+static struct table {
+  bool success;
+  LCH_List *record;
+  LCH_List *records;
+};
 
-  // if (fseek(file, 0, SEEK_END) < 0) {
-  //     LCH_LOG_ERROR(instance, "fseek: %s", strerror(errno));
-  //     return false;
-  // }
 
-  // const long size = ftell(file);
-  // if (size < 0) {
-  //     LCH_LOG_ERROR(instance, "ftell: %s", strerror(errno));
-  //     return false;
-  // }
+static void field_callback(char *str, size_t len, struct table *table) {
+  assert(str != NULL);
+  assert(table != NULL);
+  assert(table->records != NULL);
 
-  // if (fseek(file, 0, SEEK_SET) < 0) {
-  //     LCH_LOG_ERROR(instance, "fseek: %s", strerror(errno));
-  //     return false;
-  // }
+  if (table->record == NULL) {
+    table->record = LCH_ListCreate();
+    if (table->record == NULL) {
+      return;
+    }
+  }
 
-  // char *buffer = malloc(size + 1);
-  // if (buffer == NULL) {
-  //     LCH_LOG_ERROR(instance, "malloc: %s", strerror(errno));
-  //     return NULL;
-  // }
-  // buffer[size] = '\0';
+  char *field = strdup(str);
+  if (field == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    return;
+  }
 
-  // if (fread(buffer, 1, size, file) != size) {
-  //     LCH_LOG_ERROR(instance, "fread: %s", strerror(errno));
-  //     return false;
-  // }
-  // LCH_LOG_DEBUG(instance, "Read '%s' (%d Byte%s) with content:\n%s",
-  // filename,
-  //                             size, (size == 1) ? "" : "s", buffer);
+  table->success = LCH_ListAppend(table->record, (void *)field, free);
+}
 
+static void record_callback(int ch, struct table *table) {
+  assert(table != NULL);
+  assert(table->records != NULL);
+  assert(table->record != NULL);
+
+  table->success |= LCH_ListAppend(table->records, (void *)table->record, LCH_ListDestroy);
+  table->record = NULL;
+}
+
+
+LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
+  struct csv_parser parser;
+  int ret = csv_init(&parser, CSV_APPEND_NULL);
+  if (ret != 0) {
+    LCH_LOG_ERROR("Failed to initialize CSV parser");
+    return NULL;
+  }
+
+  FILE *file = fopen(locator, "rb");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", locator, strerror(errno));
+    return NULL;
+  }
+  size_t bytes_read;
+
+  char buffer[LCH_BUFFER_SIZE];
+  buffer[0] = '\0';
+
+  struct table table = {
+    .record = NULL,
+    .records = LCH_ListCreate(),
+  };
+
+  do {
+    table.success = false;
+    bytes_read = fread(buffer, 1, sizeof(buffer), file);
+    const size_t bytes_parsed = csv_parse(&parser, buffer, bytes_read, field_callback, record_callback, &table);
+    if (bytes_parsed != bytes_read) {
+      LCH_LOG_ERROR("Failed to parse CSV file '%s': '%s'", locator, csv_strerror(csv_error(&parser)));
+      csv_free(&parser);
+      fclose(file);
+      free(table.records);
+      return NULL;
+    }
+  } while (bytes_read > 0 && table.success);
+
+  csv_fini(&parser, field_callback, record_callback, &table);
+  csv_free(&parser);
+  fclose(file);
+
+  if (!table.success) {
+    LCH_LOG_ERROR("Failed to parse CSV file '%s'", locator);
+    free(table.records);
+    return NULL;
+  }
+
+  return table.records;
+}
+
+bool LCH_TableWriteCallbackCSV(const char *const locator, const LCH_List *const table) {
+  FILE *file = fopen(file, "r");
+  if (!LCH_FileWriteTable(file, table)) {
+    return false;
+  }
+  fclose(file);
   return true;
-}
-
-bool LCH_TableWriteCallbackCSV() { return true; }
-
-static bool isComma(const char *buffer, long at) { return buffer[at] == 0x2C; }
-
-static bool isCarriageReturn(const char *buffer, long at) {
-  return buffer[at] == 0x0D;
-}
-
-static bool isDoubleQuote(const char *buffer, long at) {
-  return buffer[at] == 0x22;
-}
-
-static bool isLineFeed(const char *buffer, long at) {
-  return buffer[at] == 0x0A;
-}
-
-static bool isTextData(const char *buffer, long at) {
-  char ch = buffer[at];
-  return ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) ||
-          (ch >= 0x2D && ch <= 0x7E));
-}
-
-static long ParseNonEscaped(const char *buffer, long size, long l) {
-  // non_escaped = *TEXTDATA
-  long r = l;
-  while
-    IS_TEXT_DATA(buffer[r]) { r += 1; }
-  return r;
-}
-
-static void ParseEscaped(void) {
-  // escaped = DQUOTE *(TEXTDATA / COMMA / CR / LF / 2DQUOTE) DQUOTE
-}
-
-static void ParseField(void) {
-  // field = (escaped / non-escaped)
-}
-
-static void ParseRecord(void) {
-  // record = field *(COMMA field)
-}
-
-static void ParseHeader(void) {
-  // header = field *(COMMA field)
-}
-
-static void ParseTable(const char *buffer, long size) {
-  // table = header CRLF record * (CRLF record) [CRLF]
 }

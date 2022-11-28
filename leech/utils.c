@@ -316,3 +316,78 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
 
   return list;
 }
+
+bool LCH_FileWriteField(FILE *const file, const char *const field) {
+  assert(file != NULL);
+  assert(field != NULL);
+
+  const bool escaped = (strchr(field, '"') != NULL);
+  if (escaped) {
+    if (fputc('"', file) == EOF) {
+      return false;
+    }
+  }
+
+  for (size_t i = 0; i < strlen(field); i++) {
+    if (field[i] == '"') {
+      if (fputc('"', file) == EOF) {
+        return false;
+      }
+    }
+
+    if (fputc(field[i], file) == EOF) {
+      return false;
+    }
+  }
+
+  if (escaped) {
+    if (fputc('"', file) == EOF) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool LCH_FileWriteRecord(FILE *const file, const LCH_List *const record) {
+  assert(file != NULL);
+  assert(record != NULL);
+
+  const size_t length = LCH_ListLength(record);
+  for (int i = 0; i < length; i++) {
+    if (i > 0) {
+      if (fputc(',', file) == EOF) {
+        return false;
+      }
+    }
+
+    const char *const field = (char *)LCH_ListGet(record, i);
+    if (!LCH_FileWriteField(file, field)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool LCH_FileWriteTable(FILE *const file, const LCH_List *const table) {
+  assert(file != NULL);
+  assert(table != NULL);
+
+  const size_t length = LCH_ListLength(table);
+  for (size_t i = 0; i < length; i++) {
+    if (i > 0) {
+      char crlf[] = "\r\n";
+      if (fputs(crlf, file) == EOF) {
+        return false;
+      }
+    }
+
+    const LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
+    if (!LCH_FileWriteRecord(file, record)) {
+      return false;
+    }
+  }
+
+  return true;
+}

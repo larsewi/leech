@@ -8,6 +8,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct LCH_Buffer LCH_List;
 typedef struct LCH_Buffer LCH_Dict;
@@ -104,5 +105,11 @@ void LCH_DictDestroy(LCH_Dict *self);
  * @param[out] list list of substrings.
  */
 LCH_List *LCH_SplitString(const char *str, const char *del);
+
+bool LCH_FileWriteField(FILE *file, const char *field);
+
+bool LCH_FileWriteRecord(FILE *const file, const LCH_List *const record);
+
+bool LCH_FileWriteTable(FILE *const file, const LCH_List *const table);
 
 #endif // _LEECH_UTILS_H
