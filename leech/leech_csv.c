@@ -1,21 +1,18 @@
 #include <assert.h>
+#include <csv.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <csv.h>
 
-#include "leech_csv.h"
-#include "utils.h"
 #include "debug_messenger.h"
+#include "leech_csv.h"
 
-
-static struct table {
+struct table {
   bool success;
   LCH_List *record;
   LCH_List *records;
 };
-
 
 static void field_callback(char *str, size_t len, struct table *table) {
   assert(str != NULL);
@@ -43,10 +40,10 @@ static void record_callback(int ch, struct table *table) {
   assert(table->records != NULL);
   assert(table->record != NULL);
 
-  table->success |= LCH_ListAppend(table->records, (void *)table->record, LCH_ListDestroy);
+  table->success |= LCH_ListAppend(table->records, (void *)table->record,
+                                   (void (*)(void *))LCH_ListDestroy);
   table->record = NULL;
 }
-
 
 LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
   struct csv_parser parser;
@@ -58,7 +55,8 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
 
   FILE *file = fopen(locator, "rb");
   if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", locator, strerror(errno));
+    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", locator,
+                  strerror(errno));
     return NULL;
   }
   size_t bytes_read;
@@ -67,16 +65,20 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
   buffer[0] = '\0';
 
   struct table table = {
-    .record = NULL,
-    .records = LCH_ListCreate(),
+      .record = NULL,
+      .records = LCH_ListCreate(),
   };
 
   do {
     table.success = false;
     bytes_read = fread(buffer, 1, sizeof(buffer), file);
-    const size_t bytes_parsed = csv_parse(&parser, buffer, bytes_read, field_callback, record_callback, &table);
+    const size_t bytes_parsed =
+        csv_parse(&parser, buffer, bytes_read,
+                  (void (*)(void *, size_t, void *))field_callback,
+                  (void (*)(int, void *))record_callback, &table);
     if (bytes_parsed != bytes_read) {
-      LCH_LOG_ERROR("Failed to parse CSV file '%s': '%s'", locator, csv_strerror(csv_error(&parser)));
+      LCH_LOG_ERROR("Failed to parse CSV file '%s': '%s'", locator,
+                    csv_strerror(csv_error(&parser)));
       csv_free(&parser);
       fclose(file);
       free(table.records);
@@ -84,7 +86,8 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
     }
   } while (bytes_read > 0 && table.success);
 
-  csv_fini(&parser, field_callback, record_callback, &table);
+  csv_fini(&parser, (void (*)(void *, size_t, void *))field_callback,
+           (void (*)(int, void *))record_callback, &table);
   csv_free(&parser);
   fclose(file);
 
@@ -97,9 +100,10 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
   return table.records;
 }
 
-bool LCH_TableWriteCallbackCSV(const char *const locator, const LCH_List *const table) {
-  FILE *file = fopen(file, "r");
-  if (!LCH_FileWriteTable(file, table)) {
+bool LCH_TableWriteCallbackCSV(const char *const locator,
+                               const LCH_List *const table) {
+  FILE *file = fopen(locator, "r");
+  if (!LCH_FileWriteCSVTable(file, table)) {
     return false;
   }
   fclose(file);

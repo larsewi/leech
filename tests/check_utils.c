@@ -76,6 +76,43 @@ START_TEST(test_SplitString) {
 }
 END_TEST
 
+START_TEST(test_FileWriteCSV) {
+  LCH_List *table = LCH_ListCreate();
+
+  LCH_List *record = LCH_ListCreate();
+  char *str = strdup("firstname");
+  LCH_ListAppend(record, (void *)str, free);
+  str = strdup("lastname");
+  LCH_ListAppend(record, (void *)str, free);
+  str = strdup("age");
+  LCH_ListAppend(record, (void *)str, free);
+  LCH_ListAppend(table, (void *)record, free);
+
+  record = LCH_ListCreate();
+  str = strdup("Paul");
+  LCH_ListAppend(record, (void *)str, free);
+  str = strdup("MC Cartney");
+  LCH_ListAppend(record, (void *)str, free);
+  str = strdup("1942");
+  LCH_ListAppend(record, (void *)str, free);
+  LCH_ListAppend(table, (void *)record, free);
+
+  FILE *file = fopen("beatles.csv", "w");
+  bool success = LCH_FileWriteCSVTable(file, table);
+  fclose(file);
+  ck_assert(success);
+
+  char expected[] = "firstname,lastname,age\r\nPaul,MC Cartney,1942";
+  char actual[128];
+  file = fopen("beatles.csv", "r");
+  size_t bytes = fread(actual, 1, sizeof(actual), file);
+  fclose(file);
+  ck_assert_int_eq(bytes, strlen(expected));
+  actual[bytes] = '\0';
+  ck_assert_str_eq(expected, actual);
+}
+END_TEST
+
 Suite *utils_suite(void) {
   Suite *s = suite_create("Utils");
   {
@@ -91,6 +128,11 @@ Suite *utils_suite(void) {
   {
     TCase *tc = tcase_create("SplitString");
     tcase_add_test(tc, test_SplitString);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("FileWriteCSV");
+    tcase_add_test(tc, test_FileWriteCSV);
     suite_add_tcase(s, tc);
   }
   return s;

@@ -114,3 +114,4 @@ tests/*.log
 tests/*.trs
 tests/check_leech
 tests/check_utils
+tests/beatles.csv

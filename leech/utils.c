@@ -8,6 +8,9 @@
 
 #define INITIAL_CAPACITY 8
 #define LOAD_FACTOR 0.75f
+#define TEXT_DATA(ch)                                                          \
+  ((ch >= 0x20 && ch <= (0x21)) || (ch >= 0x23 && ch <= 0x2B) ||               \
+   (ch >= 0x2D && ch <= 0x7E))
 
 typedef struct LCH_Buffer LCH_Buffer;
 
@@ -317,11 +320,18 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   return list;
 }
 
-bool LCH_FileWriteField(FILE *const file, const char *const field) {
+bool LCH_FileWriteCSVField(FILE *const file, const char *const field) {
   assert(file != NULL);
   assert(field != NULL);
 
-  const bool escaped = (strchr(field, '"') != NULL);
+  bool escaped = false;
+  for (size_t i = 0; i < strlen(field); i++) {
+    if (!TEXT_DATA(field[i])) {
+      escaped = true;
+      break;
+    }
+  }
+
   if (escaped) {
     if (fputc('"', file) == EOF) {
       return false;
@@ -349,7 +359,7 @@ bool LCH_FileWriteField(FILE *const file, const char *const field) {
   return true;
 }
 
-bool LCH_FileWriteRecord(FILE *const file, const LCH_List *const record) {
+bool LCH_FileWriteCSVRecord(FILE *const file, const LCH_List *const record) {
   assert(file != NULL);
   assert(record != NULL);
 
@@ -362,7 +372,7 @@ bool LCH_FileWriteRecord(FILE *const file, const LCH_List *const record) {
     }
 
     const char *const field = (char *)LCH_ListGet(record, i);
-    if (!LCH_FileWriteField(file, field)) {
+    if (!LCH_FileWriteCSVField(file, field)) {
       return false;
     }
   }
@@ -370,7 +380,7 @@ bool LCH_FileWriteRecord(FILE *const file, const LCH_List *const record) {
   return true;
 }
 
-bool LCH_FileWriteTable(FILE *const file, const LCH_List *const table) {
+bool LCH_FileWriteCSVTable(FILE *const file, const LCH_List *const table) {
   assert(file != NULL);
   assert(table != NULL);
 
@@ -384,7 +394,7 @@ bool LCH_FileWriteTable(FILE *const file, const LCH_List *const table) {
     }
 
     const LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
-    if (!LCH_FileWriteRecord(file, record)) {
+    if (!LCH_FileWriteCSVRecord(file, record)) {
       return false;
     }
   }
