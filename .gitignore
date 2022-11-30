@@ -107,11 +107,9 @@ m4/lt~obsolete.m4
 # (which is called by configure script))
 Makefile
 
-simulate/simulate
+doofus/doofus
 
 tests/.libs/*
 tests/*.log
 tests/*.trs
-tests/check_leech
-tests/check_utils
-tests/beatles.csv
+tests/unit_test

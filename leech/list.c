@@ -8,15 +8,15 @@
 
 #define INITIAL_CAPACITY 8
 
-typedef struct LCH_Item {
+typedef struct LCH_ListElement {
   void *value;
   void (*destroy)(void *);
-} LCH_Item;
+} LCH_ListElement;
 
 struct LCH_List {
   size_t length;
   size_t capacity;
-  LCH_Item **buffer;
+  LCH_ListElement **buffer;
 };
 
 LCH_List *LCH_ListCreate() {
@@ -28,7 +28,7 @@ LCH_List *LCH_ListCreate() {
 
   self->length = 0;
   self->capacity = INITIAL_CAPACITY;
-  self->buffer = (LCH_Item **)calloc(self->capacity, sizeof(LCH_Item *));
+  self->buffer = (LCH_ListElement **)calloc(self->capacity, sizeof(LCH_ListElement *));
 
   if (self->buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for list buffer: %s", strerror(errno));
@@ -50,8 +50,8 @@ static bool ListCapacity(LCH_List *const self) {
   if (self->length < self->capacity) {
     return true;
   }
-  self->buffer = (LCH_Item **)realloc(self->buffer,
-                                      self->capacity * 2 * sizeof(LCH_Item *));
+  self->buffer = (LCH_ListElement **)realloc(self->buffer,
+                                      self->capacity * 2 * sizeof(LCH_ListElement *));
   memset(self->buffer + self->capacity, 0, self->capacity);
   self->capacity *= 2;
   if (self->buffer == NULL) {
@@ -74,7 +74,7 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   }
 
   // Create item
-  LCH_Item *item = (LCH_Item *)calloc(1, sizeof(LCH_Item));
+  LCH_ListElement *item = (LCH_ListElement *)calloc(1, sizeof(LCH_ListElement));
   if (item == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for list element: %s", strerror(errno));
     return false;
@@ -95,7 +95,7 @@ void *LCH_ListGet(const LCH_List *const self, const size_t index) {
   assert(self->buffer != NULL);
   assert(index < self->length);
 
-  LCH_Item *item = self->buffer[index];
+  LCH_ListElement *item = self->buffer[index];
   return item->value;
 }
 
@@ -106,7 +106,7 @@ void LCH_ListDestroy(LCH_List *self) {
   assert(self->buffer != NULL);
 
   for (size_t i = 0; i < self->capacity; i++) {
-    LCH_Item *item = self->buffer[i];
+    LCH_ListElement *item = self->buffer[i];
     if (item == NULL) {
       continue;
     }

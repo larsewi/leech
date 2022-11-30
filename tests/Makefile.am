@@ -1,12 +1,15 @@
-TESTS = check_leech check_utils
-check_PROGRAMS = check_leech check_utils
+TESTS = unit_test
 
-check_leech_SOURCES = check_leech.c $(top_builddir)/leech/leech.c
-check_leech_CFLAGS = @CHECK_CFLAGS@
-check_leech_LDADD = $(top_builddir)/leech/libleech.la -lcheck_pic -lrt -lm -lsubunit @CHECK_LIBS@
-check_leech_LDFLAGS = -pthread
+check_PROGRAMS = unit_test
 
-check_utils_SOURCES = check_utils.c $(top_builddir)/leech/utils.c
-check_utils_CFLAGS = @CHECK_CFLAGS@
-check_utils_LDADD = $(top_builddir)/leech/libleech.la -lcheck_pic -lrt -lm -lsubunit @CHECK_LIBS@
-check_utils_LDFLAGS = -pthread
+unit_test_SOURCES = \
+    main.c $(top_builddir)/leech/debug_messenger.c \
+    check_buffer.c $(top_builddir)/leech/buffer.c \
+    check_csv.c $(top_builddir)/leech/csv.c \
+    check_dict.c $(top_builddir)/leech/dict.c \
+    check_list.c $(top_builddir)/leech/list.c \
+    check_utils.c $(top_builddir)/leech/utils.c
+
+unit_test_CFLAGS = @CHECK_CFLAGS@
+unit_test_LDADD = -lcheck_pic -lrt -lm -lsubunit @CHECK_LIBS@
+unit_test_LDFLAGS = -pthread
