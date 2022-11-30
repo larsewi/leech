@@ -2,13 +2,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 
 #include "buffer.h"
 #include "debug_messenger.h"
 #include "definitions.h"
 
-#define INITIAL_CAPACITY LCH_KIBIBYTE(1)
+#define INITIAL_CAPACITY 64
 
 struct LCH_Buffer {
   size_t length;
@@ -41,6 +42,10 @@ LCH_Buffer *LCH_BufferCreate(void) {
 }
 
 bool LCH_BufferAppend(LCH_Buffer *self, const char *format, ...) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(format != NULL);
+
   va_list ap;
 
   va_start(ap, format);
@@ -92,9 +97,16 @@ bool LCH_BufferAppend(LCH_Buffer *self, const char *format, ...) {
   return true;
 }
 
-size_t LCH_BufferLength(LCH_Buffer *self) { return self->length; }
+size_t LCH_BufferLength(LCH_Buffer *self) {
+  assert(self != NULL);
+  return self->length;
+}
 
-char *LCH_BufferGet(LCH_Buffer *self) { return strdup(self->buffer); }
+char *LCH_BufferGet(LCH_Buffer *self) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  return strdup(self->buffer);
+}
 
 void LCH_BufferDestroy(LCH_Buffer *self) {
   free(self->buffer);

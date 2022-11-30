@@ -5,7 +5,34 @@
 #include "../leech/buffer.h"
 #include "../leech/debug_messenger.h"
 
-START_TEST(test_LCH_Buffer) { ck_assert(1); }
+START_TEST(test_LCH_Buffer) {
+  LCH_Buffer *buffer = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(buffer);
+
+  for (int i = 0; i < 10; i++) {
+    ck_assert(LCH_BufferAppend(buffer, "Hello %s!\n", "buffer"));
+  }
+
+  char *actual = LCH_BufferGet(buffer);
+  ck_assert_ptr_nonnull(buffer);
+
+  LCH_BufferDestroy(buffer);
+
+  char exptected[] = {
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+    "Hello buffer!\n"
+  };
+
+  ck_assert_str_eq(actual, exptected);
+}
 END_TEST
 
 Suite *BufferSuite(void) {

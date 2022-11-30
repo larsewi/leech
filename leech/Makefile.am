@@ -15,6 +15,7 @@ libleech_la_SOURCES = \
         utils.c \
         list.c \
         dict.c \
+        buffer.c \
         table.c
 
 libleech_csv_la_SOURCES = \
