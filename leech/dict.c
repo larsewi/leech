@@ -64,7 +64,7 @@ static bool DictCapacity(LCH_Dict *const self) {
   size_t new_capacity = self->capacity * 2;
   LCH_DictElement **new_buffer = (LCH_DictElement **)calloc(new_capacity, sizeof(LCH_DictElement *));
   if (new_buffer == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for dict element: %s", strerror(errno));
     return false;
   }
 
@@ -81,7 +81,9 @@ static bool DictCapacity(LCH_Dict *const self) {
     new_buffer[index] = item;
   }
 
+  LCH_DictElement **old_buffer = self->buffer;
   self->buffer = new_buffer;
+  free(old_buffer);
   self->capacity = new_capacity;
   LCH_LOG_DEBUG("Expanded dict capacity %d/%d", self->length, self->capacity);
 

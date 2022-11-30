@@ -108,7 +108,6 @@ m4/lt~obsolete.m4
 Makefile
 
 doofus/doofus
-
 tests/.libs/*
 tests/*.log
 tests/*.trs
