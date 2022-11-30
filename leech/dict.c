@@ -172,16 +172,6 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
   assert(self != NULL);
   assert(key != NULL);
 
-  fprintf(stderr, "Distrobution: ");
-  for (size_t i = 0; i < self->capacity; i++) {
-    if (self->buffer[i] == NULL) {
-      fprintf(stderr, "0");
-    } else {
-      fprintf(stderr, "1");
-    }
-  }
-  fprintf(stderr, "\n");
-
   const size_t hash = Hash(key);
   size_t index = hash % self->capacity;
   assert(self->buffer[index] != NULL);
