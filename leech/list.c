@@ -52,15 +52,19 @@ static bool ListCapacity(LCH_List *const self) {
   if (self->length < self->capacity) {
     return true;
   }
-  self->buffer = (LCH_ListElement **)realloc(
+
+  size_t new_capacity = self->capacity * 2;
+  LCH_ListElement **new_buffer = (LCH_ListElement **)realloc(
       self->buffer, self->capacity * 2 * sizeof(LCH_ListElement *));
-  memset(self->buffer + self->capacity, 0, self->capacity);
-  self->capacity *= 2;
-  if (self->buffer == NULL) {
+  if (new_buffer == NULL) {
     LCH_LOG_ERROR("Failed to reallocate memory for list buffer: %s",
                   strerror(errno));
     return false;
   }
+  memset(new_buffer + self->capacity, 0, self->capacity);
+
+  self->capacity = new_capacity;
+  self->buffer = new_buffer;
   LCH_LOG_DEBUG("Expanded list buffer capacity %d/%d", self->length,
                 self->capacity);
   return true;
