@@ -9,16 +9,16 @@
 #define INITIAL_CAPACITY 8
 #define LOAD_FACTOR 0.75f
 
-typedef struct LCH_DictElement {
+typedef struct DictElement {
   char *key;
   void *value;
   void (*destroy)(void *);
-} LCH_DictElement;
+} DictElement;
 
 struct LCH_Dict {
   size_t length;
   size_t capacity;
-  LCH_DictElement **buffer;
+  DictElement **buffer;
 };
 
 LCH_Dict *LCH_DictCreate() {
@@ -31,7 +31,7 @@ LCH_Dict *LCH_DictCreate() {
   self->length = 0;
   self->capacity = INITIAL_CAPACITY;
   self->buffer =
-      (LCH_DictElement **)calloc(self->capacity, sizeof(LCH_DictElement *));
+      (DictElement **)calloc(self->capacity, sizeof(DictElement *));
 
   if (self->buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for dict buffer: %s",
@@ -64,8 +64,8 @@ static bool DictCapacity(LCH_Dict *const self) {
   }
 
   size_t new_capacity = self->capacity * 2;
-  LCH_DictElement **new_buffer =
-      (LCH_DictElement **)calloc(new_capacity, sizeof(LCH_DictElement *));
+  DictElement **new_buffer =
+      (DictElement **)calloc(new_capacity, sizeof(DictElement *));
   if (new_buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for dict element: %s",
                   strerror(errno));
@@ -76,7 +76,7 @@ static bool DictCapacity(LCH_Dict *const self) {
     if (self->buffer[i] == NULL) {
       continue;
     }
-    LCH_DictElement *item = self->buffer[i];
+    DictElement *item = self->buffer[i];
     long index = Hash(item->key) % new_capacity;
     while (new_buffer[index] != NULL) {
       index = (index + 1) % new_capacity;
@@ -86,7 +86,7 @@ static bool DictCapacity(LCH_Dict *const self) {
                   item->key, i, index);
   }
 
-  LCH_DictElement **old_buffer = self->buffer;
+  DictElement **old_buffer = self->buffer;
   self->buffer = new_buffer;
   free(old_buffer);
   self->capacity = new_capacity;
@@ -115,7 +115,7 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
 
   if (self->buffer[index] != NULL) {
     assert(self->buffer[index]->key != NULL);
-    LCH_DictElement *item = self->buffer[index];
+    DictElement *item = self->buffer[index];
     item->destroy(item->value);
     item->value = value;
     item->destroy = destroy;
@@ -124,7 +124,7 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     return true;
   }
 
-  LCH_DictElement *item = (LCH_DictElement *)malloc(sizeof(LCH_DictElement));
+  DictElement *item = (DictElement *)malloc(sizeof(DictElement));
   if (item == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for dict element: %s",
                   strerror(errno));
@@ -191,7 +191,7 @@ void LCH_DictDestroy(LCH_Dict *self) {
   assert(self->buffer != NULL);
 
   for (size_t i = 0; i < self->capacity; i++) {
-    LCH_DictElement *item = self->buffer[i];
+    DictElement *item = self->buffer[i];
     if (item == NULL) {
       continue;
     }
