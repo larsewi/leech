@@ -1,13 +1,11 @@
 #include <check.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../leech/buffer.h"
 #include "../leech/debug_messenger.h"
 
-START_TEST(test_LCH_Buffer) { 
-  ck_assert(1);
-}
+START_TEST(test_LCH_Buffer) { ck_assert(1); }
 END_TEST
 
 Suite *BufferSuite(void) {

@@ -30,10 +30,12 @@ LCH_Dict *LCH_DictCreate() {
 
   self->length = 0;
   self->capacity = INITIAL_CAPACITY;
-  self->buffer = (LCH_DictElement **)calloc(self->capacity, sizeof(LCH_DictElement *));
+  self->buffer =
+      (LCH_DictElement **)calloc(self->capacity, sizeof(LCH_DictElement *));
 
   if (self->buffer == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for dict buffer: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for dict buffer: %s",
+                  strerror(errno));
     free(self);
     return NULL;
   }
@@ -57,14 +59,16 @@ static size_t Hash(const char *const str) {
 }
 
 static bool DictCapacity(LCH_Dict *const self) {
-  if (self->length < self->capacity / LOAD_FACTOR) {
+  if (self->length < self->capacity * LOAD_FACTOR) {
     return true;
   }
 
   size_t new_capacity = self->capacity * 2;
-  LCH_DictElement **new_buffer = (LCH_DictElement **)calloc(new_capacity, sizeof(LCH_DictElement *));
+  LCH_DictElement **new_buffer =
+      (LCH_DictElement **)calloc(new_capacity, sizeof(LCH_DictElement *));
   if (new_buffer == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for dict element: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for dict element: %s",
+                  strerror(errno));
     return false;
   }
 
@@ -73,19 +77,21 @@ static bool DictCapacity(LCH_Dict *const self) {
       continue;
     }
     LCH_DictElement *item = self->buffer[i];
-
     long index = Hash(item->key) % new_capacity;
     while (new_buffer[index] != NULL) {
-      index += 1;
+      index = (index + 1) % new_capacity;
     }
     new_buffer[index] = item;
+    LCH_LOG_DEBUG("Moved dict element with key '%s' from index %d to index %d",
+                  item->key, i, index);
   }
 
   LCH_DictElement **old_buffer = self->buffer;
   self->buffer = new_buffer;
   free(old_buffer);
   self->capacity = new_capacity;
-  LCH_LOG_DEBUG("Expanded dict capacity %d/%d", self->length, self->capacity);
+  LCH_LOG_DEBUG("Expanded dict buffer. New buffer capacity %d/%d", self->length,
+                self->capacity);
 
   return true;
 }
@@ -104,7 +110,7 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
 
   while (self->buffer[index] != NULL &&
          strcmp(self->buffer[index]->key, key) != 0) {
-    index++;
+    index = (index + 1) % self->capacity;
   }
 
   if (self->buffer[index] != NULL) {
@@ -113,18 +119,22 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     item->destroy(item->value);
     item->value = value;
     item->destroy = destroy;
+    LCH_LOG_DEBUG("Updated value of dict element with key '%s' at index %zu",
+                  key, index);
     return true;
   }
 
-  LCH_DictElement *item = (LCH_DictElement *)calloc(1, sizeof(LCH_DictElement));
+  LCH_DictElement *item = (LCH_DictElement *)malloc(sizeof(LCH_DictElement));
   if (item == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for dict element: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for dict element: %s",
+                  strerror(errno));
     return false;
   }
 
   item->key = strdup(key);
   if (item->key == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for dict key: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for dict key: %s",
+                  strerror(errno));
     free(item);
     return false;
   }
@@ -132,8 +142,10 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
   item->destroy = destroy;
 
   self->buffer[index] = item;
-  LCH_LOG_DEBUG("Set entry to dict with key '%s', hash %zu, index %zu", key,
-                hash, index);
+  self->length += 1;
+  LCH_LOG_DEBUG("Created dict entry with key '%s' at index %zu. New buffer "
+                "capacity %zu/%zu",
+                key, index, self->length, self->capacity);
 
   return true;
 }
@@ -146,14 +158,13 @@ bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
   size_t index = hash % self->capacity;
   while (self->buffer[index] != NULL) {
     if (strcmp(self->buffer[index]->key, key) == 0) {
-      LCH_LOG_DEBUG("Found entry in dict with key '%s', hash %zu, index %zu",
-                    key, hash, index);
+      LCH_LOG_DEBUG("Found dict entry with key '%s' at index %zu", key,
+                    index);
       return true;
     }
-    index += 1;
+    index = (index + 1) % self->capacity;
   }
-  LCH_LOG_DEBUG("Did not find entry in dict with key '%s', hash %zu", key,
-                hash);
+  LCH_LOG_DEBUG("Did not find dict entry with key '%s'", key);
   return false;
 }
 
@@ -161,16 +172,25 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
   assert(self != NULL);
   assert(key != NULL);
 
+  fprintf(stderr, "Distrobution: ");
+  for (size_t i = 0; i < self->capacity; i++) {
+    if (self->buffer[i] == NULL) {
+      fprintf(stderr, "0");
+    } else {
+      fprintf(stderr, "1");
+    }
+  }
+  fprintf(stderr, "\n");
+
   const size_t hash = Hash(key);
   size_t index = hash % self->capacity;
-  while (self->buffer[index] != NULL &&
-         strcmp(self->buffer[index]->key, key) != 0) {
-    index += 1;
-  }
   assert(self->buffer[index] != NULL);
+  while (strcmp(self->buffer[index]->key, key) != 0) {
+    index = (index + 1) % self->capacity;
+    assert(self->buffer[index] != NULL);
+  }
 
-  LCH_LOG_DEBUG("Get entry from dict with key '%s', hash %zu, index %zu", key,
-                hash, index);
+  LCH_LOG_DEBUG("Retreived entry from dict with key '%s' at index %zu", key, index);
   return self->buffer[index]->value;
 }
 

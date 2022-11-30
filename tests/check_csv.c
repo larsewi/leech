@@ -4,9 +4,7 @@
 #include "../leech/csv.h"
 #include "../leech/debug_messenger.h"
 
-START_TEST(Basic) {
-  ck_assert(1);
-}
+START_TEST(Basic) { ck_assert(1); }
 END_TEST
 
 Suite *CSVSuite(void) {

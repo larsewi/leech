@@ -28,10 +28,12 @@ LCH_List *LCH_ListCreate() {
 
   self->length = 0;
   self->capacity = INITIAL_CAPACITY;
-  self->buffer = (LCH_ListElement **)calloc(self->capacity, sizeof(LCH_ListElement *));
+  self->buffer =
+      (LCH_ListElement **)calloc(self->capacity, sizeof(LCH_ListElement *));
 
   if (self->buffer == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for list buffer: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for list buffer: %s",
+                  strerror(errno));
     free(self);
     return NULL;
   }
@@ -50,15 +52,17 @@ static bool ListCapacity(LCH_List *const self) {
   if (self->length < self->capacity) {
     return true;
   }
-  self->buffer = (LCH_ListElement **)realloc(self->buffer,
-                                      self->capacity * 2 * sizeof(LCH_ListElement *));
+  self->buffer = (LCH_ListElement **)realloc(
+      self->buffer, self->capacity * 2 * sizeof(LCH_ListElement *));
   memset(self->buffer + self->capacity, 0, self->capacity);
   self->capacity *= 2;
   if (self->buffer == NULL) {
-    LCH_LOG_ERROR("Failed to reallocate memory for list buffer: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to reallocate memory for list buffer: %s",
+                  strerror(errno));
     return false;
   }
-  LCH_LOG_DEBUG("Expanded list buffer capacity %d/%d", self->length, self->capacity);
+  LCH_LOG_DEBUG("Expanded list buffer capacity %d/%d", self->length,
+                self->capacity);
   return true;
 }
 
@@ -76,7 +80,8 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   // Create item
   LCH_ListElement *item = (LCH_ListElement *)calloc(1, sizeof(LCH_ListElement));
   if (item == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for list element: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for list element: %s",
+                  strerror(errno));
     return false;
   }
   item->value = value;

@@ -2,9 +2,9 @@
 #include <errno.h>
 #include <string.h>
 
-#include "utils.h"
 #include "debug_messenger.h"
 #include "definitions.h"
+#include "utils.h"
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
