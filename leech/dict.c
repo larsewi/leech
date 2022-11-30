@@ -158,8 +158,7 @@ bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
   size_t index = hash % self->capacity;
   while (self->buffer[index] != NULL) {
     if (strcmp(self->buffer[index]->key, key) == 0) {
-      LCH_LOG_DEBUG("Found dict entry with key '%s' at index %zu", key,
-                    index);
+      LCH_LOG_DEBUG("Found dict entry with key '%s' at index %zu", key, index);
       return true;
     }
     index = (index + 1) % self->capacity;
@@ -180,7 +179,8 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
     assert(self->buffer[index] != NULL);
   }
 
-  LCH_LOG_DEBUG("Retreived entry from dict with key '%s' at index %zu", key, index);
+  LCH_LOG_DEBUG("Retreived entry from dict with key '%s' at index %zu", key,
+                index);
   return self->buffer[index]->value;
 }
 
