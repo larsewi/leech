@@ -18,18 +18,16 @@ START_TEST(test_LCH_Buffer) {
 
   LCH_BufferDestroy(buffer);
 
-  char exptected[] = {
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-    "Hello buffer!\n"
-  };
+  char exptected[] = {"Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"
+                      "Hello buffer!\n"};
 
   ck_assert_str_eq(actual, exptected);
 }

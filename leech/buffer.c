@@ -1,8 +1,8 @@
+#include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
 
 #include "buffer.h"
@@ -49,12 +49,13 @@ bool LCH_BufferAppend(LCH_Buffer *self, const char *format, ...) {
   va_list ap;
 
   va_start(ap, format);
-  int length = vsnprintf(NULL, self->capacity - self->length, format, ap);
+  int length = vsnprintf(NULL, 0, format, ap);
   va_end(ap);
 
   if (length < 0) {
     LCH_LOG_ERROR("Failed to format string for string buffer: %s",
                   strerror(errno));
+    self->buffer[self->length] = '\0';
     return false;
   }
 
@@ -70,14 +71,17 @@ bool LCH_BufferAppend(LCH_Buffer *self, const char *format, ...) {
 
     self->capacity = new_capacity;
     self->buffer = new_buffer;
+    LCH_LOG_DEBUG("Expanded string buffer capacity %zu/%zu", self->length,
+                  self->capacity);
 
     va_start(ap, format);
-    int length = vsnprintf(NULL, self->capacity - self->length, format, ap);
+    int length = vsnprintf(NULL, 0, format, ap);
     va_end(ap);
 
     if (length < 0) {
       LCH_LOG_ERROR("Failed to format string for string buffer: %s",
                     strerror(errno));
+      self->buffer[self->length] = '\0';
       return false;
     }
   }
@@ -88,12 +92,16 @@ bool LCH_BufferAppend(LCH_Buffer *self, const char *format, ...) {
   va_end(ap);
 
   if (length < 0) {
+    self->buffer[self->length] = '\0';
     LCH_LOG_ERROR("Failed to format string for string buffer: %s",
                   strerror(errno));
     return false;
   }
 
   self->length += (size_t)length;
+  LCH_LOG_DEBUG("Appended string of length %d to string buffer. "
+                "New string buffer capacity %zu/%zu",
+                length, self->length, self->capacity);
   return true;
 }
 
