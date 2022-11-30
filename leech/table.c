@@ -6,9 +6,9 @@
 
 typedef struct LCH_Table {
   char *readLocator;
-  bool (*readCallback)();
+  LCH_List *(*readCallback)(const char *);
   char *writeLocator;
-  bool (*writeCallback)();
+  bool (*writeCallback)(const char *, const LCH_List *);
 } LCH_Table;
 
 LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {

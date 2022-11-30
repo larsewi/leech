@@ -1,10 +1,9 @@
 #ifndef _LEECH_CSV_H
 #define _LEECH_CSV_H
 
-#include <leech.h>
 #include <stdbool.h>
 
-#include "utils.h"
+#include "list.h"
 
 LCH_List *LCH_TableReadCallbackCSV(const char *const locator);
 

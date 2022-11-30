@@ -1,8 +1,6 @@
 #ifndef _LEECH_DEBUG_MESSENGER_H
 #define _LEECH_DEBUG_MESSENGER_H
 
-#include <stdbool.h>
-
 #define LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT (1 << 0)
 #define LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT (1 << 1)
 #define LCH_DEBUG_MESSAGE_TYPE_INFO_BIT (1 << 2)

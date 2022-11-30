@@ -21,6 +21,6 @@ AC_PROG_CC
 
 LT_INIT
 
-AC_CONFIG_FILES([Makefile leech/Makefile simulate/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile leech/Makefile doofus/Makefile tests/Makefile])
 
 AC_OUTPUT

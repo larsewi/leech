@@ -2,14 +2,10 @@
 #include <errno.h>
 #include <leech.h>
 #include <leech_csv.h>
-#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include "commands.h"
-#include "server.h"
 
 #define WORK_DIR ".leech/"
 #define MAX_EVENTS 10
@@ -33,76 +29,6 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  int server_sock = CreateServerSocket();
-  if (server_sock == -1) {
-    LCH_InstanceDestroy(instance);
-    return EXIT_FAILURE;
-  }
-
-  struct pollfd pfds[] = {
-      {
-          .fd = server_sock,
-          .events = POLLIN,
-      },
-      {
-          .fd = STDIN_FILENO,
-          .events = POLLIN,
-      },
-  };
-
-  char buffer[LCH_BUFFER_SIZE];
-  ssize_t size;
-  while (SHOULD_RUN) {
-    int ret = poll(pfds, LCH_LENGTH(pfds), -1);
-    if (ret == -1) {
-      LCH_LOG_ERROR("poll: %s", strerror(errno));
-      close(server_sock);
-      LCH_InstanceDestroy(instance);
-      return EXIT_FAILURE;
-    }
-
-    for (int i = 0; i < LCH_LENGTH(pfds); i++) {
-      struct pollfd *pfd = pfds + i;
-      if (pfd->revents != POLLIN) {
-        continue;
-      }
-
-      if (pfd->fd == server_sock) {
-        LCH_LOG_DEBUG("Handling server socket event");
-        size = read(server_sock, (void *)buffer, sizeof(buffer));
-        if (size < 0) {
-          LCH_LOG_ERROR("read: %s", strerror(errno));
-          close(server_sock);
-          LCH_InstanceDestroy(instance);
-          return EXIT_FAILURE;
-        }
-      }
-
-      else if (pfd->fd == STDIN_FILENO) {
-        LCH_LOG_DEBUG("Handling 'stdin' file descriptor event");
-        size = read(STDIN_FILENO, (void *)buffer, sizeof(buffer));
-        if (size < 0) {
-          LCH_LOG_ERROR("read: %s", strerror(errno));
-          close(server_sock);
-          LCH_InstanceDestroy(instance);
-          return EXIT_FAILURE;
-        }
-        if (size == 0) {
-          LCH_LOG_DEBUG("Exited by user");
-          SHOULD_RUN = false;
-          break;
-        }
-        buffer[size] = '\0';
-        if (!ParseCommand(instance, buffer)) {
-          close(server_sock);
-          LCH_InstanceDestroy(instance);
-          return EXIT_FAILURE;
-        }
-      }
-    }
-  }
-
-  close(server_sock);
   LCH_InstanceDestroy(instance);
   return EXIT_SUCCESS;
 }
