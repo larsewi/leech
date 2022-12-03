@@ -115,7 +115,11 @@ size_t LCH_BufferLength(LCH_Buffer *self) {
 char *LCH_BufferGet(LCH_Buffer *self) {
   assert(self != NULL);
   assert(self->buffer != NULL);
-  return strdup(self->buffer);
+  char *str = strdup(self->buffer);
+  if (str == NULL) {
+    LCH_LOG_ERROR("Failed to get string from string buffer: %s", strerror(errno));
+  }
+  return false;
 }
 
 void LCH_BufferDestroy(LCH_Buffer *self) {
