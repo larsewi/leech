@@ -4,7 +4,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "debug_messenger.h"
@@ -120,7 +119,7 @@ char *LCH_BufferGet(LCH_Buffer *self) {
     LCH_LOG_ERROR("Failed to get string from string buffer: %s",
                   strerror(errno));
   }
-  return false;
+  return str;
 }
 
 void LCH_BufferDestroy(LCH_Buffer *self) {

@@ -2,6 +2,7 @@
 #define _LEECH_BUFFER_H
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct LCH_Buffer LCH_Buffer;
 

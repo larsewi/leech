@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <string.h>
 
-#include "buffer.h"
 #include "debug_messenger.h"
 
 #define TEXTDATA(ch)                                           \
@@ -22,27 +21,31 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
   }
 
   bool escape = false;
-  for (char ch = *field; ch != '\0'; ch++) {
-    if (!TEXTDATA(ch)) {
+  const size_t length = strlen(field);
+  for (size_t i = 0; i < length; i++) {
+    if (!TEXTDATA(field[i])) {
       escape = true;
 
-      if (ch == '"') {
+      if (field[i] == '"') {
         if (!LCH_BufferAppend(temp, "\"\"")) {
           LCH_BufferDestroy(temp);
           return false;
         }
+        LCH_LOG_DEBUG("Escaped double quote");
         continue;
       }
     }
 
-    if (!LCH_BufferAppend(temp, "%c", ch)) {
+    if (!LCH_BufferAppend(temp, "%c", field[i])) {
       LCH_BufferDestroy(temp);
       return false;
     }
   }
 
   char *str = LCH_BufferGet(temp);
+  LCH_LOG_DEBUG("Field: %s", str);
   LCH_BufferDestroy(temp);
+  LCH_LOG_DEBUG("Field: %s", str);
   if (str == NULL) {
     return false;
   }
@@ -52,11 +55,13 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
       free(str);
       return false;
     }
+    LCH_LOG_DEBUG("Composed escaped field: \"%s\"", str);
   } else {
     if (!LCH_BufferAppend(buffer, str)) {
       free(str);
       return false;
     }
+    LCH_LOG_DEBUG("Composed non-escaped field: %s", str);
   }
   free(str);
   return true;
@@ -73,12 +78,13 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
       if (!LCH_BufferAppend(buffer, ",")) {
         return false;
       }
-
-      LCH_List *field = (LCH_List *)LCH_ListGet(record, i);
-      if (!ComposeField(buffer, field)) {
-        return false;
-      }
+      LCH_LOG_DEBUG("Added field separator");
     }
+    char *field = (char *)LCH_ListGet(record, i);
+    if (!ComposeField(buffer, field)) {
+      return false;
+    }
+    LCH_LOG_DEBUG("Added field");
   }
 
   return true;
@@ -101,6 +107,7 @@ LCH_Buffer *LCH_ComposeCSV(const LCH_List *const table) {
         LCH_BufferDestroy(buffer);
         return NULL;
       }
+      LCH_LOG_DEBUG("Added record separator");
     }
 
     LCH_List *record = (LCH_List *)LCH_ListGet(table, i);
@@ -109,6 +116,7 @@ LCH_Buffer *LCH_ComposeCSV(const LCH_List *const table) {
       LCH_BufferDestroy(buffer);
       return NULL;
     }
+    LCH_LOG_DEBUG("Added record");
   }
 
   return buffer;

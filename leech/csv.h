@@ -1,8 +1,9 @@
 #ifndef _LEECH_CSV_H
 #define _LEECH_CSV_H
 
+#include "buffer.h"
 #include "list.h"
 
-static bool ComposeField(LCH_Buffer *const buffer, const char *const field);
+LCH_Buffer *LCH_ComposeCSV(const LCH_List *const table);
 
 #endif  // _LEECH_CSV_H

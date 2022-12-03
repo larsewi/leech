@@ -92,9 +92,12 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   item->destroy = destroy;
 
   // Insert item into buffer
-  self->buffer[self->length] = item;
-  LCH_LOG_DEBUG("Appended list element to index %d", self->length);
+  const size_t index = self->length;
+  self->buffer[index] = item;
   self->length += 1;
+  LCH_LOG_DEBUG(
+      "Appended list element to index %zu. New list buffer capacity %zu/%zu",
+      index, self->length, self->capacity);
 
   return true;
 }
