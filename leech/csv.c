@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "utils.h"
 #include "debug_messenger.h"
 
 #define TEXTDATA(ch)                                           \
@@ -21,18 +22,18 @@ typedef enum State {
   ERROR,
 } State;
 
-LCH_List *LCH_ParseCSV(const char *const str) {
+LCH_List *LCH_ParseCSV(const char *str) {
   assert(str != NULL);
 
   LCH_List *table = NULL;
   LCH_List *record = NULL;
   LCH_Buffer *field = NULL;
+
   State state = START_TABLE;
   bool escaped = false;
+  const char *cursor = str;
 
-  size_t i = 0;
-  const size_t length = strlen(str);
-  while (i < length) {
+  while (*cursor != '\0') {
     switch (state) {
       case START_TABLE: {
         table = LCH_ListCreate();
@@ -46,18 +47,20 @@ LCH_List *LCH_ParseCSV(const char *const str) {
 
       case START_FIELD: {
         field = LCH_BufferCreate();
-        escaped = (str[i] == ' ');
+        if (*cursor == ' ') {
+          ++cursor;
+          break;
+        }
         state = (field != NULL) ? PROCESS_FIELD : ERROR;
       } break;
 
       case PROCESS_FIELD: {
-        char ch = str[i];
-        if (!escaped && ch == ',') {
+        if (!escaped && *cursor == ',') {
           state = END_FIELD;
           break;
         }
 
-        if (!TEXTDATA(ch)) {
+        if (!TEXTDATA(*cursor)) {
           escaped = true;
         }
       };

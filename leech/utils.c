@@ -53,7 +53,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   return list;
 }
 
-bool LCH_StartsWith(const char *const self, const char *const substr) {
+bool LCH_StringStartsWith(const char *const self, const char *const substr) {
   assert(self != NULL);
   assert(substr != NULL);
 
@@ -64,6 +64,29 @@ bool LCH_StartsWith(const char *const self, const char *const substr) {
     }
   }
   return true;
+}
+
+char *LCH_StringStrip(char *self) {
+  assert(self != NULL);
+
+  size_t start = 0, end = 0, cursor = 0;
+  while (self[cursor] != '\0') {
+    if (self[cursor] == ' ') {
+      if (start == cursor) {
+        ++start;
+      }
+    } else {
+      end = cursor + 1;
+    }
+    ++cursor;
+  }
+  LCH_LOG_DEBUG("strlen: %zu", strlen(self));
+  LCH_LOG_DEBUG("Start: %zu, end: %zu", start, end);
+  LCH_LOG_DEBUG("Dest: %p, src: %p, n: %zu", self, self + start, end - start);
+
+  self = (char *)memmove((void *)self, (void *)(self + start), end - start);
+  self[end - start] = '\0';
+  return self;
 }
 
 // bool LCH_FileWriteCSVField(FILE *const file, const char *const field) {
