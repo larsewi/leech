@@ -17,6 +17,8 @@
  * - The final line need not contain a newline sequence. This would NOT be
  *   interpreted as an additional empty record */
 
-LCH_Buffer *LCH_ComposeCSV(const LCH_List *const table);
+LCH_List *LCH_ParseCSV(const char *str);
+
+LCH_Buffer *LCH_ComposeCSV(const LCH_List *table);
 
 #endif  // _LEECH_CSV_H

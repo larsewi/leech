@@ -53,6 +53,19 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   return list;
 }
 
+bool LCH_StartsWith(const char *const self, const char *const substr) {
+  assert(self != NULL);
+  assert(substr != NULL);
+
+  size_t length = strlen(substr);
+  for (size_t i = 0; i < length; i++) {
+    if (self[i] != substr[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // bool LCH_FileWriteCSVField(FILE *const file, const char *const field) {
 //   assert(file != NULL);
 //   assert(field != NULL);

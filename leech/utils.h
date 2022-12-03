@@ -15,4 +15,6 @@
  */
 LCH_List *LCH_SplitString(const char *str, const char *del);
 
+bool LCH_StartsWith(const char *self, const char *substr);
+
 #endif  // _LEECH_UTILS_H
