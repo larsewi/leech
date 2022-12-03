@@ -51,29 +51,23 @@ void LCH_LogMessage(unsigned char severity, const char *format, ...) {
 void LCH_DebugMessengerCallbackDefault(unsigned char severity,
                                        const char *message) {
   assert(message != NULL);
-  int rc = 0;
   switch (severity) {
     case LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT:
-      rc =
-          fprintf(stdout, LCH_COLOR_BLUE "D" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stdout, LCH_COLOR_BLUE "D" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT:
-      rc =
-          fprintf(stdout, LCH_COLOR_CYAN "V" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stdout, LCH_COLOR_CYAN "V" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_INFO_BIT:
-      rc = fprintf(stdout, LCH_COLOR_GREEN "I" LCH_COLOR_RESET ": %s\n",
-                   message);
+      fprintf(stdout, LCH_COLOR_GREEN "I" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT:
-      rc = fprintf(stdout, LCH_COLOR_YELLOW "W" LCH_COLOR_RESET ": %s\n",
-                   message);
+      fprintf(stdout, LCH_COLOR_YELLOW "W" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT:
-      rc = fprintf(stderr, LCH_COLOR_RED "E" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stderr, LCH_COLOR_RED "E" LCH_COLOR_RESET ": %s\n", message);
       break;
     default:
       break;
   }
-  assert(rc >= 0);
 }
