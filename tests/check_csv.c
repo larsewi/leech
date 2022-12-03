@@ -8,9 +8,9 @@
 
 START_TEST(test_LCH_ComposeCSV) {
   char *data[][LCH_BUFFER_SIZE] = {
-      {"firstname", "lastname", "born"}, {"Paul", "McCartney", "1942"},
-      {"Ringo", "Starr", "1940"},        {"John", "Lennon", "1940"},
-      {"George", "Harrison", "1943"},
+      {"first name", "lastname", "born"}, {"Paul", " McCar\ttney", " 1942 \t"},
+      {"Ri\"ngo", "Starr", "1940"},       {"John", "Lennon  ", "1940"},
+      {"George", "Harr\r\nison", "1943"},
   };
 
   LCH_List *table = LCH_ListCreate();
@@ -37,11 +37,11 @@ START_TEST(test_LCH_ComposeCSV) {
   ck_assert_ptr_nonnull(actual);
 
   char expected[] =
-      "firstname,lastname,born\r\n"
-      "Paul,McCartney,1942\r\n"
-      "Ringo,Starr,1940\r\n"
-      "John,Lennon,1940\r\n"
-      "George,Harrison,1943";
+      "first name,lastname,born\r\n"
+      "Paul,\" McCar\ttney\",\" 1942 \t\"\r\n"
+      "\"Ri\"\"ngo\",Starr,1940\r\n"
+      "John,\"Lennon  \",1940\r\n"
+      "George,\"Harr\r\nison\",1943";
 
   ck_assert_str_eq(expected, actual);
   LCH_ListDestroy(table);

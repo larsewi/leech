@@ -1,6 +1,7 @@
 #include "csv.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <string.h>
 
 #include "debug_messenger.h"
@@ -20,8 +21,11 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
     return false;
   }
 
-  bool escape = false;
   const size_t length = strlen(field);
+
+  /* Fields starting with or ending with a space should be escaped */
+  bool escape = length > 0 && (field[0] == ' ' || field[length - 1] == ' ');
+
   for (size_t i = 0; i < length; i++) {
     if (!TEXTDATA(field[i])) {
       escape = true;
@@ -43,9 +47,7 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
   }
 
   char *str = LCH_BufferGet(temp);
-  LCH_LOG_DEBUG("Field: %s", str);
   LCH_BufferDestroy(temp);
-  LCH_LOG_DEBUG("Field: %s", str);
   if (str == NULL) {
     return false;
   }
