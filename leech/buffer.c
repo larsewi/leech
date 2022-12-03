@@ -117,7 +117,8 @@ char *LCH_BufferGet(LCH_Buffer *self) {
   assert(self->buffer != NULL);
   char *str = strdup(self->buffer);
   if (str == NULL) {
-    LCH_LOG_ERROR("Failed to get string from string buffer: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to get string from string buffer: %s",
+                  strerror(errno));
   }
   return false;
 }

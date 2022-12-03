@@ -6,13 +6,13 @@
 #include "buffer.h"
 #include "debug_messenger.h"
 
-#define TEXTDATA(ch) ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || (ch >= 0x2D && ch <= 0x7E))
-
+#define TEXTDATA(ch)                                           \
+  ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \
+   (ch >= 0x2D && ch <= 0x7E))
 
 LCH_List *LCH_ParseCSV(const char *const str) { assert(str != NULL); }
 
-static bool ComposeField(LCH_Buffer *const buffer,
-                         const char *const field) {
+static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
   assert(buffer != NULL);
   assert(field != NULL);
 
