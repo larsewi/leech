@@ -3,8 +3,8 @@
 
 typedef struct LCH_Instance LCH_Instance;
 typedef struct LCH_InstanceCreateInfo {
-    char *instanceID;
-    char *workDir;
+  char *instanceID;
+  char *workDir;
 } LCH_InstanceCreateInfo;
 
 LCH_Instance *LCH_InstanceCreate(

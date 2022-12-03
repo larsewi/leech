@@ -8,19 +8,19 @@
 #define LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT (1 << 4)
 
 #define LCH_LOG_DEBUG(...) \
-    LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT, __VA_ARGS__)
+  LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT, __VA_ARGS__)
 #define LCH_LOG_VERBOSE(...) \
-    LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT, __VA_ARGS__)
+  LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT, __VA_ARGS__)
 #define LCH_LOG_INFO(...) \
-    LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_INFO_BIT, __VA_ARGS__)
+  LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_INFO_BIT, __VA_ARGS__)
 #define LCH_LOG_WARNING(...) \
-    LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT, __VA_ARGS__)
+  LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT, __VA_ARGS__)
 #define LCH_LOG_ERROR(...) \
-    LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT, __VA_ARGS__)
+  LCH_LogMessage(LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT, __VA_ARGS__)
 
 typedef struct LCH_DebugMessengerInitInfo {
-    unsigned char severity;
-    void (*messageCallback)(unsigned char, const char *);
+  unsigned char severity;
+  void (*messageCallback)(unsigned char, const char *);
 } LCH_DebugMessengerInitInfo;
 
 void LCH_DebugMessengerInit(const LCH_DebugMessengerInitInfo *const initInfo);
