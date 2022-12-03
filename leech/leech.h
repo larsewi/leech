@@ -7,4 +7,4 @@
 #include "table.h"
 #include "utils.h"
 
-#endif // _LEECH_LEECH_H
+#endif  // _LEECH_LEECH_H

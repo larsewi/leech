@@ -55,4 +55,4 @@ void *LCH_DictGet(const LCH_Dict *self, const char *key);
  */
 void LCH_DictDestroy(LCH_Dict *self);
 
-#endif // _LEECH_DICT_H
+#endif  // _LEECH_DICT_H

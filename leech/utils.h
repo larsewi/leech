@@ -15,4 +15,4 @@
  */
 LCH_List *LCH_SplitString(const char *str, const char *del);
 
-#endif // _LEECH_UTILS_H
+#endif  // _LEECH_UTILS_H

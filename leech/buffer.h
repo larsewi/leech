@@ -15,4 +15,4 @@ char *LCH_BufferGet(LCH_Buffer *self);
 
 void LCH_BufferDestroy(LCH_Buffer *self);
 
-#endif // _LEECH_BUFFER_H
+#endif  // _LEECH_BUFFER_H

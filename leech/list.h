@@ -44,4 +44,4 @@ void *LCH_ListGet(const LCH_List *self, size_t index);
  */
 void LCH_ListDestroy(LCH_List *self);
 
-#endif // _LEECH_LIST_H
+#endif  // _LEECH_LIST_H

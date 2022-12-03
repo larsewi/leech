@@ -8,9 +8,9 @@ START_TEST(Basic) { ck_assert(1); }
 END_TEST
 
 Suite *CSVSuite(void) {
-  Suite *s = suite_create("csv");
-  TCase *tc = tcase_create("Basic");
-  tcase_add_test(tc, Basic);
-  suite_add_tcase(s, tc);
-  return s;
+    Suite *s = suite_create("csv");
+    TCase *tc = tcase_create("Basic");
+    tcase_add_test(tc, Basic);
+    suite_add_tcase(s, tc);
+    return s;
 }

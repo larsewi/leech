@@ -11,4 +11,4 @@
 
 #define UNUSED(x) (void)x
 
-#endif // _LEECH_DEFINITIONS_H
+#endif  // _LEECH_DEFINITIONS_H

@@ -10,4 +10,4 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator);
 bool LCH_TableWriteCallbackCSV(const char *const locator,
                                const LCH_List *const table);
 
-#endif // _LEECH_CSV_H
+#endif  // _LEECH_CSV_H
