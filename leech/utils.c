@@ -80,9 +80,6 @@ char *LCH_StringStrip(char *self) {
     }
     ++cursor;
   }
-  LCH_LOG_DEBUG("strlen: %zu", strlen(self));
-  LCH_LOG_DEBUG("Start: %zu, end: %zu", start, end);
-  LCH_LOG_DEBUG("Dest: %p, src: %p, n: %zu", self, self + start, end - start);
 
   self = (char *)memmove((void *)self, (void *)(self + start), end - start);
   self[end - start] = '\0';
