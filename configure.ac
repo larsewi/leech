@@ -16,8 +16,9 @@ AC_ARG_ENABLE(debug,
               [debug=no])
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
-AM_PROG_AR
 AC_PROG_CC
+AM_PROG_AR
+AC_PROG_RANLIB
 
 LT_INIT
 
