@@ -1,4 +1,4 @@
-AC_INIT([leech],[0.1.0],[larserikwik@gmail.com])
+AC_INIT([leech],[0.1.0])
 
 AC_CONFIG_SRCDIR([leech/leech.c])
 
@@ -11,7 +11,7 @@ AM_PATH_CHECK
 # PKG_CHECK_MODULES([CHECK], [check >= 0.15.2])
 
 AC_ARG_ENABLE(debug,
-              AS_HELP_STRING([--enable-debug], [Enable debugging]),
+              AS_HELP_STRING([--enable-debug], [enable debugging]),
               [debug=$enableval],
               [debug=no])
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
