@@ -109,9 +109,3 @@ m4/lt~obsolete.m4
 Makefile
 
 build
-
-tests/.libs/*
-tests/*.log
-tests/*.trs
-tests/unit_test
-doofus/doofus
