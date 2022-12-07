@@ -9,7 +9,6 @@ lib_LTLIBRARIES = \
         libleech_psql.la
 
 libleech_la_SOURCES = \
-        leech.c \
         debug_messenger.c \
         instance.c \
         utils.c \

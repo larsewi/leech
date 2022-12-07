@@ -1,14 +1,12 @@
 AC_INIT([leech],[0.1.0])
 
-AC_CONFIG_SRCDIR([leech/leech.c])
+AC_CONFIG_SRCDIR([leech/leech.h])
 
 AC_CONFIG_MACRO_DIRS([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 AM_PATH_CHECK
-
-# PKG_CHECK_MODULES([CHECK], [check >= 0.15.2])
 
 AC_ARG_ENABLE(debug,
               AS_HELP_STRING([--enable-debug], [enable debugging]),
@@ -18,7 +16,6 @@ AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 AC_PROG_CC
 AM_PROG_AR
-AC_PROG_RANLIB
 
 LT_INIT
 
