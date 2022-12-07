@@ -73,6 +73,7 @@ autom4te.cache
 /config.cache
 /config.guess
 /config.h.in
+/config.h.in~
 /config.log
 /config.status
 /config.sub
@@ -106,6 +107,8 @@ m4/lt~obsolete.m4
 # can automatically generate from config.status script
 # (which is called by configure script))
 Makefile
+
+build
 
 tests/.libs/*
 tests/*.log

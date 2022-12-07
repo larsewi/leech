@@ -1,4 +1,4 @@
-AC_INIT([leech],[0.1.0])
+AC_INIT([leech],[0.1.0],[larserikwik@gmail.com])
 
 AC_CONFIG_SRCDIR([leech/leech.c])
 
@@ -21,6 +21,7 @@ AC_PROG_CC
 
 LT_INIT
 
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile leech/Makefile doofus/Makefile tests/Makefile])
 
 AC_OUTPUT
