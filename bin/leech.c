@@ -12,7 +12,11 @@
 #define WORK_DIR ".leech/"
 #define MAX_EVENTS 10
 
-#define OPTIONS \
+#define OPTIONS "urwDVvh"
+#define OPTIONS_DESC \
+    "-u  unique identifier\n" \
+    "-r  read locator\n" \
+    "-w  write locator\n" \
     "-D  enable debug messages\n" \
     "-V  enable verbose messages\n" \
     "-v  print version number\n" \
@@ -44,7 +48,7 @@ int main(int argc, char *argv[]) {
 
 static void CheckOptions(int argc, char *argv[]) {
   int opt;
-  while ((opt = getopt(argc, argv, "urwDVvh")) != -1) {
+  while ((opt = getopt(argc, argv, OPTIONS)) != -1) {
     switch (opt) {
       case 'u':
         UNIQUE_ID = optarg;
@@ -65,7 +69,7 @@ static void CheckOptions(int argc, char *argv[]) {
         printf("%s\n", PACKAGE_STRING);
         exit(EXIT_SUCCESS);
       case 'h':
-        printf("%s:\n\n%s\n", PACKAGE_STRING, OPTIONS);
+        printf("%s:\n\n%s\n", PACKAGE_STRING, OPTIONS_DESC);
         exit(EXIT_SUCCESS);
       default:
         exit(EXIT_FAILURE);
