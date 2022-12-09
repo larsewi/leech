@@ -33,7 +33,7 @@ START_TEST(test_LCH_Dict) {
 END_TEST
 
 Suite *DictSuite(void) {
-  Suite *s = suite_create("dict");
+  Suite *s = suite_create("dict.c");
   {
     TCase *tc = tcase_create("LCH_Dict*");
     tcase_add_test(tc, test_LCH_Dict);

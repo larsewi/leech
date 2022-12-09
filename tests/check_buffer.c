@@ -35,7 +35,7 @@ START_TEST(test_LCH_Buffer) {
 END_TEST
 
 Suite *BufferSuite(void) {
-  Suite *s = suite_create("buffer");
+  Suite *s = suite_create("buffer.c");
   TCase *tc = tcase_create("LCH_Buffer*");
   tcase_add_test(tc, test_LCH_Buffer);
   suite_add_tcase(s, tc);

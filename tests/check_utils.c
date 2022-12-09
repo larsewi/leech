@@ -30,7 +30,7 @@ START_TEST(test_LCH_SplitString) {}
 END_TEST
 
 Suite *UtilsSuite(void) {
-  Suite *s = suite_create("utils");
+  Suite *s = suite_create("utils.c");
   {
     TCase *tc = tcase_create("LCH_SplitString");
     tcase_add_test(tc, test_LCH_SplitString);

@@ -51,7 +51,7 @@ START_TEST(test_LCH_ComposeCSV) {
 END_TEST
 
 Suite *CSVSuite(void) {
-  Suite *s = suite_create("CSV");
+  Suite *s = suite_create("csv.c");
   TCase *tc = tcase_create("Compose");
   tcase_add_test(tc, test_LCH_ComposeCSV);
   suite_add_tcase(s, tc);

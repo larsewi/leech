@@ -27,7 +27,7 @@ START_TEST(test_LCH_List) {
 END_TEST
 
 Suite *ListSuite(void) {
-  Suite *s = suite_create("list");
+  Suite *s = suite_create("list.c");
   {
     TCase *tc = tcase_create("LCH_List*");
     tcase_add_test(tc, test_LCH_List);
