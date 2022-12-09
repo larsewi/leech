@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 
-noinst_PROGRAMS = leech
+bin_PROGRAMS = leech
 leech_SOURCES = leech.c
 leech_LDADD = \
     $(top_builddir)/lib/libleech.la \
