@@ -9,8 +9,8 @@
 #include "table.h"
 
 struct LCH_Instance {
-  char *instanceID;
-  char *workDir;
+  const char *instanceID;
+  const char *workDir;
   LCH_Table **tables;
   size_t numTables;
 };
@@ -39,8 +39,6 @@ void LCH_InstanceDestroy(LCH_Instance *instance) {
   if (instance == NULL) {
     return;
   }
-  free(instance->instanceID);
-  free(instance->workDir);
   for (size_t i = 0; i < instance->numTables; i++) {
     LCH_TableDestroy(instance->tables[i]);
   }

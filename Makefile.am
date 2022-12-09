@@ -1,8 +1,8 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = leech doofus . tests
+SUBDIRS = lib bin . tests
 
 format:
-	clang-format -i leech/*.c leech/*.h doofus/*.c tests/*.c
+	clang-format -i lib/*.c lib/*.h bin/*.c tests/*.c
 
 super-clean:
 	git clean -fxd

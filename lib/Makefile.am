@@ -1,7 +1,7 @@
 include_HEADERS = \
-        $(top_builddir)/leech/leech.h \
-        $(top_builddir)/leech/leech_csv.h \
-        $(top_builddir)/leech/leech_psql.h
+        $(top_builddir)/lib/leech.h \
+        $(top_builddir)/lib/leech_csv.h \
+        $(top_builddir)/lib/leech_psql.h
 
 lib_LTLIBRARIES = \
         libleech.la \

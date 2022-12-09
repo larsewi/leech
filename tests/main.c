@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../leech/debug_messenger.h"
+#include "../lib/debug_messenger.h"
 
 static void SetupDebugMessenger(void);
 

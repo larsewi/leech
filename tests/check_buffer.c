@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../leech/buffer.h"
-#include "../leech/debug_messenger.h"
+#include "../lib/buffer.h"
+#include "../lib/debug_messenger.h"
 
 START_TEST(test_LCH_Buffer) {
   LCH_Buffer *buffer = LCH_BufferCreate();

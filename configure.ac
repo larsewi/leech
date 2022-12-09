@@ -1,6 +1,6 @@
 AC_INIT([leech],[0.1.0])
 
-AC_CONFIG_SRCDIR([leech/leech.h])
+AC_CONFIG_SRCDIR([lib/leech.h])
 
 AC_CONFIG_MACRO_DIRS([m4])
 
@@ -20,6 +20,6 @@ AM_PROG_AR
 LT_INIT
 
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile leech/Makefile doofus/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
 
 AC_OUTPUT

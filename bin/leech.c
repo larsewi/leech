@@ -1,7 +1,9 @@
 #include <assert.h>
+#include <config.h>
 #include <errno.h>
-#include <leech.h>
 #include <leech_csv.h>
+#include <leech_psql.h>
+#include <leech.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,8 +12,15 @@
 #define WORK_DIR ".leech/"
 #define MAX_EVENTS 10
 
-static char *UNIQUE_ID = NULL;
-static bool SHOULD_RUN = true;
+#define OPTIONS \
+    "-D  enable debug messages\n" \
+    "-V  enable verbose messages\n" \
+    "-v  print version number\n" \
+    "-h  print help message\n"
+
+static const char *READ_LOCATOR = NULL;
+static const char *WRITE_LOCATOR = NULL;
+static const char *UNIQUE_ID = NULL;
 static bool LOG_DEBUG = false;
 static bool LOG_VERBOSE = false;
 
@@ -35,26 +44,32 @@ int main(int argc, char *argv[]) {
 
 static void CheckOptions(int argc, char *argv[]) {
   int opt;
-  while ((opt = getopt(argc, argv, "vdh")) != -1) {
+  while ((opt = getopt(argc, argv, "urwDVvh")) != -1) {
     switch (opt) {
-      case 'd':
+      case 'u':
+        UNIQUE_ID = optarg;
+        break;
+      case 'r':
+        READ_LOCATOR = optarg;
+        break;
+      case 'w':
+        WRITE_LOCATOR = optarg;
+        break;
+      case 'D':
         LOG_DEBUG = true;
         break;
-      case 'v':
+      case 'V':
         LOG_VERBOSE = true;
         break;
+      case 'v':
+        printf("%s\n", PACKAGE_STRING);
+        exit(EXIT_SUCCESS);
       case 'h':
-        printf("usage: %s UNIQUE_ID [-d] [-v] [-h]\n", argv[0]);
+        printf("%s:\n\n%s\n", PACKAGE_STRING, OPTIONS);
         exit(EXIT_SUCCESS);
       default:
         exit(EXIT_FAILURE);
     }
-  }
-  if (optind < argc) {
-    UNIQUE_ID = argv[optind++];
-  } else {
-    fprintf(stderr, "Missing required argument 'UNIQUE_ID'\n");
-    exit(EXIT_FAILURE);
   }
 }
 
@@ -77,59 +92,29 @@ static void SetupDebugMessenger(void) {
 static LCH_Instance *SetupInstance(void) {
   LCH_Instance *instance = NULL;
   {  // Create instance
-    char *instanceID = strdup(UNIQUE_ID);
-    if (instanceID == NULL) {
-      LCH_LOG_ERROR("strdup: %s", strerror(errno));
-      return NULL;
-    }
-
-    char *workDir = strdup(WORK_DIR);
-    if (workDir == NULL) {
-      LCH_LOG_ERROR("strdup: %s", strerror(errno));
-      free(instanceID);
-      return NULL;
-    }
-
     LCH_InstanceCreateInfo createInfo = {
-        .instanceID = instanceID,
-        .workDir = workDir,
+        .instanceID = UNIQUE_ID,
+        .workDir = WORK_DIR,
     };
 
     instance = LCH_InstanceCreate(&createInfo);
     if (instance == NULL) {
-      LCH_LOG_ERROR("LCH_InstanceCreate: %s", strerror(errno));
-      free(workDir);
-      free(instanceID);
+      LCH_LOG_ERROR("LCH_InstanceCreate");
       return NULL;
     }
   }
 
   {  // Add CSV table
-    char *readLocator = strdup("client/example.csv");
-    if (readLocator == NULL) {
-      LCH_LOG_ERROR("strdup: %s", strerror(errno));
-      return NULL;
-    }
-
-    char *writeLocator = strdup("server/example.csv");
-    if (writeLocator == NULL) {
-      LCH_LOG_ERROR("strdup: %s", strerror(errno));
-      free(readLocator);
-      return NULL;
-    }
-
     LCH_TableCreateInfo createInfo = {
-        .readLocator = readLocator,
+        .readLocator = READ_LOCATOR,
         .readCallback = LCH_TableReadCallbackCSV,
-        .writeLocator = writeLocator,
+        .writeLocator = WRITE_LOCATOR,
         .writeCallback = LCH_TableWriteCallbackCSV,
     };
 
     LCH_Table *table = LCH_TableCreate(&createInfo);
     if (table == NULL) {
-      free(writeLocator);
-      free(readLocator);
-      LCH_InstanceDestroy(instance);
+      LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
