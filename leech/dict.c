@@ -82,8 +82,6 @@ static bool DictCapacity(LCH_Dict *const self) {
       index = (index + 1) % new_capacity;
     }
     new_buffer[index] = item;
-    LCH_LOG_DEBUG("Moved dict element with key '%s' from index %d to index %d",
-                  item->key, i, index);
   }
 
   DictElement **old_buffer = self->buffer;
@@ -119,8 +117,6 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
     item->destroy(item->value);
     item->value = value;
     item->destroy = destroy;
-    LCH_LOG_DEBUG("Updated value of dict element with key '%s' at index %zu",
-                  key, index);
     return true;
   }
 
@@ -143,10 +139,6 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
 
   self->buffer[index] = item;
   self->length += 1;
-  LCH_LOG_DEBUG(
-      "Created dict entry with key '%s' at index %zu. New buffer "
-      "capacity %zu/%zu",
-      key, index, self->length, self->capacity);
 
   return true;
 }
@@ -159,12 +151,10 @@ bool LCH_DictHasKey(const LCH_Dict *const self, const char *const key) {
   size_t index = hash % self->capacity;
   while (self->buffer[index] != NULL) {
     if (strcmp(self->buffer[index]->key, key) == 0) {
-      LCH_LOG_DEBUG("Found dict entry with key '%s' at index %zu", key, index);
       return true;
     }
     index = (index + 1) % self->capacity;
   }
-  LCH_LOG_DEBUG("Did not find dict entry with key '%s'", key);
   return false;
 }
 
@@ -179,9 +169,6 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
     index = (index + 1) % self->capacity;
     assert(self->buffer[index] != NULL);
   }
-
-  LCH_LOG_DEBUG("Retreived entry from dict with key '%s' at index %zu", key,
-                index);
   return self->buffer[index]->value;
 }
 
@@ -201,8 +188,8 @@ void LCH_DictDestroy(LCH_Dict *self) {
       item->destroy(item->value);
     }
     free(item);
-    LCH_LOG_DEBUG("Destroyed buffer item at index %zu", i);
   }
   free(self->buffer);
   free(self);
+  LCH_LOG_DEBUG("Destroyed dict");
 }

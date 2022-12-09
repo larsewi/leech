@@ -21,7 +21,8 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
       assert(to > from);
       char *s = strndup(str + from, to - from);
       if (s == NULL) {
-        LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+        LCH_LOG_ERROR("Failed to allocate memory during string split: %s",
+                      strerror(errno));
         LCH_ListDestroy(list);
         return NULL;
       }

@@ -99,10 +99,6 @@ bool LCH_BufferAppend(LCH_Buffer *self, const char *format, ...) {
   }
 
   self->length += (size_t)length;
-  LCH_LOG_DEBUG(
-      "Appended string of length %d to string buffer. "
-      "New string buffer capacity %zu/%zu",
-      length, self->length, self->capacity);
   return true;
 }
 
@@ -125,4 +121,5 @@ char *LCH_BufferGet(LCH_Buffer *self) {
 void LCH_BufferDestroy(LCH_Buffer *self) {
   free(self->buffer);
   free(self);
+  LCH_LOG_DEBUG("Destroyed string buffer");
 }
