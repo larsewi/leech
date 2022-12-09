@@ -87,8 +87,15 @@ END_TEST
 
 Suite *CSVSuite(void) {
   Suite *s = suite_create("csv.c");
-  TCase *tc = tcase_create("Compose");
-  tcase_add_test(tc, test_LCH_ComposeCSV);
-  suite_add_tcase(s, tc);
+  {
+    TCase *tc = tcase_create("Compose");
+    tcase_add_test(tc, test_LCH_ComposeCSV);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("Parse");
+    tcase_add_test(tc, test_LCH_ParseCSV);
+    suite_add_tcase(s, tc);
+  }
   return s;
 }
