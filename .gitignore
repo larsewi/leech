@@ -109,3 +109,8 @@ m4/lt~obsolete.m4
 Makefile
 
 build
+**/doofus
+**/unit_test
+*.log
+*.trs
+config.h
