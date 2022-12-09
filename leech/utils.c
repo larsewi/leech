@@ -66,12 +66,12 @@ bool LCH_StringStartsWith(const char *const self, const char *const substr) {
   return true;
 }
 
-char *LCH_StringStrip(char *self) {
-  assert(self != NULL);
+char *LCH_StringStrip(char *str, const char* charset) {
+  assert(str != NULL);
 
   size_t start = 0, end = 0, cursor = 0;
-  while (self[cursor] != '\0') {
-    if (self[cursor] == ' ') {
+  while (str[cursor] != '\0') {
+    if (strchr(charset, str[cursor]) != NULL) {
       if (start == cursor) {
         ++start;
       }
@@ -81,89 +81,7 @@ char *LCH_StringStrip(char *self) {
     ++cursor;
   }
 
-  self = (char *)memmove((void *)self, (void *)(self + start), end - start);
-  self[end - start] = '\0';
-  return self;
+  str = (char *)memmove((void *)str, (void *)(str + start), end - start);
+  str[end - start] = '\0';
+  return str;
 }
-
-// bool LCH_FileWriteCSVField(FILE *const file, const char *const field) {
-//   assert(file != NULL);
-//   assert(field != NULL);
-
-//   bool escaped = false;
-//   for (size_t i = 0; i < strlen(field); i++) {
-//     if (!TEXT_DATA(field[i])) {
-//       escaped = true;
-//       break;
-//     }
-//   }
-
-//   if (escaped) {
-//     if (fputc('"', file) == EOF) {
-//       return false;
-//     }
-//   }
-
-//   for (size_t i = 0; i < strlen(field); i++) {
-//     if (field[i] == '"') {
-//       if (fputc('"', file) == EOF) {
-//         return false;
-//       }
-//     }
-
-//     if (fputc(field[i], file) == EOF) {
-//       return false;
-//     }
-//   }
-
-//   if (escaped) {
-//     if (fputc('"', file) == EOF) {
-//       return false;
-//     }
-//   }
-
-//   return true;
-// }
-
-// bool LCH_FileWriteCSVRecord(FILE *const file, const LCH_List *const record) {
-//   assert(file != NULL);
-//   assert(record != NULL);
-
-//   const size_t length = LCH_ListLength(record);
-//   for (int i = 0; i < length; i++) {
-//     if (i > 0) {
-//       if (fputc(',', file) == EOF) {
-//         return false;
-//       }
-//     }
-
-//     const char *const field = (char *)LCH_ListGet(record, i);
-//     if (!LCH_FileWriteCSVField(file, field)) {
-//       return false;
-//     }
-//   }
-
-//   return true;
-// }
-
-// bool LCH_FileWriteCSVTable(FILE *const file, const LCH_List *const table) {
-//   assert(file != NULL);
-//   assert(table != NULL);
-
-//   const size_t length = LCH_ListLength(table);
-//   for (size_t i = 0; i < length; i++) {
-//     if (i > 0) {
-//       char crlf[] = "\r\n";
-//       if (fputs(crlf, file) == EOF) {
-//         return false;
-//       }
-//     }
-
-//     const LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
-//     if (!LCH_FileWriteCSVRecord(file, record)) {
-//       return false;
-//     }
-//   }
-
-//   return true;
-// }

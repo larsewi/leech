@@ -14,15 +14,15 @@ END_TEST
 
 START_TEST(test_LCH_StringStrip) {
   char test1[] = "Hello World";
-  ck_assert_str_eq(LCH_StringStrip(test1), "Hello World");
-  char test2[] = " Hello World";
-  ck_assert_str_eq(LCH_StringStrip(test2), "Hello World");
-  char test3[] = "Hello World ";
-  ck_assert_str_eq(LCH_StringStrip(test3), "Hello World");
+  ck_assert_str_eq(LCH_StringStrip(test1, " "), "Hello World");
+  char test2[] = " \tHello\tWorld";
+  ck_assert_str_eq(LCH_StringStrip(test2, " \t"), "Hello\tWorld");
+  char test3[] = "Hello World\t";
+  ck_assert_str_eq(LCH_StringStrip(test3, "\t "), "Hello World");
   char test4[] = " Hello World ";
-  ck_assert_str_eq(LCH_StringStrip(test4), "Hello World");
+  ck_assert_str_eq(LCH_StringStrip(test4, " "), "Hello World");
   char test5[] = "   Hello World     ";
-  ck_assert_str_eq(LCH_StringStrip(test5), "Hello World");
+  ck_assert_str_eq(LCH_StringStrip(test5, " "), "Hello World");
 }
 END_TEST
 
