@@ -66,7 +66,7 @@ bool LCH_StringStartsWith(const char *const self, const char *const substr) {
   return true;
 }
 
-char *LCH_StringStrip(char *str, const char* charset) {
+char *LCH_StringStrip(char *str, const char *charset) {
   assert(str != NULL);
 
   size_t start = 0, end = 0, cursor = 0;

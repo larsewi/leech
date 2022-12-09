@@ -8,9 +8,11 @@
 
 START_TEST(test_LCH_ComposeCSV) {
   char *data[][LCH_BUFFER_SIZE] = {
-      {"first name", "lastname", "born"}, {"Paul", " McCar\ttney", " 1942 \t"},
-      {"Ri\"ngo", "Starr", "1940"},       {"John", "Lennon  ", "1940"},
-      {"George", "Harr\r\nison", "1943"},
+      {(char *)"first name", (char *)"lastname", (char *)"born"},
+      {(char *)"Paul", (char *)" McCar\ttney", (char *)" 1942 \t"},
+      {(char *)"Ri\"ngo", (char *)"Starr", (char *)"1940"},
+      {(char *)"John", (char *)"Lennon  ", (char *)"1940"},
+      {(char *)"George", (char *)"Harr\r\nison", (char *)"1943"},
   };
 
   LCH_List *table = LCH_ListCreate();
