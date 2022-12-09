@@ -50,6 +50,41 @@ START_TEST(test_LCH_ComposeCSV) {
 }
 END_TEST
 
+START_TEST(test_LCH_ParseCSV) {
+  char data[] =
+      "first name,lastname,born\r\n"
+      "Paul,\" McCar\ttney\",\" 1942 \t\"\r\n"
+      "\"Ri\"\"ngo\",Starr,1940\r\n"
+      "John,\"Lennon  \",1940\r\n"
+      "George,\"Harr\r\nison\",1943";
+
+  char *expected[][LCH_BUFFER_SIZE] = {
+      {(char *)"first name", (char *)"lastname", (char *)"born"},
+      {(char *)"Paul", (char *)" McCar\ttney", (char *)" 1942 \t"},
+      {(char *)"Ri\"ngo", (char *)"Starr", (char *)"1940"},
+      {(char *)"John", (char *)"Lennon  ", (char *)"1940"},
+      {(char *)"George", (char *)"Harr\r\nison", (char *)"1943"},
+  };
+
+  LCH_List *table = LCH_ParseCSV(data);
+  ck_assert_ptr_nonnull(table);
+
+  const size_t rows = LCH_ListLength(table);
+  for (size_t row = 0; row < rows; row++) {
+    LCH_List *record = (LCH_List *) LCH_ListGet(table, row);
+    ck_assert_ptr_nonnull(record);
+
+    const size_t cols = LCH_ListLength(record);
+    for (size_t col = 0; col < cols; col++) {
+      const char *const field = (char *) LCH_ListGet(record, col);
+      ck_assert_ptr_nonnull(field);
+
+      ck_assert_str_eq(expected[row][col], field);
+    }
+  }
+}
+END_TEST
+
 Suite *CSVSuite(void) {
   Suite *s = suite_create("csv.c");
   TCase *tc = tcase_create("Compose");

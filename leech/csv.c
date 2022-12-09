@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 #include "debug_messenger.h"
 #include "utils.h"
@@ -11,74 +12,223 @@
   ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \
    (ch >= 0x2D && ch <= 0x7E))
 
-typedef enum State {
-  START_TABLE,
-  START_RECORD,
-  START_FIELD,
-  PROCESS_FIELD,
-  PROCESS_ESCAPED,
-  END_FIELD,
-  END_RECORD,
-  END_TABLE,
-  ERROR,
-} State;
+typedef struct Parser {
+  const char *cursor;
+  size_t row;
+  size_t column;
+} Parser;
+
+// escaped = DQUOTE *(TEXTDATA / COMMA / CR / LF / 2DQUOTE) DQUOTE
+static char *ParseEscaped(Parser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+
+  // Remove leading double quote
+  assert(parser->cursor[0] == '"');
+  parser->cursor += 1;
+
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to create buffer for escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    return NULL;
+  }
+
+  while (parser->cursor[0] != '"' && !LCH_StringStartsWith(parser->cursor, "\"\"")) {
+    if (LCH_BufferAppend(buffer, "%c", parser->cursor[0])) {
+      LCH_LOG_ERROR("Failed to append character '%c' to buffer for escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+      LCH_BufferDestroy(buffer);
+      return NULL;
+    }
+    parser->cursor += (parser->cursor[0] == '"') ? 2 : 1;
+  }
+
+  // Remove trailing double quote
+  assert(parser->cursor[0] == '"');
+  parser->cursor += 1;
+
+  char *const field = LCH_BufferGet(buffer);
+  LCH_BufferDestroy(buffer);
+  if (field == NULL) {
+    LCH_LOG_ERROR("Failed to create string from buffer for escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+  }
+  return field;
+}
+
+// non-escaped = *TEXTDATA
+static char *ParseNonEscaped(Parser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to create buffer for non-escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    return NULL;
+  }
+
+  while (parser->cursor != '\0' && parser->cursor[0] != ',' && !LCH_StringStartsWith(parser->cursor, "\r\n")) {
+    if (TEXTDATA(parser->cursor[0])) {
+      if (!LCH_BufferAppend(buffer, "%c", parser->cursor[0])) {
+        LCH_LOG_ERROR("Failed to append character '%c' to buffer for non-escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+        LCH_BufferDestroy(buffer);
+      }
+    } else {
+      LCH_LOG_ERROR("Expected 0x20-21 / 0x23-2B / 0x2D-7E; found '%c' (Row %zu, Col %zu)");
+      LCH_BufferDestroy(buffer);
+    }
+  }
+
+  char *const field = LCH_BufferGet(buffer);
+  LCH_BufferDestroy(buffer);
+  if (field == NULL) {
+    LCH_LOG_ERROR("Failed to create string from buffer for non-escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    return NULL;
+  }
+
+  return field;
+}
+
+// field = escaped / non-escaped
+static char *ParseField(Parser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+
+  // Trim leading spaceses
+  while (parser->cursor[0] == ' ') {
+    parser->cursor += 1;
+  }
+
+  char *const field = (parser->cursor[0] == '"') ? ParseEscaped(parser) : ParseNonEscaped(parser);
+  if (field == NULL) {
+    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row, parser->cursor);
+    return NULL;
+  }
+
+  // Trim trailing spaceses
+  while (parser->cursor[0] == ' ') {
+    parser->cursor += 1;
+  }
+
+  return field;
+}
+
+// record = field *(COMMA field)
+static LCH_List *ParseRecord(Parser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+
+  LCH_List *const record = LCH_ListCreate();
+  if (record == NULL) {
+    LCH_LOG_ERROR("Failed to create record");
+    return NULL;
+  }
+
+  char *field = ParseField(parser);
+  if (field == NULL) {
+    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_ListDestroy(record);
+    return NULL;
+  }
+
+  if (!LCH_ListAppend(record, (void *)field, free)) {
+    LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)", field, parser->row, parser->column);
+    free(field);
+    LCH_ListDestroy(record);
+    return NULL;
+  }
+
+  while (parser->cursor[0] == ',') {
+    parser->column += 1;
+    parser->cursor += 1;
+
+    field = ParseField(parser);
+    if (field == NULL) {
+      LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row, parser->column);
+      LCH_ListDestroy(record);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(record, (void *)field, free)) {
+      LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)", field, parser->row, parser->column);
+      free(field);
+      LCH_ListDestroy(record);
+      return NULL;
+    }
+  }
+  return record;
+}
+
+// table = record *(CRLF record) [CRLF]
+static LCH_List *ParseTable(Parser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+
+  LCH_List *const table = LCH_ListCreate();
+  if (table == NULL) {
+    LCH_LOG_ERROR("Failed to create table");
+    return NULL;
+  }
+
+  LCH_List *record = ParseRecord(parser);
+  if (record == NULL) {
+    LCH_LOG_ERROR("Failed to parse record at (row %zu)", parser->row);
+    LCH_ListDestroy(table);
+    return NULL;
+  }
+
+  if (!LCH_ListAppend(table, (void *) record, LCH_ListDestroy)) {
+    LCH_LOG_ERROR("Failed append record to table");
+    LCH_ListDestroy(record);
+    LCH_ListDestroy(table);
+    return NULL;
+  }
+
+  while (LCH_StringStartsWith(parser->cursor, "\r\n")) {
+    parser->cursor += 2;
+
+    if (parser->cursor[0] == '\0') {
+      // This was just the optional trailing CRLF
+      break;
+    }
+
+    parser->row += 1;
+    parser->column = 1;
+
+    record = ParseRecord(parser);
+    if (record == NULL) {
+      LCH_LOG_ERROR("Failed to parse record at (row %zu)", parser->row);
+      LCH_ListDestroy(table);
+      return NULL;
+    }
+
+    if (LCH_ListAppend(table, record, LCH_ListDestroy)) {
+      LCH_LOG_ERROR("Failed append record to table");
+      LCH_ListDestroy(record);
+      LCH_ListDestroy(table);
+      return NULL;
+    }
+  }
+
+  if (parser->cursor[0] != '\n') {
+    LCH_LOG_ERROR("Expected EOF; found '%c' (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+    LCH_ListDestroy(table);
+    return NULL;
+  }
+
+  return table;
+}
 
 LCH_List *LCH_ParseCSV(const char *str) {
   assert(str != NULL);
 
-  LCH_List *table = NULL;
-  LCH_List *record = NULL;
-  LCH_Buffer *field = NULL;
+  Parser parser = {
+    .cursor = str,
+    .row = 1,
+    .column = 1,
+  };
 
-  State state = START_TABLE;
-  const char *cursor = str;
-
-  while (*cursor != '\0') {
-    switch (state) {
-      case START_TABLE: {
-        table = LCH_ListCreate();
-        state = (table != NULL) ? START_RECORD : ERROR;
-      } break;
-
-      case START_RECORD: {
-        record = LCH_ListCreate();
-        state = (record != NULL) ? START_FIELD : ERROR;
-      } break;
-
-      case START_FIELD: {
-        field = LCH_BufferCreate();
-        if (*cursor == '"') {
-          ++cursor;
-          state = (field != NULL) ? PROCESS_ESCAPED : ERROR;
-        } else {
-          state = (field != NULL) ? PROCESS_FIELD : ERROR;
-        }
-      } break;
-
-      case PROCESS_FIELD: {
-        if (*cursor == ',') {
-          state = END_FIELD;
-        }
-      };
-
-      case END_FIELD: {
-      };
-
-      case END_RECORD: {
-      };
-
-      case END_TABLE: {
-      };
-
-      case ERROR: {
-        LCH_LOG_ERROR("Failed to parse CSV");
-        return NULL;
-      };
-
-      default:
-        assert(false);
-        break;
-    }
+  LCH_List *const table = ParseTable(&parser);
+  if (table == NULL) {
+    LCH_LOG_ERROR("Failed to parse CSV");
   }
   return table;
 }
