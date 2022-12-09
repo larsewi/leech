@@ -71,12 +71,37 @@ START_TEST(test_LCH_ParseCSV) {
 
   const size_t rows = LCH_ListLength(table);
   for (size_t row = 0; row < rows; row++) {
-    LCH_List *record = (LCH_List *) LCH_ListGet(table, row);
+    LCH_List *record = (LCH_List *)LCH_ListGet(table, row);
     ck_assert_ptr_nonnull(record);
 
     const size_t cols = LCH_ListLength(record);
     for (size_t col = 0; col < cols; col++) {
-      const char *const field = (char *) LCH_ListGet(record, col);
+      const char *const field = (char *)LCH_ListGet(record, col);
+      ck_assert_ptr_nonnull(field);
+
+      ck_assert_str_eq(expected[row][col], field);
+    }
+  }
+}
+END_TEST
+
+START_TEST(test_LCH_ParseCSVTrailingCRLF) {
+  char data[] = "first name,lastname,born\r\n";
+
+  char *expected[][LCH_BUFFER_SIZE] = {
+      {(char *)"first name", (char *)"lastname", (char *)"born"}};
+
+  LCH_List *table = LCH_ParseCSV(data);
+  ck_assert_ptr_nonnull(table);
+
+  const size_t rows = LCH_ListLength(table);
+  for (size_t row = 0; row < rows; row++) {
+    LCH_List *record = (LCH_List *)LCH_ListGet(table, row);
+    ck_assert_ptr_nonnull(record);
+
+    const size_t cols = LCH_ListLength(record);
+    for (size_t col = 0; col < cols; col++) {
+      const char *const field = (char *)LCH_ListGet(record, col);
       ck_assert_ptr_nonnull(field);
 
       ck_assert_str_eq(expected[row][col], field);
@@ -95,6 +120,11 @@ Suite *CSVSuite(void) {
   {
     TCase *tc = tcase_create("Parse");
     tcase_add_test(tc, test_LCH_ParseCSV);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("ParseTrailingCRLF");
+    tcase_add_test(tc, test_LCH_ParseCSVTrailingCRLF);
     suite_add_tcase(s, tc);
   }
   return s;

@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <ctype.h>
-#include <string.h>
 #include <errno.h>
+#include <string.h>
 
 #include "debug_messenger.h"
 #include "utils.h"
@@ -25,37 +25,55 @@ static char *ParseEscaped(Parser *const parser) {
 
   // Remove leading double quote
   assert(parser->cursor[0] == '"');
-  LCH_LOG_DEBUG("Ate leading '\"' character for escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+  LCH_LOG_DEBUG(
+      "Ate leading '\"' character for escaped field (Row %zu, Col %zu)",
+      parser->cursor[0], parser->row, parser->column);
   parser->cursor += 1;
 
   LCH_Buffer *const buffer = LCH_BufferCreate();
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to create buffer for escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_ERROR(
+        "Failed to create buffer for escaped field (Row %zu, Col %zu)",
+        parser->row, parser->column);
     return NULL;
   }
-  LCH_LOG_DEBUG("Created empty buffer for escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+  LCH_LOG_DEBUG("Created empty buffer for escaped field (Row %zu, Col %zu)",
+                parser->row, parser->column);
 
-  while (parser->cursor[0] != '"' || LCH_StringStartsWith(parser->cursor, "\"\"")) {
+  while (parser->cursor[0] != '"' ||
+         LCH_StringStartsWith(parser->cursor, "\"\"")) {
     if (!LCH_BufferAppend(buffer, "%c", parser->cursor[0])) {
-      LCH_LOG_ERROR("Failed to append character '%c' to buffer for escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+      LCH_LOG_ERROR(
+          "Failed to append character '%c' to buffer for escaped field (Row "
+          "%zu, Col %zu)",
+          parser->cursor[0], parser->row, parser->column);
       LCH_BufferDestroy(buffer);
       return NULL;
     }
-    LCH_LOG_DEBUG("Appended '%c' to buffer for escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+    LCH_LOG_DEBUG(
+        "Appended '%c' to buffer for escaped field (Row %zu, Col %zu)",
+        parser->cursor[0], parser->row, parser->column);
     parser->cursor += (parser->cursor[0] == '"') ? 2 : 1;
   }
 
   // Remove trailing double quote
   assert(parser->cursor[0] == '"');
-  LCH_LOG_DEBUG("Ate trailing '\"' character for escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+  LCH_LOG_DEBUG(
+      "Ate trailing '\"' character for escaped field (Row %zu, Col %zu)",
+      parser->row, parser->column);
   parser->cursor += 1;
 
   char *const field = LCH_BufferGet(buffer);
   LCH_BufferDestroy(buffer);
   if (field == NULL) {
-    LCH_LOG_ERROR("Failed to create string from buffer for escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_ERROR(
+        "Failed to create string from buffer for escaped field (Row %zu, Col "
+        "%zu)",
+        parser->row, parser->column);
   }
-  LCH_LOG_DEBUG("Created string '%s' from buffer for escaped field (Row %zu, Col %zu)", field, parser->row, parser->column);
+  LCH_LOG_DEBUG(
+      "Created string '%s' from buffer for escaped field (Row %zu, Col %zu)",
+      field, parser->row, parser->column);
   return field;
 }
 
@@ -66,20 +84,32 @@ static char *ParseNonEscaped(Parser *const parser) {
 
   LCH_Buffer *const buffer = LCH_BufferCreate();
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to create buffer for non-escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_ERROR(
+        "Failed to create buffer for non-escaped field (Row %zu, Col %zu)",
+        parser->row, parser->column);
     return NULL;
   }
-  LCH_LOG_DEBUG("Created empty buffer for non-escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+  LCH_LOG_DEBUG("Created empty buffer for non-escaped field (Row %zu, Col %zu)",
+                parser->row, parser->column);
 
-  while (parser->cursor[0] != '\0' && parser->cursor[0] != ',' && !LCH_StringStartsWith(parser->cursor, "\r\n")) {
+  while (parser->cursor[0] != '\0' && parser->cursor[0] != ',' &&
+         !LCH_StringStartsWith(parser->cursor, "\r\n")) {
     if (TEXTDATA(parser->cursor[0])) {
       if (!LCH_BufferAppend(buffer, "%c", parser->cursor[0])) {
-        LCH_LOG_ERROR("Failed to append character '%c' to buffer for non-escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+        LCH_LOG_ERROR(
+            "Failed to append character '%c' to buffer for non-escaped field "
+            "(Row %zu, Col %zu)",
+            parser->cursor[0], parser->row, parser->column);
         LCH_BufferDestroy(buffer);
       }
-      LCH_LOG_DEBUG("Appended character '%c' to buffer for non-escaped field (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+      LCH_LOG_DEBUG(
+          "Appended character '%c' to buffer for non-escaped field (Row %zu, "
+          "Col %zu)",
+          parser->cursor[0], parser->row, parser->column);
     } else {
-      LCH_LOG_ERROR("Expected 0x20-21 / 0x23-2B / 0x2D-7E; found '%c' (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+      LCH_LOG_ERROR(
+          "Expected 0x20-21 / 0x23-2B / 0x2D-7E; found '%c' (Row %zu, Col %zu)",
+          parser->cursor[0], parser->row, parser->column);
       LCH_BufferDestroy(buffer);
     }
     parser->cursor += 1;
@@ -88,10 +118,16 @@ static char *ParseNonEscaped(Parser *const parser) {
   char *const field = LCH_BufferGet(buffer);
   LCH_BufferDestroy(buffer);
   if (field == NULL) {
-    LCH_LOG_ERROR("Failed to create string from buffer for non-escaped field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_ERROR(
+        "Failed to create string from buffer for non-escaped field (Row %zu, "
+        "Col %zu)",
+        parser->row, parser->column);
     return NULL;
   }
-  LCH_LOG_DEBUG("Created string '%s' from buffer for non-escaped field (Row %zu, Col %zu)", field, parser->row, parser->column);
+  LCH_LOG_DEBUG(
+      "Created string '%s' from buffer for non-escaped field (Row %zu, Col "
+      "%zu)",
+      field, parser->row, parser->column);
 
   return field;
 }
@@ -104,20 +140,25 @@ static char *ParseField(Parser *const parser) {
   // Trim leading spaceses
   while (parser->cursor[0] == ' ') {
     parser->cursor += 1;
-    LCH_LOG_DEBUG("Ate leading space from field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_DEBUG("Ate leading space from field (Row %zu, Col %zu)",
+                  parser->row, parser->column);
   }
 
-  char *const field = (parser->cursor[0] == '"') ? ParseEscaped(parser) : ParseNonEscaped(parser);
+  char *const field = (parser->cursor[0] == '"') ? ParseEscaped(parser)
+                                                 : ParseNonEscaped(parser);
   if (field == NULL) {
-    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row,
+                  parser->column);
     return NULL;
   }
-  LCH_LOG_DEBUG("Parsed field '%s' (Row %zu, Col %zu)", field, parser->row, parser->column);
+  LCH_LOG_DEBUG("Parsed field '%s' (Row %zu, Col %zu)", field, parser->row,
+                parser->column);
 
   // Trim trailing spaceses
   while (parser->cursor[0] == ' ') {
     parser->cursor += 1;
-    LCH_LOG_DEBUG("Ate trailing space from field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_DEBUG("Ate trailing space from field (Row %zu, Col %zu)",
+                  parser->row, parser->column);
   }
 
   return field;
@@ -137,18 +178,21 @@ static LCH_List *ParseRecord(Parser *const parser) {
 
   char *field = ParseField(parser);
   if (field == NULL) {
-    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row, parser->column);
+    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row,
+                  parser->column);
     LCH_ListDestroy(record);
     return NULL;
   }
 
   if (!LCH_ListAppend(record, (void *)field, free)) {
-    LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)", field, parser->row, parser->column);
+    LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
+                  field, parser->row, parser->column);
     free(field);
     LCH_ListDestroy(record);
     return NULL;
   }
-  LCH_LOG_DEBUG("Appended field '%s' to record (Row %zu, Col %zu)", field, parser->row, parser->column);
+  LCH_LOG_DEBUG("Appended field '%s' to record (Row %zu, Col %zu)", field,
+                parser->row, parser->column);
 
   while (parser->cursor[0] == ',') {
     parser->column += 1;
@@ -156,19 +200,23 @@ static LCH_List *ParseRecord(Parser *const parser) {
 
     field = ParseField(parser);
     if (field == NULL) {
-      LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row, parser->column);
+      LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row,
+                    parser->column);
       LCH_ListDestroy(record);
       return NULL;
     }
-    LCH_LOG_DEBUG("Parsed field '%s' (Row %zu, Col %zu)", field, parser->row, parser->column);
+    LCH_LOG_DEBUG("Parsed field '%s' (Row %zu, Col %zu)", field, parser->row,
+                  parser->column);
 
     if (!LCH_ListAppend(record, (void *)field, free)) {
-      LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)", field, parser->row, parser->column);
+      LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
+                    field, parser->row, parser->column);
       free(field);
       LCH_ListDestroy(record);
       return NULL;
     }
-    LCH_LOG_DEBUG("Appended field '%s' to record (Row %zu, Col %zu)", field, parser->row, parser->column);
+    LCH_LOG_DEBUG("Appended field '%s' to record (Row %zu, Col %zu)", field,
+                  parser->row, parser->column);
   }
   return record;
 }
@@ -193,7 +241,8 @@ static LCH_List *ParseTable(Parser *const parser) {
   }
   LCH_LOG_DEBUG("Parsed record (Row %zu)", parser->row, parser->column);
 
-  if (!LCH_ListAppend(table, (void *) record, (void (*)(void *)) LCH_ListDestroy)) {
+  if (!LCH_ListAppend(table, (void *)record,
+                      (void (*)(void *))LCH_ListDestroy)) {
     LCH_LOG_ERROR("Failed to append record to table (Row %zu)", parser->row);
     LCH_ListDestroy(record);
     LCH_ListDestroy(table);
@@ -222,7 +271,8 @@ static LCH_List *ParseTable(Parser *const parser) {
     }
     LCH_LOG_DEBUG("Parsed record (Row %zu)", parser->row);
 
-    if (!LCH_ListAppend(table, (void *) record, (void (*)(void *)) LCH_ListDestroy)) {
+    if (!LCH_ListAppend(table, (void *)record,
+                        (void (*)(void *))LCH_ListDestroy)) {
       LCH_LOG_ERROR("Failed append record to table (Row %zu)", parser->row);
       LCH_ListDestroy(record);
       LCH_ListDestroy(table);
@@ -232,7 +282,8 @@ static LCH_List *ParseTable(Parser *const parser) {
   }
 
   if (parser->cursor[0] != '\0') {
-    LCH_LOG_ERROR("Expected EOF; found '%c' (Row %zu, Col %zu)", parser->cursor[0], parser->row, parser->column);
+    LCH_LOG_ERROR("Expected EOF; found '%c' (Row %zu, Col %zu)",
+                  parser->cursor[0], parser->row, parser->column);
     LCH_ListDestroy(table);
     return NULL;
   }
@@ -245,9 +296,9 @@ LCH_List *LCH_ParseCSV(const char *str) {
   assert(str != NULL);
 
   Parser parser = {
-    .cursor = str,
-    .row = 1,
-    .column = 1,
+      .cursor = str,
+      .row = 1,
+      .column = 1,
   };
   LCH_LOG_DEBUG("Initialized CSV parser");
 
