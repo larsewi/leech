@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <check.h>
-#include <stdio.h>
 #include <leech.h>
+#include <stdio.h>
 
 static void SetupDebugMessenger(void);
 

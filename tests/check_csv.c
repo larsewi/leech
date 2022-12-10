@@ -1,6 +1,6 @@
 #include <check.h>
-#include <string.h>
 #include <leech.h>
+#include <string.h>
 
 #include "../lib/definitions.h"
 
