@@ -1,8 +1,8 @@
 #ifndef _LEECH_LEECH_H
 #define _LEECH_LEECH_H
 
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 /****************************************************************************/
 /*  Debug Messenger                                                         */
@@ -173,7 +173,6 @@ LCH_List *LCH_SplitString(const char *str, const char *del);
 bool LCH_StringStartsWith(const char *str, const char *substr);
 
 char *LCH_StringStrip(char *str, const char *charset);
-
 
 /****************************************************************************/
 /*  Table                                                                   */

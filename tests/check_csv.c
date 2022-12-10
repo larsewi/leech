@@ -1,8 +1,7 @@
 #include <check.h>
-#include <stdlib.h>
 #include <string.h>
+#include <leech.h>
 
-#include "../lib/leech.h"
 #include "../lib/definitions.h"
 
 START_TEST(test_LCH_ComposeCSV) {

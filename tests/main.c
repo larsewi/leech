@@ -1,10 +1,7 @@
 #include <assert.h>
 #include <check.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
-
-#include "../lib/leech.h"
+#include <leech.h>
 
 static void SetupDebugMessenger(void);
 

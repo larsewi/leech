@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "leech.h"
 #include "definitions.h"
+#include "leech.h"
 
 #define LCH_COLOR_RED "\x1b[31m"
 #define LCH_COLOR_YELLOW "\x1b[33m"

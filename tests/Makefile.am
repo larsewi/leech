@@ -2,6 +2,8 @@ TESTS = unit_test
 
 check_PROGRAMS = unit_test
 
+AM_CPPFLAGS = -I$(top_srcdir)/lib
+
 unit_test_SOURCES = main.c check_buffer.c check_csv.c check_dict.c \
     check_list.c check_utils.c
 

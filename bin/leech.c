@@ -1,27 +1,26 @@
 #include <assert.h>
 #include <config.h>
 #include <errno.h>
+#include <leech.h>
+#include <leech_csv.h>
+#include <leech_psql.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <leech.h>
-#include <leech_csv.h>
-#include <leech_psql.h>
-
 #define WORK_DIR ".leech/"
 #define MAX_EVENTS 10
 
 #define OPTIONS "urwDVvh"
-#define OPTIONS_DESC \
-    "-u  unique identifier\n" \
-    "-r  read locator\n" \
-    "-w  write locator\n" \
-    "-D  enable debug messages\n" \
-    "-V  enable verbose messages\n" \
-    "-v  print version number\n" \
-    "-h  print help message\n"
+#define OPTIONS_DESC              \
+  "-u  unique identifier\n"       \
+  "-r  read locator\n"            \
+  "-w  write locator\n"           \
+  "-D  enable debug messages\n"   \
+  "-V  enable verbose messages\n" \
+  "-v  print version number\n"    \
+  "-h  print help message\n"
 
 static const char *READ_LOCATOR = NULL;
 static const char *WRITE_LOCATOR = NULL;
