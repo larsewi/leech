@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 /****************************************************************************/
 /*  Debug Messenger                                                         */
@@ -173,6 +174,8 @@ LCH_List *LCH_SplitString(const char *str, const char *del);
 bool LCH_StringStartsWith(const char *str, const char *substr);
 
 char *LCH_StringStrip(char *str, const char *charset);
+
+bool LCH_FileSize(FILE *file, size_t *size);
 
 /****************************************************************************/
 /*  Table                                                                   */
