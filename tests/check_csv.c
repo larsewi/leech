@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../lib/csv.h"
-#include "../lib/debug_messenger.h"
+#include "../lib/leech.h"
 #include "../lib/definitions.h"
 
 START_TEST(test_LCH_ComposeCSV) {

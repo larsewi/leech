@@ -9,13 +9,14 @@ lib_LTLIBRARIES = \
         libleech_psql.la
 
 libleech_la_SOURCES = \
-        debug_messenger.c \
-        instance.c \
-        utils.c \
-        list.c \
-        dict.c \
         buffer.c \
-        table.c
+        csv.c \
+        debug_messenger.c \
+        dict.c \
+        instance.c \
+        list.c \
+        table.c \
+        utils.c
 
 libleech_csv_la_SOURCES = \
         leech_csv.c \

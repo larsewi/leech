@@ -1,10 +1,8 @@
-#include "dict.h"
-
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
 
-#include "debug_messenger.h"
+#include "leech.h"
 #include "definitions.h"
 
 #define INITIAL_CAPACITY 8

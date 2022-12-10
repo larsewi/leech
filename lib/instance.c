@@ -1,12 +1,9 @@
-#include "instance.h"
-
 #include <assert.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "debug_messenger.h"
-#include "table.h"
+#include "leech.h"
 
 struct LCH_Instance {
   const char *instanceID;

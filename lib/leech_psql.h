@@ -1,9 +1,7 @@
 #ifndef _LEECH_LEECH_PSQL_H
 #define _LEECH_LEECH_PSQL_H
 
-#include <stdbool.h>
-
-#include "list.h"
+#include "leech.h"
 
 LCH_List *LCH_TableReadCallbackPSQL(const char *const locator);
 

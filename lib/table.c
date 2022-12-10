@@ -1,8 +1,7 @@
-#include "table.h"
-
 #include <assert.h>
-#include <stdlib.h>
 #include <string.h>
+
+#include "leech.h"
 
 typedef struct LCH_Table {
   char *readLocator;

@@ -5,8 +5,7 @@
 #include <errno.h>
 #include <string.h>
 
-#include "debug_messenger.h"
-#include "utils.h"
+#include "leech.h"
 
 #define TEXTDATA(ch)                                           \
   ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \

@@ -1,13 +1,14 @@
 #include <assert.h>
 #include <config.h>
 #include <errno.h>
-#include <leech_csv.h>
-#include <leech_psql.h>
-#include <leech.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <leech.h>
+#include <leech_csv.h>
+#include <leech_psql.h>
 
 #define WORK_DIR ".leech/"
 #define MAX_EVENTS 10
