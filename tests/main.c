@@ -1,13 +1,14 @@
 #include <assert.h>
 #include <check.h>
-#include <leech.h>
 #include <stdio.h>
+#include "../lib/leech.h"
 
 static void SetupDebugMessenger(void);
 
 Suite *BufferSuite(void);
 Suite *CSVSuite(void);
 Suite *DictSuite(void);
+Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
 Suite *UtilsSuite(void);
 
@@ -17,6 +18,7 @@ int main(void) {
   SRunner *sr = srunner_create(BufferSuite());
   srunner_add_suite(sr, CSVSuite());
   srunner_add_suite(sr, DictSuite());
+  srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, ListSuite());
   srunner_add_suite(sr, UtilsSuite());
 
@@ -56,7 +58,7 @@ static void SetupDebugMessenger(void) {
       .severity =
           LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
           LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT | LCH_DEBUG_MESSAGE_TYPE_INFO_BIT |
-          LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT | LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT,
+          LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT,
       .messageCallback = &DebugMessengerCallbackDefault,
   };
   LCH_DebugMessengerInit(&initInfo);

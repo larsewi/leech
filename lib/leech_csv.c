@@ -21,8 +21,19 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
   }
 
   char buffer[size];
+  if (fread((void *) buffer, 1, size, file) != size) {
+    LCH_LOG_ERROR("Failed to read file '%s': %s", locator, strerror(errno));
+    return NULL;
+  }
+  fclose(file);
 
-  return NULL;
+  LCH_List *table = LCH_ParseCSV(buffer);
+  if (table == NULL) {
+    LCH_LOG_ERROR("Failed to parse CSV file '%s'", locator, strerror(errno));
+    return NULL;
+  }
+
+  return table;
 }
 
 bool LCH_TableWriteCallbackCSV(const char *const locator,
