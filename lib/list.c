@@ -114,11 +114,10 @@ void LCH_ListDestroy(LCH_List *self) {
 
   for (size_t i = 0; i < self->capacity; i++) {
     ListElement *item = self->buffer[i];
-    if (item == NULL) {
-      continue;
-    }
-    if (item->destroy != NULL) {
-      item->destroy(item->value);
+    if (item != NULL && item->destroy) {
+      if (item->destroy != NULL) {
+        item->destroy(item->value);
+      }
     }
     free(item);
   }

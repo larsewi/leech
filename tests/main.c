@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   srunner_add_suite(sr, ListSuite());
   srunner_add_suite(sr, UtilsSuite());
 
-  if (argc > 1 && strcmp(argv[1], "no-fork")) {
+  if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {
     srunner_set_fork_status(sr, CK_NORMAL);
   }
 

@@ -88,6 +88,7 @@ START_TEST(test_LCH_TableWriteCallbackCSV) {
   ck_assert(LCH_FileSize(file, &size));
 
   char actual[size];
+  actual[0] = '\0';
   ck_assert_int_eq(fread(actual, 1, size, file), size);
 
   fclose(file);
