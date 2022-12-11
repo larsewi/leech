@@ -92,10 +92,11 @@ bool LCH_FileSize(FILE *file, size_t *size) {
 
   long pos = ftell(file);
   if (pos < 0) {
-    LCH_LOG_ERROR("Failed to obtain the current file position indicator: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to obtain the current file position indicator: %s",
+                  strerror(errno));
     return false;
   }
-  *size = (size_t) pos;
+  *size = (size_t)pos;
 
   if (fseek(file, 0, SEEK_SET) != 0) {
     LCH_LOG_ERROR("Failed to seek to start of file: %s", strerror(errno));

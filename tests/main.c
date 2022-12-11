@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <check.h>
 #include <stdio.h>
+
 #include "../lib/leech.h"
 
 static void SetupDebugMessenger(void);
@@ -55,10 +56,10 @@ static void DebugMessengerCallbackDefault(unsigned char severity,
 
 static void SetupDebugMessenger(void) {
   LCH_DebugMessengerInitInfo initInfo = {
-      .severity =
-          LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
-          LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT | LCH_DEBUG_MESSAGE_TYPE_INFO_BIT |
-          LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT,
+      .severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
+                  LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
+                  LCH_DEBUG_MESSAGE_TYPE_INFO_BIT |
+                  LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT,
       .messageCallback = &DebugMessengerCallbackDefault,
   };
   LCH_DebugMessengerInit(&initInfo);

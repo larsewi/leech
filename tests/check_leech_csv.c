@@ -1,18 +1,19 @@
 #include <check.h>
 
+#include "../lib/definitions.h"
 #include "../lib/leech.h"
 #include "../lib/leech_csv.h"
-#include "../lib/definitions.h"
 
 START_TEST(test_LCH_TableReadCallbackCSV) {
   FILE *file = fopen("sample.csv", "w");
   ck_assert_ptr_nonnull(file);
 
-  char content[] = "firstname,lastname,born\r\n"
-    "Paul,McCartney,1942\r\n"
-    "Ringo,Starr,1940\r\n"
-    "John,Lennon,1940\r\n"
-    "George,Harrison,1943\r\n";
+  char content[] =
+      "firstname,lastname,born\r\n"
+      "Paul,McCartney,1942\r\n"
+      "Ringo,Starr,1940\r\n"
+      "John,Lennon,1940\r\n"
+      "George,Harrison,1943\r\n";
 
   ck_assert_int_eq(fwrite(content, 1, sizeof(content), file), sizeof(content));
   fclose(file);

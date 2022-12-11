@@ -21,7 +21,7 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
   }
 
   char buffer[size];
-  if (fread((void *) buffer, 1, size, file) != size) {
+  if (fread((void *)buffer, 1, size, file) != size) {
     LCH_LOG_ERROR("Failed to read file '%s': %s", locator, strerror(errno));
     return NULL;
   }
@@ -38,5 +38,7 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
 
 bool LCH_TableWriteCallbackCSV(const char *const locator,
                                const LCH_List *const table) {
+  assert(locator != NULL);
+  assert(table != NULL);
   return false;
 }

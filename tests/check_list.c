@@ -1,7 +1,7 @@
 #include <check.h>
 
-#include "../lib/leech.h"
 #include "../lib/definitions.h"
+#include "../lib/leech.h"
 
 START_TEST(test_LCH_List) {
   int i, j;
