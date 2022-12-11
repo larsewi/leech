@@ -29,6 +29,7 @@ START_TEST(test_LCH_Buffer) {
       "Hello buffer!\n"};
 
   ck_assert_str_eq(actual, exptected);
+  free(actual);
 }
 END_TEST
 

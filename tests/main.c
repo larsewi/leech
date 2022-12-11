@@ -13,7 +13,7 @@ Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
 Suite *UtilsSuite(void);
 
-int main(void) {
+int main(int argc, char *argv[]) {
   SetupDebugMessenger();
 
   SRunner *sr = srunner_create(BufferSuite());
@@ -22,6 +22,10 @@ int main(void) {
   srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, ListSuite());
   srunner_add_suite(sr, UtilsSuite());
+
+  if (argc > 1 && strcmp(argv[1], "no-fork")) {
+    srunner_set_fork_status(sr, CK_NORMAL);
+  }
 
   srunner_run_all(sr, CK_VERBOSE);
   int number_failed = srunner_ntests_failed(sr);

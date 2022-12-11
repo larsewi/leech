@@ -44,6 +44,7 @@ START_TEST(test_LCH_ComposeCSV) {
       "George,\"Harr\r\nison\",1943";
 
   ck_assert_str_eq(expected, actual);
+  free(actual);
   LCH_ListDestroy(table);
 }
 END_TEST
@@ -80,6 +81,7 @@ START_TEST(test_LCH_ParseCSV) {
       ck_assert_str_eq(expected[row][col], field);
     }
   }
+  LCH_ListDestroy(table);
 }
 END_TEST
 
@@ -105,6 +107,7 @@ START_TEST(test_LCH_ParseCSVTrailingCRLF) {
       ck_assert_str_eq(expected[row][col], field);
     }
   }
+  LCH_ListDestroy(table);
 }
 END_TEST
 

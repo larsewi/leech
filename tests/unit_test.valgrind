@@ -1,0 +1,220 @@
+==13788== Memcheck, a memory error detector
+==13788== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==13788== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==13788== Command: /home/larsewi/uio/leech/tests/.libs/unit_test no-fork
+==13788== 
+Running suite(s): buffer.c
+==13813== 
+==13813== HEAP SUMMARY:
+==13813==     in use at exit: 4,300 bytes in 186 blocks
+==13813==   total heap usage: 233 allocs, 47 frees, 13,915 bytes allocated
+==13813== 
+==13813== LEAK SUMMARY:
+==13813==    definitely lost: 0 bytes in 0 blocks
+==13813==    indirectly lost: 0 bytes in 0 blocks
+==13813==      possibly lost: 0 bytes in 0 blocks
+==13813==    still reachable: 4,300 bytes in 186 blocks
+==13813==         suppressed: 0 bytes in 0 blocks
+==13813== Reachable blocks (those to which a pointer was found) are not shown.
+==13813== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13813== 
+==13813== For lists of detected and suppressed errors, rerun with: -s
+==13813== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+ csv.c
+==13814== 
+==13814== HEAP SUMMARY:
+==13814==     in use at exit: 4,378 bytes in 189 blocks
+==13814==   total heap usage: 421 allocs, 232 frees, 30,432 bytes allocated
+==13814== 
+==13814== LEAK SUMMARY:
+==13814==    definitely lost: 0 bytes in 0 blocks
+==13814==    indirectly lost: 0 bytes in 0 blocks
+==13814==      possibly lost: 0 bytes in 0 blocks
+==13814==    still reachable: 4,378 bytes in 189 blocks
+==13814==         suppressed: 0 bytes in 0 blocks
+==13814== Reachable blocks (those to which a pointer was found) are not shown.
+==13814== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13814== 
+==13814== For lists of detected and suppressed errors, rerun with: -s
+==13814== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==13815== 
+==13815== HEAP SUMMARY:
+==13815==     in use at exit: 4,461 bytes in 192 blocks
+==13815==   total heap usage: 484 allocs, 292 frees, 43,775 bytes allocated
+==13815== 
+==13815== LEAK SUMMARY:
+==13815==    definitely lost: 0 bytes in 0 blocks
+==13815==    indirectly lost: 0 bytes in 0 blocks
+==13815==      possibly lost: 0 bytes in 0 blocks
+==13815==    still reachable: 4,461 bytes in 192 blocks
+==13815==         suppressed: 0 bytes in 0 blocks
+==13815== Reachable blocks (those to which a pointer was found) are not shown.
+==13815== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13815== 
+==13815== For lists of detected and suppressed errors, rerun with: -s
+==13815== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==13816== 
+==13816== HEAP SUMMARY:
+==13816==     in use at exit: 4,552 bytes in 195 blocks
+==13816==   total heap usage: 450 allocs, 255 frees, 54,945 bytes allocated
+==13816== 
+==13816== LEAK SUMMARY:
+==13816==    definitely lost: 0 bytes in 0 blocks
+==13816==    indirectly lost: 0 bytes in 0 blocks
+==13816==      possibly lost: 0 bytes in 0 blocks
+==13816==    still reachable: 4,552 bytes in 195 blocks
+==13816==         suppressed: 0 bytes in 0 blocks
+==13816== Reachable blocks (those to which a pointer was found) are not shown.
+==13816== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13816== 
+==13816== For lists of detected and suppressed errors, rerun with: -s
+==13816== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+ dict.c
+==13817== 
+==13817== HEAP SUMMARY:
+==13817==     in use at exit: 4,627 bytes in 198 blocks
+==13817==   total heap usage: 565 allocs, 367 frees, 69,543 bytes allocated
+==13817== 
+==13817== LEAK SUMMARY:
+==13817==    definitely lost: 0 bytes in 0 blocks
+==13817==    indirectly lost: 0 bytes in 0 blocks
+==13817==      possibly lost: 0 bytes in 0 blocks
+==13817==    still reachable: 4,627 bytes in 198 blocks
+==13817==         suppressed: 0 bytes in 0 blocks
+==13817== Reachable blocks (those to which a pointer was found) are not shown.
+==13817== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13817== 
+==13817== For lists of detected and suppressed errors, rerun with: -s
+==13817== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+ leech_csv.c
+==13818== 
+==13818== HEAP SUMMARY:
+==13818==     in use at exit: 4,735 bytes in 201 blocks
+==13818==   total heap usage: 713 allocs, 512 frees, 95,100 bytes allocated
+==13818== 
+==13818== LEAK SUMMARY:
+==13818==    definitely lost: 0 bytes in 0 blocks
+==13818==    indirectly lost: 0 bytes in 0 blocks
+==13818==      possibly lost: 0 bytes in 0 blocks
+==13818==    still reachable: 4,735 bytes in 201 blocks
+==13818==         suppressed: 0 bytes in 0 blocks
+==13818== Reachable blocks (those to which a pointer was found) are not shown.
+==13818== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13818== 
+==13818== For lists of detected and suppressed errors, rerun with: -s
+==13818== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==13819== Conditional jump or move depends on uninitialised value(s)
+==13819==    at 0x10D474: test_LCH_TableWriteCallbackCSV_fn (check_leech_csv.c:103)
+==13819==    by 0x1113E8: srunner_run_tagged (in /home/larsewi/uio/leech/tests/.libs/unit_test)
+==13819==    by 0x10BBCF: main (main.c:30)
+==13819== 
+==13819== 
+==13819== HEAP SUMMARY:
+==13819==     in use at exit: 4,816 bytes in 204 blocks
+==13819==   total heap usage: 835 allocs, 631 frees, 110,247 bytes allocated
+==13819== 
+==13819== LEAK SUMMARY:
+==13819==    definitely lost: 0 bytes in 0 blocks
+==13819==    indirectly lost: 0 bytes in 0 blocks
+==13819==      possibly lost: 0 bytes in 0 blocks
+==13819==    still reachable: 4,816 bytes in 204 blocks
+==13819==         suppressed: 0 bytes in 0 blocks
+==13819== Reachable blocks (those to which a pointer was found) are not shown.
+==13819== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13819== 
+==13819== Use --track-origins=yes to see where uninitialised values come from
+==13819== For lists of detected and suppressed errors, rerun with: -s
+==13819== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+ list.c
+==13824== Conditional jump or move depends on uninitialised value(s)
+==13824==    at 0x495030F: LCH_ListDestroy (list.c:117)
+==13824==    by 0x1113E8: srunner_run_tagged (in /home/larsewi/uio/leech/tests/.libs/unit_test)
+==13824==    by 0x10BBCF: main (main.c:30)
+==13824== 
+==13824== 
+==13824== HEAP SUMMARY:
+==13824==     in use at exit: 4,897 bytes in 207 blocks
+==13824==   total heap usage: 833 allocs, 626 frees, 112,551 bytes allocated
+==13824== 
+==13824== LEAK SUMMARY:
+==13824==    definitely lost: 0 bytes in 0 blocks
+==13824==    indirectly lost: 0 bytes in 0 blocks
+==13824==      possibly lost: 0 bytes in 0 blocks
+==13824==    still reachable: 4,897 bytes in 207 blocks
+==13824==         suppressed: 0 bytes in 0 blocks
+==13824== Reachable blocks (those to which a pointer was found) are not shown.
+==13824== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13824== 
+==13824== Use --track-origins=yes to see where uninitialised values come from
+==13824== For lists of detected and suppressed errors, rerun with: -s
+==13824== ERROR SUMMARY: 6 errors from 1 contexts (suppressed: 0 from 0)
+ utils.c
+==13841== 
+==13841== HEAP SUMMARY:
+==13841==     in use at exit: 4,973 bytes in 210 blocks
+==13841==   total heap usage: 819 allocs, 609 frees, 124,779 bytes allocated
+==13841== 
+==13841== LEAK SUMMARY:
+==13841==    definitely lost: 0 bytes in 0 blocks
+==13841==    indirectly lost: 0 bytes in 0 blocks
+==13841==      possibly lost: 0 bytes in 0 blocks
+==13841==    still reachable: 4,973 bytes in 210 blocks
+==13841==         suppressed: 0 bytes in 0 blocks
+==13841== Reachable blocks (those to which a pointer was found) are not shown.
+==13841== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13841== 
+==13841== For lists of detected and suppressed errors, rerun with: -s
+==13841== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==13842== 
+==13842== HEAP SUMMARY:
+==13842==     in use at exit: 5,114 bytes in 213 blocks
+==13842==   total heap usage: 839 allocs, 626 frees, 138,109 bytes allocated
+==13842== 
+==13842== LEAK SUMMARY:
+==13842==    definitely lost: 0 bytes in 0 blocks
+==13842==    indirectly lost: 0 bytes in 0 blocks
+==13842==      possibly lost: 0 bytes in 0 blocks
+==13842==    still reachable: 5,114 bytes in 213 blocks
+==13842==         suppressed: 0 bytes in 0 blocks
+==13842== Reachable blocks (those to which a pointer was found) are not shown.
+==13842== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13842== 
+==13842== For lists of detected and suppressed errors, rerun with: -s
+==13842== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==13843== 
+==13843== HEAP SUMMARY:
+==13843==     in use at exit: 5,191 bytes in 216 blocks
+==13843==   total heap usage: 858 allocs, 642 frees, 151,256 bytes allocated
+==13843== 
+==13843== LEAK SUMMARY:
+==13843==    definitely lost: 0 bytes in 0 blocks
+==13843==    indirectly lost: 0 bytes in 0 blocks
+==13843==      possibly lost: 0 bytes in 0 blocks
+==13843==    still reachable: 5,191 bytes in 216 blocks
+==13843==         suppressed: 0 bytes in 0 blocks
+==13843== Reachable blocks (those to which a pointer was found) are not shown.
+==13843== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13843== 
+==13843== For lists of detected and suppressed errors, rerun with: -s
+==13843== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+100%: Checks: 11, Failures: 0, Errors: 0
+check_buffer.c:31:P:LCH_Buffer*:test_LCH_Buffer:0: Passed
+check_csv.c:46:P:Compose:test_LCH_ComposeCSV:0: Passed
+check_csv.c:81:P:Parse:test_LCH_ParseCSV:0: Passed
+check_csv.c:107:P:ParseTrailingCRLF:test_LCH_ParseCSVTrailingCRLF:0: Passed
+check_dict.c:28:P:LCH_Dict*:test_LCH_Dict:0: Passed
+check_leech_csv.c:50:P:LCH_TableReadCallbackCSV:test_LCH_TableReadCallbackCSV:0: Passed
+check_leech_csv.c:103:P:LCH_TableWriteCallbackCSV:test_LCH_TableWriteCallbackCSV:0: Passed
+check_list.c:22:P:LCH_List*:test_LCH_List:0: Passed
+check_utils.c:29:P:LCH_SplitString:test_LCH_SplitString:0: Passed
+check_utils.c:11:P:LCH_StartsWith:test_LCH_StartsWith:0: Passed
+check_utils.c:25:P:LCH_StringStrip:test_LCH_StringStrip:0: Passed
+==13788== 
+==13788== HEAP SUMMARY:
+==13788==     in use at exit: 0 bytes in 0 blocks
+==13788==   total heap usage: 873 allocs, 873 frees, 161,249 bytes allocated
+==13788== 
+==13788== All heap blocks were freed -- no leaks are possible
+==13788== 
+==13788== For lists of detected and suppressed errors, rerun with: -s
+==13788== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
