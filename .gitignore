@@ -113,3 +113,4 @@ Makefile
 *.log
 *.trs
 config.h
+*.valgrind
