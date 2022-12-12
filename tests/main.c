@@ -24,10 +24,10 @@ int main(int argc, char *argv[]) {
   srunner_add_suite(sr, UtilsSuite());
 
   if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {
-    srunner_set_fork_status(sr, CK_NORMAL);
+    srunner_set_fork_status(sr, CK_NOFORK);
   }
 
-  srunner_run_all(sr, CK_VERBOSE);
+  srunner_run_all(sr, CK_NORMAL);
   int number_failed = srunner_ntests_failed(sr);
 
   srunner_free(sr);

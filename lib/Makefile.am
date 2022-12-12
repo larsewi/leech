@@ -19,6 +19,7 @@ libleech_la_SOURCES = \
         utils.c
 
 libleech_csv_la_SOURCES = \
+        buffer.c \
         leech_csv.c \
         debug_messenger.c \
         list.c
