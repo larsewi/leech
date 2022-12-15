@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include "common.h"
 #include "commit.h"
 #include "diff.h"
 #include "patch.h"
@@ -18,7 +19,7 @@
 
 enum OPTION_VALUE {
   OPTION_FILE = 1,
-  OPTION_INFO,
+  OPTION_INFORM,
   OPTION_VERBOSE,
   OPTION_DEBUG,
   OPTION_VERSION,
@@ -32,7 +33,7 @@ struct command {
 };
 
 static const struct option OPTIONS[] = {
-  { "info", no_argument, NULL, OPTION_INFO },
+  { "inform", no_argument, NULL, OPTION_INFORM },
   { "verbose", no_argument, NULL, OPTION_VERBOSE },
   { "debug", no_argument, NULL, OPTION_DEBUG },
   { "version", no_argument, NULL, OPTION_VERSION },
@@ -55,27 +56,6 @@ static const struct command COMMANDS[] = {
   {NULL, NULL, NULL},
 };
 
-static void PrintVersion(void) {
-  printf("%s\n", PACKAGE_STRING);
-}
-
-static void PrintOptions(void) {
-  size_t longest = 0;
-  for (int i = 0; OPTIONS[i].val != 0; i++) {
-    const size_t length = strlen(OPTIONS[i].name);
-    longest = (length > longest) ? length : longest;
-  }
-
-  char format[512];
-  int ret = snprintf(format, sizeof(format), "  --%%-%zus  %%s\n", longest);
-  assert(ret >= 0 && sizeof(format) > (size_t)ret);
-
-  printf("options:\n");
-  for (int i = 0; OPTIONS[i].val != 0; i++) {
-    printf(format, OPTIONS[i].name, DESCRIPTIONS[i]);
-  }
-}
-
 static void PrintCommands(void) {
   size_t longest = 0;
   for (int i = 0; COMMANDS[i].name != NULL; i++) {
@@ -96,7 +76,7 @@ static void PrintCommands(void) {
 static void PrintHelp(void) {
   PrintVersion();
   printf("\n");
-  PrintOptions();
+  PrintOptions(OPTIONS, DESCRIPTIONS);
   printf("\n");
   PrintCommands();
   printf("\n");
@@ -116,7 +96,7 @@ int main(int argc, char *argv[]) {
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
-      case OPTION_INFO:
+      case OPTION_INFORM:
         severity |= LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
         break;
       case OPTION_VERBOSE:
@@ -140,7 +120,8 @@ int main(int argc, char *argv[]) {
 
   for (int i = 0; COMMANDS[i].name != NULL; i++) {
     if (strcmp(argv[optind], COMMANDS[i].name) == 0) {
-      return COMMANDS[i].command(argc - optind, argv + optind);
+      optind += 1;
+      return COMMANDS[i].command(argc, argv);
     }
   }
   return EXIT_FAILURE;
