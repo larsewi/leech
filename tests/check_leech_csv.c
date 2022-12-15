@@ -84,17 +84,18 @@ START_TEST(test_LCH_TableWriteCallbackCSV) {
   FILE *const file = fopen("sample.csv", "r");
   ck_assert_ptr_nonnull(file);
 
-  size_t size;
+  size_t size = 0;
   ck_assert(LCH_FileSize(file, &size));
 
-  char actual[size];
-  actual[0] = '\0';
+  char actual[LCH_BUFFER_SIZE];
+  memset(actual, 0, sizeof(actual));
+  ck_assert_int_le(size, LCH_BUFFER_SIZE);
   ck_assert_int_eq(fread(actual, 1, size, file), size);
 
   fclose(file);
   ck_assert_int_eq(remove("sample.csv"), 0);
 
-  const char expect[] =
+  char expect[] =
       "firstname,lastname,born\r\n"
       "Paul,McCartney,1942\r\n"
       "Ringo,Starr,1940\r\n"
