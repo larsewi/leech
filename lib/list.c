@@ -115,7 +115,7 @@ void LCH_ListSet(LCH_List *const self, const size_t index, void *const value,
   self->buffer[index]->destroy = destroy;
 }
 
-size_t LCH_ListIndex(LCH_List *const self, const void *const value,
+size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
                      int (*compare)(const void *, const void *)) {
   assert(self != NULL);
   assert(compare != NULL);

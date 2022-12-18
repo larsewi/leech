@@ -90,7 +90,7 @@ void LCH_ListSet(LCH_List *self, size_t index, void *value,
  * @param[in] value value to find.
  * @param[in] compare comparison function.
  */
-size_t LCH_ListIndex(LCH_List *self, const void *value,
+size_t LCH_ListIndex(const LCH_List *self, const void *value,
                      int (*compare)(const void *, const void *));
 
 /**
