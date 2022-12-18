@@ -42,6 +42,9 @@ LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
     LCH_ListDestroy(primary);
     free(table);
   }
+
+  LCH_List *header = (LCH_List *)LCH_ListGet(records, 0);
+
   LCH_ListDestroy(records);
 
   table->writeLocator = createInfo->writeLocator;
