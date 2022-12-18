@@ -44,7 +44,7 @@ START_TEST(test_LCH_ListSort) {
 
   const char *expect[] = {"a", "aa", "ab", "ac", "b", "ba", "c"};
   for (size_t i = 0; i < LCH_ListLength(list); i++) {
-    ck_assert_str_eq(LCH_ListGet(list, i), expect[i]);
+    ck_assert_str_eq((char *)LCH_ListGet(list, i), expect[i]);
   }
 
   LCH_ListDestroy(list);

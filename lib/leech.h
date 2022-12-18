@@ -81,7 +81,8 @@ void *LCH_ListGet(const LCH_List *self, size_t index);
  * @param[in] index index of item.
  * @param[in] value value to assign.
  */
-void LCH_ListSet(LCH_List *self, size_t index, void *value);
+void LCH_ListSet(LCH_List *self, size_t index, void *value,
+                 void (*destroy)(void *));
 
 /**
  * Sort list.

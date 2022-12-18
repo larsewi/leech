@@ -33,14 +33,14 @@ START_TEST(test_LCH_TableReadCallbackCSV) {
   ck_assert_int_eq(rows, 5);
 
   for (size_t row = 0; row < rows; row++) {
-    const LCH_List *const record = LCH_ListGet(table, row);
+    const LCH_List *const record = (LCH_List *)LCH_ListGet(table, row);
     ck_assert_ptr_nonnull(record);
 
     const size_t cols = LCH_ListLength(record);
     ck_assert_int_eq(cols, 3);
 
     for (size_t col = 0; col < cols; col++) {
-      const char *const field = LCH_ListGet(record, col);
+      const char *const field = (char *)LCH_ListGet(record, col);
       ck_assert_ptr_nonnull(field);
 
       ck_assert_str_eq(field, expect[row][col]);
