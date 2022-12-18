@@ -106,6 +106,48 @@ void *LCH_ListGet(const LCH_List *const self, const size_t index) {
   return item->value;
 }
 
+void LCH_ListSet(LCH_List *const self, const size_t index, void *const value) {
+  assert(self != NULL);
+  assert(index < self->length);
+
+  self->buffer[index] = value;
+}
+
+static void Swap(LCH_List *const list, const size_t a, const size_t b) {
+  assert(list != NULL);
+  assert(a < list->length);
+  assert(b < list->length);
+
+  ListElement *tmp = list->buffer[a];
+  list->buffer[a] = list->buffer[b];
+  list->buffer[b] = tmp;
+}
+
+static size_t Partition(LCH_List *const list, const size_t low, const size_t high, int (*cmp)(const void *, const void *)) {
+  void *pivot = LCH_ListGet(list, high);
+  size_t i = low;
+  for (size_t j = low; j < high; j++) {
+    if (cmp(LCH_ListGet(list, j), pivot) <= 0) {
+      Swap(list, i++, j);
+    }
+  }
+  Swap(list, i, high);
+  return i;
+}
+
+static void QuickSort(LCH_List *const list, const size_t low, const size_t high, int (*cmp)(const void *, const void *)) {
+  if (low < high) {
+    const size_t pivot = Partition(list, low, high, cmp);
+    QuickSort(list, low, pivot - 1, cmp);
+    QuickSort(list, pivot + 1, high, cmp);
+  }
+}
+
+void LCH_ListSort(LCH_List *const self, int (*cmp)(const void *, const void *)) {
+  assert(self != NULL);
+  QuickSort(self, 0, self->length - 1, cmp);
+}
+
 void LCH_ListDestroy(LCH_List *self) {
   if (self == NULL) {
     return;

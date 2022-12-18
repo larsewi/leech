@@ -5,6 +5,8 @@
 #include "leech.h"
 
 typedef struct LCH_Table {
+  LCH_List *primaryFields;
+  LCH_List *subsidiaryFields;
   LCH_List *records;
   const void *writeLocator;
   bool (*writeCallback)(const void *, const LCH_List *);
@@ -25,6 +27,12 @@ LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
     return NULL;
   }
 
+  LCH_List *primary = LCH_ParseCSV(createInfo->primaryFields);
+  table->primaryFields = primary;
+
+  LCH_List *subsidiary = LCH_ParseCSV(createInfo->subsidiaryFields);
+  table->subsidiaryFields = subsidiary;
+
   table->records = createInfo->readCallback(createInfo->readLocator);
   if (table->records == NULL) {
     LCH_LOG_ERROR("Failed to read table data");
@@ -41,6 +49,8 @@ void LCH_TableDestroy(LCH_Table *table) {
   if (table == NULL) {
     return;
   }
+  LCH_ListDestroy(table->primaryFields);
+  LCH_ListDestroy(table->subsidiaryFields);
   LCH_ListDestroy(table->records);
   free(table);
 }

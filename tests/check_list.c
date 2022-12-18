@@ -1,4 +1,5 @@
 #include <check.h>
+#include <string.h>
 
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
@@ -26,11 +27,40 @@ START_TEST(test_LCH_List) {
 }
 END_TEST
 
+START_TEST(test_LCH_ListSort) {
+  int i, j;
+
+  LCH_List *list = LCH_ListCreate();
+  ck_assert_ptr_nonnull(list);
+
+  const char *strs[] = {"b", "c", "a", "ba", "ab", "ac", "aa"};
+  for (size_t i = 0; i < LCH_LENGTH(strs); i++) {
+    char *data = strdup(strs[i]);
+    ck_assert_ptr_nonnull(data);
+    ck_assert(LCH_ListAppend(list, data, free));
+  }
+  LCH_ListSort(list, (int (*)(const void *, const void *))strcmp);
+  ck_assert_int_eq(LCH_ListLength(list), LCH_LENGTH(strs));
+
+  const char *expect[] = {"a", "aa", "ab", "ac", "b", "ba", "c"};
+  for (size_t i = 0; i < LCH_ListLength(list); i++) {
+    ck_assert_str_eq(LCH_ListGet(list, i), expect[i]);
+  }
+
+  LCH_ListDestroy(list);
+}
+END_TEST
+
 Suite *ListSuite(void) {
   Suite *s = suite_create("list.c");
   {
     TCase *tc = tcase_create("LCH_List*");
     tcase_add_test(tc, test_LCH_List);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ListSort");
+    tcase_add_test(tc, test_LCH_ListSort);
     suite_add_tcase(s, tc);
   }
   return s;

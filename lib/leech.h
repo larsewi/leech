@@ -76,6 +76,21 @@ bool LCH_ListAppend(LCH_List *self, void *value, void (*destroy)(void *));
 void *LCH_ListGet(const LCH_List *self, size_t index);
 
 /**
+ * Assing value to list item at index.
+ * @param[in] self pointer to list.
+ * @param[in] index index of item.
+ * @param[in] value value to assign.
+ */
+void LCH_ListSet(LCH_List *self, size_t index, void *value);
+
+/**
+ * Sort list.
+ * @param[in] self pointer to list.
+ * @param[in] cmp comparison function.
+ */
+void LCH_ListSort(LCH_List *const self, int (*cmp)(const void *, const void *));
+
+/**
  * Destroy list and contents.
  * @param[in] self pointer to list.
  */
