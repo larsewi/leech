@@ -11,14 +11,14 @@ enum OPTION_VALUE {
 };
 
 static const struct option OPTIONS[] = {
-  { "file", no_argument, NULL, OPTION_FILE },
-  { "help", no_argument, NULL, OPTION_HELP },
-  { NULL, 0, NULL, 0 },
+    {"file", no_argument, NULL, OPTION_FILE},
+    {"help", no_argument, NULL, OPTION_HELP},
+    {NULL, 0, NULL, 0},
 };
 
 static const char *const DESCRIPTIONS[] = {
-  "output patch file",
-  "print help message",
+    "output patch file",
+    "print help message",
 };
 
 static void PrintHelp(void) {

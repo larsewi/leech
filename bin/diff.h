@@ -3,4 +3,4 @@
 
 int Diff(int argc, char *argv[]);
 
-#endif // _LEECH_DIFF
+#endif  // _LEECH_DIFF

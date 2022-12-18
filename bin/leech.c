@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <config.h>
 #include <errno.h>
+#include <getopt.h>
 #include <leech.h>
 #include <leech_csv.h>
 #include <leech_psql.h>
@@ -8,10 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <getopt.h>
 
-#include "common.h"
 #include "commit.h"
+#include "common.h"
 #include "diff.h"
 #include "patch.h"
 
@@ -33,27 +33,24 @@ struct command {
 };
 
 static const struct option OPTIONS[] = {
-  { "inform", no_argument, NULL, OPTION_INFORM },
-  { "verbose", no_argument, NULL, OPTION_VERBOSE },
-  { "debug", no_argument, NULL, OPTION_DEBUG },
-  { "version", no_argument, NULL, OPTION_VERSION },
-  { "help", no_argument, NULL, OPTION_HELP },
-  { NULL, 0, NULL, 0 },
+    {"inform", no_argument, NULL, OPTION_INFORM},
+    {"verbose", no_argument, NULL, OPTION_VERBOSE},
+    {"debug", no_argument, NULL, OPTION_DEBUG},
+    {"version", no_argument, NULL, OPTION_VERSION},
+    {"help", no_argument, NULL, OPTION_HELP},
+    {NULL, 0, NULL, 0},
 };
 
 static const char *const DESCRIPTIONS[] = {
-  "enable debug messages",
-  "enable verbose messages",
-  "enable info messages",
-  "print version string",
-  "print help message",
+    "enable debug messages", "enable verbose messages", "enable info messages",
+    "print version string",  "print help message",
 };
 
 static const struct command COMMANDS[] = {
-  {"commit", "commit changes in tables", Commit},
-  {"diff", "calculate changes in tables", Diff},
-  {"patch", "apply changes to tables", Patch},
-  {NULL, NULL, NULL},
+    {"commit", "commit changes in tables", Commit},
+    {"diff", "calculate changes in tables", Diff},
+    {"patch", "apply changes to tables", Patch},
+    {NULL, NULL, NULL},
 };
 
 static void PrintCommands(void) {
@@ -91,7 +88,8 @@ static void SetupDebugMessenger(unsigned char severity) {
 }
 
 int main(int argc, char *argv[]) {
-  unsigned char severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT | LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT;
+  unsigned char severity =
+      LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT | LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT;
 
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
@@ -126,41 +124,3 @@ int main(int argc, char *argv[]) {
   }
   return EXIT_FAILURE;
 }
-
-
-
-// static LCH_Instance *SetupInstance(void) {
-//   LCH_Instance *instance = NULL;
-//   {  // Create instance
-//     LCH_InstanceCreateInfo createInfo = {
-//         .instanceID = UNIQUE_ID,
-//         .workDir = WORK_DIR,
-//     };
-
-//     instance = LCH_InstanceCreate(&createInfo);
-//     if (instance == NULL) {
-//       LCH_LOG_ERROR("LCH_InstanceCreate");
-//       return NULL;
-//     }
-//   }
-
-//   {  // Add CSV table
-//     LCH_TableCreateInfo createInfo = {
-//         .readLocator = READ_LOCATOR,
-//         .readCallback = LCH_TableReadCallbackCSV,
-//         .writeLocator = WRITE_LOCATOR,
-//         .writeCallback = LCH_TableWriteCallbackCSV,
-//     };
-
-//     LCH_Table *table = LCH_TableCreate(&createInfo);
-//     if (table == NULL) {
-//       LCH_LOG_ERROR("LCH_TableCreate");
-//       return NULL;
-//     }
-
-//     // TODO: Add table to instance
-//     LCH_TableDestroy(table);
-//   }
-
-//   return instance;
-// }

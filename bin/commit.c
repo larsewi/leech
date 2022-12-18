@@ -10,12 +10,12 @@ enum OPTION_VALUE {
 };
 
 static const struct option OPTIONS[] = {
-  { "help", no_argument, NULL, OPTION_HELP },
-  { NULL, 0, NULL, 0 },
+    {"help", no_argument, NULL, OPTION_HELP},
+    {NULL, 0, NULL, 0},
 };
 
 static const char *const DESCRIPTIONS[] = {
-  "print help message",
+    "print help message",
 };
 
 static void PrintHelp(void) {

@@ -11,6 +11,7 @@ Suite *CSVSuite(void);
 Suite *DictSuite(void);
 Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
+Suite *TableSuite(void);
 Suite *UtilsSuite(void);
 
 int main(int argc, char *argv[]) {
@@ -21,6 +22,7 @@ int main(int argc, char *argv[]) {
   srunner_add_suite(sr, DictSuite());
   srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, ListSuite());
+  srunner_add_suite(sr, TableSuite());
   srunner_add_suite(sr, UtilsSuite());
 
   if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {

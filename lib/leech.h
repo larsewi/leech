@@ -184,10 +184,12 @@ bool LCH_FileSize(FILE *file, size_t *size);
 typedef struct LCH_Table LCH_Table;
 
 typedef struct LCH_TableCreateInfo {
-  const char *readLocator;
-  LCH_List *(*readCallback)(const char *);
-  const char *writeLocator;
-  bool (*writeCallback)(const char *, const LCH_List *);
+  const char *primaryFields;
+  const char *subsidiaryFields;
+  const void *readLocator;
+  const void *writeLocator;
+  LCH_List *(*readCallback)(const void *);
+  bool (*writeCallback)(const void *, const LCH_List *);
 } LCH_TableCreateInfo;
 
 LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo);

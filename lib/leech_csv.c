@@ -4,26 +4,28 @@
 #include <errno.h>
 #include <string.h>
 
-LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
+LCH_List *LCH_TableReadCallbackCSV(const void *const locator) {
   assert(locator != NULL);
 
-  FILE *file = fopen(locator, "r");
+  const char *const path = (const char *)locator;
+
+  FILE *file = fopen(path, "r");
   if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", locator,
+    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
                   strerror(errno));
     return NULL;
   }
 
   size_t size;
   if (!LCH_FileSize(file, &size)) {
-    LCH_LOG_ERROR("Failed to get size of file '%s'", locator);
+    LCH_LOG_ERROR("Failed to get size of file '%s'", path);
     fclose(file);
     return NULL;
   }
 
   char buffer[size];
   if (fread((void *)buffer, 1, size, file) != size) {
-    LCH_LOG_ERROR("Failed to read file '%s': %s", locator, strerror(errno));
+    LCH_LOG_ERROR("Failed to read file '%s': %s", path, strerror(errno));
     fclose(file);
     return NULL;
   }
@@ -31,21 +33,23 @@ LCH_List *LCH_TableReadCallbackCSV(const char *const locator) {
 
   LCH_List *table = LCH_ParseCSV(buffer);
   if (table == NULL) {
-    LCH_LOG_ERROR("Failed to parse CSV file '%s'", locator, strerror(errno));
+    LCH_LOG_ERROR("Failed to parse CSV file '%s'", path, strerror(errno));
     return NULL;
   }
 
   return table;
 }
 
-bool LCH_TableWriteCallbackCSV(const char *const locator,
+bool LCH_TableWriteCallbackCSV(const void *const locator,
                                const LCH_List *const table) {
   assert(locator != NULL);
   assert(table != NULL);
 
+  const char *const path = (const char *)locator;
+
   LCH_Buffer *const buffer = LCH_ComposeCSV(table);
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to compose CSV for file '%s'", locator);
+    LCH_LOG_ERROR("Failed to compose CSV for file '%s'", path);
     return false;
   }
 
@@ -53,23 +57,23 @@ bool LCH_TableWriteCallbackCSV(const char *const locator,
   if (csv == NULL) {
     LCH_LOG_ERROR(
         "Failed to get string from buffer after composing CSV for file '%s'",
-        locator);
+        path);
     return false;
   }
 
   const size_t length = LCH_BufferLength(buffer);
   LCH_BufferDestroy(buffer);
 
-  FILE *const file = fopen(locator, "w");
+  FILE *const file = fopen(path, "w");
   if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", locator,
+    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
                   strerror(errno));
     return false;
   }
 
   if (fwrite(csv, 1, length, file) != length) {
     LCH_LOG_ERROR("Failed to write composed CSV (%zu bytes) to file '%s': %s",
-                  length, locator, strerror(errno));
+                  length, path, strerror(errno));
     fclose(file);
     return false;
   }

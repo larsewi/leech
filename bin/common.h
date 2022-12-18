@@ -3,8 +3,11 @@
 
 #include <getopt.h>
 
+#include "../lib/leech.h"
+
 void PrintVersion(void);
 
-void PrintOptions(const struct option *const options, const char *const *const descriptions);
+void PrintOptions(const struct option *const options,
+                  const char *const *const descriptions);
 
-#endif // _LEECH_COMMON
+#endif  // _LEECH_COMMON

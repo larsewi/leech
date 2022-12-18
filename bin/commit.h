@@ -3,4 +3,4 @@
 
 int Commit(int argc, char *argv[]);
 
-#endif // _LEECH_COMMIT
+#endif  // _LEECH_COMMIT

@@ -3,4 +3,4 @@
 
 int Patch(int argc, char *argv[]);
 
-#endif // _LEECH_PATCH
+#endif  // _LEECH_PATCH
