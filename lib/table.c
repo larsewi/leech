@@ -21,23 +21,28 @@ LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
   assert(createInfo->readCallback != NULL);
   assert(createInfo->writeCallback != NULL);
 
-  LCH_Table *table = (LCH_Table *)malloc(sizeof(LCH_Table));
+  LCH_Table *table = (LCH_Table *)calloc(1, sizeof(LCH_Table));
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for table: %s", strerror(errno));
     return NULL;
   }
 
   LCH_List *primary = LCH_ParseCSV(createInfo->primaryFields);
+  LCH_ListSort(primary, (int (*)(const void *, const void *))strcmp);
   table->primaryFields = primary;
 
   LCH_List *subsidiary = LCH_ParseCSV(createInfo->subsidiaryFields);
+  LCH_ListSort(subsidiary, (int (*)(const void *, const void *))strcmp);
   table->subsidiaryFields = subsidiary;
 
-  table->records = createInfo->readCallback(createInfo->readLocator);
-  if (table->records == NULL) {
-    LCH_LOG_ERROR("Failed to read table data");
-    return NULL;
+  LCH_List *records = createInfo->readCallback(createInfo->readLocator);
+  if (records == NULL) {
+    LCH_LOG_ERROR("Failed to read table");
+    LCH_ListDestroy(subsidiary);
+    LCH_ListDestroy(primary);
+    free(table);
   }
+  LCH_ListDestroy(records);
 
   table->writeLocator = createInfo->writeLocator;
   table->writeCallback = createInfo->writeCallback;

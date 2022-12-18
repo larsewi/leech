@@ -49,6 +49,21 @@ START_TEST(test_LCH_ListSort) {
 }
 END_TEST
 
+START_TEST(test_LCH_ListIndex) {
+  LCH_List *list = LCH_ListCreate();
+  ck_assert_ptr_nonnull(list);
+
+  const char *strs[] = {"Paul", "Ringo", "George", "", "Lennon"};
+  for (size_t i = 0; i < LCH_LENGTH(strs); i++) {
+    ck_assert(LCH_ListAppend(list, strdup(strs[i]), free));
+  }
+
+  ck_assert_int_eq(LCH_ListIndex(list, "George", (int (*)(const void *, const void *))strcmp), 2);
+
+  LCH_ListDestroy(list);
+}
+END_TEST
+
 Suite *ListSuite(void) {
   Suite *s = suite_create("list.c");
   {
@@ -59,6 +74,11 @@ Suite *ListSuite(void) {
   {
     TCase *tc = tcase_create("LCH_ListSort");
     tcase_add_test(tc, test_LCH_ListSort);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ListIndex");
+    tcase_add_test(tc, test_LCH_ListIndex);
     suite_add_tcase(s, tc);
   }
   return s;

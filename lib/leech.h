@@ -85,11 +85,21 @@ void LCH_ListSet(LCH_List *self, size_t index, void *value,
                  void (*destroy)(void *));
 
 /**
+ * Get index of first occurance of value in list.
+ * @param[in] self pointer to list.
+ * @param[in] value value to find.
+ * @param[in] compare comparison function.
+ */
+size_t LCH_ListIndex(LCH_List *self, const void *value,
+                     int (*compare)(const void *, const void *));
+
+/**
  * Sort list.
  * @param[in] self pointer to list.
- * @param[in] cmp comparison function.
+ * @param[in] compare comparison function.
  */
-void LCH_ListSort(LCH_List *const self, int (*cmp)(const void *, const void *));
+void LCH_ListSort(LCH_List *const self,
+                  int (*compare)(const void *, const void *));
 
 /**
  * Destroy list and contents.

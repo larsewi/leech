@@ -115,6 +115,20 @@ void LCH_ListSet(LCH_List *const self, const size_t index, void *const value,
   self->buffer[index]->destroy = destroy;
 }
 
+size_t LCH_ListIndex(LCH_List *const self, const void *const value,
+                     int (*compare)(const void *, const void *)) {
+  assert(self != NULL);
+  assert(compare != NULL);
+
+  for (size_t i = 0; i < self->length; i++) {
+    if (compare(LCH_ListGet(self, i), value) == 0) {
+      return i;
+    }
+  }
+  return LCH_ListLength(self);
+}
+
+
 static void Swap(LCH_List *const list, const size_t a, const size_t b) {
   assert(list != NULL);
   assert(a < list->length);
@@ -127,11 +141,11 @@ static void Swap(LCH_List *const list, const size_t a, const size_t b) {
 
 static size_t Partition(LCH_List *const list, const size_t low,
                         const size_t high,
-                        int (*cmp)(const void *, const void *)) {
+                        int (*compare)(const void *, const void *)) {
   void *pivot = LCH_ListGet(list, high);
   size_t i = low;
   for (size_t j = low; j < high; j++) {
-    if (cmp(LCH_ListGet(list, j), pivot) <= 0) {
+    if (compare(LCH_ListGet(list, j), pivot) <= 0) {
       Swap(list, i++, j);
     }
   }
@@ -140,18 +154,18 @@ static size_t Partition(LCH_List *const list, const size_t low,
 }
 
 static void QuickSort(LCH_List *const list, const size_t low, const size_t high,
-                      int (*cmp)(const void *, const void *)) {
+                      int (*compare)(const void *, const void *)) {
   if (low < high) {
-    const size_t pivot = Partition(list, low, high, cmp);
-    QuickSort(list, low, pivot - 1, cmp);
-    QuickSort(list, pivot + 1, high, cmp);
+    const size_t pivot = Partition(list, low, high, compare);
+    QuickSort(list, low, pivot - 1, compare);
+    QuickSort(list, pivot + 1, high, compare);
   }
 }
 
 void LCH_ListSort(LCH_List *const self,
-                  int (*cmp)(const void *, const void *)) {
+                  int (*compare)(const void *, const void *)) {
   assert(self != NULL);
-  QuickSort(self, 0, self->length - 1, cmp);
+  QuickSort(self, 0, self->length - 1, compare);
 }
 
 void LCH_ListDestroy(LCH_List *self) {
