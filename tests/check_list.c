@@ -28,8 +28,6 @@ START_TEST(test_LCH_List) {
 END_TEST
 
 START_TEST(test_LCH_ListSort) {
-  int i, j;
-
   LCH_List *list = LCH_ListCreate();
   ck_assert_ptr_nonnull(list);
 
