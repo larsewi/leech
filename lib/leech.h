@@ -107,6 +107,12 @@ void LCH_ListSort(LCH_List *const self,
  */
 void LCH_ListDestroy(LCH_List *self);
 
+/**
+ * Destroy list except contents.
+ * @param[in] self pointer to list.
+ */
+void LCH_ListDestroyShallow(LCH_List *self);
+
 /****************************************************************************/
 /*  Dict                                                                    */
 /****************************************************************************/
@@ -218,7 +224,7 @@ typedef struct LCH_TableCreateInfo {
   bool (*writeCallback)(const void *, const LCH_List *);
 } LCH_TableCreateInfo;
 
-LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo);
+LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *createInfo);
 
 void LCH_TableDestroy(LCH_Table *table);
 

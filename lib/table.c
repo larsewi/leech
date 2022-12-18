@@ -16,6 +16,10 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
   const size_t n_cols = LCH_ListLength(header);
 
   LCH_List *indices = LCH_ListCreate();
+  if (indices == NULL) {
+    return NULL;
+  }
+
   for (size_t i = 0; i < LCH_ListLength(fields); i++) {
     void *const field = LCH_ListGet(fields, i);
 
@@ -89,7 +93,7 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record, const LCH_List
   return str;
 }
 
-LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
+LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo != NULL);
   assert(createInfo->primaryFields != NULL);
   assert(createInfo->subsidiaryFields != NULL);
@@ -100,17 +104,24 @@ LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
 
   LCH_Table *table = (LCH_Table *)calloc(1, sizeof(LCH_Table));
   if (table == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for table: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
-  LCH_List *primaryFields = LCH_ParseCSV(createInfo->primaryFields);
-  LCH_ListSort(primaryFields, (int (*)(const void *, const void *))strcmp);
-  table->primaryFields = primaryFields;
 
-  LCH_List *subsidiaryFields = LCH_ParseCSV(createInfo->subsidiaryFields);
+  LCH_List *tmp = LCH_ParseCSV(createInfo->primaryFields);
+  LCH_List *primaryFields = LCH_ListGet(tmp, 0);
+  LCH_ListDestroyShallow(tmp);
+  LCH_ListSort(primaryFields, (int (*)(const void *, const void *))strcmp);
+  for (size_t i = 0; i < LCH_ListLength(primaryFields); i++) {
+    char *field = (char *)LCH_ListGet(primaryFields, i);
+    LCH_LOG_INFO("Primary field: %s", field);
+  }
+
+  tmp = LCH_ParseCSV(createInfo->subsidiaryFields);
+  LCH_List *subsidiaryFields = LCH_ListGet(tmp, 0);
+  LCH_ListDestroyShallow(tmp);
   LCH_ListSort(subsidiaryFields, (int (*)(const void *, const void *))strcmp);
-  table->subsidiaryFields = subsidiaryFields;
 
   LCH_List *const records = createInfo->readCallback(createInfo->readLocator);
   if (records == NULL) {
@@ -193,6 +204,8 @@ LCH_Table *LCH_TableCreate(LCH_TableCreateInfo *createInfo) {
   LCH_ListDestroy(records);
 
   table->data = data;
+  table->primaryFields = primaryFields;
+  table->subsidiaryFields = subsidiaryFields;
   table->writeLocator = createInfo->writeLocator;
   table->writeCallback = createInfo->writeCallback;
 

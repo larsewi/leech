@@ -185,3 +185,14 @@ void LCH_ListDestroy(LCH_List *self) {
   free(self);
   LCH_LOG_DEBUG("Destroyed list");
 }
+
+void LCH_ListDestroyShallow(LCH_List *self) {
+  if (self == NULL) {
+    return;
+  }
+  assert(self->buffer != NULL);
+
+  free(self->buffer);
+  free(self);
+  LCH_LOG_DEBUG("Destroyed list");
+}
