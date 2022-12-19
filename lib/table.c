@@ -112,55 +112,57 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
     return NULL;
   }
 
-  LCH_List *tmp = LCH_ParseCSV(createInfo->primaryFields);
-  assert(LCH_ListLength(tmp) == 1);
-  LCH_List *primaryFields = LCH_ListGet(tmp, 0);
-  LCH_ListSort(primaryFields, (int (*)(const void *, const void *))strcmp);
-  LCH_ListDestroyShallow(tmp);
-  for (size_t i = 0; i < LCH_ListLength(primaryFields); i++) {
-    char *field = (char *)LCH_ListGet(primaryFields, i);
-    LCH_LOG_INFO("Primary field: %s", field);
+  {
+    LCH_List *tmp = LCH_ParseCSV(createInfo->primaryFields);
+    if (tmp == NULL) {
+      LCH_TableDestroy(table);
+      return NULL;
+    }
+    assert(LCH_ListLength(tmp) == 1);
+    table->primaryFields = LCH_ListGet(tmp, 0);
+    LCH_ListSort(table->primaryFields, (int (*)(const void *, const void *))strcmp);
+    LCH_ListDestroyShallow(tmp);
   }
 
-  tmp = LCH_ParseCSV(createInfo->subsidiaryFields);
-  LCH_List *subsidiaryFields = LCH_ListGet(tmp, 0);
-  LCH_ListDestroyShallow(tmp);
-  LCH_ListSort(subsidiaryFields, (int (*)(const void *, const void *))strcmp);
+  {
+    LCH_List *tmp = LCH_ParseCSV(createInfo->subsidiaryFields);
+    if (tmp == NULL) {
+      LCH_TableDestroy(table);
+      return NULL;
+    }
+    assert(LCH_ListLength(tmp) == 1);
+    table->subsidiaryFields = LCH_ListGet(tmp, 0);
+    LCH_ListDestroyShallow(tmp);
+    LCH_ListSort(table->subsidiaryFields, (int (*)(const void *, const void *))strcmp);
+  }
 
   LCH_List *const records = createInfo->readCallback(createInfo->readLocator);
   if (records == NULL) {
-    LCH_ListDestroy(subsidiaryFields);
-    LCH_ListDestroy(primaryFields);
-    free(table);
+    LCH_TableDestroy(table);
+    return NULL;
+  }
+
+  table->data = LCH_DictCreate();
+  if (table->data == NULL) {
+    LCH_ListDestroy(records);
+    LCH_TableDestroy(table);
     return NULL;
   }
 
   const LCH_List *const header = LCH_ListGet(records, 0);
 
-  LCH_List *primaryIndices = GetIndexOfFields(header, primaryFields);
-  if (primaryFields == NULL) {
-    LCH_ListDestroy(subsidiaryFields);
-    LCH_ListDestroy(primaryFields);
-    free(table);
+  LCH_List *primaryIndices = GetIndexOfFields(header, table->primaryFields);
+  if (primaryIndices == NULL) {
+    LCH_ListDestroy(records);
+    LCH_TableDestroy(table);
     return NULL;
   }
 
-  LCH_List *subsidiaryIndices = GetIndexOfFields(header, subsidiaryFields);
-  if (primaryFields == NULL) {
+  LCH_List *subsidiaryIndices = GetIndexOfFields(header, table->subsidiaryFields);
+  if (subsidiaryIndices == NULL) {
     LCH_ListDestroy(primaryIndices);
-    LCH_ListDestroy(subsidiaryFields);
-    LCH_ListDestroy(primaryFields);
-    free(table);
-    return NULL;
-  }
-
-  LCH_Dict *data = LCH_DictCreate();
-  if (data == NULL) {
-    LCH_ListDestroy(subsidiaryIndices);
-    LCH_ListDestroy(primaryIndices);
-    LCH_ListDestroy(subsidiaryFields);
-    LCH_ListDestroy(primaryFields);
-    free(table);
+    LCH_ListDestroy(records);
+    LCH_TableDestroy(table);
     return NULL;
   }
 
@@ -169,47 +171,39 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
 
     char *key = ComposeFieldsAtIndices(record, primaryIndices);
     if (key == NULL) {
-      LCH_DictDestroy(data);
       LCH_ListDestroy(subsidiaryIndices);
       LCH_ListDestroy(primaryIndices);
-      LCH_ListDestroy(subsidiaryFields);
-      LCH_ListDestroy(primaryFields);
-      free(table);
+      LCH_ListDestroy(records);
+      LCH_TableDestroy(table);
       return NULL;
     }
 
     char *value = ComposeFieldsAtIndices(record, subsidiaryIndices);
     if (value == NULL) {
       free(key);
-      LCH_DictDestroy(data);
       LCH_ListDestroy(subsidiaryIndices);
       LCH_ListDestroy(primaryIndices);
-      LCH_ListDestroy(subsidiaryFields);
-      LCH_ListDestroy(primaryFields);
-      free(table);
+      LCH_ListDestroy(records);
+      LCH_TableDestroy(table);
       return NULL;
     }
 
-    if (!LCH_DictSet(data, key, value, free)) {
+    if (!LCH_DictSet(table->data, key, value, free)) {
       free(value);
       free(key);
-      LCH_DictDestroy(data);
       LCH_ListDestroy(subsidiaryIndices);
       LCH_ListDestroy(primaryIndices);
-      LCH_ListDestroy(subsidiaryFields);
-      LCH_ListDestroy(primaryFields);
-      free(table);
+      LCH_ListDestroy(records);
+      LCH_TableDestroy(table);
       return NULL;
     }
+    free(key);
   }
 
   LCH_ListDestroy(subsidiaryIndices);
   LCH_ListDestroy(primaryIndices);
   LCH_ListDestroy(records);
 
-  table->data = data;
-  table->primaryFields = primaryFields;
-  table->subsidiaryFields = subsidiaryFields;
   table->writeLocator = createInfo->writeLocator;
   table->writeCallback = createInfo->writeCallback;
 
