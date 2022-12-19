@@ -12,7 +12,8 @@ typedef struct LCH_Table {
   bool (*writeCallback)(const void *, const LCH_List *);
 } LCH_Table;
 
-static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *const fields) {
+static LCH_List *GetIndexOfFields(const LCH_List *const header,
+                                  const LCH_List *const fields) {
   const size_t n_cols = LCH_ListLength(header);
 
   LCH_List *indices = LCH_ListCreate();
@@ -29,7 +30,8 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
       LCH_ListDestroy(indices);
       return NULL;
     }
-    *index = LCH_ListIndex(header, field, (int (*)(const void *, const void *))strcmp);
+    *index = LCH_ListIndex(header, field,
+                           (int (*)(const void *, const void *))strcmp);
 
     if (*index >= n_cols) {
       LCH_LOG_ERROR("Field '%s' not in table header", (char *)field);
@@ -47,7 +49,8 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
   return indices;
 }
 
-static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record, const LCH_List *const indices) {
+static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
+                                        const LCH_List *const indices) {
   LCH_List *const fields = LCH_ListCreate();
   if (fields == NULL) {
     return NULL;
@@ -72,7 +75,8 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record, const LCH_
   return fields;
 }
 
-static char *ComposeFieldsAtIndices(const LCH_List *const record, const LCH_List *const indices) {
+static char *ComposeFieldsAtIndices(const LCH_List *const record,
+                                    const LCH_List *const indices) {
   LCH_List *const lst = ExtractFieldsAtIndices(record, indices);
   if (lst == NULL) {
     return NULL;
@@ -107,7 +111,6 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
-
 
   LCH_List *tmp = LCH_ParseCSV(createInfo->primaryFields);
   LCH_List *primaryFields = LCH_ListGet(tmp, 0);
@@ -186,7 +189,7 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
       return NULL;
     }
 
-    if(!LCH_DictSet(data, key, value, free)) {
+    if (!LCH_DictSet(data, key, value, free)) {
       free(value);
       free(key);
       LCH_DictDestroy(data);

@@ -128,7 +128,6 @@ size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
   return LCH_ListLength(self);
 }
 
-
 static void Swap(LCH_List *const list, const size_t a, const size_t b) {
   assert(list != NULL);
   assert(a < list->length);

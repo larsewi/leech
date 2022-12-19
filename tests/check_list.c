@@ -58,10 +58,18 @@ START_TEST(test_LCH_ListIndex) {
     ck_assert(LCH_ListAppend(list, strdup(strs[i]), free));
   }
 
-  ck_assert_int_eq(LCH_ListIndex(list, "George", (int (*)(const void *, const void *))strcmp), 2);
-  ck_assert_int_eq(LCH_ListIndex(list, "Lennon", (int (*)(const void *, const void *))strcmp), 4);
-  ck_assert_int_eq(LCH_ListIndex(list, "Paul", (int (*)(const void *, const void *))strcmp), 0);
-  ck_assert_int_eq(LCH_ListIndex(list, "Unknown", (int (*)(const void *, const void *))strcmp), 5);
+  ck_assert_int_eq(LCH_ListIndex(list, "George",
+                                 (int (*)(const void *, const void *))strcmp),
+                   2);
+  ck_assert_int_eq(LCH_ListIndex(list, "Lennon",
+                                 (int (*)(const void *, const void *))strcmp),
+                   4);
+  ck_assert_int_eq(
+      LCH_ListIndex(list, "Paul", (int (*)(const void *, const void *))strcmp),
+      0);
+  ck_assert_int_eq(LCH_ListIndex(list, "Unknown",
+                                 (int (*)(const void *, const void *))strcmp),
+                   5);
 
   LCH_ListDestroy(list);
 }
