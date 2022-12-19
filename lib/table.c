@@ -87,7 +87,7 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
     LCH_ListDestroy(lst);
   }
 
-  if (!LCH_ListAppend(tbl, lst, LCH_ListDestroy)) {
+  if (!LCH_ListAppend(tbl, lst, (void (*)(void *))LCH_ListDestroy)) {
     LCH_ListDestroy(tbl);
     LCH_ListDestroy(lst);
   }

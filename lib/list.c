@@ -193,6 +193,11 @@ void LCH_ListDestroyShallow(LCH_List *self) {
   }
   assert(self->buffer != NULL);
 
+  for (size_t i = 0; i < self->length; i++) {
+    ListElement *item = self->buffer[i];
+    free(item);
+  }
+
   free(self->buffer);
   free(self);
   LCH_LOG_DEBUG("Destroyed list");
