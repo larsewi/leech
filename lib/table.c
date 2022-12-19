@@ -82,8 +82,18 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
     return NULL;
   }
 
-  LCH_Buffer *buf = LCH_ComposeCSV(lst);
-  LCH_ListDestroy(lst);
+  LCH_List *tbl = LCH_ListCreate();
+  if (tbl == NULL) {
+    LCH_ListDestroy(lst);
+  }
+
+  if (!LCH_ListAppend(tbl, lst, LCH_ListDestroy)) {
+    LCH_ListDestroy(tbl);
+    LCH_ListDestroy(lst);
+  }
+
+  LCH_Buffer *buf = LCH_ComposeCSV(tbl);
+  LCH_ListDestroy(tbl);
   if (buf == NULL) {
     return NULL;
   }
