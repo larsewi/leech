@@ -28,8 +28,13 @@ START_TEST(test_CreateDestroyTable) {
 
   LCH_Table *table = LCH_TableCreate(&createInfo);
   ck_assert_ptr_nonnull(table);
-  ck_assert_int_eq(remove("sample.csv"), 0);
+
+  LCH_Dict *newData = LCH_TableLoadNewData(table);
+  ck_assert_ptr_nonnull(newData);
+  LCH_DictDestroy(newData);
+
   LCH_TableDestroy(table);
+  ck_assert_int_eq(remove("sample.csv"), 0);
 }
 END_TEST
 

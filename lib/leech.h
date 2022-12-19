@@ -226,6 +226,8 @@ typedef struct LCH_TableCreateInfo {
 
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *createInfo);
 
+LCH_Dict *LCH_TableLoadNewData(const LCH_Table *table);
+
 void LCH_TableDestroy(LCH_Table *table);
 
 /****************************************************************************/
