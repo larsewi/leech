@@ -113,9 +113,10 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   }
 
   LCH_List *tmp = LCH_ParseCSV(createInfo->primaryFields);
+  assert(LCH_ListLength(tmp) == 1);
   LCH_List *primaryFields = LCH_ListGet(tmp, 0);
-  LCH_ListDestroyShallow(tmp);
   LCH_ListSort(primaryFields, (int (*)(const void *, const void *))strcmp);
+  LCH_ListDestroyShallow(tmp);
   for (size_t i = 0; i < LCH_ListLength(primaryFields); i++) {
     char *field = (char *)LCH_ListGet(primaryFields, i);
     LCH_LOG_INFO("Primary field: %s", field);

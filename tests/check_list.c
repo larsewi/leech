@@ -49,6 +49,16 @@ START_TEST(test_LCH_ListSort) {
 }
 END_TEST
 
+START_TEST(test_LCH_ListSortSingle) {
+  LCH_List *list = LCH_ListCreate();
+  ck_assert_ptr_nonnull(list);
+  ck_assert(LCH_ListAppend(list, strdup("Hello World!"), free));
+  LCH_ListSort(list, (int (*)(const void *, const void *))strcmp);
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "Hello World!");
+  LCH_ListDestroy(list);
+}
+END_TEST
+
 START_TEST(test_LCH_ListIndex) {
   LCH_List *list = LCH_ListCreate();
   ck_assert_ptr_nonnull(list);
@@ -85,6 +95,11 @@ Suite *ListSuite(void) {
   {
     TCase *tc = tcase_create("LCH_ListSort");
     tcase_add_test(tc, test_LCH_ListSort);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ListSortSingle");
+    tcase_add_test(tc, test_LCH_ListSortSingle);
     suite_add_tcase(s, tc);
   }
   {
