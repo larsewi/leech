@@ -4,7 +4,7 @@
 `sudo apt-get install build-essential automake autoconf libtool-bin check libssl-dev`
 
 ## Install
-`./autogen.sh && ./configure --enable-simulate && make && sudo make install`
+`./autogen.sh && ./configure --enable-debug && make && sudo make install`
 
 ```mermaid
     graph TD;
