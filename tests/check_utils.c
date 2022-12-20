@@ -2,6 +2,7 @@
 
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
+#include "../lib/utils.h"
 
 START_TEST(test_LCH_StartsWith) {
   ck_assert(LCH_StringStartsWith("Hello World", "Hello"));

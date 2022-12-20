@@ -4,6 +4,10 @@
 #include <errno.h>
 #include <string.h>
 
+#include "utils.h"
+#include "csv.h"
+#include "buffer.h"
+
 LCH_List *LCH_TableReadCallbackCSV(const void *const locator) {
   assert(locator != NULL);
 

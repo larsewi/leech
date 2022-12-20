@@ -3,6 +3,7 @@
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
 #include "../lib/leech_csv.h"
+#include "../lib/table.h"
 
 START_TEST(test_CreateDestroyTable) {
   const char csv[] =

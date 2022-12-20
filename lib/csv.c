@@ -4,6 +4,8 @@
 #include <string.h>
 
 #include "leech.h"
+#include "buffer.h"
+#include "utils.h"
 
 #define TEXTDATA(ch)                                           \
   ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \

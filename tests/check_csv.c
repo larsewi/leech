@@ -3,6 +3,8 @@
 
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
+#include "../lib/buffer.h"
+#include "../lib/csv.h"
 
 START_TEST(test_LCH_ComposeCSV) {
   char *data[][LCH_BUFFER_SIZE] = {

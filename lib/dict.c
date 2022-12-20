@@ -4,6 +4,7 @@
 
 #include "definitions.h"
 #include "leech.h"
+#include "dict.h"
 
 #define INITIAL_CAPACITY 8
 #define LOAD_FACTOR 0.75f

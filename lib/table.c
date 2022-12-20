@@ -3,6 +3,9 @@
 #include <string.h>
 
 #include "leech.h"
+#include "table.h"
+#include "csv.h"
+#include "list.h"
 
 typedef struct LCH_Table {
   LCH_List *primaryFields;

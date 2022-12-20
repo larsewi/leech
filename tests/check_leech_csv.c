@@ -3,6 +3,7 @@
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
 #include "../lib/leech_csv.h"
+#include "../lib/utils.h"
 
 START_TEST(test_LCH_TableReadCallbackCSV) {
   FILE *file = fopen("sample.csv", "w");

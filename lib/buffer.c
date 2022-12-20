@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "definitions.h"
 #include "leech.h"
+#include "definitions.h"
+#include "buffer.h"
 
 #define INITIAL_CAPACITY 64
 
