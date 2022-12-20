@@ -1,12 +1,13 @@
+#include "buffer.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "leech.h"
 #include "definitions.h"
-#include "buffer.h"
+#include "leech.h"
 
 #define INITIAL_CAPACITY 64
 

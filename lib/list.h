@@ -35,4 +35,4 @@ void LCH_ListSort(LCH_List *const self,
  */
 void LCH_ListDestroyShallow(LCH_List *self);
 
-#endif // _LEECH_LIST_H
+#endif  // _LEECH_LIST_H

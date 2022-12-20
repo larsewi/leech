@@ -2,7 +2,7 @@
   "configurations": [
     {
       "name": "Linux",
-      "includePath": ["${workspaceFolder}/**"],
+      "includePath": ["${workspaceFolder}/**", "/usr/local/opt/openssl/include"],
       "defines": [],
       "compilerPath": "/usr/bin/gcc",
       "cStandard": "c11",

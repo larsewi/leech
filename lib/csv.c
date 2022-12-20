@@ -3,8 +3,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "leech.h"
 #include "buffer.h"
+#include "leech.h"
 #include "utils.h"
 
 #define TEXTDATA(ch)                                           \

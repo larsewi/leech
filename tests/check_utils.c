@@ -30,6 +30,23 @@ END_TEST
 START_TEST(test_LCH_SplitString) {}
 END_TEST
 
+START_TEST(test_LCH_SHA1) {
+  unsigned char message1[] = "Hello World!";
+  unsigned char message2[] = "Hello world!";
+
+  unsigned char *digest1 = LCH_SHA1(message1, sizeof(message1));
+  unsigned char *digest2 = LCH_SHA1(message2, sizeof(message2));
+
+  ck_assert_ptr_nonnull(digest1);
+  ck_assert_ptr_nonnull(digest2);
+
+  ck_assert_str_ne(digest1, digest2);
+
+  free(digest1);
+  free(digest2);
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -45,6 +62,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_StringStrip");
     tcase_add_test(tc, test_LCH_StringStrip);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_SHA1");
+    tcase_add_test(tc, test_LCH_SHA1);
     suite_add_tcase(s, tc);
   }
   return s;

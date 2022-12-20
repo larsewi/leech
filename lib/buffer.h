@@ -1,8 +1,8 @@
 #ifndef _LEECH_BUFFER_H
 #define _LEECH_BUFFER_H
 
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct LCH_Buffer LCH_Buffer;
 
@@ -16,5 +16,4 @@ char *LCH_BufferGet(LCH_Buffer *self);
 
 void LCH_BufferDestroy(LCH_Buffer *self);
 
-
-#endif // _LEECH_BUFFER_H
+#endif  // _LEECH_BUFFER_H

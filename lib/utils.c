@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <errno.h>
+#include <openssl/err.h>
+#include <openssl/evp.h>
 #include <string.h>
 
 #include "leech.h"
@@ -104,4 +106,57 @@ bool LCH_FileSize(FILE *file, size_t *size) {
   }
 
   return true;
+}
+
+unsigned char *LCH_SHA1(const void *const message, const size_t length) {
+  EVP_MD_CTX *context = EVP_MD_CTX_new();
+  if (context == NULL) {
+    LCH_LOG_ERROR("Failed to create context for digest operation: %s",
+                  ERR_error_string(ERR_get_error(), NULL));
+    return NULL;
+  }
+
+  EVP_MD *sha1 = EVP_MD_fetch(NULL, "SHA1", NULL);
+  if (sha1 == NULL) {
+    LCH_LOG_ERROR("Failed to fetch SHA1 algorithm for digest operation: %s",
+                  ERR_error_string(ERR_get_error(), NULL));
+    EVP_MD_CTX_free(context);
+  }
+
+  if (!EVP_DigestInit_ex(context, sha1, NULL)) {
+    LCH_LOG_ERROR("Failed to initialize digest operation: %s",
+                  ERR_error_string(ERR_get_error(), NULL));
+    EVP_MD_CTX_free(context);
+    EVP_MD_free(sha1);
+    return NULL;
+  }
+
+  if (!EVP_DigestUpdate(context, message, length)) {
+    LCH_LOG_ERROR("Failed to pass message to be digested: %s",
+                  ERR_error_string(ERR_get_error(), NULL));
+    EVP_MD_CTX_free(context);
+    EVP_MD_free(sha1);
+    return NULL;
+  }
+
+  unsigned char *const digest = OPENSSL_malloc(EVP_MD_get_size(sha1));
+  if (digest == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory for digest buffer: %s",
+                  ERR_error_string(ERR_get_error(), NULL));
+    EVP_MD_CTX_free(context);
+    EVP_MD_free(sha1);
+    return NULL;
+  }
+
+  if (!EVP_DigestFinal_ex(context, digest, NULL)) {
+    LCH_LOG_ERROR("Failed to calculate digest: %s",
+                  ERR_error_string(ERR_get_error(), NULL));
+    EVP_MD_CTX_free(context);
+    EVP_MD_free(sha1);
+    return NULL;
+  }
+
+  EVP_MD_CTX_free(context);
+  EVP_MD_free(sha1);
+  return digest;
 }

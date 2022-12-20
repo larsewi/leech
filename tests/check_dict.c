@@ -1,8 +1,8 @@
 #include <check.h>
 
 #include "../lib/definitions.h"
-#include "../lib/leech.h"
 #include "../lib/dict.h"
+#include "../lib/leech.h"
 
 START_TEST(test_LCH_Dict) {
   LCH_Dict *dict = LCH_DictCreate();

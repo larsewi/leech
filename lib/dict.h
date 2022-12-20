@@ -1,8 +1,8 @@
 #ifndef _LEECH_DICT
 #define _LEECH_DICT
 
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct LCH_Dict LCH_Dict;
 
@@ -54,4 +54,4 @@ void *LCH_DictGet(const LCH_Dict *self, const char *key);
  */
 void LCH_DictDestroy(LCH_Dict *self);
 
-#endif // _LEECH_DICT
+#endif  // _LEECH_DICT

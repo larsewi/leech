@@ -1,10 +1,11 @@
+#include "table.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
 
-#include "leech.h"
-#include "table.h"
 #include "csv.h"
+#include "leech.h"
 #include "list.h"
 
 typedef struct LCH_Table {
@@ -39,7 +40,8 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
     }
     assert(LCH_ListLength(tmp) == 1);
     table->primaryFields = LCH_ListGet(tmp, 0);
-    LCH_ListSort(table->primaryFields, (int (*)(const void *, const void *))strcmp);
+    LCH_ListSort(table->primaryFields,
+                 (int (*)(const void *, const void *))strcmp);
     LCH_ListDestroyShallow(tmp);
   }
 
@@ -52,7 +54,8 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
     assert(LCH_ListLength(tmp) == 1);
     table->subsidiaryFields = LCH_ListGet(tmp, 0);
     LCH_ListDestroyShallow(tmp);
-    LCH_ListSort(table->subsidiaryFields, (int (*)(const void *, const void *))strcmp);
+    LCH_ListSort(table->subsidiaryFields,
+                 (int (*)(const void *, const void *))strcmp);
   }
 
   table->readLocator = createInfo->readLocator;
@@ -62,7 +65,6 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
 
   return table;
 }
-
 
 static LCH_List *GetIndexOfFields(const LCH_List *const header,
                                   const LCH_List *const fields) {
@@ -180,7 +182,8 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
     return NULL;
   }
 
-  LCH_List *subsidiaryIndices = GetIndexOfFields(header, table->subsidiaryFields);
+  LCH_List *subsidiaryIndices =
+      GetIndexOfFields(header, table->subsidiaryFields);
   if (subsidiaryIndices == NULL) {
     LCH_ListDestroy(primaryIndices);
     LCH_DictDestroy(data);

@@ -154,7 +154,8 @@ static size_t Partition(LCH_List *const list, const size_t low,
   return i;
 }
 
-static void QuickSort(LCH_List *const list, const ssize_t low, const ssize_t high,
+static void QuickSort(LCH_List *const list, const ssize_t low,
+                      const ssize_t high,
                       int (*compare)(const void *, const void *)) {
   if (low < high) {
     const ssize_t pivot = Partition(list, low, high, compare);

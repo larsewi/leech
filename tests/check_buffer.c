@@ -1,8 +1,8 @@
 #include <check.h>
 #include <stdio.h>
 
-#include "../lib/leech.h"
 #include "../lib/buffer.h"
+#include "../lib/leech.h"
 
 START_TEST(test_LCH_Buffer) {
   LCH_Buffer *buffer = LCH_BufferCreate();
