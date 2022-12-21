@@ -148,13 +148,15 @@ unsigned char *LCH_SHA1(const void *const message, const size_t length) {
     return NULL;
   }
 
-  if (!EVP_DigestFinal_ex(context, digest, NULL)) {
+  unsigned int digest_len;
+  if (!EVP_DigestFinal_ex(context, digest, &digest_len)) {
     LCH_LOG_ERROR("Failed to calculate digest: %s",
                   ERR_error_string(ERR_get_error(), NULL));
     EVP_MD_CTX_free(context);
     EVP_MD_free(sha1);
     return NULL;
   }
+  assert(digest_len == 40);
 
   EVP_MD_CTX_free(context);
   EVP_MD_free(sha1);
