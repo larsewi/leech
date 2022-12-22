@@ -1,60 +1,110 @@
 #include "block.h"
 
 #include <arpa/inet.h>
+#include <assert.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <limits.h>
 
 #include "leech.h"
 #include "utils.h"
 
-struct LCH_Block {
-  const unsigned char *parent;
-  time_t timestamp;
-  size_t length;
-  const void *data;
+struct __attribute__((__packed__)) LCH_Block {
+  unsigned char parent_id[LCH_BLOCK_ID_LENGTH];
+  uint32_t timestamp;
+  uint32_t data_len;
+  unsigned char data[0];
 };
 
-LCH_Block *LCH_BlockCreate(const unsigned char *const parent,
-                           const void *const data, const size_t length) {
-  LCH_Block *block = calloc(1, sizeof(block));
-  if (block == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for block: %s", strerror(errno));
-    return NULL;
-  }
-  block->parent = parent;
-  block->timestamp = time(NULL);
-  block->length = length;
-  block->data = data;
+static char *DigestToString(const unsigned char digest[LCH_BLOCK_ID_LENGTH]) {
+  // Two characters per byte, plus terminating null byte
+  const int len = (sizeof(digest) * 2) + 1;
 
-  return block;
-}
-
-void LCH_BlockDestroy(LCH_Block *const block) { free(block); }
-
-void *LCH_BlockMarshal(const LCH_Block *const block, size_t *const size) {
-  void *const buffer =
-      malloc(LCH_SHA1_LENGTH + (2 * sizeof(uint32_t)) + block->length);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for block marshaling: %s",
+  char *const str = malloc(len);
+  if (str == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory for block ID: %s",
                   strerror(errno));
     return NULL;
   }
 
-  memcpy(buffer, block->parent, LCH_SHA1_LENGTH);
+  for (int i = 0; i < sizeof(digest); i++) {
+    int ret = snprintf(str + (i * 2), len - (i * 2), "%02x", digest[i]);
+    assert(ret == 2);
+  }
 
-  const uint32_t time = htonl((uint32_t)block->timestamp);
-  memcpy(buffer + LCH_SHA1_LENGTH, &time, sizeof(uint32_t));
-
-  const uint32_t length = htonl((uint32_t)block->length);
-  memcpy(buffer + LCH_SHA1_LENGTH + sizeof(uint32_t), &length,
-         sizeof(uint32_t));
-
-  memcpy(buffer + LCH_SHA1_LENGTH + (2 * sizeof(uint32_t)), block->data,
-         block->length);
-
-  return buffer;
+  return str;
 }
 
-void LCH_BlockUnmarshal(void) {}
+static bool StringToDigest(const char *str,
+                           unsigned char digest[LCH_BLOCK_ID_LENGTH]) {
+  for (int i = 0; i < sizeof(digest); i++) {
+    if (sscanf(str, "%2hhx", &digest[i]) != 1) {
+      return false;
+    }
+    str += 2;
+  }
+
+  return true;
+}
+
+char *LCH_BlockGetParentID(const LCH_Block *const block) {
+  return DigestToString(block->parent_id);
+}
+
+time_t LCH_BlockGetTimestamp(const LCH_Block *const block) {
+  return (time_t)ntohl(block->timestamp);
+}
+
+size_t LCH_BlockGetDataLength(const LCH_Block *const block) {
+  return (size_t)ntohl(block->data_len);
+}
+
+char *LCH_BlockGetBlockID(const LCH_Block *const block) {
+  const size_t len = sizeof(LCH_Block) + LCH_BlockGetDataLength(block);
+  unsigned char digest[LCH_BLOCK_ID_LENGTH];
+  SHA1(block, len, digest);
+  return DigestToString(digest);
+}
+
+LCH_Block *LCH_BlockCreate(const LCH_Block *const parent, const void *const data,
+                     const size_t data_len) {
+  assert(parent != NULL);
+
+  LCH_Block *block = malloc(sizeof(LCH_Block) + data_len);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory for block: %s");
+    return NULL;
+  }
+
+  char *parent_id = LCH_BlockGetBlockID(parent);
+  if (parent_id == NULL) {
+    LCH_LOG_ERROR("Failed to compute parent block ID");
+    return NULL;
+  }
+  assert(StringToDigest(parent_id, block->parent_id));
+  free(parent_id);
+
+  const time_t timestamp = time(NULL);
+  assert(timestamp <= UINT32_MAX);
+  block->timestamp = htons((uint32_t)timestamp);
+
+  assert(data_len <= UINT32_MAX);
+  block->data_len = htons((uint32_t)data_len);
+
+  memcpy(block->data, data, data_len);
+
+  return block;
+}
+
+bool LCH_BlockStore(const char *const workdir, LCH_Block *block) {
+
+}
+
+LCH_Block *LCH_BlockLoad(const char *const work_dir, const char *const block_id) {
+  char path[PATH_MAX];
+}
+
+
+void LCH_BlockDestroy(LCH_Block *const block) { free(block); }

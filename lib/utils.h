@@ -17,8 +17,4 @@ char *LCH_StringStrip(char *str, const char *charset);
 
 bool LCH_FileSize(FILE *file, size_t *size);
 
-#define LCH_SHA1_LENGTH 40
-
-unsigned char *LCH_SHA1(const void *message, size_t length);
-
 #endif  // _LEECH_UTILS

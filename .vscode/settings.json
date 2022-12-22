@@ -13,6 +13,8 @@
         "string": "c",
         "string_view": "c",
         "type_traits": "c",
-        "vector": "c"
+        "vector": "c",
+        "__string": "c",
+        "bitset": "c"
     }
 }
