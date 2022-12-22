@@ -3,6 +3,7 @@
 
 #include <openssl/sha.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define LCH_BLOCK_ID_LENGTH SHA_DIGEST_LENGTH
 
@@ -14,11 +15,11 @@ time_t LCH_BlockGetTimestamp(const LCH_Block *block);
 
 size_t LCH_BlockGetDataLength(const LCH_Block *block);
 
-void *LCH_BlockGetData(const LCH_Block *block);
+void *LCH_BlockGetData(LCH_Block *block);
 
 char *LCH_BlockGetBlockID(const LCH_Block *block);
 
-LCH_Block *LCH_BlockCreate(const LCH_Block *parent, const void *data,
+LCH_Block *LCH_BlockCreate(const char *parent_id, const void *data,
                            const size_t data_len);
 
 char *LCH_BlockStore(const char *work_dir, const LCH_Block *block);

@@ -6,6 +6,7 @@
 
 static void SetupDebugMessenger(void);
 
+Suite *BlockSuite(void);
 Suite *BufferSuite(void);
 Suite *CSVSuite(void);
 Suite *DictSuite(void);
@@ -17,7 +18,8 @@ Suite *UtilsSuite(void);
 int main(int argc, char *argv[]) {
   SetupDebugMessenger();
 
-  SRunner *sr = srunner_create(BufferSuite());
+  SRunner *sr = srunner_create(BlockSuite());
+  srunner_add_suite(sr, BufferSuite());
   srunner_add_suite(sr, CSVSuite());
   srunner_add_suite(sr, DictSuite());
   srunner_add_suite(sr, LeechCSVSuite());
