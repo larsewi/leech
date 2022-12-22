@@ -11,4 +11,10 @@
 
 #define UNUSED(x) (void)x
 
+#ifdef _WIN32
+#define PATH_SEP '\\'
+#else
+#define PATH_SEP '/'
+#endif
+
 #endif  // _LEECH_DEFINITIONS_H

@@ -3,11 +3,13 @@
 #include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <limits.h>
 
+#include "definitions.h"
 #include "leech.h"
 #include "utils.h"
 
@@ -68,8 +70,8 @@ char *LCH_BlockGetBlockID(const LCH_Block *const block) {
   return DigestToString(digest);
 }
 
-LCH_Block *LCH_BlockCreate(const LCH_Block *const parent, const void *const data,
-                     const size_t data_len) {
+LCH_Block *LCH_BlockCreate(const LCH_Block *const parent,
+                           const void *const data, const size_t data_len) {
   assert(parent != NULL);
 
   LCH_Block *block = malloc(sizeof(LCH_Block) + data_len);
@@ -98,13 +100,61 @@ LCH_Block *LCH_BlockCreate(const LCH_Block *const parent, const void *const data
   return block;
 }
 
-bool LCH_BlockStore(const char *const workdir, LCH_Block *block) {
+bool LCH_BlockStore(const char *const work_dir, LCH_Block *block) {}
 
-}
+LCH_Block *LCH_BlockLoad(const char *const work_dir,
+                         const char *const block_id) {
+  assert(work_dir != NULL);
+  assert(block_id != NULL);
 
-LCH_Block *LCH_BlockLoad(const char *const work_dir, const char *const block_id) {
   char path[PATH_MAX];
+  int ret =
+      snprintf(path, sizeof(path), "%s%c%s", work_dir, PATH_SEP, block_id);
+  if (ret < 0 || (size_t)ret >= sizeof(path)) {
+    LCH_LOG_ERROR("Failed to join paths '%s', '%s': Path truncated (%d >= %zu)",
+                  work_dir, block_id, ret, sizeof(path));
+    return NULL;
+  }
+
+  FILE *file = fopen(path, "rb");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s': %s", path, strerror(errno));
+    return NULL;
+  }
+
+  LCH_Block *block = malloc(sizeof(LCH_Block));
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    fclose(file);
+    return NULL;
+  }
+
+  if (fread(block, sizeof(LCH_Block), 1, file) != 1) {
+    LCH_LOG_ERROR("Failed to read from file '%s': %s", path, strerror(errno));
+    free(block);
+    fclose(file);
+    return NULL;
+  }
+
+  const size_t data_len = LCH_BlockGetDataLength(block);
+  {
+    void *ptr = realloc(block, sizeof(LCH_Block) + data_len);
+    if (ptr == NULL) {
+      LCH_LOG_ERROR("Failed to reallocate memory: %s", strerror(errno));
+      free(block);
+      fclose(file);
+      return NULL;
+    }
+    block = ptr;
+  }
+
+  if (fread(block->data, 1, data_len, file) != data_len) {
+    LCH_LOG_ERROR("Failed to read from file '%s': %s", path, strerror(errno));
+    free(block);
+    fclose(file);
+    return NULL;
+  }
+
+  fclose(file);
+  return block;
 }
-
-
-void LCH_BlockDestroy(LCH_Block *const block) { free(block); }
