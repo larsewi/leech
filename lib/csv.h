@@ -4,8 +4,8 @@
 #include "buffer.h"
 #include "leech.h"
 
-LCH_List *LCH_ParseCSV(const char *str);
+LCH_List *LCH_CSVParse(const char *str);
 
-LCH_Buffer *LCH_ComposeCSV(const LCH_List *table);
+LCH_Buffer *LCH_CSVCompose(const LCH_List *table);
 
 #endif  // _LEECH_CSV_H

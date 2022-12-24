@@ -4,6 +4,6 @@
 #include "dict.h"
 #include "leech.h"
 
-LCH_Dict *LCH_TableLoadNewData(const LCH_Table *table);
+LCH_Dict *LCH_TableLoadData(const LCH_Table *table);
 
 #endif  // _LEECH_TABLE_H

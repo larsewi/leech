@@ -35,7 +35,7 @@ LCH_List *LCH_TableReadCallbackCSV(const void *const locator) {
   }
   fclose(file);
 
-  LCH_List *table = LCH_ParseCSV(buffer);
+  LCH_List *table = LCH_CSVParse(buffer);
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to parse CSV file '%s'", path, strerror(errno));
     return NULL;
@@ -51,7 +51,7 @@ bool LCH_TableWriteCallbackCSV(const void *const locator,
 
   const char *const path = (const char *)locator;
 
-  LCH_Buffer *const buffer = LCH_ComposeCSV(table);
+  LCH_Buffer *const buffer = LCH_CSVCompose(table);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose CSV for file '%s'", path);
     return false;

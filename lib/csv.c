@@ -260,7 +260,7 @@ static LCH_List *ParseTable(Parser *const parser) {
   return table;
 }
 
-LCH_List *LCH_ParseCSV(const char *str) {
+LCH_List *LCH_CSVParse(const char *str) {
   assert(str != NULL);
 
   Parser parser = {
@@ -353,7 +353,7 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
   return true;
 }
 
-LCH_Buffer *LCH_ComposeCSV(const LCH_List *const table) {
+LCH_Buffer *LCH_CSVCompose(const LCH_List *const table) {
   assert(table != NULL);
 
   LCH_Buffer *buffer = LCH_BufferCreate();

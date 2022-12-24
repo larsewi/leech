@@ -31,7 +31,7 @@ START_TEST(test_CreateDestroyTable) {
   LCH_Table *table = LCH_TableCreate(&createInfo);
   ck_assert_ptr_nonnull(table);
 
-  LCH_Dict *newData = LCH_TableLoadNewData(table);
+  LCH_Dict *newData = LCH_TableLoadData(table);
   ck_assert_ptr_nonnull(newData);
   LCH_DictDestroy(newData);
 

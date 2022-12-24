@@ -31,7 +31,7 @@ START_TEST(test_LCH_ComposeCSV) {
     ck_assert(LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy));
   }
 
-  LCH_Buffer *buffer = LCH_ComposeCSV(table);
+  LCH_Buffer *buffer = LCH_CSVCompose(table);
   ck_assert_ptr_nonnull(buffer);
 
   char *actual = LCH_BufferGet(buffer);
@@ -67,7 +67,7 @@ START_TEST(test_LCH_ParseCSV) {
       {(char *)"George", (char *)"Harr\r\nison", (char *)"1943"},
   };
 
-  LCH_List *table = LCH_ParseCSV(data);
+  LCH_List *table = LCH_CSVParse(data);
   ck_assert_ptr_nonnull(table);
 
   const size_t rows = LCH_ListLength(table);
@@ -93,7 +93,7 @@ START_TEST(test_LCH_ParseCSVTrailingCRLF) {
   char *expected[][LCH_BUFFER_SIZE] = {
       {(char *)"first name", (char *)"lastname", (char *)"born"}};
 
-  LCH_List *table = LCH_ParseCSV(data);
+  LCH_List *table = LCH_CSVParse(data);
   ck_assert_ptr_nonnull(table);
 
   const size_t rows = LCH_ListLength(table);

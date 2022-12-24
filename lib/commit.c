@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "instance.h"
+#include "table.h"
 
 bool LCH_Commit(const LCH_Instance *const instance) {
   assert(instance != NULL);
@@ -12,5 +13,6 @@ bool LCH_Commit(const LCH_Instance *const instance) {
 
     for (size_t i = 0; i < num_tables; i++) {
         LCH_Table *table = LCH_ListGet(tables, i);
+        LCH_List *data = LCH_TableLoadData(table);
     }
 }
