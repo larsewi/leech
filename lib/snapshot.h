@@ -1,0 +1,4 @@
+#ifndef _LEECH_SNAPSHOT_H
+#define _LEECH_SNAPSHOT_H
+
+#endif // _LEECH_SNAPSHOT_H

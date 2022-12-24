@@ -19,6 +19,7 @@ START_TEST(test_CreateDestroyTable) {
   fclose(file);
 
   LCH_TableCreateInfo createInfo = {
+      .identifier = "Sample",
       .primaryFields = "id,age",
       .subsidiaryFields = "lastname,firstname",
       .readLocator = "sample.csv",

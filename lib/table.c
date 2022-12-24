@@ -9,6 +9,7 @@
 #include "list.h"
 
 typedef struct LCH_Table {
+  const char *identifier;
   LCH_List *primaryFields;
   LCH_List *subsidiaryFields;
   const void *readLocator;
@@ -19,6 +20,7 @@ typedef struct LCH_Table {
 
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo != NULL);
+  assert(createInfo->identifier != NULL);
   assert(createInfo->primaryFields != NULL);
   assert(createInfo->subsidiaryFields != NULL);
   assert(createInfo->readLocator != NULL);
@@ -58,6 +60,7 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
                  (int (*)(const void *, const void *))strcmp);
   }
 
+  table->identifier = createInfo->identifier;
   table->readLocator = createInfo->readLocator;
   table->readCallback = createInfo->readCallback;
   table->writeLocator = createInfo->writeLocator;

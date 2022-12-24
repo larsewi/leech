@@ -88,6 +88,7 @@ void LCH_ListDestroy(LCH_List *self);
 typedef struct LCH_Table LCH_Table;
 
 typedef struct LCH_TableCreateInfo {
+  const char *identifier;
   const char *primaryFields;
   const char *subsidiaryFields;
   const void *readLocator;
