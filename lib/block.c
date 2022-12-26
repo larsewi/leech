@@ -76,8 +76,8 @@ char *LCH_BlockGetBlockID(const LCH_Block *const block) {
   return DigestToString(digest);
 }
 
-LCH_Block *LCH_BlockCreate(const char *const parent_id,
-                           const void *const data, const size_t data_len) {
+LCH_Block *LCH_BlockCreate(const char *const parent_id, const void *const data,
+                           const size_t data_len) {
   LCH_Block *block = malloc(sizeof(LCH_Block) + data_len);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for block: %s");
@@ -176,7 +176,8 @@ LCH_Block *LCH_BlockLoad(const char *const work_dir,
   }
 
   if (fread(block, sizeof(LCH_Block), 1, file) != 1) {
-    LCH_LOG_ERROR("Failed to read block header from file '%s': %s", path, strerror(errno));
+    LCH_LOG_ERROR("Failed to read block header from file '%s': %s", path,
+                  strerror(errno));
     free(block);
     fclose(file);
     return NULL;
@@ -195,7 +196,8 @@ LCH_Block *LCH_BlockLoad(const char *const work_dir,
   }
 
   if (fread(block->data, 1, data_len, file) != data_len) {
-    LCH_LOG_ERROR("Failed to read block payload from file '%s': %s", path, strerror(errno));
+    LCH_LOG_ERROR("Failed to read block payload from file '%s': %s", path,
+                  strerror(errno));
     free(block);
     fclose(file);
     return NULL;

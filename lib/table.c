@@ -2,11 +2,14 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <string.h>
 
 #include "csv.h"
+#include "definitions.h"
 #include "leech.h"
 #include "list.h"
+#include "utils.h"
 
 typedef struct LCH_Table {
   const char *identifier;
@@ -67,6 +70,10 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   table->writeCallback = createInfo->writeCallback;
 
   return table;
+}
+
+char *LCH_TableGetIdentifier(const LCH_Table *const self) {
+  return self->identifier;
 }
 
 static LCH_List *GetIndexOfFields(const LCH_List *const header,
@@ -164,7 +171,7 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
   return str;
 }
 
-LCH_Dict *LCH_TableLoadData(const LCH_Table *const table) {
+LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
   LCH_List *const records = table->readCallback(table->readLocator);
   if (records == NULL) {
     return NULL;
@@ -232,6 +239,31 @@ LCH_Dict *LCH_TableLoadData(const LCH_Table *const table) {
   LCH_ListDestroy(primaryIndices);
   LCH_ListDestroy(records);
   return data;
+}
+
+static LCH_Dict *LCH_DictCreateEmptySnapshot(const LCH_Table *const table) {
+
+}
+
+LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
+                               const char *const work_dir) {
+  assert(table != NULL);
+  assert(work_dir != NULL);
+
+  assert(table->identifier != NULL);
+  const char *const id = table->identifier;
+
+  char path[PATH_MAX];
+  int ret = snprintf(path, sizeof(path), "%s%c%s%c%s", work_dir, PATH_SEP,
+                     "snapshot", PATH_SEP, id);
+  if ((ret < 0) || ((size_t) ret >= sizeof(path))) {
+    LCH_LOG_ERROR("Failed to join paths: Truncation error");
+    return NULL;
+  }
+
+  if (LCH_FileExists(path)) {
+
+  }
 }
 
 void LCH_TableDestroy(LCH_Table *table) {

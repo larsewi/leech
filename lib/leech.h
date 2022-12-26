@@ -115,6 +115,8 @@ typedef struct LCH_InstanceCreateInfo {
 LCH_Instance *LCH_InstanceCreate(
     const LCH_InstanceCreateInfo *const createInfo);
 
+bool LCH_InstanceCommit(const LCH_Instance *instance);
+
 void LCH_InstanceDestroy(LCH_Instance *instance);
 
 #endif  // _LEECH_LEECH_H

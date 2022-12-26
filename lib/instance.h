@@ -3,6 +3,4 @@
 
 #include "leech.h"
 
-LCH_List *LCH_InstanceGetTables(const LCH_Instance *instace);
-
-#endif // _LEECH_INSTANCE_H
+#endif  // _LEECH_INSTANCE_H

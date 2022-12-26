@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include "leech.h"
 
@@ -106,4 +107,19 @@ bool LCH_FileSize(FILE *file, size_t *size) {
   }
 
   return true;
+}
+
+bool LCH_FileExists(const char *const path) {
+  struct stat sb;
+  return stat(path, &sb) == 0;
+}
+
+bool LCH_IsRegularFile(const char *const path) {
+  struct stat sb;
+  return (stat(path, &sb) != 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
+}
+
+bool LCH_IsDirectory(const char *const path) {
+  struct stat sb;
+  return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
 }

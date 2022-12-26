@@ -1,12 +1,12 @@
 #include <check.h>
-#include <stdio.h>
 #include <limits.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "../lib/block.h"
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
-#include "../lib/block.h"
 
 START_TEST(test_LCH_Block) {
   const char *const work_dir = "/tmp";
@@ -14,7 +14,8 @@ START_TEST(test_LCH_Block) {
   // Store one
   char *str = "one";
   size_t len = strlen(str) + 1;
-  LCH_Block *block = LCH_BlockCreate("0000000000000000000000000000000000000000", str, len);
+  LCH_Block *block =
+      LCH_BlockCreate("0000000000000000000000000000000000000000", str, len);
   ck_assert_ptr_nonnull(block);
   char *id = LCH_BlockStore(work_dir, block);
   free(block);
