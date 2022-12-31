@@ -242,7 +242,59 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
 }
 
 static LCH_Dict *LCH_DictCreateEmptySnapshot(const LCH_Table *const table) {
+  LCH_List *const header = LCH_ListCreate();
+  if (header == 0) {
+    LCH_LOG_ERROR("Failed to create header for empty snapshot");
+    return NULL;
+  }
 
+  for (size_t i = 0; i < LCH_ListLength(table->primaryFields); i++) {
+    char *const field = strdup(LCH_ListGet(table->primaryFields, i));
+    if (field == NULL) {
+      LCH_LOG_ERROR("Failed to allocate memory for snapshot header field");
+      LCH_ListDestroy(header);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(header, field, free)) {
+      LCH_LOG_ERROR("Failed to append field to snapshot header");
+      free(field);
+      LCH_ListDestroy(header);
+      return NULL;
+    }
+  }
+
+  for (size_t i = 0; i < LCH_ListLength(table->subsidiaryFields); i++) {
+    char *const field = strdup(LCH_ListGet(table->subsidiaryFields, i));
+    if (field == NULL) {
+      LCH_LOG_ERROR("Failed to allocate memory for snapshot header field");
+      LCH_ListDestroy(header);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(header, field, free)) {
+      LCH_LOG_ERROR("Failed to append field to snapshot header");
+      free(field);
+      LCH_ListDestroy(header);
+      return NULL;
+    }
+  }
+
+  LCH_List *const snapshot = LCH_ListCreate();
+  if (snapshot == NULL) {
+    LCH_LOG_ERROR("Failed to create snapshot");
+    LCH_ListDestroy(header);
+    return NULL;
+  }
+
+  if (!LCH_ListAppend(snapshot, header, LCH_ListDestroy)) {
+    LCH_LOG_ERROR("Failed to append header to snapshot");
+    LCH_ListDestroy(header);
+    LCH_ListDestroy(snapshot);
+    return NULL;
+  }
+
+  return snapshot;
 }
 
 LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
