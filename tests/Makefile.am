@@ -1,11 +1,11 @@
-TESTS = unit_test memory_leak
+TESTS = unit_test leak_test
 
 check_PROGRAMS = unit_test
 
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 
 unit_test_SOURCES = \
-    main.c \
+    unit_test.c \
     check_block.c \
     check_buffer.c \
     check_csv.c \
