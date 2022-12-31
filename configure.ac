@@ -3,8 +3,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT([leech],[0.1.0],[https://github.com/larsewi/leech/issues],
-        [leech],[https://github.com/larsewi/leech])
+AC_INIT([leech], [0.1.0], [https://github.com/larsewi/leech/issues], [leech],
+        [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
@@ -15,6 +15,7 @@ AC_PROG_CPP
 AC_PROG_CXX
 AM_PROG_AR
 AC_PROG_RANLIB
+AC_PROG_INSTALL
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h unistd.h])
@@ -32,10 +33,8 @@ AC_CHECK_FUNCS([memmove memset strchr strdup strerror strndup])
 
 
 # Configure arguments.
-AC_ARG_ENABLE(debug,
-              AS_HELP_STRING([--enable-debug], [enable debugging]),
-              [debug=$enableval],
-              [debug=no])
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
+              [debug=$enableval], [debug=no])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
