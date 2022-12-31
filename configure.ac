@@ -15,15 +15,6 @@ AC_PROG_CPP
 AC_PROG_CXX
 AM_PROG_AR
 
-# Checks for libraries.
-dnl FIXME: Replace 'main' with a function in '-l*':
-dnl AC_CHECK_LIB([check_pic], [main])
-dnl AC_CHECK_LIB([crypto], [main])
-dnl AC_CHECK_LIB([m], [main])
-dnl AC_CHECK_LIB([rt], [main])
-dnl AC_CHECK_LIB([ssl], [main])
-AC_CHECK_LIB([subunit], [subunit_test_start])
-
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h unistd.h])
 
@@ -46,9 +37,11 @@ AC_ARG_ENABLE(debug,
               [debug=no])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
+
+# Automake conditionals.
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
-# Check modules
+# pkg-check modules.
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
 PKG_CHECK_MODULES([OPENSSL], [openssl >= 1.0.0])
 
