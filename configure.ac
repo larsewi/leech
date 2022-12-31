@@ -50,7 +50,7 @@ AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 # Check modules
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
-PKG_CHECK_MODULES([OPENSSL], [openssl >= 3.0.0])
+PKG_CHECK_MODULES([OPENSSL], [openssl >= 1.0.0])
 
 LT_INIT
 

@@ -5,6 +5,7 @@
 
 #include "dict.h"
 #include "leech.h"
+#include "table.h"
 
 struct LCH_Instance {
   const char *instanceID;
