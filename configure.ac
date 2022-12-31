@@ -11,21 +11,18 @@ AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_CXX
 AM_PROG_AR
 
 # Checks for libraries.
-## FIXME: Replace 'main' with a function in '-lcheck_pic':
-## AC_CHECK_LIB([check_pic], [main])
-## FIXME: Replace 'main' with a function in '-lcrypto':
-## AC_CHECK_LIB([crypto], [main])
-## FIXME: Replace 'main' with a function in '-lm':
-## AC_CHECK_LIB([m], [main])
-## FIXME: Replace 'main' with a function in '-lrt':
-## AC_CHECK_LIB([rt], [main])
-## FIXME: Replace 'main' with a function in '-lssl':
-## AC_CHECK_LIB([ssl], [main])
-## FIXME: Replace 'main' with a function in '-lsubunit':
-## AC_CHECK_LIB([subunit], [main])
+dnl FIXME: Replace 'main' with a function in '-l*':
+dnl AC_CHECK_LIB([check_pic], [main])
+dnl AC_CHECK_LIB([crypto], [main])
+dnl AC_CHECK_LIB([m], [main])
+dnl AC_CHECK_LIB([rt], [main])
+dnl AC_CHECK_LIB([ssl], [main])
+AC_CHECK_LIB([subunit], [subunit_test_start])
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h unistd.h])
@@ -41,6 +38,7 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memmove memset strchr strdup strerror strndup])
 
+
 # Configure arguments.
 AC_ARG_ENABLE(debug,
               AS_HELP_STRING([--enable-debug], [enable debugging]),
@@ -48,8 +46,11 @@ AC_ARG_ENABLE(debug,
               [debug=no])
 
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
-AM_PATH_CHECK
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
+
+# Check modules
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
+PKG_CHECK_MODULES([OPENSSL], [openssl >= 3.0.0])
 
 LT_INIT
 

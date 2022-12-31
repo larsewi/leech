@@ -19,7 +19,7 @@ libleech_la_SOURCES = \
         table.h table.c \
         utils.h utils.c
 
-libleech_la_LIBADD = -lssl -lcrypto
+libleech_la_LIBADD = @OPENSSL_LIBS@
 
 libleech_csv_la_SOURCES = \
         buffer.c \

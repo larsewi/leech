@@ -1,7 +1,10 @@
 # leech
 
 ## Prerequesites
-`sudo apt-get install build-essential automake autoconf libtool-bin check libssl-dev`
+```
+sudo apt-get install build-essential automake autoconf libtool-bin check \
+pkg-config libssl-dev
+```
 
 ## Install
 `./autogen.sh && ./configure --enable-debug && make && sudo make install`
