@@ -12,7 +12,7 @@ START_TEST(test_LCH_Dict) {
                                         "six", "seven", "eight", "nine", "ten"};
 
   ck_assert_int_eq(LCH_DictLength(dict), 0);
-  for (int i = 0; i < LCH_LENGTH(keys); i++) {
+  for (int i = 0; (size_t) i < LCH_LENGTH(keys); i++) {
     int *data = (int *)malloc(sizeof(int));
     ck_assert_ptr_nonnull(data);
     *data = i;
@@ -20,7 +20,7 @@ START_TEST(test_LCH_Dict) {
   }
   ck_assert_int_eq(LCH_DictLength(dict), LCH_LENGTH(keys));
 
-  for (int i = 0; i < LCH_LENGTH(keys); i++) {
+  for (int i = 0; (size_t) i < LCH_LENGTH(keys); i++) {
     ck_assert(LCH_DictHasKey(dict, keys[i]));
     int *data = (int *)LCH_DictGet(dict, keys[i]);
     ck_assert_int_eq(*data, i);

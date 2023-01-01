@@ -13,9 +13,9 @@ AC_CONFIG_MACRO_DIRS([m4])
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
-AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_INSTALL
+AM_PROG_AR
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h unistd.h])
@@ -30,7 +30,6 @@ AC_TYPE_UINT32_T
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memmove memset strchr strdup strerror strndup])
-
 
 # Configure arguments.
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),

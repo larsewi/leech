@@ -21,6 +21,11 @@ typedef struct LCH_Table {
   bool (*writeCallback)(const void *, const LCH_List *);
 } LCH_Table;
 
+const char *LCH_TableGetIdentifier(const LCH_Table *const self) {
+  assert(self != NULL);
+  return self->identifier;
+}
+
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo != NULL);
   assert(createInfo->identifier != NULL);
@@ -70,10 +75,6 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   table->writeCallback = createInfo->writeCallback;
 
   return table;
-}
-
-char *LCH_TableGetIdentifier(const LCH_Table *const self) {
-  return self->identifier;
 }
 
 static LCH_List *GetIndexOfFields(const LCH_List *const header,
@@ -241,7 +242,7 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
   return data;
 }
 
-static LCH_Dict *LCH_DictCreateEmptySnapshot(const LCH_Table *const table) {
+static LCH_Dict *CreateEmptySnapshot(const LCH_Table *const table) {
   LCH_List *const header = LCH_ListCreate();
   if (header == 0) {
     LCH_LOG_ERROR("Failed to create header for empty snapshot");
@@ -280,21 +281,19 @@ static LCH_Dict *LCH_DictCreateEmptySnapshot(const LCH_Table *const table) {
     }
   }
 
-  LCH_List *const snapshot = LCH_ListCreate();
+  LCH_Dict *const snapshot = LCH_DictCreate();
   if (snapshot == NULL) {
     LCH_LOG_ERROR("Failed to create snapshot");
     LCH_ListDestroy(header);
     return NULL;
   }
 
-  if (!LCH_ListAppend(snapshot, header, LCH_ListDestroy)) {
-    LCH_LOG_ERROR("Failed to append header to snapshot");
-    LCH_ListDestroy(header);
-    LCH_ListDestroy(snapshot);
-    return NULL;
-  }
-
   return snapshot;
+}
+
+LCH_Dict *LoadSnapshot(const LCH_Table *const self) {
+  assert(self != NULL);
+  return NULL;
 }
 
 LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
@@ -313,9 +312,13 @@ LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
     return NULL;
   }
 
-  if (LCH_FileExists(path)) {
-
+  LCH_Dict *const snapshot = (LCH_FileExists(path)) ? CreateEmptySnapshot(table) : LoadSnapshot(table);
+  if (snapshot == NULL) {
+    LCH_LOG_ERROR("Failed to load snapshot for table %s", table->identifier);
+    return NULL;
   }
+
+  return snapshot;
 }
 
 void LCH_TableDestroy(LCH_Table *table) {

@@ -38,7 +38,7 @@ void LCH_LogMessage(unsigned char severity, const char *format, ...) {
   va_start(ap, format);
   char message[LCH_BUFFER_SIZE];
   int size = vsnprintf(message, sizeof(message), format, ap);
-  if (size >= LCH_BUFFER_SIZE) {
+  if (size < 0 || (size_t) size >= LCH_BUFFER_SIZE) {
     LCH_LOG_WARNING("Log message trucated: Too long (%d >= %d)", size,
                     LCH_BUFFER_SIZE);
   }

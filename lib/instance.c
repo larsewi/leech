@@ -33,10 +33,10 @@ LCH_Instance *LCH_InstanceCreate(
   return instance;
 }
 
-bool LCH_InstanceCommit(const LCH_Instance *instance) {
-  assert(instance != NULL);
+bool LCH_InstanceCommit(const LCH_Instance *const self) {
+  assert(self != NULL);
 
-  LCH_List *tables = instance->tables;
+  LCH_List *tables = self->tables;
   size_t num_tables = LCH_ListLength(tables);
 
   for (size_t i = 0; i < num_tables; i++) {
@@ -51,7 +51,7 @@ bool LCH_InstanceCommit(const LCH_Instance *instance) {
     }
 
     LCH_LOG_DEBUG("Loading old data from table '%s'", table_id);
-    LCH_Dict *old_data = LCH_TableLoadNewData(table);
+    LCH_Dict *old_data = LCH_TableLoadOldData(table, self->workDir);
     if (old_data == NULL) {
       LCH_LOG_ERROR("Failed to load old data from table '%s'", table_id);
       LCH_DictDestroy(new_data);

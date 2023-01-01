@@ -131,17 +131,17 @@ size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
 static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
   assert(list != NULL);
   assert(a >= 0);
-  assert(a < list->length);
+  assert(a < (ssize_t) list->length);
   assert(b >= 0);
-  assert(b < list->length);
+  assert(b < (ssize_t) list->length);
 
   ListElement *tmp = list->buffer[a];
   list->buffer[a] = list->buffer[b];
   list->buffer[b] = tmp;
 }
 
-static size_t Partition(LCH_List *const list, const size_t low,
-                        const size_t high,
+static size_t Partition(LCH_List *const list, const ssize_t low,
+                        const ssize_t high,
                         int (*compare)(const void *, const void *)) {
   void *pivot = LCH_ListGet(list, high);
   ssize_t i = low;

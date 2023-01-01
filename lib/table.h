@@ -4,7 +4,7 @@
 #include "dict.h"
 #include "leech.h"
 
-char *LCH_TableGetIdentifier(const LCH_Table *self);
+const char *LCH_TableGetIdentifier(const LCH_Table *table);
 
 LCH_Dict *LCH_TableLoadNewData(const LCH_Table *table);
 
