@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <config.h>
 #include <errno.h>
 #include <getopt.h>
 #include <leech.h>

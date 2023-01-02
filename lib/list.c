@@ -131,9 +131,9 @@ size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
 static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
   assert(list != NULL);
   assert(a >= 0);
-  assert(a < (ssize_t) list->length);
+  assert(a < (ssize_t)list->length);
   assert(b >= 0);
-  assert(b < (ssize_t) list->length);
+  assert(b < (ssize_t)list->length);
 
   ListElement *tmp = list->buffer[a];
   list->buffer[a] = list->buffer[b];

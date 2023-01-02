@@ -1,3 +1,6 @@
+AM_CFLAGS = -Wall -Wextra -Werror
+AM_CPPFLAGS = -include config.h
+
 include_HEADERS = \
         $(top_builddir)/lib/leech.h \
         $(top_builddir)/lib/leech_csv.h \

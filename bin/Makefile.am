@@ -1,4 +1,6 @@
-AM_CPPFLAGS = -I$(top_srcdir)/lib
+AM_CFLAGS = -Wall -Wextra -Werror
+AM_CPPFLAGS = -include config.h
+
 
 bin_PROGRAMS = leech
 leech_SOURCES = leech.c common.c commit.c diff.c patch.c

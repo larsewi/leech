@@ -307,12 +307,13 @@ LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
   char path[PATH_MAX];
   int ret = snprintf(path, sizeof(path), "%s%c%s%c%s", work_dir, PATH_SEP,
                      "snapshot", PATH_SEP, id);
-  if ((ret < 0) || ((size_t) ret >= sizeof(path))) {
+  if ((ret < 0) || ((size_t)ret >= sizeof(path))) {
     LCH_LOG_ERROR("Failed to join paths: Truncation error");
     return NULL;
   }
 
-  LCH_Dict *const snapshot = (LCH_FileExists(path)) ? CreateEmptySnapshot(table) : LoadSnapshot(table);
+  LCH_Dict *const snapshot =
+      (LCH_FileExists(path)) ? CreateEmptySnapshot(table) : LoadSnapshot(table);
   if (snapshot == NULL) {
     LCH_LOG_ERROR("Failed to load snapshot for table %s", table->identifier);
     return NULL;
