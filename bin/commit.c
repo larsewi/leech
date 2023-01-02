@@ -23,6 +23,8 @@ static void PrintHelp(void) {
   printf("\n");
   PrintOptions(OPTIONS, DESCRIPTIONS);
   printf("\n");
+  PrintBugreport();
+  printf("\n");
 }
 
 int Commit(int argc, char *argv[]) {

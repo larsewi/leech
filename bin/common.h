@@ -10,4 +10,6 @@ void PrintVersion(void);
 void PrintOptions(const struct option *const options,
                   const char *const *const descriptions);
 
+void PrintBugreport(void);
+
 #endif  // _LEECH_COMMON

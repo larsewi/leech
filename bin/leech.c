@@ -76,6 +76,8 @@ static void PrintHelp(void) {
   printf("\n");
   PrintCommands();
   printf("\n");
+  PrintBugreport();
+  printf("\n");
 }
 
 static void SetupDebugMessenger(unsigned char severity) {

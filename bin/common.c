@@ -27,6 +27,11 @@ void PrintOptions(const struct option *const options,
   }
 }
 
+void PrintBugreport(void) {
+  printf("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
+  printf("%s home page: <%s>.\n", PACKAGE_NAME, PACKAGE_URL);
+}
+
 // static LCH_Instance *SetupInstance(void) {
 //   LCH_Instance *instance = NULL;
 //   {  // Create instance

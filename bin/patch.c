@@ -26,6 +26,8 @@ static void PrintHelp(void) {
   printf("\n");
   PrintOptions(OPTIONS, DESCRIPTIONS);
   printf("\n");
+  PrintBugreport();
+  printf("\n");
 }
 
 int Patch(int argc, char *argv[]) {
