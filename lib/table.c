@@ -242,58 +242,64 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
   return data;
 }
 
-static LCH_Dict *CreateEmptySnapshot(const LCH_Table *const table) {
-  LCH_List *const header = LCH_ListCreate();
-  if (header == 0) {
-    LCH_LOG_ERROR("Failed to create header for empty snapshot");
-    return NULL;
-  }
-
-  for (size_t i = 0; i < LCH_ListLength(table->primaryFields); i++) {
-    char *const field = strdup(LCH_ListGet(table->primaryFields, i));
-    if (field == NULL) {
-      LCH_LOG_ERROR("Failed to allocate memory for snapshot header field");
-      LCH_ListDestroy(header);
-      return NULL;
-    }
-
-    if (!LCH_ListAppend(header, field, free)) {
-      LCH_LOG_ERROR("Failed to append field to snapshot header");
-      free(field);
-      LCH_ListDestroy(header);
-      return NULL;
-    }
-  }
-
-  for (size_t i = 0; i < LCH_ListLength(table->subsidiaryFields); i++) {
-    char *const field = strdup(LCH_ListGet(table->subsidiaryFields, i));
-    if (field == NULL) {
-      LCH_LOG_ERROR("Failed to allocate memory for snapshot header field");
-      LCH_ListDestroy(header);
-      return NULL;
-    }
-
-    if (!LCH_ListAppend(header, field, free)) {
-      LCH_LOG_ERROR("Failed to append field to snapshot header");
-      free(field);
-      LCH_ListDestroy(header);
-      return NULL;
-    }
-  }
-
-  LCH_Dict *const snapshot = LCH_DictCreate();
-  if (snapshot == NULL) {
-    LCH_LOG_ERROR("Failed to create snapshot");
-    LCH_ListDestroy(header);
-    return NULL;
-  }
-
-  return snapshot;
-}
-
-LCH_Dict *LoadSnapshot(const LCH_Table *const self) {
+static LCH_Dict *LoadSnapshot(const LCH_Table *const self,
+                              const char *const path) {
   assert(self != NULL);
-  return NULL;
+
+  LCH_List *table = LCH_CSVParseFile(path);
+  if (table == NULL) {
+    return NULL;
+  }
+
+  LCH_Dict *snapshot = LCH_DictCreate();
+  if (snapshot == NULL) {
+    return NULL;
+  }
+
+  assert(LCH_ListLength(table) % 2 == 0);
+  char *key = NULL, *val = NULL;
+  for (size_t i = 0; i < LCH_ListLength(table); i++) {
+    const LCH_List *const record = LCH_ListGet(table, i);
+
+    LCH_Buffer *const buffer = LCH_CSVComposeRecord(record);
+    if (buffer == NULL) {
+      LCH_ListDestroy(table);
+      LCH_DictDestroy(snapshot);
+      return NULL;
+    }
+
+    char *str = LCH_BufferGet(buffer);
+    if (str == NULL) {
+      LCH_LOG_ERROR("Failed to get snapshot string from string buffer");
+      free(key);
+      free(val);
+      LCH_BufferDestroy(buffer);
+      LCH_ListDestroy(table);
+      LCH_DictDestroy(snapshot);
+      return NULL;
+    }
+    LCH_BufferDestroy(buffer);
+
+    if (i % 2 == 0) {
+      key = str;
+      continue;
+    }
+    val = str;
+
+    if (!LCH_DictSet(snapshot, key, val, free)) {
+      free(key);
+      free(val);
+      LCH_ListDestroy(table);
+      LCH_DictDestroy(snapshot);
+      return NULL;
+    }
+    free(key);
+    key = NULL;
+    val = NULL;
+  }
+
+  LCH_ListDestroy(table);
+  return snapshot;
 }
 
 LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
@@ -313,7 +319,7 @@ LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
   }
 
   LCH_Dict *const snapshot =
-      (LCH_FileExists(path)) ? CreateEmptySnapshot(table) : LoadSnapshot(table);
+      (LCH_FileExists(path)) ? LCH_DictCreate() : LoadSnapshot(table, path);
   if (snapshot == NULL) {
     LCH_LOG_ERROR("Failed to load snapshot for table %s", table->identifier);
     return NULL;

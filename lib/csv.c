@@ -260,6 +260,23 @@ static LCH_List *ParseTable(Parser *const parser) {
   return table;
 }
 
+LCH_List *LCH_CSVParseRecord(const char *const str) {
+  assert(str != NULL);
+
+  Parser parser = {
+      .cursor = str,
+      .row = 1,
+      .column = 1,
+  };
+
+  LCH_List *const table = ParseRecord(&parser);
+  if (table == NULL) {
+    LCH_LOG_ERROR("Failed to parse CSV record");
+    return NULL;
+  }
+  return table;
+}
+
 LCH_List *LCH_CSVParse(const char *str) {
   assert(str != NULL);
 
@@ -272,7 +289,40 @@ LCH_List *LCH_CSVParse(const char *str) {
   LCH_List *const table = ParseTable(&parser);
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to parse CSV");
+    return NULL;
   }
+  return table;
+}
+
+LCH_List *LCH_CSVParseFile(const char *const path) {
+  FILE *file = fopen(path, "r");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
+                  strerror(errno));
+    return NULL;
+  }
+
+  size_t size;
+  if (!LCH_FileSize(file, &size)) {
+    LCH_LOG_ERROR("Failed to get size of file '%s'", path);
+    fclose(file);
+    return NULL;
+  }
+
+  char buffer[size];
+  if (fread((void *)buffer, 1, size, file) != size) {
+    LCH_LOG_ERROR("Failed to read file '%s': %s", path, strerror(errno));
+    fclose(file);
+    return NULL;
+  }
+  fclose(file);
+
+  LCH_List *table = LCH_CSVParse(buffer);
+  if (table == NULL) {
+    LCH_LOG_ERROR("Failed to parse CSV file '%s'", path, strerror(errno));
+    return NULL;
+  }
+
   return table;
 }
 
@@ -353,6 +403,24 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
   return true;
 }
 
+LCH_Buffer *LCH_CSVComposeRecord(const LCH_List *const record) {
+  assert(record != NULL);
+
+  LCH_Buffer *buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to compose CSV record");
+    return NULL;
+  }
+
+  if (!ComposeRecord(buffer, record)) {
+    LCH_LOG_ERROR("Failed to compose CSV record");
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  return buffer;
+}
+
 LCH_Buffer *LCH_CSVCompose(const LCH_List *const table) {
   assert(table != NULL);
 
@@ -381,4 +449,44 @@ LCH_Buffer *LCH_CSVCompose(const LCH_List *const table) {
     LCH_LOG_DEBUG("Appended record to table");
   }
   return buffer;
+}
+
+bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
+  assert(table != NULL);
+  assert(path != NULL);
+
+  LCH_Buffer *const buffer = LCH_CSVCompose(table);
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to compose CSV for file '%s'", path);
+    return false;
+  }
+
+  char *const csv = LCH_BufferGet(buffer);
+  if (csv == NULL) {
+    LCH_LOG_ERROR(
+        "Failed to get string from buffer after composing CSV for file '%s'",
+        path);
+    return false;
+  }
+
+  const size_t length = LCH_BufferLength(buffer);
+  LCH_BufferDestroy(buffer);
+
+  FILE *const file = fopen(path, "w");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
+                  strerror(errno));
+    return false;
+  }
+
+  if (fwrite(csv, 1, length, file) != length) {
+    LCH_LOG_ERROR("Failed to write composed CSV (%zu bytes) to file '%s': %s",
+                  length, path, strerror(errno));
+    fclose(file);
+    return false;
+  }
+
+  fclose(file);
+  free(csv);
+  return true;
 }
