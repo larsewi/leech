@@ -122,11 +122,7 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
   }
 
   for (size_t i = 0; i < LCH_ListLength(indices); i++) {
-    LCH_LOG_ERROR("Length: %zu", LCH_ListLength(indices));
     const size_t index = *(size_t *)LCH_ListGet(indices, i);
-    LCH_LOG_ERROR("Index: %zu", index);
-    LCH_LOG_ERROR("Records: %zu", LCH_ListLength(record));
-
     assert(index < LCH_ListLength(record));
 
     char *field = (char *)LCH_ListGet(record, index);
