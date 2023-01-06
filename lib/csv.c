@@ -58,6 +58,7 @@ static char *ParseEscaped(Parser *const parser) {
         "Failed to create string from buffer for escaped field (Row %zu, Col "
         "%zu)",
         parser->row, parser->column);
+    return NULL;
   }
   return field;
 }
@@ -84,12 +85,14 @@ static char *ParseNonEscaped(Parser *const parser) {
             "(Row %zu, Col %zu)",
             parser->cursor[0], parser->row, parser->column);
         LCH_BufferDestroy(buffer);
+        return NULL;
       }
     } else {
       LCH_LOG_ERROR(
           "Expected 0x20-21 / 0x23-2B / 0x2D-7E; found '%c' (Row %zu, Col %zu)",
           parser->cursor[0], parser->row, parser->column);
       LCH_BufferDestroy(buffer);
+      return NULL;
     }
     parser->cursor += 1;
   }

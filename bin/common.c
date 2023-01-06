@@ -7,6 +7,9 @@
 
 #include "../lib/leech_csv.h"
 
+#define WORK_DIR "./leech"
+#define UNIQUE_ID "unique"
+
 void PrintVersion(void) { printf("%s\n", PACKAGE_STRING); }
 
 void PrintOptions(const struct option *const options,
@@ -32,38 +35,44 @@ void PrintBugreport(void) {
   printf("%s home page: <%s>.\n", PACKAGE_NAME, PACKAGE_URL);
 }
 
-// static LCH_Instance *SetupInstance(void) {
-//   LCH_Instance *instance = NULL;
-//   {  // Create instance
-//     LCH_InstanceCreateInfo createInfo = {
-//         .instanceID = UNIQUE_ID,
-//         .workDir = WORK_DIR,
-//     };
 
-//     instance = LCH_InstanceCreate(&createInfo);
-//     if (instance == NULL) {
-//       LCH_LOG_ERROR("LCH_InstanceCreate");
-//       return NULL;
-//     }
-//   }
+LCH_Instance *SetupInstance(void) {
+  LCH_Instance *instance = NULL;
+  {  // Create instance
+    LCH_InstanceCreateInfo createInfo = {
+        .identifier = UNIQUE_ID,
+        .work_dir = WORK_DIR,
+    };
 
-//   {  // Add CSV table
-//     LCH_TableCreateInfo createInfo = {
-//         .readLocator = READ_LOCATOR,
-//         .readCallback = LCH_TableReadCallbackCSV,
-//         .writeLocator = WRITE_LOCATOR,
-//         .writeCallback = LCH_TableWriteCallbackCSV,
-//     };
+    instance = LCH_InstanceCreate(&createInfo);
+    if (instance == NULL) {
+      LCH_LOG_ERROR("LCH_InstanceCreate");
+      return NULL;
+    }
+  }
 
-//     LCH_Table *table = LCH_TableCreate(&createInfo);
-//     if (table == NULL) {
-//       LCH_LOG_ERROR("LCH_TableCreate");
-//       return NULL;
-//     }
+  {  // Add CSV table
+    LCH_TableCreateInfo createInfo = {
+        .identifier = "beatles",
+        .primary_fields = "lastname,firstname",
+        .subsidiary_fields = "age,role",
+        .read_locator = "beatles.csv",
+        .write_locator = "beatles.dest.csv",
+        .read_callback = LCH_TableReadCallbackCSV,
+        .write_callback = LCH_TableWriteCallbackCSV,
+    };
 
-//     // TODO: Add table to instance
-//     LCH_TableDestroy(table);
-//   }
+    LCH_Table *table = LCH_TableCreate(&createInfo);
+    if (table == NULL) {
+      LCH_LOG_ERROR("LCH_TableCreate");
+      return NULL;
+    }
 
-//   return instance;
-// }
+    if (!LCH_InstanceAddTable(instance, table)) {
+      LCH_LOG_ERROR("LCH_InstanceAddTable");
+      return NULL;
+    }
+  }
+
+  return instance;
+}

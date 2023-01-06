@@ -20,12 +20,12 @@ START_TEST(test_CreateDestroyTable) {
 
   LCH_TableCreateInfo createInfo = {
       .identifier = "Sample",
-      .primaryFields = "id,age",
-      .subsidiaryFields = "lastname,firstname",
-      .readLocator = "sample.csv",
-      .writeLocator = "sample.csv",
-      .readCallback = LCH_TableReadCallbackCSV,
-      .writeCallback = LCH_TableWriteCallbackCSV,
+      .primary_fields = "id,age",
+      .subsidiary_fields = "lastname,firstname",
+      .read_locator = "sample.csv",
+      .write_locator = "sample.csv",
+      .read_callback = LCH_TableReadCallbackCSV,
+      .write_callback = LCH_TableWriteCallbackCSV,
   };
 
   LCH_Table *table = LCH_TableCreate(&createInfo);

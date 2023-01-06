@@ -13,12 +13,12 @@
 
 typedef struct LCH_Table {
   const char *identifier;
-  LCH_List *primaryFields;
-  LCH_List *subsidiaryFields;
-  const void *readLocator;
-  LCH_List *(*readCallback)(const void *);
-  const void *writeLocator;
-  bool (*writeCallback)(const void *, const LCH_List *);
+  LCH_List *primary_fields;
+  LCH_List *subsidiary_fields;
+  const void *read_locator;
+  LCH_List *(*read_callback)(const void *);
+  const void *write_locator;
+  bool (*write_callback)(const void *, const LCH_List *);
 } LCH_Table;
 
 const char *LCH_TableGetIdentifier(const LCH_Table *const self) {
@@ -29,12 +29,12 @@ const char *LCH_TableGetIdentifier(const LCH_Table *const self) {
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo != NULL);
   assert(createInfo->identifier != NULL);
-  assert(createInfo->primaryFields != NULL);
-  assert(createInfo->subsidiaryFields != NULL);
-  assert(createInfo->readLocator != NULL);
-  assert(createInfo->writeLocator != NULL);
-  assert(createInfo->readCallback != NULL);
-  assert(createInfo->writeCallback != NULL);
+  assert(createInfo->primary_fields != NULL);
+  assert(createInfo->subsidiary_fields != NULL);
+  assert(createInfo->read_locator != NULL);
+  assert(createInfo->write_locator != NULL);
+  assert(createInfo->read_callback != NULL);
+  assert(createInfo->write_callback != NULL);
 
   LCH_Table *table = (LCH_Table *)calloc(1, sizeof(LCH_Table));
   if (table == NULL) {
@@ -43,36 +43,36 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   }
 
   {
-    LCH_List *tmp = LCH_CSVParse(createInfo->primaryFields);
+    LCH_List *tmp = LCH_CSVParse(createInfo->primary_fields);
     if (tmp == NULL) {
       LCH_TableDestroy(table);
       return NULL;
     }
     assert(LCH_ListLength(tmp) == 1);
-    table->primaryFields = LCH_ListGet(tmp, 0);
-    LCH_ListSort(table->primaryFields,
+    table->primary_fields = LCH_ListGet(tmp, 0);
+    LCH_ListSort(table->primary_fields,
                  (int (*)(const void *, const void *))strcmp);
     LCH_ListDestroyShallow(tmp);
   }
 
   {
-    LCH_List *tmp = LCH_CSVParse(createInfo->subsidiaryFields);
+    LCH_List *tmp = LCH_CSVParse(createInfo->subsidiary_fields);
     if (tmp == NULL) {
       LCH_TableDestroy(table);
       return NULL;
     }
     assert(LCH_ListLength(tmp) == 1);
-    table->subsidiaryFields = LCH_ListGet(tmp, 0);
+    table->subsidiary_fields = LCH_ListGet(tmp, 0);
     LCH_ListDestroyShallow(tmp);
-    LCH_ListSort(table->subsidiaryFields,
+    LCH_ListSort(table->subsidiary_fields,
                  (int (*)(const void *, const void *))strcmp);
   }
 
   table->identifier = createInfo->identifier;
-  table->readLocator = createInfo->readLocator;
-  table->readCallback = createInfo->readCallback;
-  table->writeLocator = createInfo->writeLocator;
-  table->writeCallback = createInfo->writeCallback;
+  table->read_locator = createInfo->read_locator;
+  table->read_callback = createInfo->read_callback;
+  table->write_locator = createInfo->write_locator;
+  table->write_callback = createInfo->write_callback;
 
   return table;
 }
@@ -173,7 +173,7 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
 }
 
 LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
-  LCH_List *const records = table->readCallback(table->readLocator);
+  LCH_List *const records = table->read_callback(table->read_locator);
   if (records == NULL) {
     return NULL;
   }
@@ -186,7 +186,7 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
 
   const LCH_List *const header = LCH_ListGet(records, 0);
 
-  LCH_List *primaryIndices = GetIndexOfFields(header, table->primaryFields);
+  LCH_List *primaryIndices = GetIndexOfFields(header, table->primary_fields);
   if (primaryIndices == NULL) {
     LCH_DictDestroy(data);
     LCH_ListDestroy(records);
@@ -194,7 +194,7 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
   }
 
   LCH_List *subsidiaryIndices =
-      GetIndexOfFields(header, table->subsidiaryFields);
+      GetIndexOfFields(header, table->subsidiary_fields);
   if (subsidiaryIndices == NULL) {
     LCH_ListDestroy(primaryIndices);
     LCH_DictDestroy(data);
@@ -332,7 +332,7 @@ void LCH_TableDestroy(LCH_Table *table) {
   if (table == NULL) {
     return;
   }
-  LCH_ListDestroy(table->subsidiaryFields);
-  LCH_ListDestroy(table->primaryFields);
+  LCH_ListDestroy(table->subsidiary_fields);
+  LCH_ListDestroy(table->primary_fields);
   free(table);
 }

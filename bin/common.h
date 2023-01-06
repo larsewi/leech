@@ -12,4 +12,6 @@ void PrintOptions(const struct option *const options,
 
 void PrintBugreport(void);
 
+LCH_Instance *SetupInstance(void);
+
 #endif  // _LEECH_COMMON

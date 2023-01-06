@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
-#include <leech.h>
-#include <leech_csv.h>
-#include <leech_psql.h>
+#include <../lib/leech.h>
+#include <../lib/leech_csv.h>
+#include <../lib/leech_psql.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

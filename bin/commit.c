@@ -38,5 +38,19 @@ int Commit(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
   }
+
+  LCH_Instance *instance = SetupInstance();
+  if (instance == NULL) {
+    LCH_LOG_ERROR("SetupInstance");
+    return EXIT_FAILURE;
+  }
+
+  if (!LCH_InstanceCommit(instance)) {
+    LCH_LOG_ERROR("LCH_InstanceCommit");
+    return EXIT_FAILURE;
+  }
+
+  LCH_InstanceDestroy(instance);
+
   return EXIT_SUCCESS;
 }

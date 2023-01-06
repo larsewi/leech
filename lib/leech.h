@@ -89,12 +89,12 @@ typedef struct LCH_Table LCH_Table;
 
 typedef struct LCH_TableCreateInfo {
   const char *identifier;
-  const char *primaryFields;
-  const char *subsidiaryFields;
-  const void *readLocator;
-  const void *writeLocator;
-  LCH_List *(*readCallback)(const void *);
-  bool (*writeCallback)(const void *, const LCH_List *);
+  const char *primary_fields;
+  const char *subsidiary_fields;
+  const void *read_locator;
+  const void *write_locator;
+  LCH_List *(*read_callback)(const void *);
+  bool (*write_callback)(const void *, const LCH_List *);
 } LCH_TableCreateInfo;
 
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *createInfo);
@@ -108,12 +108,14 @@ void LCH_TableDestroy(LCH_Table *table);
 typedef struct LCH_Instance LCH_Instance;
 
 typedef struct LCH_InstanceCreateInfo {
-  const char *instanceID;
-  const char *workDir;
+  const char *identifier;
+  const char *work_dir;
 } LCH_InstanceCreateInfo;
 
 LCH_Instance *LCH_InstanceCreate(
     const LCH_InstanceCreateInfo *const createInfo);
+
+bool LCH_InstanceAddTable(LCH_Instance *instance, LCH_Table *table);
 
 bool LCH_InstanceCommit(const LCH_Instance *instance);
 

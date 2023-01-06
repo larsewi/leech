@@ -16,6 +16,8 @@
         "vector": "c",
         "__string": "c",
         "bitset": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "__threading_support": "c",
+        "complex": "c"
     }
 }

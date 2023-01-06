@@ -8,16 +8,16 @@
 #include "table.h"
 
 struct LCH_Instance {
-  const char *instanceID;
-  const char *workDir;
+  const char *identifier;
+  const char *work_dir;
   LCH_List *tables;
 };
 
 LCH_Instance *LCH_InstanceCreate(
     const LCH_InstanceCreateInfo *const createInfo) {
   assert(createInfo != NULL);
-  assert(createInfo->instanceID != NULL);
-  assert(createInfo->workDir != NULL);
+  assert(createInfo->identifier != NULL);
+  assert(createInfo->work_dir != NULL);
 
   LCH_Instance *instance = (LCH_Instance *)malloc(sizeof(LCH_Instance));
   if (instance == NULL) {
@@ -26,11 +26,23 @@ LCH_Instance *LCH_InstanceCreate(
     return NULL;
   }
 
-  instance->instanceID = createInfo->instanceID;
-  instance->workDir = createInfo->workDir;
+  instance->identifier = createInfo->identifier;
+  instance->work_dir = createInfo->work_dir;
   instance->tables = LCH_ListCreate();
+  if (instance->tables == NULL) {
+    free(instance);
+    return NULL;
+  }
 
   return instance;
+}
+
+bool LCH_InstanceAddTable(LCH_Instance *const instance, LCH_Table *const table) {
+  assert(instance != NULL);
+  assert(instance->tables != NULL);
+  assert(table != NULL);
+
+  return LCH_ListAppend(instance->tables, table, (void (*)(void *)) LCH_TableDestroy);
 }
 
 bool LCH_InstanceCommit(const LCH_Instance *const self) {
@@ -51,7 +63,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     }
 
     LCH_LOG_DEBUG("Loading old data from table '%s'", table_id);
-    LCH_Dict *old_data = LCH_TableLoadOldData(table, self->workDir);
+    LCH_Dict *old_data = LCH_TableLoadOldData(table, self->work_dir);
     if (old_data == NULL) {
       LCH_LOG_ERROR("Failed to load old data from table '%s'", table_id);
       LCH_DictDestroy(new_data);
@@ -62,7 +74,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     LCH_DictDestroy(old_data);
   }
 
-  return false;
+  return true;
 }
 
 LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
