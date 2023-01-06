@@ -18,10 +18,7 @@ struct LCH_DebugMessenger {
   void (*messageCallback)(unsigned char, const char *);
 };
 
-static struct LCH_DebugMessenger DEBUG_MESSENGER = {
-    .severity = 0,
-    .messageCallback = NULL,
-};
+static struct LCH_DebugMessenger DEBUG_MESSENGER = {0};
 
 void LCH_DebugMessengerInit(const LCH_DebugMessengerInitInfo *const initInfo) {
   DEBUG_MESSENGER.severity = initInfo->severity;
@@ -52,19 +49,19 @@ void LCH_DebugMessengerCallbackDefault(unsigned char severity,
   assert(message != NULL);
   switch (severity) {
     case LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT:
-      fprintf(stdout, LCH_COLOR_BLUE "D" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stdout, LCH_COLOR_BLUE "  DEBUG" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT:
-      fprintf(stdout, LCH_COLOR_CYAN "V" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stdout, LCH_COLOR_CYAN "VERBOSE" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_INFO_BIT:
-      fprintf(stdout, LCH_COLOR_GREEN "I" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stdout, LCH_COLOR_GREEN "   INFO" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT:
-      fprintf(stdout, LCH_COLOR_YELLOW "W" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stdout, LCH_COLOR_YELLOW "WARNING" LCH_COLOR_RESET ": %s\n", message);
       break;
     case LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT:
-      fprintf(stderr, LCH_COLOR_RED "E" LCH_COLOR_RESET ": %s\n", message);
+      fprintf(stderr, LCH_COLOR_RED "  ERROR" LCH_COLOR_RESET ": %s\n", message);
       break;
     default:
       break;
