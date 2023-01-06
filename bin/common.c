@@ -35,7 +35,6 @@ void PrintBugreport(void) {
   printf("%s home page: <%s>.\n", PACKAGE_NAME, PACKAGE_URL);
 }
 
-
 LCH_Instance *SetupInstance(void) {
   LCH_Instance *instance = NULL;
   {  // Create instance

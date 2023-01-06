@@ -37,12 +37,14 @@ LCH_Instance *LCH_InstanceCreate(
   return instance;
 }
 
-bool LCH_InstanceAddTable(LCH_Instance *const instance, LCH_Table *const table) {
+bool LCH_InstanceAddTable(LCH_Instance *const instance,
+                          LCH_Table *const table) {
   assert(instance != NULL);
   assert(instance->tables != NULL);
   assert(table != NULL);
 
-  return LCH_ListAppend(instance->tables, table, (void (*)(void *)) LCH_TableDestroy);
+  return LCH_ListAppend(instance->tables, table,
+                        (void (*)(void *))LCH_TableDestroy);
 }
 
 bool LCH_InstanceCommit(const LCH_Instance *const self) {

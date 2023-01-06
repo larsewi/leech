@@ -212,7 +212,10 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
     const LCH_List *const record = (LCH_List *)LCH_ListGet(records, i);
     const size_t record_len = LCH_ListLength(record);
     if (record_len != header_len) {
-      LCH_LOG_ERROR("Number of header columns does not align with number of columns in row %zu (%zu != %zu)", i, header_len, record_len);
+      LCH_LOG_ERROR(
+          "Number of header columns does not align with number of columns in "
+          "row %zu (%zu != %zu)",
+          i, header_len, record_len);
       LCH_ListDestroy(subsidiaryIndices);
       LCH_ListDestroy(primaryIndices);
       LCH_DictDestroy(data);
