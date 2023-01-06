@@ -117,6 +117,11 @@ int main(int argc, char *argv[]) {
 
   SetupDebugMessenger(severity);
 
+  if (optind >= argc) {
+    LCH_LOG_WARNING("NOOP: Missing command ...");
+    return EXIT_SUCCESS;
+  }
+
   for (int i = 0; COMMANDS[i].name != NULL; i++) {
     if (strcmp(argv[optind], COMMANDS[i].name) == 0) {
       optind += 1;

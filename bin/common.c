@@ -55,7 +55,7 @@ LCH_Instance *SetupInstance(void) {
     LCH_TableCreateInfo createInfo = {
         .identifier = "beatles",
         .primary_fields = "lastname,firstname",
-        .subsidiary_fields = "age,role",
+        .subsidiary_fields = "born,role",
         .read_locator = "beatles.csv",
         .write_locator = "beatles.dest.csv",
         .read_callback = LCH_TableReadCallbackCSV,

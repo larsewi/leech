@@ -125,6 +125,7 @@ static char *ParseField(Parser *const parser) {
   if (field == NULL) {
     LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row,
                   parser->column);
+    free(field);
     return NULL;
   }
 
@@ -150,8 +151,6 @@ static LCH_List *ParseRecord(Parser *const parser) {
 
   char *field = ParseField(parser);
   if (field == NULL) {
-    LCH_LOG_ERROR("Failed to parse field (Row %zu, Col %zu)", parser->row,
-                  parser->column);
     LCH_ListDestroy(record);
     return NULL;
   }
@@ -205,7 +204,7 @@ static LCH_List *ParseTable(Parser *const parser) {
     LCH_LOG_ERROR("Failed to create table");
     return NULL;
   }
-  LCH_LOG_DEBUG("Created table empty table");
+  LCH_LOG_DEBUG("Created empty table");
 
   LCH_List *record = ParseRecord(parser);
   if (record == NULL) {
@@ -213,7 +212,7 @@ static LCH_List *ParseTable(Parser *const parser) {
     LCH_ListDestroy(table);
     return NULL;
   }
-  LCH_LOG_DEBUG("Parsed record (Row %zu)", parser->row, parser->column);
+  LCH_LOG_DEBUG("Parsed record (Row %zu)", parser->row);
 
   if (!LCH_ListAppend(table, (void *)record,
                       (void (*)(void *))LCH_ListDestroy)) {
@@ -312,9 +311,10 @@ LCH_List *LCH_CSVParseFile(const char *const path) {
     return NULL;
   }
 
-  char buffer[size];
+  char buffer[size + 1];
+  buffer[size] = '\0';
   if (fread((void *)buffer, 1, size, file) != size) {
-    LCH_LOG_ERROR("Failed to read file '%s': %s", path, strerror(errno));
+    LCH_LOG_ERROR("Failed to read file '%s'", path);
     fclose(file);
     return NULL;
   }

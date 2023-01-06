@@ -1,5 +1,5 @@
-firstrname,lastrname,borrn,role
-Paul,McCartrney,1942,"piarno, vocals"
-Rirngo,Starr,1940,"drums, vocals"
-Johrn,Lernrnorn,1940,"vocals, lead guitar"
-George,Harrisorn,1943,"vocals, rythm guitar"
+firstname,lastname,role,born
+Paul,McCartney,"piano, vocals",1942
+Ringo,Starr,"drums, vocals",1940
+John,Lennon,"vocals, lead guitar",1940
+George,Harrison,"vocals, rythm guitar",1943

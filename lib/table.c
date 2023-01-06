@@ -122,9 +122,14 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
   }
 
   for (size_t i = 0; i < LCH_ListLength(indices); i++) {
-    const size_t *const index = (size_t *)LCH_ListGet(indices, i);
+    LCH_LOG_ERROR("Length: %zu", LCH_ListLength(indices));
+    const size_t index = *(size_t *)LCH_ListGet(indices, i);
+    LCH_LOG_ERROR("Index: %zu", index);
+    LCH_LOG_ERROR("Records: %zu", LCH_ListLength(record));
 
-    char *field = (char *)LCH_ListGet(record, *index);
+    assert(index < LCH_ListLength(record));
+
+    char *field = (char *)LCH_ListGet(record, index);
     field = strdup(field);
     if (field == NULL) {
       LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
@@ -185,6 +190,7 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
   }
 
   const LCH_List *const header = LCH_ListGet(records, 0);
+  const size_t header_len = LCH_ListLength(header);
 
   LCH_List *primaryIndices = GetIndexOfFields(header, table->primary_fields);
   if (primaryIndices == NULL) {
@@ -204,6 +210,15 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
 
   for (size_t i = 1; i < LCH_ListLength(records); i++) {
     const LCH_List *const record = (LCH_List *)LCH_ListGet(records, i);
+    const size_t record_len = LCH_ListLength(record);
+    if (record_len != header_len) {
+      LCH_LOG_ERROR("Number of header columns does not align with number of columns in row %zu (%zu != %zu)", i, header_len, record_len);
+      LCH_ListDestroy(subsidiaryIndices);
+      LCH_ListDestroy(primaryIndices);
+      LCH_DictDestroy(data);
+      LCH_ListDestroy(records);
+      return NULL;
+    }
 
     char *key = ComposeFieldsAtIndices(record, primaryIndices);
     if (key == NULL) {

@@ -47,6 +47,7 @@ int Commit(int argc, char *argv[]) {
 
   if (!LCH_InstanceCommit(instance)) {
     LCH_LOG_ERROR("LCH_InstanceCommit");
+    LCH_InstanceDestroy(instance);
     return EXIT_FAILURE;
   }
 
