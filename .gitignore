@@ -108,7 +108,8 @@ m4/lt~obsolete.m4
 # (which is called by configure script))
 Makefile
 
-**/leech
+**leech
+.leech
 **/unit_test
 *.log
 *.trs

@@ -7,7 +7,7 @@
 
 #include "../lib/leech_csv.h"
 
-#define WORK_DIR "./leech"
+#define WORK_DIR ".leech"
 #define UNIQUE_ID "unique"
 
 void PrintVersion(void) { printf("%s\n", PACKAGE_STRING); }

@@ -19,4 +19,8 @@ bool LCH_FileSize(FILE *file, size_t *size);
 
 bool LCH_FileExists(const char *path);
 
+bool LCH_IsRegularFile(const char *path);
+
+bool LCH_IsDirectory(const char *path);
+
 #endif  // _LEECH_UTILS
