@@ -333,7 +333,7 @@ LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
   }
 
   LCH_Dict *const snapshot =
-      (LCH_FileExists(path)) ? LCH_DictCreate() : LoadSnapshot(table, path);
+      (LCH_IsRegularFile(path)) ? LoadSnapshot(table, path) : LCH_DictCreate();
   if (snapshot == NULL) {
     LCH_LOG_ERROR("Failed to load snapshot for table %s", table->identifier);
     return NULL;
