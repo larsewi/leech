@@ -159,8 +159,19 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     LCH_LOG_VERBOSE("Calculating entry modifications for table '%s'.",
                     table_id);
-    LCH_Dict *modifications = NULL;
-    const size_t n_modifications = 0;
+    LCH_Dict *modifications = LCH_DictSetChangedIntersection(
+        new_data, old_data, (void *(*)(const void *))strdup,
+        (int (*)(const void *, const void *))strcmp);
+    if (modifications == NULL) {
+      LCH_LOG_ERROR("Failed to calculate modifications for table '%s'.",
+                    table_id);
+      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(old_data);
+      LCH_DictDestroy(additions);
+      LCH_DictDestroy(deletions);
+      return NULL;
+    }
+    const size_t n_modifications = LCH_DictLength(modifications);
 
     LCH_LOG_INFO(
         "Found %zu additions, %zu modifications and %zu deletions for table "
