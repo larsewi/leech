@@ -325,6 +325,7 @@ LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
   const char *const id = table->identifier;
 
   char path[PATH_MAX];
+  path[0] = '\0';
   int ret = snprintf(path, sizeof(path), "%s%c%s%c%s", work_dir, PATH_SEP,
                      "snapshot", PATH_SEP, id);
   if ((ret < 0) || ((size_t)ret >= sizeof(path))) {

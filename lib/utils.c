@@ -110,16 +110,16 @@ bool LCH_FileSize(FILE *file, size_t *size) {
 }
 
 bool LCH_FileExists(const char *const path) {
-  struct stat sb;
+  struct stat sb = {0};
   return stat(path, &sb) == 0;
 }
 
 bool LCH_IsRegularFile(const char *const path) {
-  struct stat sb;
+  struct stat sb = {0};
   return (stat(path, &sb) != 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
 }
 
 bool LCH_IsDirectory(const char *const path) {
-  struct stat sb;
+  struct stat sb = {0};
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
 }

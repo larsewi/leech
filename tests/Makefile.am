@@ -1,9 +1,8 @@
 TESTS = unit_test leak_test
 
+AM_CPPFLAGS = -include config.h
+
 check_PROGRAMS = unit_test
-
-AM_CPPFLAGS = -I$(top_srcdir)/lib
-
 unit_test_SOURCES = \
     unit_test.c \
     check_block.c \
