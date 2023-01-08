@@ -61,6 +61,36 @@ START_TEST(test_LCH_DictSetMinus) {
 }
 END_TEST
 
+START_TEST(test_LCH_DictSetChangedIntersection) {
+  LCH_Dict *left = LCH_DictCreate();
+  LCH_DictSet(left, "one", strdup("foo"), free);
+  LCH_DictSet(left, "two", (void *)strdup("2"), free);
+  LCH_DictSet(left, "three", (void *)strdup("3"), free);
+  LCH_DictSet(left, "four", (void *)strdup("4"), free);
+  LCH_DictSet(left, "five", (void *)strdup("bar"), free);
+
+  LCH_Dict *right = LCH_DictCreate();
+  LCH_DictSet(right, "one", (void *)strdup("1"), free);
+  LCH_DictSet(right, "three", (void *)strdup("3"), free);
+  LCH_DictSet(right, "five", (void *)strdup("5"), free);
+
+  LCH_Dict *result = LCH_DictSetChangedIntersection(
+      left, right, (void *(*)(const void *))strdup,
+      (int (*)(const void *, const void *))strcmp);
+  ck_assert(LCH_DictHasKey(result, "one"));
+  ck_assert_str_eq(LCH_DictGet(result, "one"), "foo");
+  ck_assert(!LCH_DictHasKey(result, "two"));
+  ck_assert(!LCH_DictHasKey(result, "three"));
+  ck_assert(!LCH_DictHasKey(result, "four"));
+  ck_assert(LCH_DictHasKey(result, "five"));
+  ck_assert_str_eq(LCH_DictGet(result, "five"), "bar");
+
+  LCH_DictDestroy(left);
+  LCH_DictDestroy(right);
+  LCH_DictDestroy(result);
+}
+END_TEST
+
 Suite *DictSuite(void) {
   Suite *s = suite_create("dict.c");
   {
@@ -71,6 +101,11 @@ Suite *DictSuite(void) {
   {
     TCase *tc = tcase_create("LCH_DictSetMinus");
     tcase_add_test(tc, test_LCH_DictSetMinus);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_DictSetChangedIntersection");
+    tcase_add_test(tc, test_LCH_DictSetChangedIntersection);
     suite_add_tcase(s, tc);
   }
   return s;

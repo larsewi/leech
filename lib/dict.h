@@ -59,6 +59,19 @@ LCH_Dict *LCH_DictSetMinus(const LCH_Dict *self, const LCH_Dict *other,
                            void *(*valdup)(const void *));
 
 /**
+ * Get set intersection where values are different.
+ * @param [in] self left operand.
+ * @param [in] other right operand.
+ * @param [in] valdup function to duplicate value.
+ * @param [in] compare function to compare values.
+ * @return dict containing entries found in both self and other, but where
+ *         value is different.
+ */
+LCH_Dict *LCH_DictSetChangedIntersection(
+    const LCH_Dict *self, const LCH_Dict *other, void *(*valdup)(const void *),
+    int (*compare)(const void *, const void *));
+
+/**
  * Destroy dict and contents.
  * @param[in] self pointer to dict.
  */
