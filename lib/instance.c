@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
+#include <memory.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -134,8 +135,43 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
       return false;
     }
 
+    LCH_LOG_VERBOSE("Calculating entry additions for table '%s'.", table_id);
+    LCH_Dict *additions =
+        LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
+    if (additions == NULL) {
+      LCH_LOG_ERROR("Failed to calculate additions for table '%s'.", table_id);
+      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(old_data);
+      return NULL;
+    }
+    const size_t n_additions = LCH_DictLength(additions);
+
+    LCH_LOG_VERBOSE("Calculating entry deletions for table '%s'.", table_id);
+    LCH_Dict *deletions =
+        LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
+    if (deletions == NULL) {
+      LCH_LOG_ERROR("Failed to calculate deletions for table '%s'.", table_id);
+      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(old_data);
+      LCH_DictDestroy(additions);
+    }
+    const size_t n_deletions = LCH_DictLength(deletions);
+
+    LCH_LOG_VERBOSE("Calculating entry modifications for table '%s'.",
+                    table_id);
+    LCH_Dict *modifications = NULL;
+    const size_t n_modifications = 0;
+
+    LCH_LOG_INFO(
+        "Found %zu additions, %zu modifications and %zu deletions for table "
+        "'%s'",
+        n_additions, n_deletions, n_modifications, table_id);
+
     LCH_DictDestroy(new_data);
     LCH_DictDestroy(old_data);
+    LCH_DictDestroy(additions);
+    LCH_DictDestroy(deletions);
+    LCH_DictDestroy(modifications);
   }
 
   return true;
