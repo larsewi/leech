@@ -2,8 +2,8 @@
   "configurations": [
     {
       "name": "Linux",
-      "includePath": ["${workspaceFolder}/**", "/usr/local/opt/openssl/include"],
-      "defines": [],
+      "includePath": ["${workspaceFolder}/**"],
+      "defines": ["PACKAGE_STRING", "PACKAGE_BUGREPORT", "PACKAGE_NAME", "PACKAGE_URL"],
       "compilerPath": "/usr/bin/gcc",
       "cStandard": "c11",
       "cppStandard": "c++17",

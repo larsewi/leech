@@ -43,6 +43,7 @@ LCH_Instance *LCH_InstanceCreate(
     LCH_LOG_DEBUG("Directory '%s' already exists", instance->work_dir);
   }
   else {
+    LCH_LOG_VERBOSE("Creating directory '%s'.", createInfo->work_dir);
     int ret = mkdir(instance->work_dir, S_IRWXU);
     if (ret != 0) {
       LCH_LOG_ERROR("Failed to create directory '%s': %s", instance->work_dir, strerror(errno));
@@ -63,6 +64,7 @@ LCH_Instance *LCH_InstanceCreate(
     LCH_LOG_DEBUG("Directory '%s' already exists", path);
   }
   else {
+    LCH_LOG_VERBOSE("Creating directory '%s'.", path);
     ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
       LCH_LOG_ERROR("Failed to create directory '%s': %s", path, strerror(errno));
@@ -82,6 +84,7 @@ LCH_Instance *LCH_InstanceCreate(
     LCH_LOG_DEBUG("Directory '%s' already exists", path);
   }
   else {
+    LCH_LOG_VERBOSE("Creating directory '%s'.", path);
     ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
       LCH_LOG_ERROR("Failed to create directory '%s': %s", path, strerror(errno));
