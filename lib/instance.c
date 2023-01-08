@@ -154,7 +154,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    LCH_LOG_VERBOSE("Calculating entry additions for table '%s'.", table_id);
+    LCH_LOG_DEBUG("Calculating entry additions for table '%s'.", table_id);
     LCH_Dict *additions =
         LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
     if (additions == NULL) {
@@ -194,7 +194,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    LCH_LOG_VERBOSE("Calculating entry deletions for table '%s'.", table_id);
+    LCH_LOG_DEBUG("Calculating entry deletions for table '%s'.", table_id);
     LCH_Dict *deletions =
         LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
     if (deletions == NULL) {
@@ -232,8 +232,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    LCH_LOG_VERBOSE("Calculating entry modifications for table '%s'.",
-                    table_id);
+    LCH_LOG_DEBUG("Calculating entry modifications for table '%s'.", table_id);
 
     LCH_Dict *modifications = LCH_DictSetChangedIntersection(
         new_data, old_data, (void *(*)(const void *))strdup,
@@ -280,8 +279,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     LCH_DictDestroy(old_data);
 
     LCH_LOG_VERBOSE(
-        "Found %zu additions, %zu modifications and %zu deletions for table "
-        "'%s'",
+        "Calculated diff including %zu additions, %zu modifications and %zu "
+        "deletions for table '%s'",
         n_additions, n_deletions, n_modifications, table_id);
 
     /************************************************************************/
@@ -290,8 +289,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   }
 
   LCH_LOG_INFO(
-      "Found %zu additions, %zu modifications and %zu deletions for %zu "
-      "tables.",
+      "Calculated diff including a total of %zu additions, %zu modifications "
+      "and %zu deletions for %zu tables.",
       tot_additions, tot_deletions, tot_modifications, LCH_ListLength(tables));
 
   char *diff_str = LCH_BufferGet(diff);
