@@ -22,6 +22,11 @@ struct LCH_Dict {
   DictElement **buffer;
 };
 
+struct LCH_DictIter {
+  size_t cur_pos;
+  const struct LCH_Dict *dict;
+};
+
 LCH_Dict *LCH_DictCreate() {
   LCH_Dict *self = (LCH_Dict *)malloc(sizeof(LCH_Dict));
   if (self == NULL) {
@@ -280,4 +285,56 @@ void LCH_DictDestroy(LCH_Dict *self) {
   free(self->buffer);
   free(self);
   LCH_LOG_DEBUG("Destroyed dict");
+}
+
+LCH_DictIter *LCH_DictIterCreate(const LCH_Dict *const dict) {
+  assert(dict != NULL);
+
+  LCH_DictIter *iter = malloc(sizeof(LCH_DictIter));
+  if (iter == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory for iterator: %s",
+                  strerror(errno));
+    return NULL;
+  }
+  iter->cur_pos = 0;
+  iter->dict = dict;
+
+  return iter;
+}
+
+bool LCH_DictIterNext(LCH_DictIter *const iter) {
+  assert(iter != NULL);
+  assert(iter->dict != NULL);
+  assert(iter->dict->buffer != NULL);
+
+  while (iter->cur_pos < iter->dict->capacity) {
+    if (iter->dict->buffer[iter->cur_pos++] == NULL) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
+char *LCH_DictIterGetKey(const LCH_DictIter *const iter) {
+  assert(iter != NULL);
+  assert(iter->dict != NULL);
+  assert(iter->dict->buffer != NULL);
+  assert(iter->cur_pos > 0);
+
+  DictElement *item = iter->dict->buffer[iter->cur_pos - 1];
+  assert(item != NULL);
+  assert(item->key != NULL);
+  return item->key;
+}
+
+void *LCH_DictIterGetValue(const LCH_DictIter *const iter) {
+  assert(iter != NULL);
+  assert(iter->dict != NULL);
+  assert(iter->dict->buffer != NULL);
+  assert(iter->cur_pos > 0);
+
+  DictElement *item = iter->dict->buffer[iter->cur_pos - 1];
+  assert(item != NULL);
+  return item->value;
 }

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 typedef struct LCH_Dict LCH_Dict;
+typedef struct LCH_DictIter LCH_DictIter;
 
 /**
  * Create a dict.
@@ -76,5 +77,34 @@ LCH_Dict *LCH_DictSetChangedIntersection(
  * @param[in] self pointer to dict.
  */
 void LCH_DictDestroy(LCH_Dict *self);
+
+/**
+ * Create a dict iterator.
+ * @param [in] dict dict to create iterator from.
+ * @return pointer to iterator.
+ * @note iterator must be freed with free.
+ */
+LCH_DictIter *LCH_DictIterCreate(const LCH_Dict *const dict);
+
+/**
+ * Find next element in iterator.
+ * @param [in] iter pointer to iterator.
+ * @return true if new element was found.
+ */
+bool LCH_DictIterNext(LCH_DictIter *const iter);
+
+/**
+ * Get key from found element.
+ * @param [in] pointer to iterator.
+ * @return key from element.
+ */
+char *LCH_DictIterGetKey(const LCH_DictIter *const iter);
+
+/**
+ * Get value from found element.
+ * @param [in] pointer to iterator.
+ * @return value from element.
+ */
+void *LCH_DictIterGetValue(const LCH_DictIter *const iter);
 
 #endif  // _LEECH_DICT
