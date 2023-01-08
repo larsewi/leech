@@ -49,6 +49,16 @@ bool LCH_DictSet(LCH_Dict *self, const char *key, void *value,
 void *LCH_DictGet(const LCH_Dict *self, const char *key);
 
 /**
+ * Set minus based on key.
+ * @param [in] self left operand.
+ * @param [in] other right operand.
+ * @param [in] valdup function to duplicate value.
+ * @return dict containing entries found in self that is not found in other.
+ */
+LCH_Dict *LCH_DictSetMinus(const LCH_Dict *self, const LCH_Dict *other,
+                           void *(*valdup)(const void *));
+
+/**
  * Destroy dict and contents.
  * @param[in] self pointer to dict.
  */

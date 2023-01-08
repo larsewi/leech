@@ -1,15 +1,15 @@
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <limits.h>
 
+#include "definitions.h"
 #include "dict.h"
 #include "leech.h"
 #include "table.h"
 #include "utils.h"
-#include "definitions.h"
 
 struct LCH_Instance {
   const char *identifier;
@@ -38,56 +38,59 @@ LCH_Instance *LCH_InstanceCreate(
     return NULL;
   }
 
-  if (LCH_IsDirectory(instance->work_dir))
-  {
+  if (LCH_IsDirectory(instance->work_dir)) {
     LCH_LOG_DEBUG("Directory '%s' already exists", instance->work_dir);
-  }
-  else {
+  } else {
     LCH_LOG_VERBOSE("Creating directory '%s'.", createInfo->work_dir);
     int ret = mkdir(instance->work_dir, S_IRWXU);
     if (ret != 0) {
-      LCH_LOG_ERROR("Failed to create directory '%s': %s", instance->work_dir, strerror(errno));
+      LCH_LOG_ERROR("Failed to create directory '%s': %s", instance->work_dir,
+                    strerror(errno));
       LCH_InstanceDestroy(instance);
       return NULL;
     }
   }
 
   char path[PATH_MAX];
-  int ret = snprintf(path, sizeof(path), "%s%c%s", instance->work_dir, PATH_SEP, "snapshot");
-  if (ret < 0 || (size_t) ret >= sizeof(path)) {
-    LCH_LOG_ERROR("Failed to join paths '%s' and '%s': Trunctaion error", instance->work_dir, "snapshot");
+  int ret = snprintf(path, sizeof(path), "%s%c%s", instance->work_dir, PATH_SEP,
+                     "snapshot");
+  if (ret < 0 || (size_t)ret >= sizeof(path)) {
+    LCH_LOG_ERROR("Failed to join paths '%s' and '%s': Trunctaion error",
+                  instance->work_dir, "snapshot");
     LCH_InstanceDestroy(instance);
     return NULL;
   }
 
   if (LCH_IsDirectory(path)) {
     LCH_LOG_DEBUG("Directory '%s' already exists", path);
-  }
-  else {
+  } else {
     LCH_LOG_VERBOSE("Creating directory '%s'.", path);
     ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
-      LCH_LOG_ERROR("Failed to create directory '%s': %s", path, strerror(errno));
+      LCH_LOG_ERROR("Failed to create directory '%s': %s", path,
+                    strerror(errno));
       LCH_InstanceDestroy(instance);
       return NULL;
     }
   }
 
-  ret = snprintf(path, sizeof(path), "%s%c%s", instance->work_dir, PATH_SEP, "blocks");
-  if (ret < 0 || (size_t) ret >= sizeof(path)) {
-    LCH_LOG_ERROR("Failed to join paths '%s' and '%s': Trunctaion error", instance->work_dir, "blocks");
+  ret = snprintf(path, sizeof(path), "%s%c%s", instance->work_dir, PATH_SEP,
+                 "blocks");
+  if (ret < 0 || (size_t)ret >= sizeof(path)) {
+    LCH_LOG_ERROR("Failed to join paths '%s' and '%s': Trunctaion error",
+                  instance->work_dir, "blocks");
     LCH_InstanceDestroy(instance);
     return NULL;
   }
 
   if (LCH_IsDirectory(path)) {
     LCH_LOG_DEBUG("Directory '%s' already exists", path);
-  }
-  else {
+  } else {
     LCH_LOG_VERBOSE("Creating directory '%s'.", path);
     ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
-      LCH_LOG_ERROR("Failed to create directory '%s': %s", path, strerror(errno));
+      LCH_LOG_ERROR("Failed to create directory '%s': %s", path,
+                    strerror(errno));
       LCH_InstanceDestroy(instance);
       return NULL;
     }
@@ -116,14 +119,14 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     const LCH_Table *const table = LCH_ListGet(tables, i);
     const char *const table_id = LCH_TableGetIdentifier(table);
 
-    LCH_LOG_DEBUG("Loading new data from table '%s'", table_id);
+    LCH_LOG_VERBOSE("Loading new state for table '%s'.", table_id);
     LCH_Dict *new_data = LCH_TableLoadNewData(table);
     if (new_data == NULL) {
       LCH_LOG_ERROR("Failed to load new data from table '%s'", table_id);
       return false;
     }
 
-    LCH_LOG_DEBUG("Loading old data from table '%s'", table_id);
+    LCH_LOG_VERBOSE("Loading old state for table '%s'.", table_id);
     LCH_Dict *old_data = LCH_TableLoadOldData(table, self->work_dir);
     if (old_data == NULL) {
       LCH_LOG_ERROR("Failed to load old data from table '%s'", table_id);

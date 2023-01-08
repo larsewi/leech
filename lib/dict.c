@@ -172,6 +172,48 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
   return self->buffer[index]->value;
 }
 
+LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
+                           const LCH_Dict *const other,
+                           void *(*valdup)(const void *)) {
+  assert(self != NULL);
+  assert(other != NULL);
+  assert(self->buffer != NULL);
+
+  LCH_Dict *result = LCH_DictCreate();
+  if (result == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < self->capacity; i++) {
+    const DictElement *const item = self->buffer[i];
+
+    if (self->buffer[i] == NULL) {
+      continue;
+    }
+
+    const char *const key = item->key;
+    assert(key != NULL);
+
+    if (LCH_DictHasKey(other, key)) {
+      continue;
+    }
+
+    void *value = valdup(item->value);
+    if (value == NULL) {
+      LCH_DictDestroy(result);
+      LCH_LOG_ERROR("Failed to duplicate value from dict entry at key '%s'.",
+                    key);
+      return NULL;
+    }
+
+    if (!LCH_DictSet(result, key, value, item->destroy)) {
+      return NULL;
+    }
+  }
+
+  return result;
+}
+
 void LCH_DictDestroy(LCH_Dict *self) {
   if (self == NULL) {
     return;
