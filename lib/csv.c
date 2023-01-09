@@ -384,6 +384,22 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
   return true;
 }
 
+char *LCH_CSVComposeField(const char *const str) {
+  LCH_Buffer *temp = LCH_BufferCreate();
+  if (temp == NULL) {
+    return NULL;
+  }
+
+  if (!ComposeField(temp, str)) {
+    LCH_BufferDestroy(temp);
+    return NULL;
+  }
+
+  char *field = LCH_BufferGet(temp);
+  LCH_BufferDestroy(temp);
+  return field;
+}
+
 static bool ComposeRecord(LCH_Buffer *const buffer,
                           const LCH_List *const record) {
   assert(buffer != NULL);
