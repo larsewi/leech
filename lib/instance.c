@@ -112,8 +112,14 @@ bool LCH_InstanceAddTable(LCH_Instance *const instance,
                         (void (*)(void *))LCH_TableDestroy);
 }
 
-static bool CalculateDiff(LCH_Buffer *const diff, const LCH_Dict *const new_data, const LCH_Dict *const old_data, size_t *const tot_additions, size_t *const tot_deletions, size_t *const tot_modifications) {
-  LCH_Dict *additions = LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
+static bool CalculateDiff(LCH_Buffer *const diff,
+                          const LCH_Dict *const new_data,
+                          const LCH_Dict *const old_data,
+                          size_t *const tot_additions,
+                          size_t *const tot_deletions,
+                          size_t *const tot_modifications) {
+  LCH_Dict *additions =
+      LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
   if (additions == NULL) {
     LCH_LOG_ERROR("Failed to calculate additions.");
     return false;
@@ -144,7 +150,8 @@ static bool CalculateDiff(LCH_Buffer *const diff, const LCH_Dict *const new_data
 
   /************************************************************************/
 
-  LCH_Dict *deletions = LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
+  LCH_Dict *deletions =
+      LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
   if (deletions == NULL) {
     LCH_LOG_ERROR("Failed to calculate deletion entries.");
     return false;
@@ -207,7 +214,10 @@ static bool CalculateDiff(LCH_Buffer *const diff, const LCH_Dict *const new_data
 
   /************************************************************************/
 
-  LCH_LOG_DEBUG("Calculated diff including %zu additions, %zu modifications and %zu deletions.", n_additions, n_deletions, n_modifications);
+  LCH_LOG_DEBUG(
+      "Calculated diff including %zu additions, %zu modifications and %zu "
+      "deletions.",
+      n_additions, n_deletions, n_modifications);
 
   return true;
 }
@@ -255,7 +265,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     /************************************************************************/
 
     LCH_LOG_VERBOSE("Calculating diff for table '%s'", table_id);
-    if (!CalculateDiff(diff, new_data, old_data, &tot_additions, &tot_deletions, &tot_modifications)) {
+    if (!CalculateDiff(diff, new_data, old_data, &tot_additions, &tot_deletions,
+                       &tot_modifications)) {
       LCH_LOG_ERROR("Failed to calculate diff for table '%s'", table_id);
       LCH_BufferDestroy(diff);
       LCH_DictDestroy(new_data);
