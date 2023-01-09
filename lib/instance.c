@@ -168,7 +168,8 @@ static bool CalculateDiff(LCH_Buffer *const diff,
 
   while (LCH_DictIterNext(iter)) {
     const char *key = LCH_DictIterGetKey(iter);
-    if (!LCH_BufferAppend(diff, "-,%s\n", key)) {
+    const char *value = (char *)LCH_DictIterGetValue(iter);
+    if (!LCH_BufferAppend(diff, "-,%s,%s\n", key, value)) {
       LCH_LOG_ERROR("Failed to append deletion entries to diff buffer.");
       free(iter);
       LCH_DictDestroy(deletions);
