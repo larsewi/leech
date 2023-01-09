@@ -112,6 +112,106 @@ bool LCH_InstanceAddTable(LCH_Instance *const instance,
                         (void (*)(void *))LCH_TableDestroy);
 }
 
+static bool CalculateDiff(LCH_Buffer *const diff, const LCH_Dict *const new_data, const LCH_Dict *const old_data, size_t *const tot_additions, size_t *const tot_deletions, size_t *const tot_modifications) {
+  LCH_Dict *additions = LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
+  if (additions == NULL) {
+    LCH_LOG_ERROR("Failed to calculate additions.");
+    return false;
+  }
+  const size_t n_additions = LCH_DictLength(additions);
+  *tot_additions += n_additions;
+
+  LCH_DictIter *iter = LCH_DictIterCreate(additions);
+  if (iter == NULL) {
+    LCH_LOG_ERROR("Failed to create iterator for addition entries.");
+    LCH_DictDestroy(additions);
+    return false;
+  }
+
+  while (LCH_DictIterNext(iter)) {
+    const char *key = LCH_DictIterGetKey(iter);
+    const char *value = (char *)LCH_DictIterGetValue(iter);
+    if (!LCH_BufferAppend(diff, "+,%s,%s\n", key, value)) {
+      LCH_LOG_ERROR("Failed to append addition entries to diff buffer.");
+      free(iter);
+      LCH_DictDestroy(additions);
+      return false;
+    }
+  }
+
+  free(iter);
+  LCH_DictDestroy(additions);
+
+  /************************************************************************/
+
+  LCH_Dict *deletions = LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
+  if (deletions == NULL) {
+    LCH_LOG_ERROR("Failed to calculate deletion entries.");
+    return false;
+  }
+  const size_t n_deletions = LCH_DictLength(deletions);
+  *tot_deletions += n_deletions;
+
+  iter = LCH_DictIterCreate(deletions);
+  if (iter == NULL) {
+    LCH_LOG_ERROR("Failed to create iterator for deletion entries.");
+    LCH_DictDestroy(deletions);
+    return false;
+  }
+
+  while (LCH_DictIterNext(iter)) {
+    const char *key = LCH_DictIterGetKey(iter);
+    if (!LCH_BufferAppend(diff, "-,%s\n", key)) {
+      LCH_LOG_ERROR("Failed to append deletion entries to diff buffer.");
+      free(iter);
+      LCH_DictDestroy(deletions);
+      return false;
+    }
+  }
+
+  free(iter);
+  LCH_DictDestroy(deletions);
+
+  /************************************************************************/
+
+  LCH_Dict *modifications = LCH_DictSetChangedIntersection(
+      new_data, old_data, (void *(*)(const void *))strdup,
+      (int (*)(const void *, const void *))strcmp);
+  if (modifications == NULL) {
+    LCH_LOG_ERROR("Failed to calculate modifications entries.");
+    return false;
+  }
+  const size_t n_modifications = LCH_DictLength(modifications);
+  *tot_modifications += n_modifications;
+
+  iter = LCH_DictIterCreate(modifications);
+  if (iter == NULL) {
+    LCH_LOG_ERROR("Failed to create iterator for modifications entries.");
+    LCH_DictDestroy(modifications);
+    return false;
+  }
+
+  while (LCH_DictIterNext(iter)) {
+    const char *key = LCH_DictIterGetKey(iter);
+    const char *value = (char *)LCH_DictIterGetValue(iter);
+    if (!LCH_BufferAppend(diff, "-,%s,%s\n", key, value)) {
+      LCH_LOG_ERROR("Failed to append modification entries to diff buffer.");
+      free(iter);
+      LCH_DictDestroy(modifications);
+      return false;
+    }
+  }
+
+  free(iter);
+  LCH_DictDestroy(modifications);
+
+  /************************************************************************/
+
+  LCH_LOG_DEBUG("Calculated diff including %zu additions, %zu modifications and %zu deletions.", n_additions, n_deletions, n_modifications);
+
+  return true;
+}
+
 bool LCH_InstanceCommit(const LCH_Instance *const self) {
   assert(self != NULL);
   assert(self->tables != NULL);
@@ -154,134 +254,16 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    LCH_LOG_DEBUG("Calculating entry additions for table '%s'.", table_id);
-    LCH_Dict *additions =
-        LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
-    if (additions == NULL) {
-      LCH_LOG_ERROR("Failed to calculate additions for table '%s'.", table_id);
+    LCH_LOG_VERBOSE("Calculating diff for table '%s'", table_id);
+    if (!CalculateDiff(diff, new_data, old_data, &tot_additions, &tot_deletions, &tot_modifications)) {
+      LCH_LOG_ERROR("Failed to calculate diff for table '%s'", table_id);
       LCH_BufferDestroy(diff);
       LCH_DictDestroy(new_data);
       LCH_DictDestroy(old_data);
       return false;
     }
-    const size_t n_additions = LCH_DictLength(additions);
-    tot_additions += n_additions;
-
-    LCH_DictIter *iter = LCH_DictIterCreate(additions);
-    if (iter == NULL) {
-      LCH_LOG_ERROR("Failed to create iterator for additions for table '%s'.",
-                    table_id);
-      LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
-      LCH_DictDestroy(old_data);
-      LCH_DictDestroy(additions);
-      return false;
-    }
-
-    while (LCH_DictIterNext(iter)) {
-      const char *key = LCH_DictIterGetKey(iter);
-      const char *value = (char *)LCH_DictIterGetValue(iter);
-      if (!LCH_BufferAppend(diff, "+,%s,%s\n", key, value)) {
-        LCH_LOG_ERROR(
-            "Failed to append addition to diff buffer for table '%s'.",
-            table_id);
-        return false;
-      }
-    }
-
-    free(iter);
-    LCH_DictDestroy(additions);
-
-    /************************************************************************/
-
-    LCH_LOG_DEBUG("Calculating entry deletions for table '%s'.", table_id);
-    LCH_Dict *deletions =
-        LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
-    if (deletions == NULL) {
-      LCH_LOG_ERROR("Failed to calculate deletions for table '%s'.", table_id);
-      LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
-      LCH_DictDestroy(old_data);
-    }
-    const size_t n_deletions = LCH_DictLength(deletions);
-    tot_deletions += n_deletions;
-
-    iter = LCH_DictIterCreate(deletions);
-    if (iter == NULL) {
-      LCH_LOG_ERROR("Failed to create iterator for deletions for table '%s'.",
-                    table_id);
-      LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
-      LCH_DictDestroy(old_data);
-      LCH_DictDestroy(deletions);
-      return false;
-    }
-
-    while (LCH_DictIterNext(iter)) {
-      const char *key = LCH_DictIterGetKey(iter);
-      if (!LCH_BufferAppend(diff, "-,%s\n", key)) {
-        LCH_LOG_ERROR(
-            "Failed to append deletion to diff buffer for table '%s'.",
-            table_id);
-        return false;
-      }
-    }
-
-    free(iter);
-    LCH_DictDestroy(deletions);
-
-    /************************************************************************/
-
-    LCH_LOG_DEBUG("Calculating entry modifications for table '%s'.", table_id);
-
-    LCH_Dict *modifications = LCH_DictSetChangedIntersection(
-        new_data, old_data, (void *(*)(const void *))strdup,
-        (int (*)(const void *, const void *))strcmp);
-    if (modifications == NULL) {
-      LCH_LOG_ERROR("Failed to calculate modifications for table '%s'.",
-                    table_id);
-      LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
-      LCH_DictDestroy(old_data);
-      return false;
-    }
-    const size_t n_modifications = LCH_DictLength(modifications);
-    tot_modifications += n_modifications;
-
-    iter = LCH_DictIterCreate(modifications);
-    if (iter == NULL) {
-      LCH_LOG_ERROR(
-          "Failed to create iterator for modifications for table '%s'.",
-          table_id);
-      LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
-      LCH_DictDestroy(old_data);
-      LCH_DictDestroy(modifications);
-      return false;
-    }
-
-    while (LCH_DictIterNext(iter)) {
-      const char *key = LCH_DictIterGetKey(iter);
-      const char *value = (char *)LCH_DictIterGetValue(iter);
-      if (!LCH_BufferAppend(diff, "-,%s,%s\n", key, value)) {
-        LCH_LOG_ERROR(
-            "Failed to append modification to diff buffer for table '%s'.",
-            table_id);
-        return false;
-      }
-    }
-
-    free(iter);
-    LCH_DictDestroy(modifications);
-
-    /************************************************************************/
 
     LCH_DictDestroy(old_data);
-
-    LCH_LOG_VERBOSE(
-        "Calculated diff including %zu additions, %zu modifications and %zu "
-        "deletions for table '%s'",
-        n_additions, n_deletions, n_modifications, table_id);
 
     /************************************************************************/
 
@@ -289,7 +271,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   }
 
   LCH_LOG_INFO(
-      "Calculated diff including a total of %zu additions, %zu modifications "
+      "Calculated diffs including a total of %zu additions, %zu modifications "
       "and %zu deletions for %zu tables.",
       tot_additions, tot_deletions, tot_modifications, LCH_ListLength(tables));
 
