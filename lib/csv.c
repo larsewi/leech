@@ -297,35 +297,20 @@ LCH_List *LCH_CSVParse(const char *str) {
 }
 
 LCH_List *LCH_CSVParseFile(const char *const path) {
-  FILE *file = fopen(path, "r");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
-                  strerror(errno));
+  char *csv = LCH_ReadFile(path, NULL);
+  if (csv == NULL) {
+    LCH_LOG_ERROR("Failed to read CSV file '%s'.", path);
     return NULL;
   }
 
-  size_t size;
-  if (!LCH_FileSize(file, &size)) {
-    LCH_LOG_ERROR("Failed to get size of file '%s'", path);
-    fclose(file);
-    return NULL;
-  }
-
-  char buffer[size + 1];
-  buffer[size] = '\0';
-  if (fread((void *)buffer, 1, size, file) != size) {
-    LCH_LOG_ERROR("Failed to read file '%s'", path);
-    fclose(file);
-    return NULL;
-  }
-  fclose(file);
-
-  LCH_List *table = LCH_CSVParse(buffer);
+  LCH_List *table = LCH_CSVParse(csv);
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to parse CSV file '%s'", path, strerror(errno));
+    free(csv);
     return NULL;
   }
 
+  free(csv);
   return table;
 }
 
