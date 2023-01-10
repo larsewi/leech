@@ -45,7 +45,7 @@ LCH_Instance *LCH_InstanceCreate(
     LCH_LOG_DEBUG("Directory '%s' already exists", instance->work_dir);
   } else {
     LCH_LOG_VERBOSE("Creating directory '%s'.", createInfo->work_dir);
-    int ret = mkdir(instance->work_dir, S_IRWXU);
+    const int ret = mkdir(instance->work_dir, S_IRWXU);
     if (ret != 0) {
       LCH_LOG_ERROR("Failed to create directory '%s': %s", instance->work_dir,
                     strerror(errno));
@@ -55,11 +55,7 @@ LCH_Instance *LCH_InstanceCreate(
   }
 
   char path[PATH_MAX];
-  int ret = snprintf(path, sizeof(path), "%s%c%s", instance->work_dir, PATH_SEP,
-                     "snapshot");
-  if (ret < 0 || (size_t)ret >= sizeof(path)) {
-    LCH_LOG_ERROR("Failed to join paths '%s' and '%s': Trunctaion error",
-                  instance->work_dir, "snapshot");
+  if (!LCH_PathJoin(path, sizeof(path), 2, instance->work_dir, "snapshot")) {
     LCH_InstanceDestroy(instance);
     return NULL;
   }
@@ -68,7 +64,7 @@ LCH_Instance *LCH_InstanceCreate(
     LCH_LOG_DEBUG("Directory '%s' already exists", path);
   } else {
     LCH_LOG_VERBOSE("Creating directory '%s'.", path);
-    ret = mkdir(path, S_IRWXU);
+    const int ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
       LCH_LOG_ERROR("Failed to create directory '%s': %s", path,
                     strerror(errno));
@@ -77,9 +73,7 @@ LCH_Instance *LCH_InstanceCreate(
     }
   }
 
-  ret = snprintf(path, sizeof(path), "%s%c%s", instance->work_dir, PATH_SEP,
-                 "blocks");
-  if (ret < 0 || (size_t)ret >= sizeof(path)) {
+  if (!LCH_PathJoin(path, sizeof(path), 2, instance->work_dir, "blocks")) {
     LCH_LOG_ERROR("Failed to join paths '%s' and '%s': Trunctaion error",
                   instance->work_dir, "blocks");
     LCH_InstanceDestroy(instance);
@@ -90,7 +84,7 @@ LCH_Instance *LCH_InstanceCreate(
     LCH_LOG_DEBUG("Directory '%s' already exists", path);
   } else {
     LCH_LOG_VERBOSE("Creating directory '%s'.", path);
-    ret = mkdir(path, S_IRWXU);
+    const int ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
       LCH_LOG_ERROR("Failed to create directory '%s': %s", path,
                     strerror(errno));
