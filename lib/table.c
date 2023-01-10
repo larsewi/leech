@@ -257,7 +257,6 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
 }
 
 static LCH_Dict *LoadSnapshot(const char *const path) {
-
   LCH_List *table = LCH_CSVParseFile(path);
   if (table == NULL) {
     return NULL;
@@ -321,7 +320,8 @@ LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
   assert(table->identifier != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot", table->identifier)) {
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
+                    table->identifier)) {
     return NULL;
   }
 

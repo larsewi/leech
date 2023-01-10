@@ -2,12 +2,12 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <stdarg.h>
 
-#include "leech.h"
 #include "definitions.h"
+#include "leech.h"
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
@@ -126,7 +126,8 @@ bool LCH_IsDirectory(const char *const path) {
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
 }
 
-bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items, ...) {
+bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
+                  ...) {
   assert(path_max >= 1);
 
   va_list ap;
@@ -162,4 +163,44 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items, ...) 
     return false;
   }
   return true;
+}
+
+char *LCH_ReadFile(const char *const path, size_t *const size) {
+  FILE *file = fopen(path, "r");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s': %s", path, strerror(errno));
+    return NULL;
+  }
+
+  char *buffer = NULL;
+  size_t buffer_size = LCH_BUFFER_SIZE;
+  size_t total_read = 0, bytes_read = 0;
+
+  do {
+    char *ptr = realloc(buffer, buffer_size);
+    if (ptr == NULL) {
+      LCH_LOG_ERROR("Failed to allocate memory for read buffer: %s",
+                    strerror(errno));
+      free(buffer);
+      fclose(file);
+      return NULL;
+    }
+
+    buffer = ptr;
+    bytes_read = fread(buffer + total_read, 1, buffer_size - total_read, file);
+    total_read += bytes_read;
+    buffer_size *= 2;
+  } while (bytes_read != 0);
+
+  if (ferror(file)) {
+    LCH_LOG_ERROR("Failed to read file '%s'.", path);
+    free(buffer);
+    fclose(file);
+    return NULL;
+  }
+
+  if (size != NULL) {
+    *size = total_read;
+  }
+  return buffer;
 }

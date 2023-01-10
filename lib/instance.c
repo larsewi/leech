@@ -1,13 +1,13 @@
 #include <assert.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <memory.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fcntl.h>
-#include <stdio.h>
 #include <unistd.h>
 
 #include "buffer.h"
@@ -119,7 +119,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   LCH_Dict *additions =
       LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
   if (additions == NULL) {
-    LCH_LOG_ERROR("Failed to calculate additions.");
+    LCH_LOG_ERROR("Failed to calculate insertion entries.");
     return false;
   }
   const size_t n_additions = LCH_DictLength(additions);
@@ -127,7 +127,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
 
   LCH_DictIter *iter = LCH_DictIterCreate(additions);
   if (iter == NULL) {
-    LCH_LOG_ERROR("Failed to create iterator for addition entries.");
+    LCH_LOG_ERROR("Failed to create iterator for insertion entries.");
     LCH_DictDestroy(additions);
     return false;
   }
@@ -136,7 +136,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
     const char *key = LCH_DictIterGetKey(iter);
     const char *value = (char *)LCH_DictIterGetValue(iter);
     if (!LCH_BufferAppend(diff, "+,%s,%s\r\n", key, value)) {
-      LCH_LOG_ERROR("Failed to append addition entries to diff buffer.");
+      LCH_LOG_ERROR("Failed to append insertion entries to diff buffer.");
       free(iter);
       LCH_DictDestroy(additions);
       return false;
@@ -253,13 +253,16 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     const char *const table_id = LCH_TableGetIdentifier(table);
     char *composed_table_id = LCH_CSVComposeField(table_id);
     if (composed_table_id == NULL) {
-      LCH_LOG_ERROR("Failed to compose table id for diffs for table '%s'.", table_id);
+      LCH_LOG_ERROR("Failed to compose table id for diffs for table '%s'.",
+                    table_id);
       free(diff);
       return false;
     }
 
     if (!LCH_BufferAppend(diff, "%s\r\n", composed_table_id)) {
-      LCH_LOG_ERROR("Failed to append composed table id to diffs for table '%s'.", table_id);
+      LCH_LOG_ERROR(
+          "Failed to append composed table id to diffs for table '%s'.",
+          table_id);
       free(composed_table_id);
       free(diff);
       return false;
@@ -304,7 +307,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     LCH_LOG_VERBOSE("Creating new snapshot for table '%s'.", table_id);
     char path[PATH_MAX];
-    if (!LCH_PathJoin(path, sizeof(path), 3, self->work_dir, "snapshot", table_id)) {
+    if (!LCH_PathJoin(path, sizeof(path), 3, self->work_dir, "snapshot",
+                      table_id)) {
       LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
       LCH_BufferDestroy(diff);
       LCH_DictDestroy(new_data);
@@ -313,7 +317,10 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     FILE *const file = fopen(path, "w");
     if (file == NULL) {
-      LCH_LOG_ERROR("Filed to create snapshot for table '%s': Failed to open file '%s': %s", table_id, strerror(errno));
+      LCH_LOG_ERROR(
+          "Filed to create snapshot for table '%s': Failed to open file '%s': "
+          "%s",
+          table_id, strerror(errno));
       LCH_BufferDestroy(diff);
       LCH_DictDestroy(new_data);
       return false;
@@ -346,13 +353,15 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   }
 
   LCH_LOG_INFO(
-      "Calculated diffs including a total of %zu additions, %zu modifications "
-      "and %zu deletions for %zu tables.",
+      "Calculated diffs including a total of %zu insertions, %zu deletions and "
+      "%zu modifications, over %zu table(s).",
       tot_additions, tot_deletions, tot_modifications, LCH_ListLength(tables));
 
   char *diff_str = LCH_BufferGet(diff);
   LCH_BufferDestroy(diff);
-  LCH_LOG_DEBUG("Diff string: '%s'\n", diff_str);
+
+  /**************************************************************************/
+
   free(diff_str);
 
   return true;

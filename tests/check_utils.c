@@ -33,8 +33,27 @@ END_TEST
 
 START_TEST(test_LCH_PathJoin) {
   char path[PATH_MAX];
-  ck_assert(LCH_PathJoin(path, sizeof(path), 3, ".leech", "snapshots", "beatles"));
+  ck_assert(
+      LCH_PathJoin(path, sizeof(path), 3, ".leech", "snapshots", "beatles"));
   ck_assert_str_eq(path, ".leech/snapshots/beatles");
+}
+END_TEST
+
+START_TEST(test_LCH_ReadFile) {
+  char path[] = "testfile";
+  FILE *file = fopen(path, "w");
+  ck_assert_ptr_nonnull(file);
+
+  char expected[] = "Hello World!";
+  size_t bytes_written = fwrite(expected, 1, sizeof(expected), file);
+  fclose(file);
+
+  size_t size;
+  char *actual = LCH_ReadFile("testfile", &size);
+  ck_assert_str_eq(expected, actual);
+  ck_assert_int_eq(size, strlen(expected) + 1);
+  free(actual);
+  remove(path);
 }
 END_TEST
 
@@ -57,6 +76,11 @@ Suite *UtilsSuite(void) {
   }
   {
     TCase *tc = tcase_create("LCH_PathJoin");
+    tcase_add_test(tc, test_LCH_PathJoin);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ReadFile");
     tcase_add_test(tc, test_LCH_PathJoin);
     suite_add_tcase(s, tc);
   }

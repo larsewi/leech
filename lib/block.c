@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
+#include <openssl/sha.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,15 +14,15 @@
 #include "utils.h"
 
 struct __attribute__((__packed__)) LCH_Block {
-  unsigned char parent_id[LCH_BLOCK_ID_LENGTH];
+  unsigned char parent_id[SHA_DIGEST_LENGTH];
   uint32_t timestamp;
   uint32_t data_len;
   unsigned char data[0];
 };
 
-static char *DigestToString(const unsigned char digest[LCH_BLOCK_ID_LENGTH]) {
+static char *DigestToString(const unsigned char digest[SHA_DIGEST_LENGTH]) {
   // Two characters per byte, plus terminating null byte
-  const int len = (LCH_BLOCK_ID_LENGTH * 2) + 1;
+  const int len = (SHA_DIGEST_LENGTH * 2) + 1;
 
   char *const str = malloc(len);
   if (str == NULL) {
@@ -29,7 +30,7 @@ static char *DigestToString(const unsigned char digest[LCH_BLOCK_ID_LENGTH]) {
     return NULL;
   }
 
-  for (int i = 0; i < LCH_BLOCK_ID_LENGTH; i++) {
+  for (int i = 0; i < SHA_DIGEST_LENGTH; i++) {
     int ret = snprintf(str + (i * 2), len - (i * 2), "%02x", digest[i]);
     assert(ret == 2);
   }
@@ -38,8 +39,8 @@ static char *DigestToString(const unsigned char digest[LCH_BLOCK_ID_LENGTH]) {
 }
 
 static bool StringToDigest(const char *str,
-                           unsigned char digest[LCH_BLOCK_ID_LENGTH]) {
-  for (int i = 0; i < LCH_BLOCK_ID_LENGTH; i++) {
+                           unsigned char digest[SHA_DIGEST_LENGTH]) {
+  for (int i = 0; i < SHA_DIGEST_LENGTH; i++) {
     if (sscanf(str, "%2hhx", &digest[i]) != 1) {
       return false;
     }
@@ -64,7 +65,7 @@ size_t LCH_BlockGetDataLength(const LCH_Block *const block) {
 void *LCH_BlockGetData(LCH_Block *const block) { return block->data; }
 
 char *LCH_BlockGetBlockID(const LCH_Block *const block) {
-  unsigned char digest[LCH_BLOCK_ID_LENGTH];
+  unsigned char digest[SHA_DIGEST_LENGTH];
 
   if (block == NULL) {
     memset(digest, 0, sizeof(digest));
