@@ -18,6 +18,7 @@
         "bitset": "c",
         "stdlib.h": "c",
         "__threading_support": "c",
-        "complex": "c"
+        "complex": "c",
+        "types.h": "c"
     }
 }

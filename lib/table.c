@@ -256,9 +256,7 @@ LCH_Dict *LCH_TableLoadNewData(const LCH_Table *const table) {
   return data;
 }
 
-static LCH_Dict *LoadSnapshot(const LCH_Table *const self,
-                              const char *const path) {
-  assert(self != NULL);
+static LCH_Dict *LoadSnapshot(const char *const path) {
 
   LCH_List *table = LCH_CSVParseFile(path);
   if (table == NULL) {
@@ -316,23 +314,19 @@ static LCH_Dict *LoadSnapshot(const LCH_Table *const self,
   return snapshot;
 }
 
-
-
 LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
                                const char *const work_dir) {
   assert(table != NULL);
   assert(work_dir != NULL);
-
   assert(table->identifier != NULL);
-  const char *const id = table->identifier;
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot", id)) {
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot", table->identifier)) {
     return NULL;
   }
 
   LCH_Dict *const snapshot =
-      (LCH_IsRegularFile(path)) ? LoadSnapshot(table, path) : LCH_DictCreate();
+      (LCH_IsRegularFile(path)) ? LoadSnapshot(path) : LCH_DictCreate();
   if (snapshot == NULL) {
     LCH_LOG_ERROR("Failed to load snapshot for table %s", table->identifier);
     return NULL;
