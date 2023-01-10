@@ -316,6 +316,8 @@ static LCH_Dict *LoadSnapshot(const LCH_Table *const self,
   return snapshot;
 }
 
+
+
 LCH_Dict *LCH_TableLoadOldData(const LCH_Table *const table,
                                const char *const work_dir) {
   assert(table != NULL);

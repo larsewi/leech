@@ -4,8 +4,10 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 #include "leech.h"
+#include "definitions.h"
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
@@ -122,4 +124,42 @@ bool LCH_IsRegularFile(const char *const path) {
 bool LCH_IsDirectory(const char *const path) {
   struct stat sb = {0};
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
+}
+
+bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items, ...) {
+  assert(path_max >= 1);
+
+  va_list ap;
+  va_start(ap, n_items);
+
+  size_t used = 0;
+  bool truncated = false;
+  for (size_t i = 0; i < n_items; i++) {
+    if (i > 0) {
+      if (path_max - used < 2) {
+        truncated = true;
+        break;
+      }
+      path[used++] = PATH_SEP;
+    }
+
+    char *const sub = va_arg(ap, char *);
+    const size_t sub_len = strlen(sub);
+    for (size_t j = 0; j < sub_len; j++) {
+      if (path_max - used < 2) {
+        truncated = true;
+        break;
+      }
+      path[used++] = sub[j];
+    }
+  }
+
+  va_end(ap);
+  path[used] = '\0';
+
+  if (truncated) {
+    LCH_LOG_ERROR("Failed to join paths: Truncation error.");
+    return false;
+  }
+  return true;
 }

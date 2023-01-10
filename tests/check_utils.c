@@ -1,4 +1,5 @@
 #include <check.h>
+#include <limits.h>
 
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
@@ -30,6 +31,13 @@ END_TEST
 START_TEST(test_LCH_SplitString) {}
 END_TEST
 
+START_TEST(test_LCH_PathJoin) {
+  char path[PATH_MAX];
+  ck_assert(LCH_PathJoin(path, sizeof(path), 3, ".leech", "snapshots", "beatles"));
+  ck_assert_str_eq(path, ".leech/snapshots/beatles");
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -45,6 +53,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_StringStrip");
     tcase_add_test(tc, test_LCH_StringStrip);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_PathJoin");
+    tcase_add_test(tc, test_LCH_PathJoin);
     suite_add_tcase(s, tc);
   }
   return s;

@@ -23,4 +23,6 @@ bool LCH_IsRegularFile(const char *path);
 
 bool LCH_IsDirectory(const char *path);
 
+bool LCH_PathJoin(char *path, size_t path_max, size_t n_items, ...);
+
 #endif  // _LEECH_UTILS
