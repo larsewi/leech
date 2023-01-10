@@ -27,4 +27,5 @@
 //   return NULL;
 // }
 
-// bool LCH_HeadSet(const char *const workdir, const char *const block_id) { return false; }
+// bool LCH_HeadSet(const char *const workdir, const char *const block_id) {
+// return false; }

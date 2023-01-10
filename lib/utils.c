@@ -168,7 +168,8 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
 char *LCH_ReadFile(const char *const path, size_t *const size) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s': %s", path, strerror(errno));
+    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
+                  strerror(errno));
     return NULL;
   }
 
