@@ -189,7 +189,7 @@ char *LCH_ReadFile(const char *const path, size_t *const size) {
     buffer = ptr;
     bytes_read = fread(buffer + total_read, 1, buffer_size - total_read, file);
     total_read += bytes_read;
-    buffer_size *= 2;
+    buffer_size += LCH_BUFFER_SIZE;
   } while (bytes_read != 0);
 
   if (ferror(file)) {
