@@ -180,8 +180,9 @@ char *LCH_ReadFile(const char *const path, size_t *const size) {
   do {
     char *ptr = realloc(buffer, buffer_size);
     if (ptr == NULL) {
-      LCH_LOG_ERROR("Failed to allocate memory for read buffer: %s",
-                    strerror(errno));
+      LCH_LOG_ERROR(
+          "Failed to reallocate (%zu bytes) memory for read buffer: %s",
+          buffer_size, strerror(errno));
       free(buffer);
       fclose(file);
       return NULL;
