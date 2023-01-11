@@ -10,6 +10,7 @@ Suite *BlockSuite(void);
 Suite *BufferSuite(void);
 Suite *CSVSuite(void);
 Suite *DictSuite(void);
+Suite *HeadSuite(void);
 Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
 Suite *TableSuite(void);

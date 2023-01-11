@@ -9,6 +9,7 @@ unit_test_SOURCES = \
     check_buffer.c \
     check_csv.c \
     check_dict.c \
+    check_head.c \
     check_leech_csv.c \
     check_list.c \
     check_table.c \
