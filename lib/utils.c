@@ -201,6 +201,7 @@ char *LCH_ReadTextFile(const char *const path, size_t *const length) {
     fclose(file);
     return NULL;
   }
+  fclose(file);
 
   if (length != NULL) {
     *length = total_read;
