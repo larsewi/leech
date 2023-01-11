@@ -19,6 +19,7 @@
         "stdlib.h": "c",
         "__threading_support": "c",
         "complex": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "limits.h": "c"
     }
 }

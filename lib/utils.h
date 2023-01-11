@@ -25,6 +25,24 @@ bool LCH_IsDirectory(const char *path);
 
 bool LCH_PathJoin(char *path, size_t path_max, size_t n_items, ...);
 
-char *LCH_ReadFile(const char *path, size_t *size);
+/**
+ * @brief Read a text file.
+ *
+ * @note Returned string must be freed with free(3).
+ * @param[in] path path to file.
+ * @param[out] length If not NULL, it is set to be the string length, excluding
+ *                    the terminating null byte.
+ * @return string containing the file content, or NULL in case of error.
+ */
+char *LCH_ReadTextFile(const char *path, size_t *length);
+
+/**
+ * @brief Write a text file.
+ *
+ * @param[in] path path to file.
+ * @param[in] str string to write to file.
+ * @return false in case of error.
+ */
+bool LCH_WriteTextFile(const char *path, const char *str);
 
 #endif  // _LEECH_UTILS

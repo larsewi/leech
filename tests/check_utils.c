@@ -39,19 +39,16 @@ START_TEST(test_LCH_PathJoin) {
 }
 END_TEST
 
-START_TEST(test_LCH_ReadFile) {
+START_TEST(test_LCH_ReadWriteTextFile) {
   char path[] = "testfile";
-  FILE *file = fopen(path, "w");
-  ck_assert_ptr_nonnull(file);
 
   char expected[] = "Hello World!";
-  size_t bytes_written = fwrite(expected, 1, sizeof(expected), file);
-  fclose(file);
+  ck_assert(LCH_WriteTextFile(path, expected));
 
   size_t size;
-  char *actual = LCH_ReadFile("testfile", &size);
+  char *actual = LCH_ReadTextFile("testfile", &size);
   ck_assert_str_eq(expected, actual);
-  ck_assert_int_eq(size, strlen(expected) + 1);
+  ck_assert_int_eq(size, strlen(expected));
   free(actual);
   remove(path);
 }
@@ -80,8 +77,8 @@ Suite *UtilsSuite(void) {
     suite_add_tcase(s, tc);
   }
   {
-    TCase *tc = tcase_create("LCH_ReadFile");
-    tcase_add_test(tc, test_LCH_PathJoin);
+    TCase *tc = tcase_create("LCH_ReadWriteTextFile");
+    tcase_add_test(tc, test_LCH_ReadWriteTextFile);
     suite_add_tcase(s, tc);
   }
   return s;

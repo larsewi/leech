@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <errno.h>
-#include <fcntl.h>
 #include <limits.h>
 #include <memory.h>
 #include <stdio.h>

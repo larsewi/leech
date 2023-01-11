@@ -165,7 +165,7 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
   return true;
 }
 
-char *LCH_ReadFile(const char *const path, size_t *const size) {
+char *LCH_ReadTextFile(const char *const path, size_t *const length) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
@@ -189,7 +189,7 @@ char *LCH_ReadFile(const char *const path, size_t *const size) {
     }
 
     buffer = ptr;
-    bytes_read = fread(buffer + total_read, 1, buffer_size - total_read, file);
+    bytes_read = fread(buffer + total_read, 1, buffer_size - total_read - 1, file);
     total_read += bytes_read;
     buffer_size *= LCH_BUFFER_SIZE;
   } while (bytes_read != 0);
@@ -201,8 +201,28 @@ char *LCH_ReadFile(const char *const path, size_t *const size) {
     return NULL;
   }
 
-  if (size != NULL) {
-    *size = total_read;
+  if (length != NULL) {
+    *length = total_read;
   }
+  buffer[total_read] = '\0';
+
   return buffer;
+}
+
+bool LCH_WriteTextFile(const char *const path, const char *const str) {
+  FILE *file = fopen(path, "w");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
+                  strerror(errno));
+    return false;
+  }
+
+  if (fputs(str, file) == EOF) {
+    LCH_LOG_ERROR("Failed to write to file '%s'.", path);
+    fclose(file);
+    return false;
+  }
+
+  fclose(file);
+  return true;
 }

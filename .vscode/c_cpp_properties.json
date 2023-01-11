@@ -3,7 +3,7 @@
     {
       "name": "Linux",
       "includePath": ["${workspaceFolder}/**"],
-      "defines": ["PACKAGE_STRING", "PACKAGE_BUGREPORT", "PACKAGE_NAME", "PACKAGE_URL"],
+      "defines": [],
       "compilerPath": "/usr/bin/gcc",
       "cStandard": "c11",
       "cppStandard": "c++17",
