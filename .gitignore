@@ -115,3 +115,4 @@ Makefile
 *.trs
 config.h
 *.valgrind
+.vscode
