@@ -63,6 +63,8 @@ static void PrintHelp(void) {
 
 int Diff(int argc, char *argv[]) {
   const char *patch_file = NULL;
+  (void) patch_file;
+
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
@@ -89,7 +91,7 @@ int Diff(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  char *diff = LCH_InstanceDiff(instance, block_id, patch_file);
+  char *diff = LCH_InstanceDiff(instance, block_id);
   if (diff == NULL) {
     LCH_LOG_ERROR("Failed to enumerate blocks.");
     LCH_InstanceDestroy(instance);
