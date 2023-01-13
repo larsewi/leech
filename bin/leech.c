@@ -72,9 +72,9 @@ static void PrintCommands(void) {
 static void PrintHelp(void) {
   PrintVersion();
   printf("\n");
-  PrintOptions(OPTIONS, DESCRIPTIONS);
-  printf("\n");
   PrintCommands();
+  printf("\n");
+  PrintOptions(OPTIONS, DESCRIPTIONS);
   printf("\n");
   PrintBugreport();
   printf("\n");
@@ -95,14 +95,14 @@ int main(int argc, char *argv[]) {
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
-      case OPTION_INFORM:
-        severity |= LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
-        break;
-      case OPTION_VERBOSE:
-        severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
-        break;
       case OPTION_DEBUG:
         severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
+        // fallthrough
+      case OPTION_VERBOSE:
+        severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
+        // fallthrough
+      case OPTION_INFORM:
+        severity |= LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
         break;
       case OPTION_VERSION:
         PrintVersion();

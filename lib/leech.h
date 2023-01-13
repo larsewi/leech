@@ -119,6 +119,8 @@ bool LCH_InstanceAddTable(LCH_Instance *instance, LCH_Table *table);
 
 bool LCH_InstanceCommit(const LCH_Instance *instance);
 
+char *LCH_InstanceDiff(const LCH_Instance *instance, const char *block_id, const char *patch_file);
+
 void LCH_InstanceDestroy(LCH_Instance *instance);
 
 #endif  // _LEECH_LEECH_H

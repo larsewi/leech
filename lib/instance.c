@@ -411,6 +411,14 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
   return instance->tables;
 }
 
+char *LCH_InstanceDiff(const LCH_Instance *const self, const char *const block_id, const char *const patch_file) {
+  assert(self != NULL);
+  assert(block_id != NULL);
+  UNUSED(patch_file);
+
+  return NULL;
+}
+
 void LCH_InstanceDestroy(LCH_Instance *instance) {
   if (instance == NULL) {
     return;
