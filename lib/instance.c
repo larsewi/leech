@@ -9,15 +9,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "block.h"
 #include "buffer.h"
 #include "csv.h"
 #include "definitions.h"
 #include "dict.h"
+#include "head.h"
 #include "leech.h"
 #include "table.h"
 #include "utils.h"
-#include "head.h"
-#include "block.h"
 
 struct LCH_Instance {
   const char *identifier;
@@ -397,8 +397,10 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   LCH_LOG_VERBOSE("Moved head to '%s'.", block_id);
 
   LCH_LOG_INFO(
-      "Created block '%s' with a delta including a total of %zu insertions, %zu deletions, and %zu modifications, over %zu table(s).",
-      block_id, tot_additions, tot_deletions, tot_modifications, LCH_ListLength(tables));
+      "Created block '%s' with a delta including a total of %zu insertions, "
+      "%zu deletions, and %zu modifications, over %zu table(s).",
+      block_id, tot_additions, tot_deletions, tot_modifications,
+      LCH_ListLength(tables));
   free(block_id);
 
   return true;
