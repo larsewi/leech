@@ -16,6 +16,8 @@
 #include "leech.h"
 #include "table.h"
 #include "utils.h"
+#include "head.h"
+#include "block.h"
 
 struct LCH_Instance {
   const char *identifier;
@@ -250,6 +252,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     /************************************************************************/
 
     const char *const table_id = LCH_TableGetIdentifier(table);
+    LCH_LOG_VERBOSE("Processing table '%s'.", table_id);
+
     char *composed_table_id = LCH_CSVComposeField(table_id);
     if (composed_table_id == NULL) {
       LCH_LOG_ERROR("Failed to compose table id for diffs for table '%s'.",
@@ -351,17 +355,51 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     /************************************************************************/
   }
 
-  LCH_LOG_INFO(
-      "Calculated diffs including a total of %zu insertions, %zu deletions and "
-      "%zu modifications, over %zu table(s).",
-      tot_additions, tot_deletions, tot_modifications, LCH_ListLength(tables));
-
-  char *diff_str = LCH_BufferGet(diff);
+  char *delta = LCH_BufferGet(diff);
+  size_t delta_len = LCH_BufferLength(diff);
   LCH_BufferDestroy(diff);
 
   /**************************************************************************/
 
-  free(diff_str);
+  char *const head = LCH_HeadGet(self->work_dir);
+  if (head == NULL) {
+    LCH_LOG_ERROR("Failed to get head.");
+    free(delta);
+    return false;
+  }
+  LCH_LOG_VERBOSE("Head positioned at '%s'.", head);
+
+  LCH_Block *block = LCH_BlockCreate(head, delta, delta_len);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to create block.");
+    free(head);
+    free(delta);
+    return false;
+  }
+  free(head);
+
+  char *const block_id = LCH_BlockStore(self->work_dir, block);
+  if (block_id == NULL) {
+    LCH_LOG_ERROR("Failed to store block.");
+    free(block);
+    free(delta);
+    return false;
+  }
+  free(block);
+  free(delta);
+  LCH_LOG_VERBOSE("Created block '%s'.", block_id);
+
+  if (!LCH_HeadSet(self->work_dir, block_id)) {
+    LCH_LOG_ERROR("Failed to move head to '%s'.", block_id);
+    free(block_id);
+    return false;
+  }
+  LCH_LOG_VERBOSE("Moved head to '%s'.", block_id);
+
+  LCH_LOG_INFO(
+      "Created block '%s' with a delta including a total of %zu insertions, %zu deletions, and %zu modifications, over %zu table(s).",
+      block_id, tot_additions, tot_deletions, tot_modifications, LCH_ListLength(tables));
+  free(block_id);
 
   return true;
 }
