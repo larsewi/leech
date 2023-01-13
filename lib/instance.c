@@ -114,17 +114,22 @@ bool LCH_InstanceAddTable(LCH_Instance *const instance,
 static bool CalculateDiff(LCH_Buffer *const diff,
                           const LCH_Dict *const new_data,
                           const LCH_Dict *const old_data,
-                          size_t *const tot_additions,
-                          size_t *const tot_deletions,
-                          size_t *const tot_modifications) {
+                          size_t *const n_additions, size_t *const n_deletions,
+                          size_t *const n_modifications) {
+  assert(diff != NULL);
+  assert(new_data != NULL);
+  assert(old_data != NULL);
+  assert(n_additions != NULL);
+  assert(n_deletions != NULL);
+  assert(n_modifications != NULL);
+
   LCH_Dict *additions =
       LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
   if (additions == NULL) {
     LCH_LOG_ERROR("Failed to calculate insertion entries.");
     return false;
   }
-  const size_t n_additions = LCH_DictLength(additions);
-  *tot_additions += n_additions;
+  *n_additions = LCH_DictLength(additions);
 
   LCH_DictIter *iter = LCH_DictIterCreate(additions);
   if (iter == NULL) {
@@ -155,8 +160,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
     LCH_LOG_ERROR("Failed to calculate deletion entries.");
     return false;
   }
-  const size_t n_deletions = LCH_DictLength(deletions);
-  *tot_deletions += n_deletions;
+  *n_deletions = LCH_DictLength(deletions);
 
   iter = LCH_DictIterCreate(deletions);
   if (iter == NULL) {
@@ -188,8 +192,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
     LCH_LOG_ERROR("Failed to calculate modifications entries.");
     return false;
   }
-  const size_t n_modifications = LCH_DictLength(modifications);
-  *tot_modifications += n_modifications;
+  *n_modifications = LCH_DictLength(modifications);
 
   iter = LCH_DictIterCreate(modifications);
   if (iter == NULL) {
@@ -212,13 +215,6 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   free(iter);
   LCH_DictDestroy(modifications);
 
-  /************************************************************************/
-
-  LCH_LOG_DEBUG(
-      "Calculated diff including %zu additions, %zu modifications and %zu "
-      "deletions.",
-      n_additions, n_deletions, n_modifications);
-
   return true;
 }
 
@@ -234,9 +230,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     return NULL;
   }
 
-  size_t tot_additions = 0;
-  size_t tot_deletions = 0;
-  size_t tot_modifications = 0;
+  size_t tot_insertions = 0, tot_deletions = 0, tot_modifications = 0;
 
   for (size_t i = 0; i < num_tables; i++) {
     const LCH_Table *const table = LCH_ListGet(tables, i);
@@ -252,8 +246,6 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     /************************************************************************/
 
     const char *const table_id = LCH_TableGetIdentifier(table);
-    LCH_LOG_VERBOSE("Processing table '%s'.", table_id);
-
     char *composed_table_id = LCH_CSVComposeField(table_id);
     if (composed_table_id == NULL) {
       LCH_LOG_ERROR("Failed to compose table id for diffs for table '%s'.",
@@ -275,36 +267,45 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    LCH_LOG_VERBOSE("Loading new state for table '%s'.", table_id);
-    LCH_Dict *new_data = LCH_TableLoadNewData(table);
-    if (new_data == NULL) {
-      LCH_LOG_ERROR("Failed to load new data from table '%s'.", table_id);
+    LCH_Dict *new_state = LCH_TableLoadNewData(table);
+    if (new_state == NULL) {
+      LCH_LOG_ERROR("Failed to load new state from table '%s'.", table_id);
       LCH_BufferDestroy(diff);
       return false;
     }
+    LCH_LOG_VERBOSE("Loaded new state for table '%s' containing %zu rows.",
+                    table_id, LCH_DictLength(new_state));
 
-    LCH_LOG_VERBOSE("Loading old state for table '%s'.", table_id);
-    LCH_Dict *old_data = LCH_TableLoadOldData(table, self->work_dir);
-    if (old_data == NULL) {
-      LCH_LOG_ERROR("Failed to load old data from table '%s'.", table_id);
+    LCH_Dict *old_state = LCH_TableLoadOldData(table, self->work_dir);
+    if (old_state == NULL) {
+      LCH_LOG_ERROR("Failed to load old state from table '%s'.", table_id);
       LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(new_state);
       return false;
     }
+    LCH_LOG_VERBOSE("Loaded old state for table '%s' containing %zu rows.",
+                    table_id, LCH_DictLength(new_state));
 
     /************************************************************************/
-
-    LCH_LOG_VERBOSE("Calculating diff for table '%s'.", table_id);
-    if (!CalculateDiff(diff, new_data, old_data, &tot_additions, &tot_deletions,
-                       &tot_modifications)) {
-      LCH_LOG_ERROR("Failed to calculate diff for table '%s'.", table_id);
+    size_t n_insertions, n_deletions, n_modifications;
+    if (!CalculateDiff(diff, new_state, old_state, &n_insertions, &n_deletions,
+                       &n_modifications)) {
+      LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
       LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
-      LCH_DictDestroy(old_data);
+      LCH_DictDestroy(new_state);
+      LCH_DictDestroy(old_state);
       return false;
     }
+    LCH_LOG_VERBOSE(
+        "Computed delta for table '%s' including %zu insertions, %zu "
+        "deletions, and %zu modifications.",
+        table_id, n_insertions, n_deletions, n_modifications);
 
-    LCH_DictDestroy(old_data);
+    tot_insertions += n_insertions;
+    tot_deletions += n_deletions;
+    tot_modifications += n_modifications;
+
+    LCH_DictDestroy(old_state);
 
     /************************************************************************/
 
@@ -314,7 +315,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
                       table_id)) {
       LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
       LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(new_state);
       return false;
     }
 
@@ -325,16 +326,16 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
           "%s",
           table_id, strerror(errno));
       LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(new_state);
       return false;
     }
 
-    LCH_DictIter *iter = LCH_DictIterCreate(new_data);
+    LCH_DictIter *iter = LCH_DictIterCreate(new_state);
     if (iter == NULL) {
       LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
       fclose(file);
       LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_data);
+      LCH_DictDestroy(new_state);
       return false;
     }
 
@@ -350,7 +351,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     free(iter);
     fclose(file);
-    LCH_DictDestroy(new_data);
+    LCH_DictDestroy(new_state);
 
     /************************************************************************/
   }
@@ -397,9 +398,9 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   LCH_LOG_VERBOSE("Moved head to '%s'.", block_id);
 
   LCH_LOG_INFO(
-      "Created block '%s' with a delta including a total of %zu insertions, "
+      "Created block '%s' with a total delta of %zu insertions, "
       "%zu deletions, and %zu modifications, over %zu table(s).",
-      block_id, tot_additions, tot_deletions, tot_modifications,
+      block_id, tot_insertions, tot_deletions, tot_modifications,
       LCH_ListLength(tables));
   free(block_id);
 

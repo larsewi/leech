@@ -50,13 +50,36 @@ LCH_Instance *SetupInstance(void) {
     }
   }
 
-  {  // Add CSV table
+  {  // Add beatles.csv table
     LCH_TableCreateInfo createInfo = {
         .identifier = "beatles",
         .primary_fields = "lastname,firstname",
         .subsidiary_fields = "born,role",
         .read_locator = "beatles.csv",
         .write_locator = "beatles.dest.csv",
+        .read_callback = LCH_TableReadCallbackCSV,
+        .write_callback = LCH_TableWriteCallbackCSV,
+    };
+
+    LCH_Table *table = LCH_TableCreate(&createInfo);
+    if (table == NULL) {
+      LCH_LOG_ERROR("LCH_TableCreate");
+      return NULL;
+    }
+
+    if (!LCH_InstanceAddTable(instance, table)) {
+      LCH_LOG_ERROR("LCH_InstanceAddTable");
+      return NULL;
+    }
+  }
+
+  {  // Add prikfloyd.csv table
+    LCH_TableCreateInfo createInfo = {
+        .identifier = "pinkfloyd",
+        .primary_fields = "id",
+        .subsidiary_fields = "firstname,lastname,role",
+        .read_locator = "pinkfloyd.csv",
+        .write_locator = "pinkfloyd.dest.csv",
         .read_callback = LCH_TableReadCallbackCSV,
         .write_callback = LCH_TableWriteCallbackCSV,
     };
