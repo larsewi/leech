@@ -56,6 +56,61 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   return list;
 }
 
+static bool SplitStringSubstringMaybeAddElement(LCH_List *const lst, const char *const str, const size_t from, const size_t to) {
+  if (from < to) {
+    char *const item = strndup(str + from, to - from);
+    if (item == NULL) {
+      LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+      return false;
+    }
+
+    if (!LCH_ListAppend(lst, item, free)) {
+      free(item);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+LCH_List *LCH_SplitStringSubstring(const char *const str, const char *const substr) {
+  assert(str != NULL);
+  assert(substr != NULL);
+
+  LCH_List *const lst = LCH_ListCreate();
+  if (lst == NULL) {
+    return NULL;
+  }
+
+  size_t from = 0, to;
+  for (to = 0; str[to] != '\0'; to++) {
+    size_t i;
+    bool is_match = true;
+    for (i = 0; substr[i] != '\0'; i++) {
+      if (str[to + i] != substr[i]) {
+        is_match = false;
+        break;
+      }
+    }
+
+    if (is_match) {
+      if (!SplitStringSubstringMaybeAddElement(lst, str, from, to)) {
+        LCH_ListDestroy(lst);
+        return NULL;
+      }
+      to += i;
+      from = to;
+    }
+  }
+
+  if (!SplitStringSubstringMaybeAddElement(lst, str, from, to)) {
+    LCH_ListDestroy(lst);
+    return NULL;
+  }
+
+  return lst;
+}
+
 bool LCH_StringStartsWith(const char *const self, const char *const substr) {
   assert(self != NULL);
   assert(substr != NULL);

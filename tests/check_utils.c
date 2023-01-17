@@ -37,6 +37,31 @@ START_TEST(test_LCH_SplitString) {
 }
 END_TEST
 
+START_TEST(test_LCH_SplitStringSubstring) {
+  {
+    char *expected[] = { "+,a,b,c\r\n-,e,d,f", "%%,g,h,i" };
+    LCH_List *lst = LCH_SplitStringSubstring("+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
+    ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
+    ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+    LCH_ListDestroy(lst);
+  }
+  {
+    char *expected[] = { "+,a,b,c\r\n-,e,d,f", "%%,g,h,i" };
+    LCH_List *lst = LCH_SplitStringSubstring("\r\n\r\n+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
+    ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
+    ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+    LCH_ListDestroy(lst);
+  }
+  {
+    char *expected[] = { "+,a,b,c\r\n-,e,d,f", "%%,g,h,i" };
+    LCH_List *lst = LCH_SplitStringSubstring("+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i\r\n\r\n", "\r\n\r\n");
+    ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
+    ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+    LCH_ListDestroy(lst);
+  }
+}
+END_TEST
+
 START_TEST(test_LCH_PathJoin) {
   char path[PATH_MAX];
   ck_assert(
@@ -65,6 +90,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_SplitString");
     tcase_add_test(tc, test_LCH_SplitString);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_SplitStringSubstring");
+    tcase_add_test(tc, test_LCH_SplitStringSubstring);
     suite_add_tcase(s, tc);
   }
   {

@@ -11,6 +11,8 @@
  */
 LCH_List *LCH_SplitString(const char *str, const char *del);
 
+LCH_List *LCH_SplitStringSubstring(const char *str, const char *substr);
+
 bool LCH_StringStartsWith(const char *str, const char *substr);
 
 char *LCH_StringStrip(char *str, const char *charset);

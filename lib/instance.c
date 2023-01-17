@@ -411,80 +411,81 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
   return instance->tables;
 }
 
-static LCH_Dict *CreateEmptyDiffs(LCH_Instance *instance) {
-  assert(instance != NULL);
-  assert(instance->tables != NULL);
+// static LCH_Dict *CreateEmptyDiffs(LCH_Instance *instance) {
+//   assert(instance != NULL);
+//   assert(instance->tables != NULL);
 
-  LCH_Dict *diffs = LCH_DictCreate();
-  if (diffs == NULL) {
-    return NULL;
-  }
+//   LCH_Dict *diffs = LCH_DictCreate();
+//   if (diffs == NULL) {
+//     return NULL;
+//   }
 
-  size_t n_tables = LCH_ListLength(instance->tables);
-  for (size_t i = 0; i < n_tables; i++) {
-    LCH_Table *table = LCH_ListGet(instance->tables, i);
-    assert(table != NULL);
-    const char *const table_id = LCH_TableGetIdentifier(table);
+//   size_t n_tables = LCH_ListLength(instance->tables);
+//   for (size_t i = 0; i < n_tables; i++) {
+//     LCH_Table *table = LCH_ListGet(instance->tables, i);
+//     assert(table != NULL);
+//     const char *const table_id = LCH_TableGetIdentifier(table);
 
-    LCH_Dict *diff = LCH_DictCreate();
-    if (diff == NULL) {
-      LCH_DictDestroy(diffs);
-      return NULL;
-    }
+//     LCH_Dict *diff = LCH_DictCreate();
+//     if (diff == NULL) {
+//       LCH_DictDestroy(diffs);
+//       return NULL;
+//     }
 
-    if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void *))LCH_DictDestroy)) {
-      LCH_DictDestroy(diff);
-      LCH_DictDestroy(diffs);
-      return NULL;
-    }
-  }
+//     if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void *))LCH_DictDestroy)) {
+//       LCH_DictDestroy(diff);
+//       LCH_DictDestroy(diffs);
+//       return NULL;
+//     }
+//   }
 
-  return diffs;
-}
+//   return diffs;
+// }
 
-static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char *const delta) {
-  assert(delta != NULL);
+// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char *const delta) {
+//   assert(delta != NULL);
 
-  LCH_Dict *const diffs = CreateEmptyDiffs(instance);
-  if (diffs == NULL) {
-    return NULL;
-  }
+//   LCH_Dict *const diffs = CreateEmptyDiffs(instance);
+//   if (diffs == NULL) {
+//     return NULL;
+//   }
 
-  return diffs;
-}
+//   return diffs;
+// }
 
-static bool EnumerateBlocks(const LCH_Instance *const instance, const char *const block_id) {
-  assert(instance != NULL);
-  assert(instance->work_dir != NULL);
-  assert(block_id != NULL);
+// static bool EnumerateBlocks(const LCH_Instance *const instance, const char *const block_id) {
+//   assert(instance != NULL);
+//   assert(instance->work_dir != NULL);
+//   assert(block_id != NULL);
 
-  char *cursor = LCH_HeadGet(instance->work_dir);
-  if (cursor == NULL) {
-    LCH_LOG_ERROR("Failed to get head.");
-    return NULL;
-  }
+//   char *cursor = LCH_HeadGet(instance->work_dir);
+//   if (cursor == NULL) {
+//     LCH_LOG_ERROR("Failed to load head.");
+//     return NULL;
+//   }
 
-  LCH_Dict *diffs = CreateEmptyDiffs(self);
-  if (diffs == NULL) {
-    return NULL;
-  }
+//   LCH_Dict *compressed = CreateEmptyDiffs(instance);
+//   if (compressed == NULL) {
+//     return NULL;
+//   }
 
-  while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
-    LCH_Block *const block = LCH_BlockLoad(work_dir, cursor);
-    if (block == NULL) {
-      free(cursor);
-      return NULL;
-    }
+//   while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
+//     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
+//     if (block == NULL) {
+//       free(cursor);
+//       return NULL;
+//     }
 
-    const char *const delta = LCH_BlockGetData(block);
+//     const char *const delta = LCH_BlockGetData(block);
+//     LCH_Dict *const cursor_diffs = ExtractDiffsFromDelta(instance, delta);
 
-    free(cursor);
-    cursor = LCH_BlockGetParentID(block);
-    free(block);
-  }
+//     free(cursor);
+//     cursor = LCH_BlockGetParentID(block);
+//     free(block);
+//   }
 
-  free(cursor);
-}
+//   free(cursor);
+// }
 
 char *LCH_InstanceDiff(const LCH_Instance *const self, const char *const block_id) {
   assert(self != NULL);
