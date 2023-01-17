@@ -432,7 +432,7 @@ static LCH_Dict *CreateEmptyDiffs(LCH_Instance *instance) {
       return NULL;
     }
 
-    if (!LCH_DictSet(diffs, table_id, diff, LCH_DictDestroy)) {
+    if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void *))LCH_DictDestroy)) {
       LCH_DictDestroy(diff);
       LCH_DictDestroy(diffs);
       return NULL;
@@ -445,25 +445,31 @@ static LCH_Dict *CreateEmptyDiffs(LCH_Instance *instance) {
 static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char *const delta) {
   assert(delta != NULL);
 
-  LCH_Dict *diffs = CreateEmptyDiffs(instance);
+  LCH_Dict *const diffs = CreateEmptyDiffs(instance);
   if (diffs == NULL) {
     return NULL;
   }
+
+  return diffs;
 }
 
-static LCH_List *EnumerateBlocks(const char *const work_dir, const char *const block_id) {
-  assert(work_dir != NULL);
+static bool EnumerateBlocks(const LCH_Instance *const instance, const char *const block_id) {
+  assert(instance != NULL);
+  assert(instance->work_dir != NULL);
   assert(block_id != NULL);
 
-  char *cursor = LCH_HeadGet(work_dir);
+  char *cursor = LCH_HeadGet(instance->work_dir);
   if (cursor == NULL) {
     LCH_LOG_ERROR("Failed to get head.");
     return NULL;
   }
 
-  LCH_Dict *diffs = NULL;
+  LCH_Dict *diffs = CreateEmptyDiffs(self);
+  if (diffs == NULL) {
+    return NULL;
+  }
 
-  while (strcmp(cursor, "0000000000000000000000000000000000000000") != 0) {
+  while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
     LCH_Block *const block = LCH_BlockLoad(work_dir, cursor);
     if (block == NULL) {
       free(cursor);

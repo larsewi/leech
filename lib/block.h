@@ -23,4 +23,6 @@ char *LCH_BlockStore(const char *work_dir, const LCH_Block *block);
 
 LCH_Block *LCH_BlockLoad(const char *work_dir, const char *block_id);
 
+bool LCH_BlockRemove(const char *work_dir, const char *block_id);
+
 #endif  // _LEECH_BLOCK_H

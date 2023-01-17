@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "definitions.h"
 #include "leech.h"
@@ -150,11 +151,7 @@ LCH_Block *LCH_BlockLoad(const char *const work_dir,
   assert(block_id != NULL);
 
   char path[PATH_MAX];
-  const int ret =
-      snprintf(path, sizeof(path), "%s%c%s", work_dir, PATH_SEP, block_id);
-  if (ret < 0 || (size_t)ret >= sizeof(path)) {
-    LCH_LOG_ERROR("Failed to join paths '%s', '%s': Path truncated (%d >= %zu)",
-                  work_dir, block_id, ret, sizeof(path));
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "blocks", block_id)) {
     return NULL;
   }
 
@@ -202,4 +199,21 @@ LCH_Block *LCH_BlockLoad(const char *const work_dir,
 
   fclose(file);
   return block;
+}
+
+bool LCH_BlockRemove(const char *const work_dir, const char *const block_id) {
+  assert(work_dir != NULL);
+  assert(block_id != NULL);
+
+  char path[PATH_MAX];
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "blocks", block_id)) {
+    return NULL;
+  }
+
+  if (unlink(path) != 0) {
+    LCH_LOG_ERROR("Failed to delete block at path '%s': %s", path, strerror(errno));
+    return false;
+  }
+
+  return true;
 }

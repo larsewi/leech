@@ -13,7 +13,7 @@ START_TEST(test_HeadGetSet) {
 
   char *head = LCH_HeadGet(work_dir);
   ck_assert_ptr_nonnull(head);
-  ck_assert_str_eq(head, GENISIS_BLOCK_PARENT);
+  ck_assert_str_eq(head, LCH_GENISIS_BLOCK_PARENT);
 
   strcpy(head, NEW_HASH);
   ck_assert(LCH_HeadSet(work_dir, head));

@@ -28,7 +28,13 @@ START_TEST(test_LCH_StringStrip) {
 }
 END_TEST
 
-START_TEST(test_LCH_SplitString) {}
+START_TEST(test_LCH_SplitString) {
+  char *expected[] = { "+,a,b,c", "-,e,d,f" };
+  LCH_List *lst = LCH_SplitString("+,a,b,c\r\n-,e,d,f\r\n", "\r\n");
+  ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
+  ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+  LCH_ListDestroy(lst);
+}
 END_TEST
 
 START_TEST(test_LCH_PathJoin) {

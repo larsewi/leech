@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define LCH_GENISIS_BLOCK_PARENT "0000000000000000000000000000000000000000"
+
 char *LCH_HeadGet(const char *work_dir);
 
 bool LCH_HeadSet(const char *workdir, const char *block_id);

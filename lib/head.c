@@ -9,7 +9,6 @@
 #include "leech.h"
 #include "utils.h"
 
-#define GENISIS_BLOCK_PARENT "0000000000000000000000000000000000000000"
 
 char *LCH_HeadGet(const char *const work_dir) {
   assert(work_dir != NULL);
@@ -20,7 +19,7 @@ char *LCH_HeadGet(const char *const work_dir) {
   }
 
   if (!LCH_IsRegularFile(path)) {
-    return strdup(GENISIS_BLOCK_PARENT);
+    return strdup(LCH_GENISIS_BLOCK_PARENT);
   }
 
   char *head = LCH_ReadTextFile(path, NULL);

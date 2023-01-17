@@ -3,13 +3,19 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "../lib/block.h"
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
+#include "../lib/utils.h"
 
 START_TEST(test_LCH_Block) {
-  const char *const work_dir = "/tmp";
+  const char *const work_dir = ".";
+
+  if (!LCH_IsDirectory("blocks")) {
+    mkdir("blocks", 777);
+  }
 
   // Store one
   char *str = "one";
@@ -44,12 +50,8 @@ START_TEST(test_LCH_Block) {
   // Load three
   block = LCH_BlockLoad(work_dir, id);
   ck_assert_ptr_nonnull(block);
-  char path[PATH_MAX];
-  int ret = snprintf(path, sizeof(path), "%s%c%s", work_dir, PATH_SEP, id);
+  ck_assert(LCH_BlockRemove(work_dir, id));
   free(id);
-  ck_assert_int_gt(ret, 0);
-  ck_assert_int_lt(ret, sizeof(path));
-  ck_assert_int_eq(remove(path), 0);
   len = LCH_BlockGetDataLength(block);
   str = LCH_BlockGetData(block);
   ck_assert_int_eq(len, strlen("three") + 1);
@@ -61,11 +63,8 @@ START_TEST(test_LCH_Block) {
   // Load two
   block = LCH_BlockLoad(work_dir, id);
   ck_assert_ptr_nonnull(block);
-  ret = snprintf(path, sizeof(path), "%s%c%s", work_dir, PATH_SEP, id);
+  ck_assert(LCH_BlockRemove(work_dir, id));
   free(id);
-  ck_assert_int_gt(ret, 0);
-  ck_assert_int_lt(ret, sizeof(path));
-  ck_assert_int_eq(remove(path), 0);
   len = LCH_BlockGetDataLength(block);
   str = LCH_BlockGetData(block);
   ck_assert_int_eq(len, strlen("two") + 1);
@@ -77,11 +76,8 @@ START_TEST(test_LCH_Block) {
   // Load one
   block = LCH_BlockLoad(work_dir, id);
   ck_assert_ptr_nonnull(block);
-  ret = snprintf(path, sizeof(path), "%s%c%s", work_dir, PATH_SEP, id);
+  ck_assert(LCH_BlockRemove(work_dir, id));
   free(id);
-  ck_assert_int_gt(ret, 0);
-  ck_assert_int_lt(ret, sizeof(path));
-  ck_assert_int_eq(remove(path), 0);
   len = LCH_BlockGetDataLength(block);
   str = LCH_BlockGetData(block);
   ck_assert_int_eq(len, strlen("one") + 1);
@@ -90,6 +86,8 @@ START_TEST(test_LCH_Block) {
   ck_assert_ptr_nonnull(id);
   free(block);
   free(id);
+
+  ck_assert_int_eq(rmdir("blocks"), 0);
 }
 END_TEST
 
