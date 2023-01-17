@@ -17,6 +17,7 @@ libleech_la_SOURCES = \
         csv.h csv.c \
         debug_messenger.h debug_messenger.c \
         dict.h dict.c \
+        delta.h delta.c \
         head.h head.c \
         instance.h instance.c \
         list.h list.c \
