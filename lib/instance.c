@@ -407,6 +407,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   return true;
 }
 
+// Think it's safe to remove this one
 LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
   return instance->tables;
 }
@@ -432,8 +433,7 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //       return NULL;
 //     }
 
-//     if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void
-//     *))LCH_DictDestroy)) {
+//     if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void*))LCH_DictDestroy)) {
 //       LCH_DictDestroy(diff);
 //       LCH_DictDestroy(diffs);
 //       return NULL;
@@ -443,16 +443,44 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //   return diffs;
 // }
 
-// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char
-// *const delta) {
+// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char *const delta) {
+//   assert(instance != NULL);
 //   assert(delta != NULL);
 
-//   LCH_Dict *const diffs = CreateEmptyDiffs(instance);
-//   if (diffs == NULL) {
+//   LCH_List *const split_deltas = LCH_SplitStringSubstring(delta, "\r\n\r\n");
+//   if (split_deltas == NULL) {
 //     return NULL;
 //   }
 
-//   return diffs;
+//   const size_t n_deltas = LCH_ListLength(split_deltas);
+//   for (size_t i = 0; i < n_deltas; i++) {
+
+//     const char *const diff_data = LCH_ListGet(split_deltas, i);
+//     assert(diff_data != NULL);
+
+//     LCH_List *const diff_lst = LCH_CSVParse(diff_data);
+//     if (diff_lst == NULL) {
+//       LCH_ListDestroy(split_deltas);
+//       return NULL;
+//     }
+
+//     const char *const table_id = LCH_ListGet(diff_lst, 0);
+//     assert(table_id != NULL);
+
+//     LCH_Dict *const diff = LCH_DictCreate();
+//     if (diff == NULL) {
+//       LCH_ListDestroy(split_deltas);
+//       LCH_ListDestroy(diff_lst);
+//       return NULL;
+//     }
+
+//     const size_t diff_lst_len = LCH_ListLength(diff_lst);
+//     for (size_t j = 1; j < diff_lst_len; j++) {
+
+//     }
+//   }
+
+//   return NULL;
 // }
 
 // static bool EnumerateBlocks(const LCH_Instance *const instance, const char
