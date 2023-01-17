@@ -432,7 +432,8 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //       return NULL;
 //     }
 
-//     if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void *))LCH_DictDestroy)) {
+//     if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void
+//     *))LCH_DictDestroy)) {
 //       LCH_DictDestroy(diff);
 //       LCH_DictDestroy(diffs);
 //       return NULL;
@@ -442,7 +443,8 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //   return diffs;
 // }
 
-// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char *const delta) {
+// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char
+// *const delta) {
 //   assert(delta != NULL);
 
 //   LCH_Dict *const diffs = CreateEmptyDiffs(instance);
@@ -453,7 +455,8 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //   return diffs;
 // }
 
-// static bool EnumerateBlocks(const LCH_Instance *const instance, const char *const block_id) {
+// static bool EnumerateBlocks(const LCH_Instance *const instance, const char
+// *const block_id) {
 //   assert(instance != NULL);
 //   assert(instance->work_dir != NULL);
 //   assert(block_id != NULL);
@@ -487,7 +490,8 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //   free(cursor);
 // }
 
-char *LCH_InstanceDiff(const LCH_Instance *const self, const char *const block_id) {
+char *LCH_InstanceDiff(const LCH_Instance *const self,
+                       const char *const block_id) {
   assert(self != NULL);
   assert(block_id != NULL);
 

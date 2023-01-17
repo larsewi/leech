@@ -29,7 +29,7 @@ START_TEST(test_LCH_StringStrip) {
 END_TEST
 
 START_TEST(test_LCH_SplitString) {
-  char *expected[] = { "+,a,b,c", "-,e,d,f" };
+  char *expected[] = {"+,a,b,c", "-,e,d,f"};
   LCH_List *lst = LCH_SplitString("+,a,b,c\r\n-,e,d,f\r\n", "\r\n");
   ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
   ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
@@ -39,22 +39,25 @@ END_TEST
 
 START_TEST(test_LCH_SplitStringSubstring) {
   {
-    char *expected[] = { "+,a,b,c\r\n-,e,d,f", "%%,g,h,i" };
-    LCH_List *lst = LCH_SplitStringSubstring("+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
+    char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
+    LCH_List *lst = LCH_SplitStringSubstring(
+        "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
     ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
     ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
     LCH_ListDestroy(lst);
   }
   {
-    char *expected[] = { "+,a,b,c\r\n-,e,d,f", "%%,g,h,i" };
-    LCH_List *lst = LCH_SplitStringSubstring("\r\n\r\n+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
+    char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
+    LCH_List *lst = LCH_SplitStringSubstring(
+        "\r\n\r\n+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
     ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
     ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
     LCH_ListDestroy(lst);
   }
   {
-    char *expected[] = { "+,a,b,c\r\n-,e,d,f", "%%,g,h,i" };
-    LCH_List *lst = LCH_SplitStringSubstring("+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i\r\n\r\n", "\r\n\r\n");
+    char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
+    LCH_List *lst = LCH_SplitStringSubstring(
+        "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i\r\n\r\n", "\r\n\r\n");
     ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
     ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
     LCH_ListDestroy(lst);

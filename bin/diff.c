@@ -1,9 +1,9 @@
 #include "diff.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "common.h"
 
@@ -29,8 +29,8 @@ static const char *const DESCRIPTIONS[] = {
 };
 
 static const struct arguments ARGUMENTS[] = {
-    { "block", "identifier (block hash)" },
-    { NULL, NULL },
+    {"block", "identifier (block hash)"},
+    {NULL, NULL},
 };
 
 static void PrintArguments(void) {
@@ -63,7 +63,7 @@ static void PrintHelp(void) {
 
 int Diff(int argc, char *argv[]) {
   const char *patch_file = NULL;
-  (void) patch_file;
+  (void)patch_file;
 
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {

@@ -211,7 +211,8 @@ bool LCH_BlockRemove(const char *const work_dir, const char *const block_id) {
   }
 
   if (unlink(path) != 0) {
-    LCH_LOG_ERROR("Failed to delete block at path '%s': %s", path, strerror(errno));
+    LCH_LOG_ERROR("Failed to delete block at path '%s': %s", path,
+                  strerror(errno));
     return false;
   }
 

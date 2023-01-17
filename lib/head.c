@@ -9,7 +9,6 @@
 #include "leech.h"
 #include "utils.h"
 
-
 char *LCH_HeadGet(const char *const work_dir) {
   assert(work_dir != NULL);
 

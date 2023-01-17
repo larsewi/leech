@@ -56,7 +56,10 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   return list;
 }
 
-static bool SplitStringSubstringMaybeAddElement(LCH_List *const lst, const char *const str, const size_t from, const size_t to) {
+static bool SplitStringSubstringMaybeAddElement(LCH_List *const lst,
+                                                const char *const str,
+                                                const size_t from,
+                                                const size_t to) {
   if (from < to) {
     char *const item = strndup(str + from, to - from);
     if (item == NULL) {
@@ -73,7 +76,8 @@ static bool SplitStringSubstringMaybeAddElement(LCH_List *const lst, const char 
   return true;
 }
 
-LCH_List *LCH_SplitStringSubstring(const char *const str, const char *const substr) {
+LCH_List *LCH_SplitStringSubstring(const char *const str,
+                                   const char *const substr) {
   assert(str != NULL);
   assert(substr != NULL);
 
