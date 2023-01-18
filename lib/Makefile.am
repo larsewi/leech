@@ -14,7 +14,6 @@ lib_LTLIBRARIES = \
 libleech_la_SOURCES = \
         block.h block.c \
         buffer.h buffer.c \
-        commit.h commit.c \
         csv.h csv.c \
         debug_messenger.h debug_messenger.c \
         dict.h dict.c \
