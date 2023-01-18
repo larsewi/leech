@@ -9,10 +9,10 @@ START_TEST(test_LCH_Buffer) {
   ck_assert_ptr_nonnull(buffer);
 
   for (int i = 0; i < 10; i++) {
-    ck_assert(LCH_BufferAppend(buffer, "Hello %s!\n", "buffer"));
+    ck_assert(LCH_BufferPrintFormat(buffer, "Hello %s!\n", "buffer"));
   }
 
-  char *actual = LCH_BufferGet(buffer);
+  char *actual = LCH_BufferStringDup(buffer);
   ck_assert_ptr_nonnull(buffer);
 
   LCH_BufferDestroy(buffer);
@@ -36,8 +36,10 @@ END_TEST
 
 Suite *BufferSuite(void) {
   Suite *s = suite_create("buffer.c");
-  TCase *tc = tcase_create("LCH_Buffer*");
-  tcase_add_test(tc, test_LCH_Buffer);
-  suite_add_tcase(s, tc);
+  {
+    TCase *tc = tcase_create("LCH_Buffer*");
+    tcase_add_test(tc, test_LCH_Buffer);
+    suite_add_tcase(s, tc);
+  }
   return s;
 }

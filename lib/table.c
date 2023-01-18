@@ -164,7 +164,7 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
     return NULL;
   }
 
-  char *str = LCH_BufferGet(buf);
+  char *str = LCH_BufferStringDup(buf);
   LCH_BufferDestroy(buf);
   if (str == NULL) {
     return NULL;
@@ -279,7 +279,7 @@ static LCH_Dict *LoadSnapshot(const char *const path) {
       return NULL;
     }
 
-    char *str = LCH_BufferGet(buffer);
+    char *str = LCH_BufferStringDup(buffer);
     if (str == NULL) {
       LCH_LOG_ERROR("Failed to get snapshot string from string buffer");
       free(key);

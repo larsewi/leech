@@ -36,7 +36,7 @@ static char *ParseEscaped(Parser *const parser) {
 
   while (parser->cursor[0] != '"' ||
          LCH_StringStartsWith(parser->cursor, "\"\"")) {
-    if (!LCH_BufferAppend(buffer, "%c", parser->cursor[0])) {
+    if (!LCH_BufferPrintFormat(buffer, "%c", parser->cursor[0])) {
       LCH_LOG_ERROR(
           "Failed to append character '%c' to buffer for escaped field (Row "
           "%zu, Col %zu)",
@@ -51,7 +51,7 @@ static char *ParseEscaped(Parser *const parser) {
   assert(parser->cursor[0] == '"');
   parser->cursor += 1;
 
-  char *const field = LCH_BufferGet(buffer);
+  char *const field = LCH_BufferStringDup(buffer);
   LCH_BufferDestroy(buffer);
   if (field == NULL) {
     LCH_LOG_ERROR(
@@ -79,7 +79,7 @@ static char *ParseNonEscaped(Parser *const parser) {
   while (parser->cursor[0] != '\0' && parser->cursor[0] != ',' &&
          !LCH_StringStartsWith(parser->cursor, "\r\n")) {
     if (TEXTDATA(parser->cursor[0])) {
-      if (!LCH_BufferAppend(buffer, "%c", parser->cursor[0])) {
+      if (!LCH_BufferPrintFormat(buffer, "%c", parser->cursor[0])) {
         LCH_LOG_ERROR(
             "Failed to append character '%c' to buffer for non-escaped field "
             "(Row %zu, Col %zu)",
@@ -97,7 +97,7 @@ static char *ParseNonEscaped(Parser *const parser) {
     parser->cursor += 1;
   }
 
-  char *const field = LCH_BufferGet(buffer);
+  char *const field = LCH_BufferStringDup(buffer);
   LCH_BufferDestroy(buffer);
   if (field == NULL) {
     LCH_LOG_ERROR(
@@ -333,7 +333,7 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
       escape = true;
 
       if (field[i] == '"') {
-        if (!LCH_BufferAppend(temp, "\"\"")) {
+        if (!LCH_BufferPrintFormat(temp, "\"\"")) {
           LCH_BufferDestroy(temp);
           return false;
         }
@@ -341,25 +341,25 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
       }
     }
 
-    if (!LCH_BufferAppend(temp, "%c", field[i])) {
+    if (!LCH_BufferPrintFormat(temp, "%c", field[i])) {
       LCH_BufferDestroy(temp);
       return false;
     }
   }
 
-  char *str = LCH_BufferGet(temp);
+  char *str = LCH_BufferStringDup(temp);
   LCH_BufferDestroy(temp);
   if (str == NULL) {
     return false;
   }
 
   if (escape) {
-    if (!LCH_BufferAppend(buffer, "\"%s\"", str)) {
+    if (!LCH_BufferPrintFormat(buffer, "\"%s\"", str)) {
       free(str);
       return false;
     }
   } else {
-    if (!LCH_BufferAppend(buffer, str)) {
+    if (!LCH_BufferPrintFormat(buffer, str)) {
       free(str);
       return false;
     }
@@ -380,7 +380,7 @@ char *LCH_CSVComposeField(const char *const str) {
     return NULL;
   }
 
-  char *field = LCH_BufferGet(temp);
+  char *field = LCH_BufferStringDup(temp);
   LCH_BufferDestroy(temp);
   return field;
 }
@@ -393,7 +393,7 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
   const size_t length = LCH_ListLength(record);
   for (size_t i = 0; i < length; i++) {
     if (i > 0) {
-      if (!LCH_BufferAppend(buffer, ",")) {
+      if (!LCH_BufferPrintFormat(buffer, ",")) {
         return false;
       }
     }
@@ -437,7 +437,7 @@ LCH_Buffer *LCH_CSVCompose(const LCH_List *const table) {
   const size_t length = LCH_ListLength(table);
   for (size_t i = 0; i < length; i++) {
     if (i > 0) {
-      if (!LCH_BufferAppend(buffer, "\r\n")) {
+      if (!LCH_BufferPrintFormat(buffer, "\r\n")) {
         LCH_LOG_ERROR("Failed to compose CSV");
         LCH_BufferDestroy(buffer);
         return NULL;
@@ -465,7 +465,7 @@ bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
     return false;
   }
 
-  char *const csv = LCH_BufferGet(buffer);
+  char *const csv = LCH_BufferStringDup(buffer);
   if (csv == NULL) {
     LCH_LOG_ERROR(
         "Failed to get string from buffer after composing CSV for file '%s'",

@@ -8,13 +8,21 @@
 #include "buffer.h"
 #include "csv.h"
 
+enum operation {
+    INSERTION,
+    DELETION,
+    MODIFICATION,
+};
+
 struct LCH_Delta {
+    char *table_id;
     LCH_Dict *insertions;
     LCH_Dict *deletions;
     LCH_Dict *modifications;
 };
 
-LCH_Delta *LCH_DeltaCreate(const LCH_Dict *const new_state, const LCH_Dict *const old_state) {
+LCH_Delta *LCH_DeltaCreate(const char *const table_id, const LCH_Dict *const new_state, const LCH_Dict *const old_state) {
+    assert(table_id != NULL);
     assert(new_state != NULL);
     assert(old_state != NULL);
 
@@ -24,9 +32,17 @@ LCH_Delta *LCH_DeltaCreate(const LCH_Dict *const new_state, const LCH_Dict *cons
         return NULL;
     }
 
+    delta->table_id = strdup(table_id);
+    if (delta->table_id == NULL) {
+        LCH_LOG_ERROR("Failed to allocate memory for delta table id: '%s'", strerror(errno));
+        free(delta);
+        return NULL;
+    }
+
     delta->insertions = LCH_DictSetMinus(new_state, old_state, (void *(*)(const void *))strdup);
     if (delta->insertions == NULL) {
         LCH_LOG_ERROR("Failed to compute insertions for delta.");
+        free(delta->table_id);
         free(delta);
         return NULL;
     }
@@ -35,6 +51,7 @@ LCH_Delta *LCH_DeltaCreate(const LCH_Dict *const new_state, const LCH_Dict *cons
     if (delta->deletions == NULL) {
         LCH_LOG_ERROR("Failed to compute deletions for delta.");
         LCH_DictDestroy(delta->insertions);
+        free(delta->table_id);
         free(delta);
         return NULL;
     }
@@ -44,6 +61,7 @@ LCH_Delta *LCH_DeltaCreate(const LCH_Dict *const new_state, const LCH_Dict *cons
         LCH_LOG_ERROR("Failed to compute modifications for delta.");
         LCH_DictDestroy(delta->deletions);
         LCH_DictDestroy(delta->insertions);
+        free(delta->table_id);
         free(delta);
         return NULL;
     }
@@ -62,11 +80,41 @@ void LCH_DeltaDestroy(LCH_Delta *const delta) {
         assert(delta->modifications != NULL);
         LCH_DictDestroy(delta->modifications);
 
+        assert(delta->table_id != NULL);
+        free(delta->table_id);
+
         free(delta);
     }
 }
 
-static bool MarshalDeltaOperation(const LCH_Buffer *const buffer, const LCH_Dict *const dict, const char symbol, const bool keep_value) {
+static bool MashalTableId(LCH_Buffer *const buffer, const char *const table_id) {
+    const size_t before = LCH_BufferLength(buffer);
+    uint32_t *length = LCH_BufferAllocateLong(buffer);
+    if (length == NULL) {
+        return false;
+    }
+
+    if (!LCH_BufferPrintFormat(buffer, table_id)) {
+        return false;
+    }
+
+    const size_t after = LCH_BufferLength(buffer);
+    if (after - before > UINT32_MAX) {
+        LCH_LOG_ERROR("Table id too long (%zu > %zu).", after - before, UINT32_MAX);
+        return false;
+    }
+    *length = htonl(after - before);
+
+    return true;
+}
+
+static bool MarshalDeltaOperations(LCH_Buffer *const buffer, const LCH_Dict *const dict, const bool keep_value) {
+    const size_t before = LCH_BufferLength(buffer);
+    uint32_t *length = LCH_BufferAllocateLong(buffer);
+    if (length == NULL) {
+        return false;
+    }
+
     LCH_DictIter *iter = LCH_DictIterCreate(dict);
     if (iter == NULL) {
         LCH_LOG_ERROR("Failed to create iterator for marshaling delta.");
@@ -78,68 +126,111 @@ static bool MarshalDeltaOperation(const LCH_Buffer *const buffer, const LCH_Dict
         const char *const key = LCH_DictIterGetKey(iter);
         assert(key != NULL);
 
+        if (!LCH_BufferPrintFormat(buffer, "%s\r\n", key)) {
+            free(iter);
+            return false;
+        }
+
         if (keep_value) {
             const char *const value = (char *)LCH_DictIterGetValue(iter);
             assert(value != NULL);
 
-            if (!LCH_BufferAppend(buffer, "%c,%s,%s\r\n", symbol, key, value)) {
-                LCH_LOG_ERROR("Failed to append data to buffer while marshaling delta.");
+            if (!LCH_BufferPrintFormat(buffer, "%s\r\n", value)) {
                 free(iter);
                 return false;
             }
             continue;
         }
-        if (!LCH_BufferAppend(buffer, "%c,%s\r\n", symbol, key)) {
-            LCH_LOG_ERROR("Failed to append data to buffer while marshaling delta.");
-            free(iter);
-            return false;
-        }
     }
-
     free(iter);
+
+    const size_t after = LCH_BufferLength(buffer);
+    if (after - before > UINT32_MAX) {
+        return false;
+    }
+    *length = htonl(after - before);
+
     return true;
 }
 
-char *LCH_DeltaMarshal(const LCH_Delta *const delta) {
+bool LCH_DeltaMarshal(LCH_Buffer *const buffer, const LCH_Delta *const delta) {
+    assert(buffer != NULL);
     assert(delta != NULL);
+    assert(delta->table_id != NULL);
     assert(delta->insertions != NULL);
     assert(delta->deletions != NULL);
     assert(delta->modifications != NULL);
 
-    LCH_Buffer *buffer = LCH_BufferCreate();
-    if (buffer == NULL) {
-        LCH_LOG_ERROR("Failed to create buffer for marshaling delta.");
-        return NULL;
+    if (!MarshalTableId(buffer, delta->table_id)) {
+        LCH_LOG_ERROR("Failed to marshal delta table id.");
+        return false;
     }
 
-    if (!MarshalDeltaOperation(buffer, delta->insertions, '+', true)) {
-        LCH_LOG_ERROR("Failed to marshal delta insertions.");
-        LCH_BufferDestroy(buffer);
-        return NULL;
+    if (!MarshalDeltaOperations(buffer, delta->insertions, true)) {
+        LCH_LOG_ERROR("Failed to marshal delta insertion operations.");
+        return false;
     }
 
-    if (!MarshalDeltaOperation(buffer, delta->deletions, '-', false)) {
-        LCH_LOG_ERROR("Failed to marshal delta deletions.");
-        LCH_BufferDestroy(buffer);
-        return NULL;
+    if (!MarshalDeltaOperations(buffer, delta->deletions, false)) {
+        LCH_LOG_ERROR("Failed to marshal delta deletion operations.");
+        return false;
     }
 
-    if (!MarshalDeltaOperation(buffer, delta->modifications, '%', true)) {
-        LCH_LOG_ERROR("Failed to marshal delta modifications.");
-        LCH_BufferDestroy(buffer);
-        return NULL;
+    if (!MarshalDeltaOperations(buffer, delta->modifications, true)) {
+        LCH_LOG_ERROR("Failed to marshal delta modification operations.");
+        return false;
     }
 
-    char *const str = LCH_BufferGet(buffer);
-    if (str == NULL) {
-        LCH_LOG_ERROR("Failed to get string from buffer for marshaling delta.");
-    }
-    LCH_BufferDestroy(buffer);
-
-    return str;
+    return true;
 }
 
-LCH_Delta *LCH_DeltaUnmarshal(const char *const data) {
+static char *UnmarshalTableId(LCH_Delta *const delta, const char *buffer) {
+    const uint32_t length = ntohl(*((uint32_t *) buffer));
+    buffer += sizeof(uint32_t);
+
+    delta->table_id = strndup(buffer, length);
+    if (delta->table_id == NULL) {
+        return NULL;
+    }
+
+    buffer += length;
+    return buffer;
+}
+
+static char *UnmarshalDeltaOperation(LCH_Dict *const dict, const char *buffer) {
+    const uint32_t length = ntohl(*((uint32_t *) buffer));
+    buffer += sizeof(uint32_t);
+
+    char data[length + 1];
+    memcpy(data, buffer, length);
+    data[length] = '\0';
+
+    LCH_List *const table = LCH_CSVParse(table);
+    if (table == NULL) {
+        LCH_LOG_ERROR("Failed to parse delta operations");
+        return NULL;
+    }
+
+    const size_t n_records = LCH_ListLength(table);
+    for (size_t i = 0; i < )
+}
+
+char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
+    assert(buffer != NULL);
+
+    LCH_Delta *const _delta = malloc(sizeof(LCH_Delta));
+    if (_delta == NULL) {
+        LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+        return NULL;
+    }
+
+    buffer = UnmarshalTableId(_delta, buffer);
+    if (buffer == NULL) {
+        LCH_LOG_ERROR("Failed to unmarshal table id.");
+        free(_delta);
+    }
+
+    *delta = _delta;
     return NULL;
 }
 

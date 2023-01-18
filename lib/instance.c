@@ -141,7 +141,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   while (LCH_DictIterNext(iter)) {
     const char *key = LCH_DictIterGetKey(iter);
     const char *value = (char *)LCH_DictIterGetValue(iter);
-    if (!LCH_BufferAppend(diff, "+,%s,%s\r\n", key, value)) {
+    if (!LCH_BufferPrintFormat(diff, "+,%s,%s\r\n", key, value)) {
       LCH_LOG_ERROR("Failed to append insertion entries to diff buffer.");
       free(iter);
       LCH_DictDestroy(additions);
@@ -172,7 +172,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   while (LCH_DictIterNext(iter)) {
     const char *key = LCH_DictIterGetKey(iter);
     const char *value = (char *)LCH_DictIterGetValue(iter);
-    if (!LCH_BufferAppend(diff, "-,%s,%s\r\n", key, value)) {
+    if (!LCH_BufferPrintFormat(diff, "-,%s,%s\r\n", key, value)) {
       LCH_LOG_ERROR("Failed to append deletion entries to diff buffer.");
       free(iter);
       LCH_DictDestroy(deletions);
@@ -204,7 +204,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   while (LCH_DictIterNext(iter)) {
     const char *key = LCH_DictIterGetKey(iter);
     const char *value = (char *)LCH_DictIterGetValue(iter);
-    if (!LCH_BufferAppend(diff, "%%,%s,%s\r\n", key, value)) {
+    if (!LCH_BufferPrintFormat(diff, "%%,%s,%s\r\n", key, value)) {
       LCH_LOG_ERROR("Failed to append modification entries to diff buffer.");
       free(iter);
       LCH_DictDestroy(modifications);
@@ -236,7 +236,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     const LCH_Table *const table = LCH_ListGet(tables, i);
 
     if (i > 0) {
-      if (!LCH_BufferAppend(diff, "\r\n")) {
+      if (!LCH_BufferPrintFormat(diff, "\r\n")) {
         LCH_LOG_ERROR("Failed to add table separator.");
         LCH_BufferDestroy(diff);
         return false;
@@ -254,7 +254,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
       return false;
     }
 
-    if (!LCH_BufferAppend(diff, "%s\r\n", composed_table_id)) {
+    if (!LCH_BufferPrintFormat(diff, "%s\r\n", composed_table_id)) {
       LCH_LOG_ERROR(
           "Failed to append composed table id to diffs for table '%s'.",
           table_id);
@@ -356,7 +356,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     /************************************************************************/
   }
 
-  char *delta = LCH_BufferGet(diff);
+  char *delta = LCH_BufferStringDup(diff);
   size_t delta_len = LCH_BufferLength(diff);
   LCH_BufferDestroy(diff);
 
