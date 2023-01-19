@@ -119,7 +119,9 @@ bool LCH_DictSet(LCH_Dict *const self, const char *const key, void *const value,
   if (self->buffer[index] != NULL) {
     assert(self->buffer[index]->key != NULL);
     DictElement *item = self->buffer[index];
-    item->destroy(item->value);
+    if (item->destroy != NULL) {
+      item->destroy(item->value);
+    }
     item->value = value;
     item->destroy = destroy;
     return true;

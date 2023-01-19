@@ -20,7 +20,7 @@ struct LCH_Buffer {
 static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
   assert(self != NULL);
 
-  if ((self->capacity - self->length) <= needed) {
+  while ((self->capacity - self->length) <= needed) {
     size_t new_capacity = self->capacity * 2;
     char *new_buffer = realloc(self->buffer, new_capacity);
     if (new_buffer == NULL) {
@@ -31,7 +31,7 @@ static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
     self->capacity = new_capacity;
     self->buffer = new_buffer;
 
-    LCH_LOG_DEBUG("Expanded buffer capacity %zu/%zu", self->length,
+    LCH_LOG_DEBUG("Expanded buffer capacity: New capacity %zu/%zu.", self->length,
                   self->capacity);
   }
 
@@ -56,7 +56,7 @@ LCH_Buffer *LCH_BufferCreate(void) {
   self->capacity = INITIAL_CAPACITY;
   self->buffer[0] = '\0';
 
-  LCH_LOG_DEBUG("Created string buffer with inital capacity %d/%d",
+  LCH_LOG_DEBUG("Created string buffer with inital capacity %zu/%zu.",
                 self->length, self->capacity);
   return self;
 }
@@ -68,53 +68,29 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format, ...
 
   va_list ap;
 
+  // Figure out how many bytes we need
   va_start(ap, format);
   int length = vsnprintf(NULL, 0, format, ap);
   va_end(ap);
-
   if (length < 0) {
-    LCH_LOG_ERROR("Failed to format string for string buffer: %s",
+    LCH_LOG_ERROR("Failed to calulate length needed to print formatted string to buffer: %s",
                   strerror(errno));
     self->buffer[self->length] = '\0';
     return false;
   }
 
-  while ((size_t)length >= self->capacity - self->length) {
-    const size_t new_capacity = self->capacity * 2;
-    char *new_buffer = (char *)realloc((void *)self->buffer, new_capacity);
-
-    if (new_buffer == NULL) {
-      LCH_LOG_ERROR("Failed to reallocate memory for string buffer: %s",
-                    strerror(errno));
-      return false;
-    }
-
-    self->capacity = new_capacity;
-    self->buffer = new_buffer;
-    LCH_LOG_DEBUG("Expanded buffer capacity %zu/%zu", self->length,
-                  self->capacity);
-
-    va_start(ap, format);
-    int length = vsnprintf(NULL, 0, format, ap);
-    va_end(ap);
-
-    if (length < 0) {
-      LCH_LOG_ERROR("Failed to format string for buffer: %s",
-                    strerror(errno));
-      self->buffer[self->length] = '\0';
-      return false;
-    }
+  if (!EnsureCapacity(self, (size_t)length)) {
+    return false;
   }
 
   va_start(ap, format);
   length = vsnprintf(self->buffer + self->length, self->capacity - self->length,
                      format, ap);
   va_end(ap);
-
   if (length < 0) {
-    self->buffer[self->length] = '\0';
-    LCH_LOG_ERROR("Failed to format string for buffer: %s",
+    LCH_LOG_ERROR("Failed to print formatted string to buffer: %s",
                   strerror(errno));
+    self->buffer[self->length] = '\0';
     return false;
   }
 
@@ -138,7 +114,7 @@ char *LCH_BufferStringDup(LCH_Buffer *const self) {
   return str;
 }
 
-char *LCH_BufferGet(LCH_Buffer *const self) {
+const char *LCH_BufferGet(LCH_Buffer *const self) {
   return self->buffer;
 }
 
@@ -166,10 +142,11 @@ uint32_t *LCH_BufferAllocateLong(LCH_Buffer *const self) {
     return NULL;
   }
 
+  uint32_t *ptr = (uint32_t *) &(self->buffer[self->length]);
   self->length += sizeof(uint32_t);
   self->buffer[self->length] = '\0';
 
-  return (uint32_t *) &(self->buffer[self->length]);
+  return ptr;
 }
 
 void LCH_BufferDestroy(LCH_Buffer *const self) {

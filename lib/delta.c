@@ -3,9 +3,10 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <arpa/inet.h>
+#include <stdint.h>
 
 #include "leech.h"
-#include "buffer.h"
 #include "csv.h"
 
 enum operation {
@@ -87,7 +88,7 @@ void LCH_DeltaDestroy(LCH_Delta *const delta) {
     }
 }
 
-static bool MashalTableId(LCH_Buffer *const buffer, const char *const table_id) {
+static bool MarshalTableId(LCH_Buffer *const buffer, const char *const table_id) {
     const size_t before = LCH_BufferLength(buffer);
     uint32_t *length = LCH_BufferAllocateLong(buffer);
     if (length == NULL) {
@@ -184,8 +185,9 @@ bool LCH_DeltaMarshal(LCH_Buffer *const buffer, const LCH_Delta *const delta) {
     return true;
 }
 
-static char *UnmarshalTableId(LCH_Delta *const delta, const char *buffer) {
-    const uint32_t length = ntohl(*((uint32_t *) buffer));
+static const char *UnmarshalTableId(LCH_Delta *const delta, const char *buffer) {
+    const uint32_t *const len_ptr = (uint32_t *) buffer;
+    const uint32_t length = ntohl(*len_ptr);
     buffer += sizeof(uint32_t);
 
     delta->table_id = strndup(buffer, length);
@@ -197,25 +199,72 @@ static char *UnmarshalTableId(LCH_Delta *const delta, const char *buffer) {
     return buffer;
 }
 
-static char *UnmarshalDeltaOperation(LCH_Dict *const dict, const char *buffer) {
-    const uint32_t length = ntohl(*((uint32_t *) buffer));
+static const char *UnmarshalDeltaOperation(LCH_Dict *const dict, const char *buffer, const bool take_value) {
+    const uint32_t *const len_ptr = (uint32_t *) buffer;
+    const uint32_t length = ntohl(*len_ptr);
     buffer += sizeof(uint32_t);
 
     char data[length + 1];
     memcpy(data, buffer, length);
     data[length] = '\0';
 
-    LCH_List *const table = LCH_CSVParse(table);
+    LCH_List *const table = LCH_CSVParse(data);
     if (table == NULL) {
         LCH_LOG_ERROR("Failed to parse delta operations");
         return NULL;
     }
 
+    char *key = NULL, *value = NULL;
     const size_t n_records = LCH_ListLength(table);
-    for (size_t i = 0; i < )
+    for (size_t i = 0; i < n_records; i++) {
+        LCH_List *const record = LCH_ListGet(table, i);
+        assert(record != NULL);
+
+        LCH_Buffer *const comp_buf = LCH_CSVComposeRecord(record);
+        if (comp_buf == NULL) {
+            free(key);
+            free(value);
+            LCH_ListDestroy(table);
+            return NULL;
+        }
+
+        char *const comp_str = LCH_BufferStringDup(comp_buf);
+        if (comp_str == NULL) {
+            LCH_BufferDestroy(comp_buf);
+            free(key);
+            free(value);
+            LCH_ListDestroy(table);
+            return NULL;
+        }
+        LCH_BufferDestroy(comp_buf);
+
+        if (take_value) {
+            if (i % 2 == 0) {
+                key = comp_str;
+                continue;
+            }
+            value = comp_str;
+        } else {
+            key = comp_str;
+        }
+
+        if (!LCH_DictSet(dict, key, value, free)) {
+            free(key);
+            free(value);
+            LCH_ListDestroy(table);
+            return NULL;
+        }
+        free(key);
+        key = NULL;
+        value = NULL;
+    }
+
+    LCH_ListDestroy(table);
+    buffer += length;
+    return buffer;
 }
 
-char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
+const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
     assert(buffer != NULL);
 
     LCH_Delta *const _delta = malloc(sizeof(LCH_Delta));
@@ -228,10 +277,32 @@ char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
     if (buffer == NULL) {
         LCH_LOG_ERROR("Failed to unmarshal table id.");
         free(_delta);
+        return NULL;
+    }
+
+    buffer = UnmarshalDeltaOperation(_delta->insertions, buffer, true);
+    if (buffer == NULL) {
+        LCH_LOG_ERROR("Failed to unmarshal delta insertion operations.");
+        free(_delta);
+        return NULL;
+    }
+
+    buffer = UnmarshalDeltaOperation(_delta->deletions, buffer, false);
+    if (buffer == NULL) {
+        LCH_LOG_ERROR("Failed to unmarshal delta deletion operations.");
+        free(_delta);
+        return NULL;
+    }
+
+    buffer = UnmarshalDeltaOperation(_delta->modifications, buffer, true);
+    if (buffer == NULL) {
+        LCH_LOG_ERROR("Failed to unmarshal delta modification operations.");
+        free(_delta);
+        return NULL;
     }
 
     *delta = _delta;
-    return NULL;
+    return buffer;
 }
 
 size_t LCH_DeltaGetNumInsertions(const LCH_Delta *const delta) {

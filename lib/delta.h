@@ -2,6 +2,7 @@
 #define _LEECH_DELTA_H
 
 #include "dict.h"
+#include "buffer.h"
 
 typedef struct LCH_Delta LCH_Delta;
 
@@ -16,5 +17,7 @@ size_t LCH_DeltaGetNumDeletions(const LCH_Delta *delta);
 size_t LCH_DeltaGetNumModifications(const LCH_Delta *delta);
 
 bool LCH_DeltaMarshal(LCH_Buffer *buffer, const LCH_Delta *delta);
+
+const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer);
 
 #endif // _LEECH_DELTA_H
