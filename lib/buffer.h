@@ -70,6 +70,7 @@ bool LCH_BufferAllocate(LCH_Buffer *self, size_t size, size_t *offset);
  * @param[in] size size of value.
  * @param[in] offset offset into buffer.
  */
-void LCH_BufferSet(LCH_Buffer *self, const void *value, size_t size, size_t offset);
+void LCH_BufferSet(LCH_Buffer *self, size_t offset, const void *value,
+                   size_t size);
 
 #endif  // _LEECH_BUFFER_H

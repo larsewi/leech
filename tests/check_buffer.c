@@ -38,7 +38,6 @@ START_TEST(test_LCH_BufferAllocate) {
   LCH_Buffer *buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
 
-
   LCH_BufferPrintFormat(buffer, "first");
   size_t first_offset;
   ck_assert(LCH_BufferAllocate(buffer, sizeof(uint32_t), &first_offset));
@@ -50,10 +49,10 @@ START_TEST(test_LCH_BufferAllocate) {
   LCH_BufferPrintFormat(buffer, "end");
 
   const uint32_t second_value = 4321;
-  LCH_BufferSet(buffer, &second_value, sizeof(uint32_t), second_offset);
+  LCH_BufferSet(buffer, second_offset, &second_value, sizeof(uint32_t));
 
   const uint32_t first_value = 1234;
-  LCH_BufferSet(buffer, &first_value, sizeof(uint32_t), first_offset);
+  LCH_BufferSet(buffer, first_offset, &first_value, sizeof(uint32_t));
 
   uint32_t *first_actual = (uint32_t *)LCH_BufferGet(buffer, first_offset);
   ck_assert_int_eq(*first_actual, 1234);

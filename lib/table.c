@@ -314,7 +314,7 @@ static LCH_Dict *LoadSnapshot(const char *const path) {
 }
 
 LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
-                               const char *const work_dir) {
+                                const char *const work_dir) {
   assert(table != NULL);
   assert(work_dir != NULL);
   assert(table->identifier != NULL);

@@ -106,9 +106,9 @@ static bool MarshalTableId(LCH_Buffer *const buffer,
     LCH_LOG_ERROR("Table id too long (%zu > %zu).", after - before, UINT32_MAX);
     return false;
   }
-  
+
   const uint32_t length = htonl(after - before);
-  LCH_BufferSet(buffer, &length, sizeof(uint32_t), offset);
+  LCH_BufferSet(buffer, offset, &length, sizeof(uint32_t));
 
   return true;
 }
@@ -157,7 +157,7 @@ static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
   }
 
   const uint32_t length = htonl(after - before);
-  LCH_BufferSet(buffer, &length, sizeof(uint32_t), offset);
+  LCH_BufferSet(buffer, offset, &length, sizeof(uint32_t));
 
   return true;
 }

@@ -88,7 +88,8 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   }
 
   va_start(ap, format);
-  const int ret = vsnprintf(self->buffer + self->length, self->capacity - self->length, format, ap);
+  const int ret = vsnprintf(self->buffer + self->length,
+                            self->capacity - self->length, format, ap);
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR("Failed to print formatted string to buffer: %s",
@@ -124,7 +125,8 @@ const void *LCH_BufferGet(LCH_Buffer *const self, const size_t offset) {
   return self->buffer + offset;
 }
 
-bool LCH_BufferAllocate(LCH_Buffer *const self, const size_t size, size_t *const offset) {
+bool LCH_BufferAllocate(LCH_Buffer *const self, const size_t size,
+                        size_t *const offset) {
   assert(self != NULL);
   assert(self->buffer != NULL);
 
@@ -147,7 +149,8 @@ void LCH_BufferDestroy(LCH_Buffer *const self) {
   }
 }
 
-void LCH_BufferSet(LCH_Buffer *const self, const void *const value, const size_t size, const size_t offset) {
+void LCH_BufferSet(LCH_Buffer *const self, const size_t offset,
+                   const void *const value, const size_t size) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(self->capacity > offset + size);

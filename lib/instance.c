@@ -13,12 +13,12 @@
 #include "buffer.h"
 #include "csv.h"
 #include "definitions.h"
+#include "delta.h"
 #include "dict.h"
 #include "head.h"
 #include "leech.h"
 #include "table.h"
 #include "utils.h"
-#include "delta.h"
 
 struct LCH_Instance {
   const char *identifier;
@@ -165,14 +165,18 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     const size_t num_ins = LCH_DeltaGetNumInsertions(delta);
     const size_t num_del = LCH_DeltaGetNumDeletions(delta);
     const size_t num_mod = LCH_DeltaGetNumModifications(delta);
-    LCH_LOG_VERBOSE("Computed delta for table '%s' including %zu insertions, %zu deletions, and %zu modifications.", table_id, num_ins, num_del, num_mod);
+    LCH_LOG_VERBOSE(
+        "Computed delta for table '%s' including %zu insertions, %zu "
+        "deletions, and %zu modifications.",
+        table_id, num_ins, num_del, num_mod);
 
     tot_ins += num_ins;
     tot_del += num_del;
     tot_mod += num_mod;
 
     if (!LCH_DeltaMarshal(delta_buffer, delta)) {
-      LCH_LOG_ERROR("Failed to marshal computed delta for table '%s'.", table_id);
+      LCH_LOG_ERROR("Failed to marshal computed delta for table '%s'.",
+                    table_id);
       LCH_DeltaDestroy(delta);
       LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(old_state);
@@ -244,7 +248,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     return false;
   }
 
-  LCH_Block *const block = LCH_BlockCreate(head, LCH_BufferGet(delta_buffer, 0), LCH_BufferLength(delta_buffer));
+  LCH_Block *const block = LCH_BlockCreate(head, LCH_BufferGet(delta_buffer, 0),
+                                           LCH_BufferLength(delta_buffer));
   LCH_BufferDestroy(delta_buffer);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to create block.");
@@ -260,7 +265,10 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     return false;
   }
   free(block);
-  LCH_LOG_INFO("Created block '%s' with a deltas containing a total of %zu insertions, %zu deletions, and %zu modifications, over %zu table(s).", block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
+  LCH_LOG_INFO(
+      "Created block '%s' with a deltas containing a total of %zu insertions, "
+      "%zu deletions, and %zu modifications, over %zu table(s).",
+      block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
 
   if (!LCH_HeadSet(self->work_dir, block_id)) {
     LCH_LOG_ERROR("Failed to move head to '%s'.", block_id);
