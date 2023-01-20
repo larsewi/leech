@@ -123,8 +123,8 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   assert(n_deletions != NULL);
   assert(n_modifications != NULL);
 
-  LCH_Dict *additions =
-      LCH_DictSetMinus(new_data, old_data, (void *(*)(const void *))strdup);
+  LCH_Dict *additions = LCH_DictSetMinus(new_data, old_data,
+                                         (void *(*)(const void *))strdup, free);
   if (additions == NULL) {
     LCH_LOG_ERROR("Failed to calculate insertion entries.");
     return false;
@@ -154,8 +154,8 @@ static bool CalculateDiff(LCH_Buffer *const diff,
 
   /************************************************************************/
 
-  LCH_Dict *deletions =
-      LCH_DictSetMinus(old_data, new_data, (void *(*)(const void *))strdup);
+  LCH_Dict *deletions = LCH_DictSetMinus(old_data, new_data,
+                                         (void *(*)(const void *))strdup, free);
   if (deletions == NULL) {
     LCH_LOG_ERROR("Failed to calculate deletion entries.");
     return false;
@@ -186,7 +186,7 @@ static bool CalculateDiff(LCH_Buffer *const diff,
   /************************************************************************/
 
   LCH_Dict *modifications = LCH_DictSetChangedIntersection(
-      new_data, old_data, (void *(*)(const void *))strdup,
+      new_data, old_data, (void *(*)(const void *))strdup, free,
       (int (*)(const void *, const void *))strcmp);
   if (modifications == NULL) {
     LCH_LOG_ERROR("Failed to calculate modifications entries.");
@@ -433,7 +433,8 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //       return NULL;
 //     }
 
-//     if (!LCH_DictSet(diffs, table_id, diff, (void (*)(void*))LCH_DictDestroy)) {
+//     if (!LCH_DictSet(diffs, table_id, diff, (void
+//     (*)(void*))LCH_DictDestroy)) {
 //       LCH_DictDestroy(diff);
 //       LCH_DictDestroy(diffs);
 //       return NULL;
@@ -443,7 +444,8 @@ LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
 //   return diffs;
 // }
 
-// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char *const delta) {
+// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char
+// *const delta) {
 //   assert(instance != NULL);
 //   assert(delta != NULL);
 

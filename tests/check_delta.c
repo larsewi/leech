@@ -2,8 +2,8 @@
 #include <limits.h>
 
 #include "../lib/definitions.h"
-#include "../lib/leech.h"
 #include "../lib/delta.h"
+#include "../lib/leech.h"
 
 START_TEST(test_LCH_Delta) {
   LCH_Buffer *out_buf = LCH_BufferCreate();

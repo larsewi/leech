@@ -24,15 +24,16 @@ static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
     size_t new_capacity = self->capacity * 2;
     char *new_buffer = realloc(self->buffer, new_capacity);
     if (new_buffer == NULL) {
-      LCH_LOG_ERROR("Failed to reallocate memory for buffer: %s", strerror(errno));
+      LCH_LOG_ERROR("Failed to reallocate memory for buffer: %s",
+                    strerror(errno));
       return false;
     }
 
     self->capacity = new_capacity;
     self->buffer = new_buffer;
 
-    LCH_LOG_DEBUG("Expanded buffer capacity: New capacity %zu/%zu.", self->length,
-                  self->capacity);
+    LCH_LOG_DEBUG("Expanded buffer capacity: New capacity %zu/%zu.",
+                  self->length, self->capacity);
   }
 
   return true;
@@ -61,7 +62,8 @@ LCH_Buffer *LCH_BufferCreate(void) {
   return self;
 }
 
-bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format, ...) {
+bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
+                           ...) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(format != NULL);
@@ -73,8 +75,10 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format, ...
   int length = vsnprintf(NULL, 0, format, ap);
   va_end(ap);
   if (length < 0) {
-    LCH_LOG_ERROR("Failed to calulate length needed to print formatted string to buffer: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR(
+        "Failed to calulate length needed to print formatted string to buffer: "
+        "%s",
+        strerror(errno));
     self->buffer[self->length] = '\0';
     return false;
   }
@@ -114,37 +118,19 @@ char *LCH_BufferStringDup(LCH_Buffer *const self) {
   return str;
 }
 
-const char *LCH_BufferGet(LCH_Buffer *const self) {
-  return self->buffer;
-}
+const char *LCH_BufferGet(LCH_Buffer *const self) { return self->buffer; }
 
-bool LCH_BufferAppendLong(LCH_Buffer *const self, const uint32_t value) {
+void *LCH_BufferAllocate(LCH_Buffer *const self, const size_t size) {
   assert(self != NULL);
   assert(self->buffer != NULL);
 
-  if (!EnsureCapacity(self, sizeof(uint32_t))) {
-    return false;
-  }
-
-  uint32_t *pos = (uint32_t *) &(self->buffer[self->length]);
-  *pos = value;
-  self->length += sizeof(uint32_t);
-  self->buffer[self->length] = '\0';
-
-  return true;
-}
-
-uint32_t *LCH_BufferAllocateLong(LCH_Buffer *const self) {
-  assert(self != NULL);
-  assert(self->buffer != NULL);
-
-  if (!EnsureCapacity(self, sizeof(uint32_t))) {
+  if (!EnsureCapacity(self, size)) {
     return NULL;
   }
 
-  uint32_t *ptr = (uint32_t *) &(self->buffer[self->length]);
-  self->length += sizeof(uint32_t);
-  self->buffer[self->length] = '\0';
+  void *ptr = (void *)(self->buffer + self->length);
+  self->length += size;
+  self->buffer[size] = '\0';
 
   return ptr;
 }

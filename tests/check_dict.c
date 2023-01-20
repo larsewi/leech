@@ -46,7 +46,7 @@ START_TEST(test_LCH_DictSetMinus) {
   LCH_DictSet(right, "five", (void *)strdup("5"), free);
 
   LCH_Dict *result =
-      LCH_DictSetMinus(left, right, (void *(*)(const void *))strdup);
+      LCH_DictSetMinus(left, right, (void *(*)(const void *))strdup, free);
   ck_assert(!LCH_DictHasKey(result, "one"));
   ck_assert(LCH_DictHasKey(result, "two"));
   ck_assert_str_eq(LCH_DictGet(result, "two"), "2");
@@ -75,7 +75,7 @@ START_TEST(test_LCH_DictSetChangedIntersection) {
   LCH_DictSet(right, "five", (void *)strdup("5"), free);
 
   LCH_Dict *result = LCH_DictSetChangedIntersection(
-      left, right, (void *(*)(const void *))strdup,
+      left, right, (void *(*)(const void *))strdup, free,
       (int (*)(const void *, const void *))strcmp);
   ck_assert(LCH_DictHasKey(result, "one"));
   ck_assert_str_eq(LCH_DictGet(result, "one"), "foo");

@@ -34,17 +34,17 @@ START_TEST(test_LCH_Buffer) {
 }
 END_TEST
 
-START_TEST(test_LCH_BufferAllocateLong) {
+START_TEST(test_LCH_BufferAllocate) {
   LCH_Buffer *buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
 
-  uint32_t *l = LCH_BufferAllocateLong(buffer);
+  uint32_t *l = (uint32_t *)LCH_BufferAllocate(buffer, sizeof(uint32_t));
   *l = 1234;
 
-  l = LCH_BufferAllocateLong(buffer);
+  l = (uint32_t *)LCH_BufferAllocate(buffer, sizeof(uint32_t));
   *l = 4321;
 
-  uint32_t *actual = (uint32_t *) LCH_BufferGet(buffer);
+  uint32_t *actual = (uint32_t *)LCH_BufferGet(buffer);
   ck_assert_int_eq(*actual, 1234);
 
   actual += 1;
@@ -62,8 +62,8 @@ Suite *BufferSuite(void) {
     suite_add_tcase(s, tc);
   }
   {
-    TCase *tc = tcase_create("LCH_BufferAllocateLong");
-    tcase_add_test(tc, test_LCH_BufferAllocateLong);
+    TCase *tc = tcase_create("LCH_BufferAllocate");
+    tcase_add_test(tc, test_LCH_BufferAllocate);
     suite_add_tcase(s, tc);
   }
   return s;

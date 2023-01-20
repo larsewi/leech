@@ -181,7 +181,8 @@ void *LCH_DictGet(const LCH_Dict *const self, const char *const key) {
 
 LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
                            const LCH_Dict *const other,
-                           void *(*valdup)(const void *)) {
+                           void *(*duplicate)(const void *),
+                           void (*destroy)(void *)) {
   assert(self != NULL);
   assert(other != NULL);
   assert(self->buffer != NULL);
@@ -205,7 +206,7 @@ LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
       continue;
     }
 
-    void *value = valdup(item->value);
+    void *value = duplicate(item->value);
     if (value == NULL) {
       LCH_DictDestroy(result);
       LCH_LOG_ERROR("Failed to duplicate value from dict entry at key '%s'.",
@@ -213,7 +214,7 @@ LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
       return NULL;
     }
 
-    if (!LCH_DictSet(result, key, value, item->destroy)) {
+    if (!LCH_DictSet(result, key, value, destroy)) {
       return NULL;
     }
   }
@@ -223,7 +224,8 @@ LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
 
 LCH_Dict *LCH_DictSetChangedIntersection(
     const LCH_Dict *const self, const LCH_Dict *const other,
-    void *(*valdup)(const void *), int (*compare)(const void *, const void *)) {
+    void *(*duplicate)(const void *), void (*destroy)(void *),
+    int (*compare)(const void *, const void *)) {
   assert(self != NULL);
   assert(other != NULL);
   assert(self->buffer != NULL);
@@ -251,7 +253,7 @@ LCH_Dict *LCH_DictSetChangedIntersection(
       continue;
     }
 
-    void *value = valdup(item->value);
+    void *value = duplicate(item->value);
     if (value == NULL) {
       LCH_DictDestroy(result);
       LCH_LOG_ERROR("Failed to duplicate value from dict entry at key '%s'.",
@@ -259,7 +261,7 @@ LCH_Dict *LCH_DictSetChangedIntersection(
       return NULL;
     }
 
-    if (!LCH_DictSet(result, key, value, item->destroy)) {
+    if (!LCH_DictSet(result, key, value, destroy)) {
       return NULL;
     }
   }

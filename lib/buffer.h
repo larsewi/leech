@@ -1,9 +1,9 @@
 #ifndef _LEECH_BUFFER_H
 #define _LEECH_BUFFER_H
 
+#include <arpa/inet.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <arpa/inet.h>
 
 typedef struct LCH_Buffer LCH_Buffer;
 
@@ -54,18 +54,10 @@ void LCH_BufferDestroy(LCH_Buffer *self);
 const char *LCH_BufferGet(LCH_Buffer *self);
 
 /**
- * @brief append a long to buffer.
+ * @brief allocate memory in buffer.
  * @param[in] self buffer.
- * @param[in] value long to append.
- * @return false in case of error.
+ * @return pointer to allocated memory.
  */
-bool LCH_BufferAppendLong(LCH_Buffer *self, uint32_t value);
-
-/**
- * @brief allocate long in buffer.
- * @param[in] self buffer.
- * @return pointer to allocated long.
- */
-uint32_t *LCH_BufferAllocateLong(LCH_Buffer *self);
+void *LCH_BufferAllocate(LCH_Buffer *self, size_t size);
 
 #endif  // _LEECH_BUFFER_H
