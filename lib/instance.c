@@ -284,113 +284,35 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   return true;
 }
 
-// static LCH_Dict *CreateEmptyDiffs(LCH_Instance *instance) {
-//   assert(instance != NULL);
-//   assert(instance->tables != NULL);
+static bool EnumerateBlocks(const LCH_Instance *const instance,
+                            const char *const block_id) {
+  assert(instance != NULL);
+  assert(instance->work_dir != NULL);
+  assert(block_id != NULL);
 
-//   LCH_Dict *diffs = LCH_DictCreate();
-//   if (diffs == NULL) {
-//     return NULL;
-//   }
+  char *cursor = LCH_HeadGet(instance->work_dir);
+  if (cursor == NULL) {
+    LCH_LOG_ERROR("Failed to load head.");
+    return NULL;
+  }
 
-//   size_t n_tables = LCH_ListLength(instance->tables);
-//   for (size_t i = 0; i < n_tables; i++) {
-//     LCH_Table *table = LCH_ListGet(instance->tables, i);
-//     assert(table != NULL);
-//     const char *const table_id = LCH_TableGetIdentifier(table);
+  LCH_Delta *delta = NULL;
+  while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
+    LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
+    if (block == NULL) {
+      free(cursor);
+      return NULL;
+    }
 
-//     LCH_Dict *diff = LCH_DictCreate();
-//     if (diff == NULL) {
-//       LCH_DictDestroy(diffs);
-//       return NULL;
-//     }
+    const char *buffer = (char *)LCH_BlockGetData(block);
 
-//     if (!LCH_DictSet(diffs, table_id, diff, (void
-//     (*)(void*))LCH_DictDestroy)) {
-//       LCH_DictDestroy(diff);
-//       LCH_DictDestroy(diffs);
-//       return NULL;
-//     }
-//   }
+    free(cursor);
+    cursor = LCH_BlockGetParentID(block);
+    free(block);
+  }
 
-//   return diffs;
-// }
-
-// static LCH_Dict *ExtractDiffsFromDelta(LCH_Instance *instance, const char
-// *const delta) {
-//   assert(instance != NULL);
-//   assert(delta != NULL);
-
-//   LCH_List *const split_deltas = LCH_SplitStringSubstring(delta, "\r\n\r\n");
-//   if (split_deltas == NULL) {
-//     return NULL;
-//   }
-
-//   const size_t n_deltas = LCH_ListLength(split_deltas);
-//   for (size_t i = 0; i < n_deltas; i++) {
-
-//     const char *const diff_data = LCH_ListGet(split_deltas, i);
-//     assert(diff_data != NULL);
-
-//     LCH_List *const diff_lst = LCH_CSVParse(diff_data);
-//     if (diff_lst == NULL) {
-//       LCH_ListDestroy(split_deltas);
-//       return NULL;
-//     }
-
-//     const char *const table_id = LCH_ListGet(diff_lst, 0);
-//     assert(table_id != NULL);
-
-//     LCH_Dict *const diff = LCH_DictCreate();
-//     if (diff == NULL) {
-//       LCH_ListDestroy(split_deltas);
-//       LCH_ListDestroy(diff_lst);
-//       return NULL;
-//     }
-
-//     const size_t diff_lst_len = LCH_ListLength(diff_lst);
-//     for (size_t j = 1; j < diff_lst_len; j++) {
-
-//     }
-//   }
-
-//   return NULL;
-// }
-
-// static bool EnumerateBlocks(const LCH_Instance *const instance, const char
-// *const block_id) {
-//   assert(instance != NULL);
-//   assert(instance->work_dir != NULL);
-//   assert(block_id != NULL);
-
-//   char *cursor = LCH_HeadGet(instance->work_dir);
-//   if (cursor == NULL) {
-//     LCH_LOG_ERROR("Failed to load head.");
-//     return NULL;
-//   }
-
-//   LCH_Dict *compressed = CreateEmptyDiffs(instance);
-//   if (compressed == NULL) {
-//     return NULL;
-//   }
-
-//   while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
-//     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
-//     if (block == NULL) {
-//       free(cursor);
-//       return NULL;
-//     }
-
-//     const char *const delta = LCH_BlockGetData(block);
-//     LCH_Dict *const cursor_diffs = ExtractDiffsFromDelta(instance, delta);
-
-//     free(cursor);
-//     cursor = LCH_BlockGetParentID(block);
-//     free(block);
-//   }
-
-//   free(cursor);
-// }
+  free(cursor);
+}
 
 char *LCH_InstanceDiff(const LCH_Instance *const self,
                        const char *const block_id) {
