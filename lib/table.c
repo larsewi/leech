@@ -143,23 +143,23 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
 
 static char *ComposeFieldsAtIndices(const LCH_List *const record,
                                     const LCH_List *const indices) {
-  LCH_List *const lst = ExtractFieldsAtIndices(record, indices);
-  if (lst == NULL) {
+  LCH_List *const list = ExtractFieldsAtIndices(record, indices);
+  if (list == NULL) {
     return NULL;
   }
 
-  LCH_List *tbl = LCH_ListCreate();
-  if (tbl == NULL) {
-    LCH_ListDestroy(lst);
+  LCH_List *table = LCH_ListCreate();
+  if (table == NULL) {
+    LCH_ListDestroy(list);
   }
 
-  if (!LCH_ListAppend(tbl, lst, (void (*)(void *))LCH_ListDestroy)) {
-    LCH_ListDestroy(tbl);
-    LCH_ListDestroy(lst);
+  if (!LCH_ListAppend(table, list, (void (*)(void *))LCH_ListDestroy)) {
+    LCH_ListDestroy(table);
+    LCH_ListDestroy(list);
   }
 
-  LCH_Buffer *buf = LCH_CSVCompose(tbl);
-  LCH_ListDestroy(tbl);
+  LCH_Buffer *buf = LCH_CSVCompose(table);
+  LCH_ListDestroy(table);
   if (buf == NULL) {
     return NULL;
   }
@@ -179,7 +179,7 @@ LCH_Dict *LCH_TableLoadNewState(const LCH_Table *const table) {
     return NULL;
   }
 
-  LCH_Dict *data = LCH_DictCreate();
+  LCH_Dict *const data = LCH_DictCreate();
   if (data == NULL) {
     LCH_ListDestroy(records);
     return NULL;
@@ -210,7 +210,7 @@ LCH_Dict *LCH_TableLoadNewState(const LCH_Table *const table) {
     if (record_len != header_len) {
       LCH_LOG_ERROR(
           "Number of header columns does not align with number of columns in "
-          "row %zu (%zu != %zu)",
+          "row %zu (%zu != %zu).",
           i, header_len, record_len);
       LCH_ListDestroy(subsidiaryIndices);
       LCH_ListDestroy(primaryIndices);

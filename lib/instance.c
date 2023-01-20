@@ -189,9 +189,10 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    if (num_ins == 0 || num_del == 0 || num_mod == 0) {
-      LCH_LOG_DEBUG("No changes made; skipping snapshot update.");
-      free(new_state);
+    if (num_ins == 0 && num_del == 0 && num_mod == 0) {
+      LCH_LOG_DEBUG("No changes made in table '%s'; skipping snapshot update.",
+                    table_id);
+      LCH_DictDestroy(new_state);
       continue;
     }
 

@@ -9,7 +9,7 @@
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 8
+#define INITIAL_CAPACITY 256
 
 struct LCH_Buffer {
   size_t length;
