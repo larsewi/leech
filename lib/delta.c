@@ -91,8 +91,8 @@ void LCH_DeltaDestroy(LCH_Delta *const delta) {
 
 static bool MarshalTableId(LCH_Buffer *const buffer,
                            const char *const table_id) {
-  uint32_t *length = (uint32_t *)LCH_BufferAllocate(buffer, sizeof(uint32_t));
-  if (length == NULL) {
+  size_t offset;
+  if (!LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset)) {
     return false;
   }
 
@@ -106,7 +106,9 @@ static bool MarshalTableId(LCH_Buffer *const buffer,
     LCH_LOG_ERROR("Table id too long (%zu > %zu).", after - before, UINT32_MAX);
     return false;
   }
-  *length = htonl(after - before);
+  
+  const uint32_t length = htonl(after - before);
+  LCH_BufferSet(buffer, &length, sizeof(uint32_t), offset);
 
   return true;
 }
@@ -114,8 +116,8 @@ static bool MarshalTableId(LCH_Buffer *const buffer,
 static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
                                    const LCH_Dict *const dict,
                                    const bool keep_value) {
-  uint32_t *length = (uint32_t *)LCH_BufferAllocate(buffer, sizeof(uint32_t));
-  if (length == NULL) {
+  size_t offset;
+  if (!LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset)) {
     return false;
   }
 
@@ -124,7 +126,6 @@ static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
   LCH_DictIter *iter = LCH_DictIterCreate(dict);
   if (iter == NULL) {
     LCH_LOG_ERROR("Failed to create iterator for marshaling delta.");
-    LCH_BufferDestroy(buffer);
     return NULL;
   }
 
@@ -154,7 +155,9 @@ static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
   if (after - before > UINT32_MAX) {
     return false;
   }
-  *length = htonl(after - before);
+
+  const uint32_t length = htonl(after - before);
+  LCH_BufferSet(buffer, &length, sizeof(uint32_t), offset);
 
   return true;
 }

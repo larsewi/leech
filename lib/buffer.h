@@ -49,15 +49,27 @@ void LCH_BufferDestroy(LCH_Buffer *self);
 /**
  * @brief get buffer.
  * @param [in] self buffer.
- * @return get a pointer to the internal buffer.
+ * @param[in] offset offset into buffer.
+ * @return pointer to internal buffer.
  */
-const char *LCH_BufferGet(LCH_Buffer *self);
+const void *LCH_BufferGet(LCH_Buffer *self, size_t offset);
 
 /**
  * @brief allocate memory in buffer.
  * @param[in] self buffer.
- * @return pointer to allocated memory.
+ * @param[in] size number of bytes.
+ * @param[out] offset offset to allocated memory in buffer.
+ * @return false in case of error.
  */
-void *LCH_BufferAllocate(LCH_Buffer *self, size_t size);
+bool LCH_BufferAllocate(LCH_Buffer *self, size_t size, size_t *offset);
+
+/**
+ * @brief copy value into buffer at offset.
+ * @param[in] self buffer.
+ * @param[in] value pointer to value.
+ * @param[in] size size of value.
+ * @param[in] offset offset into buffer.
+ */
+void LCH_BufferSet(LCH_Buffer *self, const void *value, size_t size, size_t offset);
 
 #endif  // _LEECH_BUFFER_H

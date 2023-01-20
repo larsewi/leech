@@ -9,7 +9,7 @@
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 1024
+#define INITIAL_CAPACITY 8
 
 struct LCH_Buffer {
   size_t length;
@@ -72,7 +72,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
 
   // Figure out how many bytes we need
   va_start(ap, format);
-  int length = vsnprintf(NULL, 0, format, ap);
+  const int length = vsnprintf(NULL, 0, format, ap);
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR(
@@ -88,8 +88,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   }
 
   va_start(ap, format);
-  length = vsnprintf(self->buffer + self->length, self->capacity - self->length,
-                     format, ap);
+  const int ret = vsnprintf(self->buffer + self->length, self->capacity - self->length, format, ap);
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR("Failed to print formatted string to buffer: %s",
@@ -97,6 +96,8 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
     self->buffer[self->length] = '\0';
     return false;
   }
+  assert(ret == length);
+  assert((size_t)ret < self->capacity - self->length);
 
   self->length += (size_t)length;
   return true;
@@ -118,21 +119,23 @@ char *LCH_BufferStringDup(LCH_Buffer *const self) {
   return str;
 }
 
-const char *LCH_BufferGet(LCH_Buffer *const self) { return self->buffer; }
+const void *LCH_BufferGet(LCH_Buffer *const self, const size_t offset) {
+  assert(self->length > offset);
+  return self->buffer + offset;
+}
 
-void *LCH_BufferAllocate(LCH_Buffer *const self, const size_t size) {
+bool LCH_BufferAllocate(LCH_Buffer *const self, const size_t size, size_t *const offset) {
   assert(self != NULL);
   assert(self->buffer != NULL);
 
   if (!EnsureCapacity(self, size)) {
-    return NULL;
+    return false;
   }
 
-  void *ptr = (void *)(self->buffer + self->length);
+  *offset = self->length;
   self->length += size;
   self->buffer[size] = '\0';
-
-  return ptr;
+  return true;
 }
 
 void LCH_BufferDestroy(LCH_Buffer *const self) {
@@ -142,4 +145,11 @@ void LCH_BufferDestroy(LCH_Buffer *const self) {
 
     free(self);
   }
+}
+
+void LCH_BufferSet(LCH_Buffer *const self, const void *const value, const size_t size, const size_t offset) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(self->capacity > offset + size);
+  memcpy(self->buffer + offset, value, size);
 }

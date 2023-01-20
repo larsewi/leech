@@ -58,7 +58,7 @@ START_TEST(test_LCH_Delta) {
   ck_assert(LCH_DeltaMarshal(out_buf, delta));
   LCH_DeltaDestroy(delta);
 
-  const char *in_buf = LCH_BufferGet(out_buf);
+  const char *in_buf = LCH_BufferGet(out_buf, 0);
 
   in_buf = LCH_DeltaUnmarshal(&delta, in_buf);
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);

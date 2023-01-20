@@ -18,6 +18,7 @@
 #include "leech.h"
 #include "table.h"
 #include "utils.h"
+#include "delta.h"
 
 struct LCH_Instance {
   const char *identifier;
@@ -111,210 +112,90 @@ bool LCH_InstanceAddTable(LCH_Instance *const instance,
                         (void (*)(void *))LCH_TableDestroy);
 }
 
-static bool CalculateDiff(LCH_Buffer *const diff,
-                          const LCH_Dict *const new_data,
-                          const LCH_Dict *const old_data,
-                          size_t *const n_additions, size_t *const n_deletions,
-                          size_t *const n_modifications) {
-  assert(diff != NULL);
-  assert(new_data != NULL);
-  assert(old_data != NULL);
-  assert(n_additions != NULL);
-  assert(n_deletions != NULL);
-  assert(n_modifications != NULL);
-
-  LCH_Dict *additions = LCH_DictSetMinus(new_data, old_data,
-                                         (void *(*)(const void *))strdup, free);
-  if (additions == NULL) {
-    LCH_LOG_ERROR("Failed to calculate insertion entries.");
-    return false;
-  }
-  *n_additions = LCH_DictLength(additions);
-
-  LCH_DictIter *iter = LCH_DictIterCreate(additions);
-  if (iter == NULL) {
-    LCH_LOG_ERROR("Failed to create iterator for insertion entries.");
-    LCH_DictDestroy(additions);
-    return false;
-  }
-
-  while (LCH_DictIterNext(iter)) {
-    const char *key = LCH_DictIterGetKey(iter);
-    const char *value = (char *)LCH_DictIterGetValue(iter);
-    if (!LCH_BufferPrintFormat(diff, "+,%s,%s\r\n", key, value)) {
-      LCH_LOG_ERROR("Failed to append insertion entries to diff buffer.");
-      free(iter);
-      LCH_DictDestroy(additions);
-      return false;
-    }
-  }
-
-  free(iter);
-  LCH_DictDestroy(additions);
-
-  /************************************************************************/
-
-  LCH_Dict *deletions = LCH_DictSetMinus(old_data, new_data,
-                                         (void *(*)(const void *))strdup, free);
-  if (deletions == NULL) {
-    LCH_LOG_ERROR("Failed to calculate deletion entries.");
-    return false;
-  }
-  *n_deletions = LCH_DictLength(deletions);
-
-  iter = LCH_DictIterCreate(deletions);
-  if (iter == NULL) {
-    LCH_LOG_ERROR("Failed to create iterator for deletion entries.");
-    LCH_DictDestroy(deletions);
-    return false;
-  }
-
-  while (LCH_DictIterNext(iter)) {
-    const char *key = LCH_DictIterGetKey(iter);
-    const char *value = (char *)LCH_DictIterGetValue(iter);
-    if (!LCH_BufferPrintFormat(diff, "-,%s,%s\r\n", key, value)) {
-      LCH_LOG_ERROR("Failed to append deletion entries to diff buffer.");
-      free(iter);
-      LCH_DictDestroy(deletions);
-      return false;
-    }
-  }
-
-  free(iter);
-  LCH_DictDestroy(deletions);
-
-  /************************************************************************/
-
-  LCH_Dict *modifications = LCH_DictSetChangedIntersection(
-      new_data, old_data, (void *(*)(const void *))strdup, free,
-      (int (*)(const void *, const void *))strcmp);
-  if (modifications == NULL) {
-    LCH_LOG_ERROR("Failed to calculate modifications entries.");
-    return false;
-  }
-  *n_modifications = LCH_DictLength(modifications);
-
-  iter = LCH_DictIterCreate(modifications);
-  if (iter == NULL) {
-    LCH_LOG_ERROR("Failed to create iterator for modifications entries.");
-    LCH_DictDestroy(modifications);
-    return false;
-  }
-
-  while (LCH_DictIterNext(iter)) {
-    const char *key = LCH_DictIterGetKey(iter);
-    const char *value = (char *)LCH_DictIterGetValue(iter);
-    if (!LCH_BufferPrintFormat(diff, "%%,%s,%s\r\n", key, value)) {
-      LCH_LOG_ERROR("Failed to append modification entries to diff buffer.");
-      free(iter);
-      LCH_DictDestroy(modifications);
-      return false;
-    }
-  }
-
-  free(iter);
-  LCH_DictDestroy(modifications);
-
-  return true;
-}
-
 bool LCH_InstanceCommit(const LCH_Instance *const self) {
   assert(self != NULL);
   assert(self->tables != NULL);
 
   LCH_List *tables = self->tables;
-  size_t num_tables = LCH_ListLength(tables);
+  size_t n_tables = LCH_ListLength(tables);
 
-  LCH_Buffer *diff = LCH_BufferCreate();
-  if (diff == NULL) {
+  LCH_Buffer *delta_buffer = LCH_BufferCreate();
+  if (delta_buffer == NULL) {
     return NULL;
   }
 
-  size_t tot_insertions = 0, tot_deletions = 0, tot_modifications = 0;
+  size_t tot_ins = 0, tot_del = 0, tot_mod = 0;
 
-  for (size_t i = 0; i < num_tables; i++) {
+  for (size_t i = 0; i < n_tables; i++) {
     const LCH_Table *const table = LCH_ListGet(tables, i);
-
-    if (i > 0) {
-      if (!LCH_BufferPrintFormat(diff, "\r\n")) {
-        LCH_LOG_ERROR("Failed to add table separator.");
-        LCH_BufferDestroy(diff);
-        return false;
-      }
-    }
-
-    /************************************************************************/
-
     const char *const table_id = LCH_TableGetIdentifier(table);
-    char *composed_table_id = LCH_CSVComposeField(table_id);
-    if (composed_table_id == NULL) {
-      LCH_LOG_ERROR("Failed to compose table id for diffs for table '%s'.",
-                    table_id);
-      free(diff);
-      return false;
-    }
-
-    if (!LCH_BufferPrintFormat(diff, "%s\r\n", composed_table_id)) {
-      LCH_LOG_ERROR(
-          "Failed to append composed table id to diffs for table '%s'.",
-          table_id);
-      free(composed_table_id);
-      free(diff);
-      return false;
-    }
-
-    free(composed_table_id);
 
     /************************************************************************/
 
-    LCH_Dict *new_state = LCH_TableLoadNewData(table);
+    LCH_Dict *new_state = LCH_TableLoadNewState(table);
     if (new_state == NULL) {
-      LCH_LOG_ERROR("Failed to load new state from table '%s'.", table_id);
-      LCH_BufferDestroy(diff);
+      LCH_LOG_ERROR("Failed to load new state for table '%s'.", table_id);
+      LCH_BufferDestroy(delta_buffer);
       return false;
     }
     LCH_LOG_VERBOSE("Loaded new state for table '%s' containing %zu rows.",
                     table_id, LCH_DictLength(new_state));
 
-    LCH_Dict *old_state = LCH_TableLoadOldData(table, self->work_dir);
+    LCH_Dict *old_state = LCH_TableLoadOldState(table, self->work_dir);
     if (old_state == NULL) {
-      LCH_LOG_ERROR("Failed to load old state from table '%s'.", table_id);
-      LCH_BufferDestroy(diff);
+      LCH_LOG_ERROR("Failed to load old state for table '%s'.", table_id);
+      LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(new_state);
       return false;
     }
     LCH_LOG_VERBOSE("Loaded old state for table '%s' containing %zu rows.",
-                    table_id, LCH_DictLength(new_state));
+                    table_id, LCH_DictLength(old_state));
 
     /************************************************************************/
-    size_t n_insertions, n_deletions, n_modifications;
-    if (!CalculateDiff(diff, new_state, old_state, &n_insertions, &n_deletions,
-                       &n_modifications)) {
+
+    LCH_Delta *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
+    if (delta == NULL) {
       LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
-      LCH_BufferDestroy(diff);
-      LCH_DictDestroy(new_state);
+      LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(old_state);
+      LCH_DictDestroy(new_state);
       return false;
     }
-    LCH_LOG_VERBOSE(
-        "Computed delta for table '%s' including %zu insertions, %zu "
-        "deletions, and %zu modifications.",
-        table_id, n_insertions, n_deletions, n_modifications);
 
-    tot_insertions += n_insertions;
-    tot_deletions += n_deletions;
-    tot_modifications += n_modifications;
+    const size_t num_ins = LCH_DeltaGetNumInsertions(delta);
+    const size_t num_del = LCH_DeltaGetNumDeletions(delta);
+    const size_t num_mod = LCH_DeltaGetNumModifications(delta);
+    LCH_LOG_VERBOSE("Computed delta for table '%s' including %zu insertions, %zu deletions, and %zu modifications.", table_id, num_ins, num_del, num_mod);
 
+    tot_ins += num_ins;
+    tot_del += num_del;
+    tot_mod += num_mod;
+
+    if (!LCH_DeltaMarshal(delta_buffer, delta)) {
+      LCH_LOG_ERROR("Failed to marshal computed delta for table '%s'.", table_id);
+      LCH_DeltaDestroy(delta);
+      LCH_BufferDestroy(delta_buffer);
+      LCH_DictDestroy(old_state);
+      LCH_DictDestroy(new_state);
+      return false;
+    }
+
+    LCH_DeltaDestroy(delta);
     LCH_DictDestroy(old_state);
 
     /************************************************************************/
 
-    LCH_LOG_VERBOSE("Creating new snapshot for table '%s'.", table_id);
+    if (num_ins == 0 || num_del == 0 || num_mod == 0) {
+      LCH_LOG_DEBUG("No changes made; skipping snapshot update.");
+      free(new_state);
+      continue;
+    }
+
     char path[PATH_MAX];
     if (!LCH_PathJoin(path, sizeof(path), 3, self->work_dir, "snapshot",
                       table_id)) {
       LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
-      LCH_BufferDestroy(diff);
+      LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(new_state);
       return false;
     }
@@ -325,7 +206,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
           "Filed to create snapshot for table '%s': Failed to open file '%s': "
           "%s",
           table_id, strerror(errno));
-      LCH_BufferDestroy(diff);
+      LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(new_state);
       return false;
     }
@@ -334,7 +215,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     if (iter == NULL) {
       LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
       fclose(file);
-      LCH_BufferDestroy(diff);
+      LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(new_state);
       return false;
     }
@@ -349,67 +230,49 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
       assert(value != NULL);
     }
 
+    LCH_LOG_VERBOSE("Created new snapshot for table '%s'.", table_id);
+
     free(iter);
     fclose(file);
     LCH_DictDestroy(new_state);
-
-    /************************************************************************/
   }
-
-  char *delta = LCH_BufferStringDup(diff);
-  size_t delta_len = LCH_BufferLength(diff);
-  LCH_BufferDestroy(diff);
-
-  /**************************************************************************/
 
   char *const head = LCH_HeadGet(self->work_dir);
   if (head == NULL) {
     LCH_LOG_ERROR("Failed to get head.");
-    free(delta);
+    LCH_BufferDestroy(delta_buffer);
     return false;
   }
-  LCH_LOG_VERBOSE("Head positioned at '%s'.", head);
 
-  LCH_Block *block = LCH_BlockCreate(head, delta, delta_len);
+  LCH_Block *const block = LCH_BlockCreate(head, LCH_BufferGet(delta_buffer, 0), LCH_BufferLength(delta_buffer));
+  LCH_BufferDestroy(delta_buffer);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to create block.");
     free(head);
-    free(delta);
     return false;
   }
-  free(head);
 
   char *const block_id = LCH_BlockStore(self->work_dir, block);
   if (block_id == NULL) {
     LCH_LOG_ERROR("Failed to store block.");
     free(block);
-    free(delta);
+    free(head);
     return false;
   }
   free(block);
-  free(delta);
-  LCH_LOG_VERBOSE("Created block '%s'.", block_id);
+  LCH_LOG_INFO("Created block '%s' with a deltas containing a total of %zu insertions, %zu deletions, and %zu modifications, over %zu table(s).", block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
 
   if (!LCH_HeadSet(self->work_dir, block_id)) {
     LCH_LOG_ERROR("Failed to move head to '%s'.", block_id);
+    free(head);
     free(block_id);
     return false;
   }
-  LCH_LOG_VERBOSE("Moved head to '%s'.", block_id);
+  LCH_LOG_VERBOSE("Moved head from '%s' to '%s'.", head, block_id);
 
-  LCH_LOG_INFO(
-      "Created block '%s' with a total delta of %zu insertions, "
-      "%zu deletions, and %zu modifications, over %zu table(s).",
-      block_id, tot_insertions, tot_deletions, tot_modifications,
-      LCH_ListLength(tables));
+  free(head);
   free(block_id);
-
   return true;
-}
-
-// Think it's safe to remove this one
-LCH_List *LCH_InstanceGetTables(const LCH_Instance *const instance) {
-  return instance->tables;
 }
 
 // static LCH_Dict *CreateEmptyDiffs(LCH_Instance *instance) {

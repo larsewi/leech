@@ -38,17 +38,28 @@ START_TEST(test_LCH_BufferAllocate) {
   LCH_Buffer *buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
 
-  uint32_t *l = (uint32_t *)LCH_BufferAllocate(buffer, sizeof(uint32_t));
-  *l = 1234;
 
-  l = (uint32_t *)LCH_BufferAllocate(buffer, sizeof(uint32_t));
-  *l = 4321;
+  LCH_BufferPrintFormat(buffer, "first");
+  size_t first_offset;
+  ck_assert(LCH_BufferAllocate(buffer, sizeof(uint32_t), &first_offset));
 
-  uint32_t *actual = (uint32_t *)LCH_BufferGet(buffer);
-  ck_assert_int_eq(*actual, 1234);
+  LCH_BufferPrintFormat(buffer, "second");
+  size_t second_offset;
+  ck_assert(LCH_BufferAllocate(buffer, sizeof(uint32_t), &second_offset));
 
-  actual += 1;
-  ck_assert_int_eq(*actual, 4321);
+  LCH_BufferPrintFormat(buffer, "end");
+
+  const uint32_t second_value = 4321;
+  LCH_BufferSet(buffer, &second_value, sizeof(uint32_t), second_offset);
+
+  const uint32_t first_value = 1234;
+  LCH_BufferSet(buffer, &first_value, sizeof(uint32_t), first_offset);
+
+  uint32_t *first_actual = (uint32_t *)LCH_BufferGet(buffer, first_offset);
+  ck_assert_int_eq(*first_actual, 1234);
+
+  uint32_t *second_actual = (uint32_t *)LCH_BufferGet(buffer, second_offset);
+  ck_assert_int_eq(*second_actual, 4321);
 
   LCH_BufferDestroy(buffer);
 }
