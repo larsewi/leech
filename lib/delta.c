@@ -8,6 +8,7 @@
 
 #include "csv.h"
 #include "leech.h"
+#include "list.h"
 
 struct LCH_Delta {
   char *table_id;
@@ -377,57 +378,264 @@ const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
   return delta->table_id;
 }
 
-static bool CompressInsertionOperations(LCH_Delta *const parent,
-                                        const LCH_Delta *const child) {
-  assert(parent->insertions != NULL);
-  assert(child->insertions != NULL);
-
-  return false;
-}
-
-static bool CompressDeletionOperations(LCH_Delta *const parent,
-                                       const LCH_Delta *const child) {
-  assert(parent->deletions != NULL);
-  assert(child->deletions != NULL);
-
-  return false;
-}
-
-static bool CompressModificationOperations(LCH_Delta *const parent,
-                                           const LCH_Delta *const child) {
-  assert(parent->modifications != NULL);
-  assert(child->modifications != NULL);
-
-  return false;
-}
-
-bool LCH_DeltaCompress(LCH_Delta *const parent, const LCH_Delta *const child) {
-  assert(parent != NULL);
-  assert(child != NULL);
-  assert(parent->table_id != NULL);
+static bool CompressInsertionOperations(const LCH_List *const keys,
+                                        LCH_Delta *const child,
+                                        const LCH_Delta *const parent) {
+  assert(keys != NULL);
   assert(child->table_id != NULL);
-  assert(strcmp(parent->table_id, child->table_id) == 0);
+  assert(child->modifications != NULL);
+  assert(parent->insertions != NULL);
+  assert(parent->deletions != NULL);
+  assert(parent->modifications != NULL);
 
-  if (!CompressInsertionOperations(parent, child)) {
-    LCH_LOG_ERROR(
-        "Failed to compress delta insertion operations for table '%s'.",
-        parent->table_id);
+  size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    // insert -> insert => error
+    if (LCH_DictHasKey(parent->insertions, key)) {
+      LCH_LOG_ERROR(
+          "Found two subsequent delta insertion operations for key '%s' in "
+          "table '%s'.",
+          key, child->table_id);
+      return false;
+    }
+
+    // delete -> insert => modify
+    if (LCH_DictHasKey(parent->deletions, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'delete -> insert => modify' for key '%s' in table "
+          "'%s'.",
+          key, child->table_id);
+      char *value = LCH_DictRemove(child->insertions, key);
+      assert(value != NULL);
+
+      if (!LCH_DictSet(child->modifications, key, value, free)) {
+        return false;
+      }
+      continue;
+    }
+
+    // modify -> insert => error
+    if (LCH_DictHasKey(parent->modifications, key)) {
+      LCH_LOG_ERROR(
+          "Found subsequent delta modification- & insertion operations for key "
+          "'%s' in table '%s'.",
+          key, child->table_id);
+      return false;
+    }
+
+    LCH_LOG_DEBUG(
+        "Compressing 'NOOP -> insert => insert' for key '%s' in table '%s'.",
+        key, child->table_id);
+  }
+
+  return true;
+}
+
+static bool CompressDeletionOperations(const LCH_List *const keys,
+                                       LCH_Delta *const child,
+                                       const LCH_Delta *const parent) {
+  assert(keys != NULL);
+  assert(child->table_id != NULL);
+  assert(child->deletions != NULL);
+  assert(parent->insertions != NULL);
+  assert(parent->deletions != NULL);
+  assert(parent->modifications != NULL);
+
+  size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    // insert -> delete => NOOP
+    if (LCH_DictHasKey(parent->insertions, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'insert -> delete => NOOP' for key '%s' in table '%s'.",
+          key, child->table_id);
+      char *value = LCH_DictRemove(child->deletions, key);
+      assert(value == NULL);
+      continue;
+    }
+
+    // delete -> delete => error
+    if (LCH_DictHasKey(parent->deletions, key)) {
+      LCH_LOG_ERROR(
+          "Found two subsequent delta deletion operations for key '%s' in "
+          "table '%s'.",
+          key, child->table_id);
+      return false;
+    }
+
+    // modify -> delete => delete
+    if (LCH_DictHasKey(parent->modifications, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'modify -> delete => delete' for key '%s' in table "
+          "'%s'.",
+          key, child->table_id);
+      continue;
+    }
+
+    LCH_LOG_DEBUG(
+        "Compressing 'NOOP -> delete => delete' for key '%s' in table '%s'.",
+        key, child->table_id);
+  }
+
+  return true;
+}
+
+static bool CompressModificationOperations(const LCH_List *const keys,
+                                           LCH_Delta *const child,
+                                           const LCH_Delta *const parent) {
+  assert(keys != NULL);
+  assert(parent->insertions != NULL);
+  assert(parent->deletions != NULL);
+  assert(parent->modifications != NULL);
+
+  size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    // insert -> modify => insert
+    if (LCH_DictHasKey(parent->insertions, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'insert -> modify => insert' for key '%s' in table "
+          "'%s'.",
+          key, child->table_id);
+      char *value = LCH_DictRemove(child->modifications, key);
+      assert(value != NULL);
+
+      if (!LCH_DictSet(child->insertions, key, value, free)) {
+        return false;
+      }
+      continue;
+    }
+
+    // delete -> modify => error
+    if (LCH_DictHasKey(parent->deletions, key)) {
+      LCH_LOG_ERROR(
+          "Found two subsequent delta deletion- & modification operations for "
+          "key '%s' in table '%s'.",
+          key, child->table_id);
+      return false;
+    }
+
+    // modify -> modify => modify
+    if (LCH_DictHasKey(parent->modifications, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'modify -> modify => modify' for key '%s' in table "
+          "'%s'.",
+          key, child->table_id);
+      continue;
+    }
+
+    LCH_LOG_DEBUG(
+        "Compressing 'NOOP -> modify => modify' for key '%s' in table '%s'.",
+        key, child->table_id);
+  }
+
+  return true;
+}
+
+#ifndef NDEBUG
+void DeltaCompressSanityCheck(const LCH_List *const insertions,
+                              const LCH_List *const deletions,
+                              const LCH_List *const modifications) {
+  // Keys in insertion does not exist in deletion- nor modification keys
+  for (size_t i = 0; i < LCH_ListLength(insertions); i++) {
+    assert(LCH_ListIndex(deletions, LCH_ListGet(insertions, i),
+                         (int (*)(const void *, const void *))strcmp) ==
+           LCH_ListLength(insertions));
+  }
+  for (size_t i = 0; i < LCH_ListLength(insertions); i++) {
+    assert(LCH_ListIndex(modifications, LCH_ListGet(insertions, i),
+                         (int (*)(const void *, const void *))strcmp) ==
+           LCH_ListLength(insertions));
+  }
+
+  // Keys in deletion does not exist in insertion- nor modification keys
+  for (size_t i = 0; i < LCH_ListLength(deletions); i++) {
+    assert(LCH_ListIndex(insertions, LCH_ListGet(deletions, i),
+                         (int (*)(const void *, const void *))strcmp) ==
+           LCH_ListLength(deletions));
+  }
+  for (size_t i = 0; i < LCH_ListLength(deletions); i++) {
+    assert(LCH_ListIndex(modifications, LCH_ListGet(deletions, i),
+                         (int (*)(const void *, const void *))strcmp) ==
+           LCH_ListLength(deletions));
+  }
+
+  // Keys in modification does not exist in insertion- nor deletion keys
+  for (size_t i = 0; i < LCH_ListLength(modifications); i++) {
+    assert(LCH_ListIndex(insertions, LCH_ListGet(modifications, i),
+                         (int (*)(const void *, const void *))strcmp) ==
+           LCH_ListLength(modifications));
+  }
+  for (size_t i = 0; i < LCH_ListLength(deletions); i++) {
+    assert(LCH_ListIndex(deletions, LCH_ListGet(modifications, i),
+                         (int (*)(const void *, const void *))strcmp) ==
+           LCH_ListLength(modifications));
+  }
+}
+#endif  // NDEBUG
+
+bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
+  assert(child != NULL);
+  assert(parent != NULL);
+  assert(child->table_id != NULL);
+  assert(parent->table_id != NULL);
+  assert(strcmp(child->table_id, parent->table_id) == 0);
+
+  LCH_List *const insertions = LCH_DictGetKeys(child->insertions);
+  if (insertions == NULL) {
     return false;
   }
 
-  if (!CompressDeletionOperations(parent, child)) {
-    LCH_LOG_ERROR(
-        "Failed to compress delta deletion operations for table '%s'.",
-        parent->table_id);
+  LCH_List *const deletions = LCH_DictGetKeys(child->deletions);
+  if (deletions == NULL) {
+    LCH_ListDestroy(insertions);
     return false;
   }
 
-  if (!CompressModificationOperations(parent, child)) {
-    LCH_LOG_ERROR(
-        "Failed to compress delta modification operations for table '%s'.",
-        parent->table_id);
+  LCH_List *const modifications = LCH_DictGetKeys(child->modifications);
+  if (modifications == NULL) {
+    LCH_ListDestroy(deletions);
+    LCH_ListDestroy(insertions);
     return false;
   }
+
+#ifndef NDEBUG
+  DeltaCompressSanityCheck(insertions, deletions, modifications);
+#endif
+
+  if (!CompressInsertionOperations(insertions, child, parent)) {
+    LCH_LOG_ERROR("Failed to compress insertion operations for table '%s'.",
+                  child->table_id);
+    LCH_ListDestroy(modifications);
+    LCH_ListDestroy(deletions);
+    LCH_ListDestroy(insertions);
+    return false;
+  }
+  LCH_ListDestroy(insertions);
+
+  if (!CompressDeletionOperations(deletions, child, parent)) {
+    LCH_LOG_ERROR("Failed to compress deletion operations for table '%s'.",
+                  child->table_id);
+    LCH_ListDestroy(modifications);
+    LCH_ListDestroy(deletions);
+    return false;
+  }
+  LCH_ListDestroy(deletions);
+
+  if (!CompressModificationOperations(modifications, child, parent)) {
+    LCH_LOG_ERROR("Failed to compress modification operations for table '%s'.",
+                  child->table_id);
+    LCH_ListDestroy(modifications);
+    return false;
+  }
+  LCH_ListDestroy(modifications);
 
   return true;
 }

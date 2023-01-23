@@ -1,6 +1,7 @@
 #ifndef _LEECH_DICT
 #define _LEECH_DICT
 
+#include <leech.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -97,20 +98,22 @@ LCH_DictIter *LCH_DictIterCreate(const LCH_Dict *const dict);
  * @param [in] iter pointer to iterator.
  * @return true if new element was found.
  */
-bool LCH_DictIterHasNext(LCH_DictIter *const iter);
+bool LCH_DictIterHasNext(LCH_DictIter *iter);
 
 /**
  * Get key from found element.
  * @param [in] pointer to iterator.
  * @return key from element.
  */
-char *LCH_DictIterGetKey(const LCH_DictIter *const iter);
+char *LCH_DictIterGetKey(const LCH_DictIter *iter);
 
 /**
  * Get value from found element.
  * @param [in] pointer to iterator.
  * @return value from element.
  */
-void *LCH_DictIterGetValue(const LCH_DictIter *const iter);
+void *LCH_DictIterGetValue(const LCH_DictIter *iter);
+
+LCH_List *LCH_DictGetKeys(const LCH_Dict *self);
 
 #endif  // _LEECH_DICT

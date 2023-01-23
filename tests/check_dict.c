@@ -125,7 +125,6 @@ START_TEST(test_LCH_DictRemove) {
     ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
     ck_assert(LCH_DictSet(dict, buf, strdup(buf), free));
   }
-  LCH_LOG_ERROR("HEi");
 
   for (size_t i = 0; i < 30; i++) {
     ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));

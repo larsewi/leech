@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include "definitions.h"
-#include "leech.h"
 
 #define INITIAL_CAPACITY 64
 #define LOAD_FACTOR 0.75f
@@ -397,4 +396,32 @@ void *LCH_DictIterGetValue(const LCH_DictIter *const iter) {
   DictElement *item = iter->dict->buffer[iter->cur_pos - 1];
   assert(item != NULL);
   return item->value;
+}
+
+LCH_List *LCH_DictGetKeys(const LCH_Dict *const self) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+
+  LCH_List *const keys = LCH_ListCreate();
+  for (size_t i = 0; i < self->capacity; i++) {
+    DictElement *const item = self->buffer[i];
+    if (item == NULL && item->invalidated) {
+      continue;
+    }
+
+    assert(item->key != NULL);
+    char *const key = strdup(item->key);
+    if (key == NULL) {
+      LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+      LCH_ListDestroy(keys);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(keys, key, free)) {
+      free(key);
+      LCH_ListDestroy(keys);
+    }
+  }
+
+  return keys;
 }
