@@ -20,8 +20,8 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
                            const LCH_Dict *const new_state,
                            const LCH_Dict *const old_state) {
   assert(table_id != NULL);
-  assert(new_state != NULL);
-  assert(old_state != NULL);
+  assert((new_state != NULL && old_state != NULL) ||
+         (new_state == NULL && old_state == NULL));
 
   LCH_Delta *delta = malloc(sizeof(LCH_Delta));
   if (delta == NULL) {
@@ -37,7 +37,9 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  delta->insertions = LCH_DictSetMinus(new_state, old_state,
+  const bool create_empty = (new_state == NULL) && (old_state == NULL);
+
+  delta->insertions = (create_empty) ? LCH_DictCreate() : LCH_DictSetMinus(new_state, old_state,
                                        (void *(*)(const void *))strdup, free);
   if (delta->insertions == NULL) {
     LCH_LOG_ERROR("Failed to compute insertions for delta.");
@@ -46,7 +48,7 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  delta->deletions = LCH_DictSetMinus(old_state, new_state,
+  delta->deletions = (create_empty) ? LCH_DictCreate() : LCH_DictSetMinus(old_state, new_state,
                                       (void *(*)(const void *))strdup, free);
   if (delta->deletions == NULL) {
     LCH_LOG_ERROR("Failed to compute deletions for delta.");
@@ -56,7 +58,7 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  delta->modifications = LCH_DictSetChangedIntersection(
+  delta->modifications = (create_empty) ? LCH_DictCreate() : LCH_DictSetChangedIntersection(
       new_state, old_state, (void *(*)(const void *))strdup, free,
       (int (*)(const void *, const void *))strcmp);
   if (delta->modifications == NULL) {
@@ -360,6 +362,12 @@ size_t LCH_DeltaGetNumModifications(const LCH_Delta *const delta) {
   assert(delta != NULL);
   assert(delta->modifications != NULL);
   return LCH_DictLength(delta->modifications);
+}
+
+const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
+  assert(delta != NULL);
+  assert(delta->table_id != NULL);
+  return delta->table_id;
 }
 
 bool LCH_DeltaPatchTable(const LCH_Delta *const delta, LCH_Dict *const table) {

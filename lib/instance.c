@@ -284,6 +284,67 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   return true;
 }
 
+LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
+  assert(instance != NULL);
+  assert(instance->tables != NULL);
+
+  LCH_Dict *const deltas = LCH_DictCreate();
+  if (deltas == NULL) {
+    return NULL;
+  }
+
+  const size_t num_tables = LCH_DictLength(instance->tables);
+  for (size_t i = 0; i < num_tables; i++) {
+    const LCH_Table *const table = LCH_ListGet(instance->tables, i);
+    assert(table != NULL);
+
+    const char *const table_id = LCH_TableGetIdentifier(table);
+    assert(table_id != NULL);
+
+    LCH_Delta *const delta = LCH_DeltaCreate(table_id, NULL, NULL);
+    if (delta == NULL) {
+      LCH_DictDestroy(deltas);
+      return NULL;
+    }
+
+    if (!LCH_DictSet(deltas, table_id, delta, LCH_DeltaDestroy)) {
+      LCH_DeltaDestroy(delta);
+      LCH_DictDestroy(deltas);
+      return NULL;
+    }
+  }
+
+  return deltas;
+}
+
+static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer, const size_t buf_len) {
+  const char *buf_ptr = buffer;
+
+  while (buf_ptr - buffer < buf_len) {
+    LCH_Delta *child = NULL;
+    buf_ptr = LCH_DeltaUnmarshal(&child, buf_ptr);
+    if (buf_ptr == NULL) {
+      return false;
+    }
+    assert(child != NULL);
+
+    const char *const table_id = LCH_DeltaGetTableID(child);
+    assert(table_id != NULL);
+
+    if (!LCH_DictHasKey(deltas, table_id)) {
+      LCH_LOG_ERROR("Unmarshaled table with table ID '%s' not defined in leech instance.", table_id);
+      LCH_DeltaDestroy(child);
+      return false;
+    }
+
+    LCH_Delta *const parent = LCH_DictGet(deltas, table_id);
+    if (parent == NULL) {
+      LCH_DeltaDestroy(child);
+      return false;
+    }
+  }
+}
+
 static bool EnumerateBlocks(const LCH_Instance *const instance,
                             const char *const block_id) {
   assert(instance != NULL);
@@ -293,18 +354,34 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
   char *cursor = LCH_HeadGet(instance->work_dir);
   if (cursor == NULL) {
     LCH_LOG_ERROR("Failed to load head.");
-    return NULL;
+    return false;
   }
 
-  LCH_Delta *delta = NULL;
+  LCH_Dict *deltas = CreateEmptyDeltas(instance);
+  if (deltas == NULL) {
+    LCH_LOG_ERROR("Failed to initialize delta compression");
+    free(cursor);
+    return false;
+  }
+
   while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
     if (block == NULL) {
+      LCH_DictDestroy(deltas);
       free(cursor);
-      return NULL;
+      return false;
     }
 
-    const char *buffer = (char *)LCH_BlockGetData(block);
+    const char *block_data = (char *)LCH_BlockGetData(block);
+    assert(block_data != NULL);
+    const size_t block_data_len = LCH_BlockGetDataLength(block);
+
+    if (!CompressDeltas(deltas, block_data, block_data_len)) {
+      free(block);
+      LCH_DictDestroy(deltas);
+      free(cursor);
+      return false;
+    }
 
     free(cursor);
     cursor = LCH_BlockGetParentID(block);

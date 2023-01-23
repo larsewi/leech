@@ -17,6 +17,8 @@ size_t LCH_DeltaGetNumDeletions(const LCH_Delta *delta);
 
 size_t LCH_DeltaGetNumModifications(const LCH_Delta *delta);
 
+const char *LCH_DeltaGetTableID(const LCH_Delta *delta);
+
 bool LCH_DeltaMarshal(LCH_Buffer *buffer, const LCH_Delta *delta);
 
 const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer);
