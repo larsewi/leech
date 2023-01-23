@@ -32,7 +32,8 @@ struct LCH_DictIter {
 LCH_Dict *LCH_DictCreate() {
   LCH_Dict *self = (LCH_Dict *)malloc(sizeof(LCH_Dict));
   if (self == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for dictionary: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory for dictionary: %s",
+                  strerror(errno));
     return NULL;
   }
 
@@ -74,10 +75,17 @@ static size_t ComputeIndex(const LCH_Dict *const self, const char *const key) {
   assert(key != NULL);
 
   size_t index = HashKey(key) % self->capacity;
-  while ((self->buffer[index] != NULL) && !(self->buffer[index]->invalidated) &&
-         (strcmp(self->buffer[index]->key, key) != 0)) {
+  while (true) {
+    DictElement *item = self->buffer[index];
+    if (item == NULL) {
+      break;
+    }
+    if (!item->invalidated && strcmp(item->key, key) == 0) {
+      break;
+    }
     index = (index + 1) % self->capacity;
   }
+
   return index;
 }
 
@@ -88,8 +96,10 @@ static bool EnsureCapacity(LCH_Dict *const self) {
 
   /* If we can free (1.f - LOAD_FACTOR) of the capacity by removing invalidated
    * items, there is no need to expand the buffer. */
-  const bool expand = ((self->capacity / 100.f) * (self->in_use - self->length)) > (1.f - LOAD_FACTOR);
-  const size_t new_capacity = (expand) ? self->capacity : self->capacity * 2;
+  assert(self->in_use >= self->length);
+  const bool expand = ((self->capacity / 100.f) *
+                       (self->in_use - self->length)) < (1.f - LOAD_FACTOR);
+  const size_t new_capacity = (expand) ? self->capacity * 2 : self->capacity;
 
   DictElement **new_buffer =
       (DictElement **)calloc(new_capacity, sizeof(DictElement *));
@@ -124,7 +134,10 @@ static bool EnsureCapacity(LCH_Dict *const self) {
   self->in_use = self->length;
   free(old_buffer);
 
-  LCH_LOG_DEBUG("%s. New buffer capacity %zu/%zu.", (expand) ? "Expanded dict" : "Cleaned invalidated items", self->in_use, self->capacity);
+  LCH_LOG_DEBUG(
+      "%s. New buffer capacity %zu/%zu.",
+      (expand) ? "Expanded dictionary buffer" : "Removed invalidated items",
+      self->in_use, self->capacity);
 
   return true;
 }
@@ -185,6 +198,9 @@ void *LCH_DictRemove(LCH_Dict *const self, const char *const key) {
   const size_t index = ComputeIndex(self, key);
   DictElement *const item = self->buffer[index];
   assert(item != NULL);
+  assert(item->key != NULL);
+  assert(strcmp(item->key, key) == 0);
+  assert(!item->invalidated);
 
   free(item->key);
 

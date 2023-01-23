@@ -39,8 +39,10 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
 
   const bool create_empty = (new_state == NULL) && (old_state == NULL);
 
-  delta->insertions = (create_empty) ? LCH_DictCreate() : LCH_DictSetMinus(new_state, old_state,
-                                       (void *(*)(const void *))strdup, free);
+  delta->insertions =
+      (create_empty) ? LCH_DictCreate()
+                     : LCH_DictSetMinus(new_state, old_state,
+                                        (void *(*)(const void *))strdup, free);
   if (delta->insertions == NULL) {
     LCH_LOG_ERROR("Failed to compute insertions for delta.");
     free(delta->table_id);
@@ -48,8 +50,10 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  delta->deletions = (create_empty) ? LCH_DictCreate() : LCH_DictSetMinus(old_state, new_state,
-                                      (void *(*)(const void *))strdup, free);
+  delta->deletions =
+      (create_empty) ? LCH_DictCreate()
+                     : LCH_DictSetMinus(old_state, new_state,
+                                        (void *(*)(const void *))strdup, free);
   if (delta->deletions == NULL) {
     LCH_LOG_ERROR("Failed to compute deletions for delta.");
     LCH_DictDestroy(delta->insertions);
@@ -58,9 +62,12 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  delta->modifications = (create_empty) ? LCH_DictCreate() : LCH_DictSetChangedIntersection(
-      new_state, old_state, (void *(*)(const void *))strdup, free,
-      (int (*)(const void *, const void *))strcmp);
+  delta->modifications =
+      (create_empty)
+          ? LCH_DictCreate()
+          : LCH_DictSetChangedIntersection(
+                new_state, old_state, (void *(*)(const void *))strdup, free,
+                (int (*)(const void *, const void *))strcmp);
   if (delta->modifications == NULL) {
     LCH_LOG_ERROR("Failed to compute modifications for delta.");
     LCH_DictDestroy(delta->deletions);
@@ -370,21 +377,24 @@ const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
   return delta->table_id;
 }
 
-static bool CompressInsertionOperations(LCH_Delta *const parent, const LCH_Delta *const child) {
+static bool CompressInsertionOperations(LCH_Delta *const parent,
+                                        const LCH_Delta *const child) {
   assert(parent->insertions != NULL);
   assert(child->insertions != NULL);
 
   return false;
 }
 
-static bool CompressDeletionOperations(LCH_Delta *const parent, const LCH_Delta *const child) {
+static bool CompressDeletionOperations(LCH_Delta *const parent,
+                                       const LCH_Delta *const child) {
   assert(parent->deletions != NULL);
   assert(child->deletions != NULL);
 
   return false;
 }
 
-static bool CompressModificationOperations(LCH_Delta *const parent, const LCH_Delta *const child) {
+static bool CompressModificationOperations(LCH_Delta *const parent,
+                                           const LCH_Delta *const child) {
   assert(parent->modifications != NULL);
   assert(child->modifications != NULL);
 
@@ -399,17 +409,23 @@ bool LCH_DeltaCompress(LCH_Delta *const parent, const LCH_Delta *const child) {
   assert(strcmp(parent->table_id, child->table_id) == 0);
 
   if (!CompressInsertionOperations(parent, child)) {
-    LCH_LOG_ERROR("Failed to compress delta insertion operations for table '%s'.", parent->table_id);
+    LCH_LOG_ERROR(
+        "Failed to compress delta insertion operations for table '%s'.",
+        parent->table_id);
     return false;
   }
 
   if (!CompressDeletionOperations(parent, child)) {
-    LCH_LOG_ERROR("Failed to compress delta deletion operations for table '%s'.", parent->table_id);
+    LCH_LOG_ERROR(
+        "Failed to compress delta deletion operations for table '%s'.",
+        parent->table_id);
     return false;
   }
 
   if (!CompressModificationOperations(parent, child)) {
-    LCH_LOG_ERROR("Failed to compress delta modification operations for table '%s'.", parent->table_id);
+    LCH_LOG_ERROR(
+        "Failed to compress delta modification operations for table '%s'.",
+        parent->table_id);
     return false;
   }
 

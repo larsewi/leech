@@ -40,6 +40,8 @@ bool LCH_DictHasKey(const LCH_Dict *self, const char *key);
 bool LCH_DictSet(LCH_Dict *self, const char *key, void *value,
                  void (*destroy)(void *));
 
+void *LCH_DictRemove(LCH_Dict *self, const char *key);
+
 /**
  * Get dict value.
  * @param[in] self pointer to dict.

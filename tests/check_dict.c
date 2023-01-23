@@ -117,6 +117,63 @@ START_TEST(test_LCH_DictIter) {
 }
 END_TEST
 
+START_TEST(test_LCH_DictRemove) {
+  LCH_Dict *dict = LCH_DictCreate();
+
+  char buf[8];
+  for (size_t i = 0; i < 100; i++) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    ck_assert(LCH_DictSet(dict, buf, strdup(buf), free));
+  }
+  LCH_LOG_ERROR("HEi");
+
+  for (size_t i = 0; i < 30; i++) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    char *value = LCH_DictRemove(dict, buf);
+    ck_assert_str_eq(buf, value);
+    free(value);
+  }
+
+  for (size_t i = 31; i < 100; i += 5) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    char *value = LCH_DictRemove(dict, buf);
+    ck_assert_str_eq(buf, value);
+    free(value);
+  }
+
+  for (size_t i = 10; i < 20; i++) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    ck_assert(LCH_DictSet(dict, buf, strdup(buf), free));
+  }
+
+  for (size_t i = 0; i < 30; i++) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    if (i >= 10 && i < 20) {
+      ck_assert(LCH_DictHasKey(dict, buf));
+    } else {
+      ck_assert(!LCH_DictHasKey(dict, buf));
+    }
+  }
+
+  for (size_t i = 30; i < 100; i += 5) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    ck_assert(LCH_DictHasKey(dict, buf));
+  }
+
+  for (size_t i = 31; i < 100; i += 5) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    ck_assert(!LCH_DictHasKey(dict, buf));
+  }
+
+  for (size_t i = 32; i < 100; i += 5) {
+    ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
+    ck_assert(LCH_DictHasKey(dict, buf));
+  }
+
+  LCH_DictDestroy(dict);
+}
+END_TEST
+
 Suite *DictSuite(void) {
   Suite *s = suite_create("dict.c");
   {
@@ -137,6 +194,11 @@ Suite *DictSuite(void) {
   {
     TCase *tc = tcase_create("LCH_DictIter*");
     tcase_add_test(tc, test_LCH_DictIter);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_DictRemove");
+    tcase_add_test(tc, test_LCH_DictRemove);
     suite_add_tcase(s, tc);
   }
   return s;

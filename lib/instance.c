@@ -307,7 +307,8 @@ LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
       return NULL;
     }
 
-    if (!LCH_DictSet(deltas, table_id, delta, (void (*)(void *))LCH_DeltaDestroy)) {
+    if (!LCH_DictSet(deltas, table_id, delta,
+                     (void (*)(void *))LCH_DeltaDestroy)) {
       LCH_DeltaDestroy(delta);
       LCH_DictDestroy(deltas);
       return NULL;
@@ -317,7 +318,8 @@ LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
   return deltas;
 }
 
-static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer, const size_t buf_len) {
+static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
+                           const size_t buf_len) {
   const char *buf_ptr = buffer;
 
   while ((size_t)(buf_ptr - buffer) < buf_len) {
@@ -333,7 +335,9 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer, con
     assert(table_id != NULL);
 
     if (!LCH_DictHasKey(deltas, table_id)) {
-      LCH_LOG_ERROR("Unmarshaled table with table ID '%s' not defined in leech instance.", table_id);
+      LCH_LOG_ERROR(
+          "Unmarshaled table with table ID '%s' not defined in leech instance.",
+          table_id);
       LCH_DeltaDestroy(child);
       return false;
     }
