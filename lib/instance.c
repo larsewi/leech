@@ -225,7 +225,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
       return false;
     }
 
-    while (LCH_DictIterNext(iter)) {
+    while (LCH_DictIterHasNext(iter)) {
       const char *const key = LCH_DictIterGetKey(iter);
       assert(key != NULL);
       assert(fprintf(file, "%s\r\n", key) > 0);
@@ -293,7 +293,7 @@ LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
     return NULL;
   }
 
-  const size_t num_tables = LCH_DictLength(instance->tables);
+  const size_t num_tables = LCH_ListLength(instance->tables);
   for (size_t i = 0; i < num_tables; i++) {
     const LCH_Table *const table = LCH_ListGet(instance->tables, i);
     assert(table != NULL);
@@ -307,7 +307,7 @@ LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
       return NULL;
     }
 
-    if (!LCH_DictSet(deltas, table_id, delta, LCH_DeltaDestroy)) {
+    if (!LCH_DictSet(deltas, table_id, delta, (void (*)(void *))LCH_DeltaDestroy)) {
       LCH_DeltaDestroy(delta);
       LCH_DictDestroy(deltas);
       return NULL;
@@ -320,12 +320,13 @@ LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
 static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer, const size_t buf_len) {
   const char *buf_ptr = buffer;
 
-  while (buf_ptr - buffer < buf_len) {
+  while ((size_t)(buf_ptr - buffer) < buf_len) {
     LCH_Delta *child = NULL;
     buf_ptr = LCH_DeltaUnmarshal(&child, buf_ptr);
     if (buf_ptr == NULL) {
       return false;
     }
+    assert(buf_ptr - buffer >= 0);
     assert(child != NULL);
 
     const char *const table_id = LCH_DeltaGetTableID(child);
@@ -343,6 +344,7 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer, con
       return false;
     }
   }
+  return false;
 }
 
 static bool EnumerateBlocks(const LCH_Instance *const instance,
@@ -389,12 +391,18 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
   }
 
   free(cursor);
+
+  return true;
 }
 
 char *LCH_InstanceDiff(const LCH_Instance *const self,
                        const char *const block_id) {
   assert(self != NULL);
   assert(block_id != NULL);
+
+  if (!EnumerateBlocks(self, block_id)) {
+    return NULL;
+  }
 
   return NULL;
 }

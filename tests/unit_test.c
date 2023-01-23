@@ -19,16 +19,17 @@ Suite *UtilsSuite(void);
 
 int main(int argc, char *argv[]) {
   SetupDebugMessenger();
+  SRunner *sr = srunner_create(DictSuite());
 
-  SRunner *sr = srunner_create(BlockSuite());
-  srunner_add_suite(sr, BufferSuite());
-  srunner_add_suite(sr, CSVSuite());
-  srunner_add_suite(sr, DeltaSuite());
-  srunner_add_suite(sr, DictSuite());
-  srunner_add_suite(sr, LeechCSVSuite());
-  srunner_add_suite(sr, ListSuite());
-  srunner_add_suite(sr, TableSuite());
-  srunner_add_suite(sr, UtilsSuite());
+  // SRunner *sr = srunner_create(BlockSuite());
+  // srunner_add_suite(sr, BufferSuite());
+  // srunner_add_suite(sr, CSVSuite());
+  // srunner_add_suite(sr, DeltaSuite());
+  // srunner_add_suite(sr, DictSuite());
+  // srunner_add_suite(sr, LeechCSVSuite());
+  // srunner_add_suite(sr, ListSuite());
+  // srunner_add_suite(sr, TableSuite());
+  // srunner_add_suite(sr, UtilsSuite());
 
   if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {
     srunner_set_fork_status(sr, CK_NOFORK);

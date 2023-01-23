@@ -131,7 +131,7 @@ static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
     return NULL;
   }
 
-  while (LCH_DictIterNext(iter)) {
+  while (LCH_DictIterHasNext(iter)) {
     const char *const key = LCH_DictIterGetKey(iter);
     assert(key != NULL);
 
@@ -368,6 +368,52 @@ const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
   assert(delta != NULL);
   assert(delta->table_id != NULL);
   return delta->table_id;
+}
+
+static bool CompressInsertionOperations(LCH_Delta *const parent, const LCH_Delta *const child) {
+  assert(parent->insertions != NULL);
+  assert(child->insertions != NULL);
+
+  return false;
+}
+
+static bool CompressDeletionOperations(LCH_Delta *const parent, const LCH_Delta *const child) {
+  assert(parent->deletions != NULL);
+  assert(child->deletions != NULL);
+
+  return false;
+}
+
+static bool CompressModificationOperations(LCH_Delta *const parent, const LCH_Delta *const child) {
+  assert(parent->modifications != NULL);
+  assert(child->modifications != NULL);
+
+  return false;
+}
+
+bool LCH_DeltaCompress(LCH_Delta *const parent, const LCH_Delta *const child) {
+  assert(parent != NULL);
+  assert(child != NULL);
+  assert(parent->table_id != NULL);
+  assert(child->table_id != NULL);
+  assert(strcmp(parent->table_id, child->table_id) == 0);
+
+  if (!CompressInsertionOperations(parent, child)) {
+    LCH_LOG_ERROR("Failed to compress delta insertion operations for table '%s'.", parent->table_id);
+    return false;
+  }
+
+  if (!CompressDeletionOperations(parent, child)) {
+    LCH_LOG_ERROR("Failed to compress delta deletion operations for table '%s'.", parent->table_id);
+    return false;
+  }
+
+  if (!CompressModificationOperations(parent, child)) {
+    LCH_LOG_ERROR("Failed to compress delta modification operations for table '%s'.", parent->table_id);
+    return false;
+  }
+
+  return true;
 }
 
 bool LCH_DeltaPatchTable(const LCH_Delta *const delta, LCH_Dict *const table) {

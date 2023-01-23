@@ -105,7 +105,7 @@ START_TEST(test_LCH_DictIter) {
   ck_assert_ptr_nonnull(iter);
 
   size_t i = 0;
-  while (LCH_DictIterNext(iter)) {
+  while (LCH_DictIterHasNext(iter)) {
     char *key = LCH_DictIterGetKey(iter);
     char *val = (char *)LCH_DictIterGetValue(iter);
     ck_assert_str_eq(key, val);

@@ -95,7 +95,7 @@ LCH_DictIter *LCH_DictIterCreate(const LCH_Dict *const dict);
  * @param [in] iter pointer to iterator.
  * @return true if new element was found.
  */
-bool LCH_DictIterNext(LCH_DictIter *const iter);
+bool LCH_DictIterHasNext(LCH_DictIter *const iter);
 
 /**
  * Get key from found element.

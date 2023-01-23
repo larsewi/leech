@@ -23,4 +23,6 @@ bool LCH_DeltaMarshal(LCH_Buffer *buffer, const LCH_Delta *delta);
 
 const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer);
 
+bool LCH_DeltaCompress(LCH_Delta *parent, const LCH_Delta *child);
+
 #endif  // _LEECH_DELTA_H
