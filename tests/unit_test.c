@@ -19,23 +19,22 @@ Suite *UtilsSuite(void);
 
 int main(int argc, char *argv[]) {
   SetupDebugMessenger();
-  SRunner *sr = srunner_create(DictSuite());
 
-  // SRunner *sr = srunner_create(BlockSuite());
-  // srunner_add_suite(sr, BufferSuite());
-  // srunner_add_suite(sr, CSVSuite());
-  // srunner_add_suite(sr, DeltaSuite());
-  // srunner_add_suite(sr, DictSuite());
-  // srunner_add_suite(sr, LeechCSVSuite());
-  // srunner_add_suite(sr, ListSuite());
-  // srunner_add_suite(sr, TableSuite());
-  // srunner_add_suite(sr, UtilsSuite());
+  SRunner *sr = srunner_create(DictSuite());
+  srunner_add_suite(sr, BufferSuite());
+  srunner_add_suite(sr, ListSuite());
+  srunner_add_suite(sr, UtilsSuite());
+  srunner_add_suite(sr, DeltaSuite());
+  srunner_add_suite(sr, BlockSuite());
+  srunner_add_suite(sr, CSVSuite());
+  srunner_add_suite(sr, LeechCSVSuite());
+  srunner_add_suite(sr, TableSuite());
 
   if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {
     srunner_set_fork_status(sr, CK_NOFORK);
   }
 
-  srunner_run_all(sr, CK_NORMAL);
+  srunner_run_all(sr, CK_VERBOSE);
   int number_failed = srunner_ntests_failed(sr);
 
   srunner_free(sr);
@@ -71,7 +70,8 @@ static void SetupDebugMessenger(void) {
       .severity = LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
                   LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT |
                   LCH_DEBUG_MESSAGE_TYPE_INFO_BIT |
-                  LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT,
+                  LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT |
+                  LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT,
       .messageCallback = &DebugMessengerCallbackDefault,
   };
   LCH_DebugMessengerInit(&initInfo);

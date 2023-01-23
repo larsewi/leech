@@ -7,7 +7,7 @@
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 8
+#define INITIAL_CAPACITY 64
 #define LOAD_FACTOR 0.75f
 
 typedef struct DictElement {

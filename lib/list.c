@@ -5,7 +5,7 @@
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 8
+#define INITIAL_CAPACITY 32
 
 typedef struct ListElement {
   void *value;
@@ -201,5 +201,4 @@ void LCH_ListDestroyShallow(LCH_List *self) {
 
   free(self->buffer);
   free(self);
-  LCH_LOG_DEBUG("Destroyed list");
 }
