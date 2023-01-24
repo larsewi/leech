@@ -29,7 +29,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *self, const char *format, ...);
  * @param[in] self buffer.
  * @return length of buffer excluding the terminating null byte.
  */
-size_t LCH_BufferLength(LCH_Buffer *self);
+size_t LCH_BufferLength(const LCH_Buffer *self);
 
 /**
  * @brief string duplicate buffer.
@@ -52,7 +52,7 @@ void LCH_BufferDestroy(LCH_Buffer *self);
  * @param[in] offset offset into buffer.
  * @return pointer to internal buffer.
  */
-const void *LCH_BufferGet(LCH_Buffer *self, size_t offset);
+const void *LCH_BufferGet(const LCH_Buffer *self, size_t offset);
 
 /**
  * @brief allocate memory in buffer.
@@ -72,5 +72,11 @@ bool LCH_BufferAllocate(LCH_Buffer *self, size_t size, size_t *offset);
  */
 void LCH_BufferSet(LCH_Buffer *self, size_t offset, const void *value,
                    size_t size);
+
+bool LCH_BufferHexDump(LCH_Buffer *self, const LCH_Buffer *bin);
+
+bool LCH_BufferBinDump(LCH_Buffer *self, const LCH_Buffer *hex);
+
+void LCH_BufferChop(LCH_Buffer *const self, size_t offset);
 
 #endif  // _LEECH_BUFFER_H

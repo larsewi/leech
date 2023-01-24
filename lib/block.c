@@ -14,6 +14,12 @@
 #include "leech.h"
 #include "utils.h"
 
+// struct LCH_Block {
+//   LCH_Buffer *parent_id;
+//   time_t timestamp;
+//   LCH_Buffer *data;
+// }
+
 struct __attribute__((__packed__)) LCH_Block {
   unsigned char parent_id[SHA_DIGEST_LENGTH];
   uint32_t timestamp;

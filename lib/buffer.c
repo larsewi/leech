@@ -9,7 +9,7 @@
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 256
+#define INITIAL_CAPACITY 255
 
 struct LCH_Buffer {
   size_t length;
@@ -39,27 +39,30 @@ static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
   return true;
 }
 
-LCH_Buffer *LCH_BufferCreate(void) {
+LCH_Buffer *LCH_BufferCreateWithCapacity(size_t capacity) {
   LCH_Buffer *self = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
   if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for buffer: %s", strerror(errno));
     return NULL;
   }
 
-  self->buffer = (char *)malloc(INITIAL_CAPACITY);
+  self->capacity = capacity + 1;
+  self->length = 0;
+  self->buffer = (char *)malloc(self->capacity);
   if (self->buffer == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for buffer: %s", strerror(errno));
     free(self);
     return NULL;
   }
-
-  self->length = 0;
-  self->capacity = INITIAL_CAPACITY;
   self->buffer[0] = '\0';
 
   LCH_LOG_DEBUG("Created string buffer with inital capacity %zu/%zu.",
                 self->length, self->capacity);
   return self;
+}
+
+LCH_Buffer *LCH_BufferCreate(void) {
+  return LCH_BufferCreateWithCapacity(INITIAL_CAPACITY);
 }
 
 bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
@@ -104,7 +107,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   return true;
 }
 
-size_t LCH_BufferLength(LCH_Buffer *const self) {
+size_t LCH_BufferLength(const LCH_Buffer *const self) {
   assert(self != NULL);
   return self->length;
 }
@@ -120,8 +123,8 @@ char *LCH_BufferStringDup(LCH_Buffer *const self) {
   return str;
 }
 
-const void *LCH_BufferGet(LCH_Buffer *const self, const size_t offset) {
-  assert(self->length > offset);
+const void *LCH_BufferGet(const LCH_Buffer *const self, const size_t offset) {
+  assert(self->length >= offset);
   return self->buffer + offset;
 }
 
@@ -135,8 +138,8 @@ bool LCH_BufferAllocate(LCH_Buffer *const self, const size_t size,
   }
 
   *offset = self->length;
+  memset(self->buffer + self->length, 0, size + 1);
   self->length += size;
-  self->buffer[size] = '\0';
   return true;
 }
 
@@ -155,4 +158,50 @@ void LCH_BufferSet(LCH_Buffer *const self, const size_t offset,
   assert(self->buffer != NULL);
   assert(self->capacity > offset + size);
   memcpy(self->buffer + offset, value, size);
+}
+
+bool LCH_BufferHexDump(LCH_Buffer *const hex, const LCH_Buffer *const bin) {
+  assert(hex != NULL);
+  assert(bin != NULL);
+  assert(bin->buffer != NULL);
+
+  for (size_t i = 0; i < bin->length; i++) {
+    if (!LCH_BufferPrintFormat(hex, "%02x", bin->buffer[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool LCH_BufferBinDump(LCH_Buffer *const bin, const LCH_Buffer *const hex) {
+  assert(bin != NULL);
+  assert(hex != NULL);
+
+  if (hex->length % 2 != 0) {
+    LCH_LOG_WARNING("Performing binary dump with an odd number of hexadecimal characters: Last byte will be stripped.");
+  }
+
+  size_t num_bytes = hex->length / 2;
+  if (!EnsureCapacity(bin, num_bytes)) {
+    return false;
+  }
+
+  for (size_t i = 0; i < num_bytes; i++) {
+    if (sscanf(LCH_BufferGet(hex, i * 2), "%2hhx", bin->buffer + (bin->length + i)) != 1) {
+      bin->buffer[bin->length] = '\0';
+      return false;
+    }
+  }
+  bin->length += num_bytes;
+  bin->buffer[bin->length] = '\0';
+
+  return true;
+}
+
+void LCH_BufferChop(LCH_Buffer *const self, size_t offset) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(offset <= self->length);
+  self->buffer[offset] = '\0';
+  self->length = offset;
 }

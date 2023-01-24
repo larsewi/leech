@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <time.h>
 
+#include "buffer.h"
+
 typedef struct LCH_Block LCH_Block;
 
 char *LCH_BlockGetParentID(const LCH_Block *block);

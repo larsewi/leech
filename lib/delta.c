@@ -211,6 +211,7 @@ static const char *UnmarshalTableId(LCH_Delta *const delta,
 
   delta->table_id = strndup(buffer, length);
   if (delta->table_id == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 

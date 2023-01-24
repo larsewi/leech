@@ -1,9 +1,10 @@
 #ifndef _LEECH_DICT
 #define _LEECH_DICT
 
-#include <leech.h>
 #include <stdbool.h>
 #include <stdlib.h>
+
+#include "leech.h"
 
 typedef struct LCH_Dict LCH_Dict;
 typedef struct LCH_DictIter LCH_DictIter;

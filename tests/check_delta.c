@@ -64,12 +64,14 @@ START_TEST(test_LCH_Delta) {
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumDeletions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumModifications(delta), 1);
+  ck_assert_str_eq(LCH_DeltaGetTableID(delta), "beatles");
   LCH_DeltaDestroy(delta);
 
   in_buf = LCH_DeltaUnmarshal(&delta, in_buf);
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumDeletions(delta), 2);
   ck_assert_int_eq(LCH_DeltaGetNumModifications(delta), 1);
+  ck_assert_str_eq(LCH_DeltaGetTableID(delta), "pinkfloyd");
   LCH_DeltaDestroy(delta);
 
   LCH_BufferDestroy(out_buf);

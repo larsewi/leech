@@ -14,7 +14,7 @@ START_TEST(test_LCH_Block) {
   const char *const work_dir = ".";
 
   if (!LCH_IsDirectory("blocks")) {
-    mkdir("blocks", 777);
+    mkdir("blocks", S_IRWXU | S_IRWXG | S_IRWXO);
   }
 
   // Store one

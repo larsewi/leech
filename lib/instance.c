@@ -370,6 +370,7 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
     return false;
   }
 
+  size_t enumerated_blocks = 0;
   while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
     if (block == NULL) {
@@ -377,6 +378,7 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
       free(cursor);
       return false;
     }
+    LCH_LOG_DEBUG("Loaded block '%s'.", cursor);
 
     const char *block_data = (char *)LCH_BlockGetData(block);
     assert(block_data != NULL);
@@ -392,8 +394,10 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
     free(cursor);
     cursor = LCH_BlockGetParentID(block);
     free(block);
+    enumerated_blocks += 1;
   }
 
+  LCH_LOG_DEBUG("Enumerated %zu blocks.", enumerated_blocks);
   free(cursor);
 
   return true;
