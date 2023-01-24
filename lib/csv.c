@@ -433,7 +433,6 @@ LCH_Buffer *LCH_CSVCompose(const LCH_List *const table) {
       LCH_BufferDestroy(buffer);
       return NULL;
     }
-    LCH_LOG_DEBUG("Appended record to table");
   }
   return buffer;
 }

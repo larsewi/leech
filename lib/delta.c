@@ -225,6 +225,9 @@ static const char *UnmarshalDeltaOperation(LCH_Dict *const dict,
   const uint32_t *const len_ptr = (uint32_t *)buffer;
   const uint32_t length = ntohl(*len_ptr);
   buffer += sizeof(uint32_t);
+  if (length == 0) {
+    return buffer;
+  }
 
   char data[length + 1];
   memcpy(data, buffer, length);

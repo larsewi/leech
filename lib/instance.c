@@ -47,9 +47,7 @@ LCH_Instance *LCH_InstanceCreate(
     return NULL;
   }
 
-  if (LCH_IsDirectory(instance->work_dir)) {
-    LCH_LOG_DEBUG("Directory '%s' already exists", instance->work_dir);
-  } else {
+  if (!LCH_IsDirectory(instance->work_dir)) {
     LCH_LOG_VERBOSE("Creating directory '%s'.", createInfo->work_dir);
     const int ret = mkdir(instance->work_dir, S_IRWXU);
     if (ret != 0) {
@@ -66,9 +64,7 @@ LCH_Instance *LCH_InstanceCreate(
     return NULL;
   }
 
-  if (LCH_IsDirectory(path)) {
-    LCH_LOG_DEBUG("Directory '%s' already exists", path);
-  } else {
+  if (!LCH_IsDirectory(path)) {
     LCH_LOG_VERBOSE("Creating directory '%s'.", path);
     const int ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
@@ -86,9 +82,7 @@ LCH_Instance *LCH_InstanceCreate(
     return NULL;
   }
 
-  if (LCH_IsDirectory(path)) {
-    LCH_LOG_DEBUG("Directory '%s' already exists", path);
-  } else {
+  if (!LCH_IsDirectory(path)) {
     LCH_LOG_VERBOSE("Creating directory '%s'.", path);
     const int ret = mkdir(path, S_IRWXU);
     if (ret != 0) {
@@ -352,6 +346,12 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
       LCH_LOG_ERROR("Failed to compress deltas for table '%s'.", table_id);
       LCH_DeltaDestroy(parent);
     }
+
+    const size_t num_insertions = LCH_DeltaGetNumInsertions(parent);
+    const size_t num_deletions = LCH_DeltaGetNumDeletions(parent);
+    const size_t num_modifications = LCH_DeltaGetNumModifications(parent);
+    LCH_LOG_DEBUG("Compressed %zu insertions, %zu deletions and %zu modifications.", num_insertions, num_deletions, num_modifications);
+
     LCH_DeltaDestroy(parent);
   }
   return true;
