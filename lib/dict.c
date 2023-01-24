@@ -47,8 +47,6 @@ LCH_Dict *LCH_DictCreate() {
     return NULL;
   }
 
-  LCH_LOG_DEBUG("Created dictionary with capacity %d/%d", self->in_use,
-                self->capacity);
   return self;
 }
 
@@ -405,7 +403,7 @@ LCH_List *LCH_DictGetKeys(const LCH_Dict *const self) {
   LCH_List *const keys = LCH_ListCreate();
   for (size_t i = 0; i < self->capacity; i++) {
     DictElement *const item = self->buffer[i];
-    if (item == NULL && item->invalidated) {
+    if (item == NULL || item->invalidated) {
       continue;
     }
 

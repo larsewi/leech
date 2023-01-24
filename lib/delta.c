@@ -540,48 +540,6 @@ static bool CompressModificationOperations(const LCH_List *const keys,
   return true;
 }
 
-#ifndef NDEBUG
-void DeltaCompressSanityCheck(const LCH_List *const insertions,
-                              const LCH_List *const deletions,
-                              const LCH_List *const modifications) {
-  // Keys in insertion does not exist in deletion- nor modification keys
-  for (size_t i = 0; i < LCH_ListLength(insertions); i++) {
-    assert(LCH_ListIndex(deletions, LCH_ListGet(insertions, i),
-                         (int (*)(const void *, const void *))strcmp) ==
-           LCH_ListLength(insertions));
-  }
-  for (size_t i = 0; i < LCH_ListLength(insertions); i++) {
-    assert(LCH_ListIndex(modifications, LCH_ListGet(insertions, i),
-                         (int (*)(const void *, const void *))strcmp) ==
-           LCH_ListLength(insertions));
-  }
-
-  // Keys in deletion does not exist in insertion- nor modification keys
-  for (size_t i = 0; i < LCH_ListLength(deletions); i++) {
-    assert(LCH_ListIndex(insertions, LCH_ListGet(deletions, i),
-                         (int (*)(const void *, const void *))strcmp) ==
-           LCH_ListLength(deletions));
-  }
-  for (size_t i = 0; i < LCH_ListLength(deletions); i++) {
-    assert(LCH_ListIndex(modifications, LCH_ListGet(deletions, i),
-                         (int (*)(const void *, const void *))strcmp) ==
-           LCH_ListLength(deletions));
-  }
-
-  // Keys in modification does not exist in insertion- nor deletion keys
-  for (size_t i = 0; i < LCH_ListLength(modifications); i++) {
-    assert(LCH_ListIndex(insertions, LCH_ListGet(modifications, i),
-                         (int (*)(const void *, const void *))strcmp) ==
-           LCH_ListLength(modifications));
-  }
-  for (size_t i = 0; i < LCH_ListLength(deletions); i++) {
-    assert(LCH_ListIndex(deletions, LCH_ListGet(modifications, i),
-                         (int (*)(const void *, const void *))strcmp) ==
-           LCH_ListLength(modifications));
-  }
-}
-#endif  // NDEBUG
-
 bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
   assert(child != NULL);
   assert(parent != NULL);
@@ -606,10 +564,6 @@ bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
     LCH_ListDestroy(insertions);
     return false;
   }
-
-#ifndef NDEBUG
-  DeltaCompressSanityCheck(insertions, deletions, modifications);
-#endif
 
   if (!CompressInsertionOperations(insertions, child, parent)) {
     LCH_LOG_ERROR("Failed to compress insertion operations for table '%s'.",

@@ -323,32 +323,38 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
   const char *buf_ptr = buffer;
 
   while ((size_t)(buf_ptr - buffer) < buf_len) {
-    LCH_Delta *child = NULL;
-    buf_ptr = LCH_DeltaUnmarshal(&child, buf_ptr);
+    LCH_Delta *parent = NULL;
+    buf_ptr = LCH_DeltaUnmarshal(&parent, buf_ptr);
     if (buf_ptr == NULL) {
       return false;
     }
     assert(buf_ptr - buffer >= 0);
-    assert(child != NULL);
+    assert(parent != NULL);
 
-    const char *const table_id = LCH_DeltaGetTableID(child);
+    const char *const table_id = LCH_DeltaGetTableID(parent);
     assert(table_id != NULL);
 
     if (!LCH_DictHasKey(deltas, table_id)) {
       LCH_LOG_ERROR(
           "Unmarshaled table with table ID '%s' not defined in leech instance.",
           table_id);
-      LCH_DeltaDestroy(child);
+      LCH_DeltaDestroy(parent);
       return false;
     }
 
-    LCH_Delta *const parent = LCH_DictGet(deltas, table_id);
-    if (parent == NULL) {
-      LCH_DeltaDestroy(child);
+    LCH_Delta *const child = LCH_DictGet(deltas, table_id);
+    if (child == NULL) {
+      LCH_DeltaDestroy(parent);
       return false;
     }
+
+    if (!LCH_DeltaCompress(parent, child)) {
+      LCH_LOG_ERROR("Failed to compress deltas for table '%s'.", table_id);
+      LCH_DeltaDestroy(parent);
+    }
+    LCH_DeltaDestroy(parent);
   }
-  return false;
+  return true;
 }
 
 static bool EnumerateBlocks(const LCH_Instance *const instance,

@@ -147,15 +147,12 @@ static LCH_List *ParseRecord(Parser *const parser) {
     LCH_LOG_ERROR("Failed to create record");
     return NULL;
   }
-  LCH_LOG_DEBUG("Created empty record (Row %zu)", parser->row);
 
   char *field = ParseField(parser);
   if (field == NULL) {
     LCH_ListDestroy(record);
     return NULL;
   }
-  LCH_LOG_DEBUG("Parsed field '%s' (Row %zu, Col %zu)", field, parser->row,
-                parser->column);
 
   if (!LCH_ListAppend(record, (void *)field, free)) {
     LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
@@ -164,8 +161,6 @@ static LCH_List *ParseRecord(Parser *const parser) {
     LCH_ListDestroy(record);
     return NULL;
   }
-  LCH_LOG_DEBUG("Appended field '%s' to record (Row %zu, Col %zu)", field,
-                parser->row, parser->column);
 
   while (parser->cursor[0] == ',') {
     parser->column += 1;
@@ -178,8 +173,6 @@ static LCH_List *ParseRecord(Parser *const parser) {
       LCH_ListDestroy(record);
       return NULL;
     }
-    LCH_LOG_DEBUG("Parsed field '%s' (Row %zu, Col %zu)", field, parser->row,
-                  parser->column);
 
     if (!LCH_ListAppend(record, (void *)field, free)) {
       LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
@@ -188,8 +181,6 @@ static LCH_List *ParseRecord(Parser *const parser) {
       LCH_ListDestroy(record);
       return NULL;
     }
-    LCH_LOG_DEBUG("Appended field '%s' to record (Row %zu, Col %zu)", field,
-                  parser->row, parser->column);
   }
   return record;
 }
@@ -204,7 +195,6 @@ static LCH_List *ParseTable(Parser *const parser) {
     LCH_LOG_ERROR("Failed to create table");
     return NULL;
   }
-  LCH_LOG_DEBUG("Created empty table");
 
   LCH_List *record = ParseRecord(parser);
   if (record == NULL) {
@@ -212,7 +202,6 @@ static LCH_List *ParseTable(Parser *const parser) {
     LCH_ListDestroy(table);
     return NULL;
   }
-  LCH_LOG_DEBUG("Parsed record (Row %zu)", parser->row);
 
   if (!LCH_ListAppend(table, (void *)record,
                       (void (*)(void *))LCH_ListDestroy)) {
@@ -221,14 +210,12 @@ static LCH_List *ParseTable(Parser *const parser) {
     LCH_ListDestroy(table);
     return NULL;
   }
-  LCH_LOG_DEBUG("Appended record to table (Row %zu)", parser->row);
 
   while (LCH_StringStartsWith(parser->cursor, "\r\n")) {
     parser->cursor += 2;
 
     if (parser->cursor[0] == '\0') {
       // This was just the optional trailing CRLF
-      LCH_LOG_DEBUG("Reached end of buffer");
       break;
     }
 
@@ -241,7 +228,6 @@ static LCH_List *ParseTable(Parser *const parser) {
       LCH_ListDestroy(table);
       return NULL;
     }
-    LCH_LOG_DEBUG("Parsed record (Row %zu)", parser->row);
 
     if (!LCH_ListAppend(table, (void *)record,
                         (void (*)(void *))LCH_ListDestroy)) {
@@ -250,7 +236,6 @@ static LCH_List *ParseTable(Parser *const parser) {
       LCH_ListDestroy(table);
       return NULL;
     }
-    LCH_LOG_DEBUG("Appended record to table (Row %zu)", parser->row);
   }
 
   if (parser->cursor[0] != '\0') {
@@ -364,7 +349,6 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
       return false;
     }
   }
-  LCH_LOG_DEBUG("Composed field '%s'", str);
   free(str);
   return true;
 }
@@ -401,7 +385,6 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
     if (!ComposeField(buffer, field)) {
       return false;
     }
-    LCH_LOG_DEBUG("Appended field '%s' to record", field);
   }
 
   return true;

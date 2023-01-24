@@ -36,8 +36,6 @@ LCH_List *LCH_ListCreate() {
     return NULL;
   }
 
-  LCH_LOG_DEBUG("Created list with buffer capacity %d/%d", self->length,
-                self->capacity);
   return self;
 }
 
@@ -63,8 +61,6 @@ static bool ListCapacity(LCH_List *const self) {
 
   self->capacity = new_capacity;
   self->buffer = new_buffer;
-  LCH_LOG_DEBUG("Expanded list buffer capacity %d/%d", self->length,
-                self->capacity);
   return true;
 }
 
@@ -185,7 +181,6 @@ void LCH_ListDestroy(LCH_List *self) {
   }
   free(self->buffer);
   free(self);
-  LCH_LOG_DEBUG("Destroyed list");
 }
 
 void LCH_ListDestroyShallow(LCH_List *self) {

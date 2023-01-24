@@ -31,9 +31,6 @@ static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
 
     self->capacity = new_capacity;
     self->buffer = new_buffer;
-
-    LCH_LOG_DEBUG("Expanded buffer capacity: New capacity %zu/%zu.",
-                  self->length, self->capacity);
   }
 
   return true;
@@ -56,8 +53,6 @@ LCH_Buffer *LCH_BufferCreateWithCapacity(size_t capacity) {
   }
   self->buffer[0] = '\0';
 
-  LCH_LOG_DEBUG("Created string buffer with inital capacity %zu/%zu.",
-                self->length, self->capacity);
   return self;
 }
 
