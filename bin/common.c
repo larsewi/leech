@@ -73,28 +73,28 @@ LCH_Instance *SetupInstance(void) {
     }
   }
 
-  {  // Add prikfloyd.csv table
-    LCH_TableCreateInfo createInfo = {
-        .identifier = "pinkfloyd",
-        .primary_fields = "id",
-        .subsidiary_fields = "firstname,lastname,role",
-        .read_locator = "pinkfloyd.csv",
-        .write_locator = "pinkfloyd.dest.csv",
-        .read_callback = LCH_TableReadCallbackCSV,
-        .write_callback = LCH_TableWriteCallbackCSV,
-    };
+  // {  // Add prikfloyd.csv table
+  //   LCH_TableCreateInfo createInfo = {
+  //       .identifier = "pinkfloyd",
+  //       .primary_fields = "id",
+  //       .subsidiary_fields = "firstname,lastname,role",
+  //       .read_locator = "pinkfloyd.csv",
+  //       .write_locator = "pinkfloyd.dest.csv",
+  //       .read_callback = LCH_TableReadCallbackCSV,
+  //       .write_callback = LCH_TableWriteCallbackCSV,
+  //   };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
-      LCH_LOG_ERROR("LCH_TableCreate");
-      return NULL;
-    }
+  //   LCH_Table *table = LCH_TableCreate(&createInfo);
+  //   if (table == NULL) {
+  //     LCH_LOG_ERROR("LCH_TableCreate");
+  //     return NULL;
+  //   }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
-      LCH_LOG_ERROR("LCH_InstanceAddTable");
-      return NULL;
-    }
-  }
+  //   if (!LCH_InstanceAddTable(instance, table)) {
+  //     LCH_LOG_ERROR("LCH_InstanceAddTable");
+  //     return NULL;
+  //   }
+  // }
 
   return instance;
 }
