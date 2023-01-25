@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "common.h"
 
@@ -91,7 +92,8 @@ int Diff(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  char *diff = LCH_InstanceDiff(instance, block_id);
+  size_t size;
+  char *diff = LCH_InstanceDiff(instance, block_id, &size);
   if (diff == NULL) {
     LCH_LOG_ERROR("Failed to enumerate blocks.");
     LCH_InstanceDestroy(instance);
@@ -100,5 +102,26 @@ int Diff(int argc, char *argv[]) {
 
   LCH_InstanceDestroy(instance);
 
+  if (patch_file == NULL) {
+    free(diff);
+    return EXIT_SUCCESS;
+  }
+
+  FILE *file = fopen(patch_file, "wb");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s' for binary writing: %s", strerror(errno));
+    free(diff);
+    return EXIT_FAILURE;
+  }
+
+  if (fwrite(diff, 1, size, file) != size) {
+    LCH_LOG_ERROR("Failed to write to file '%s'.", strerror(errno));
+    fclose(file);
+    free(diff);
+    return EXIT_FAILURE;
+  }
+
+  fclose(file);
+  free(diff);
   return EXIT_SUCCESS;
 }

@@ -357,7 +357,7 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
   return true;
 }
 
-static bool EnumerateBlocks(const LCH_Instance *const instance,
+static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
                             const char *const block_id) {
   assert(instance != NULL);
   assert(instance->work_dir != NULL);
@@ -366,23 +366,24 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
   char *cursor = LCH_HeadGet(instance->work_dir);
   if (cursor == NULL) {
     LCH_LOG_ERROR("Failed to load head.");
-    return false;
+    return NULL;
   }
 
   LCH_Dict *deltas = CreateEmptyDeltas(instance);
   if (deltas == NULL) {
     LCH_LOG_ERROR("Failed to initialize delta compression");
     free(cursor);
-    return false;
+    return NULL;
   }
 
   size_t enumerated_blocks = 0;
   while (strcmp(cursor, block_id) != 0) {
     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
     if (block == NULL) {
+      LCH_LOG_ERROR("Failed to load block '%s'.", cursor);
       LCH_DictDestroy(deltas);
       free(cursor);
-      return false;
+      return NULL;
     }
     LCH_LOG_DEBUG("Loaded block '%s'.", cursor);
 
@@ -391,10 +392,11 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
     const size_t block_data_len = LCH_BlockGetDataLength(block);
 
     if (!CompressDeltas(deltas, block_data, block_data_len)) {
+      LCH_LOG_ERROR("Failed to compress deltas in block '%s'.", cursor);
       free(block);
       LCH_DictDestroy(deltas);
       free(cursor);
-      return false;
+      return NULL;
     }
 
     free(cursor);
@@ -406,19 +408,65 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
   LCH_LOG_DEBUG("Enumerated %zu blocks.", enumerated_blocks);
   free(cursor);
 
-  return true;
+  return deltas;
 }
 
 char *LCH_InstanceDiff(const LCH_Instance *const self,
-                       const char *const block_id) {
+                             const char *const block_id,
+                             size_t *const buf_len) {
   assert(self != NULL);
   assert(block_id != NULL);
 
-  if (!EnumerateBlocks(self, block_id)) {
+  LCH_Dict *deltas = EnumerateBlocks(self, block_id);
+  if (deltas == NULL) {
+    LCH_LOG_ERROR("Failed to enumerate blocks.");
     return NULL;
   }
 
-  return NULL;
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    LCH_DictDestroy(deltas);
+    return NULL;
+  }
+
+  LCH_List *keys = LCH_DictGetKeys(deltas);
+  if (keys == NULL) {
+    LCH_BufferDestroy(buffer);
+    LCH_DictDestroy(deltas);
+    return NULL;
+  }
+
+  for (size_t i = 0; i < LCH_ListLength(keys); i++) {
+    const char *const key = LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    LCH_Delta *delta = LCH_DictGet(deltas, key);
+    assert(delta != NULL);
+
+    if (!LCH_DeltaMarshal(buffer, delta)) {
+      LCH_LOG_ERROR("Failed to marshal delta.");
+      LCH_ListDestroy(keys);
+      LCH_BufferDestroy(buffer);
+      LCH_DictDestroy(deltas);
+      return NULL;
+    }
+  }
+
+  LCH_ListDestroy(keys);
+  LCH_DictDestroy(deltas);
+
+  char *result = malloc(LCH_BufferLength(buffer));
+  if (result == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  memcpy(result, LCH_BufferGet(buffer, 0), LCH_BufferLength(buffer));
+  *buf_len = LCH_BufferLength(buffer);
+  LCH_BufferDestroy(buffer);
+
+  return result;
 }
 
 void LCH_InstanceDestroy(LCH_Instance *instance) {
