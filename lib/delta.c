@@ -398,7 +398,7 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
     assert(key != NULL);
 
     // insert -> insert => error
-    if (LCH_DictHasKey(parent->insertions, key)) {
+    if (LCH_DictHasKey(child->insertions, key)) {
       LCH_LOG_ERROR(
           "Found two subsequent delta insertion operations for key '%s' in "
           "table '%s'.",
@@ -406,33 +406,40 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
       return false;
     }
 
-    // delete -> insert => modify
-    if (LCH_DictHasKey(parent->deletions, key)) {
+    // insert -> delete => noop
+    if (LCH_DictHasKey(child->deletions, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'delete -> insert => modify' for key '%s' in table "
+          "Compressing 'insert -> delete => noop' for key '%s' in table "
           "'%s'.",
           key, child->table_id);
-      char *value = LCH_DictRemove(child->insertions, key);
-      assert(value != NULL);
+      char *value = LCH_DictRemove(child->deletions, key);
+      assert(value == NULL);
+      continue;
+    }
 
-      if (!LCH_DictSet(child->modifications, key, value, free)) {
+    // insert -> modify => insert
+    if (LCH_DictHasKey(child->modifications, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'insert -> modify => insert' for key '%s' in table "
+          "'%s'.",
+          key, child->table_id);
+
+      char *value = LCH_DictRemove(child->modifications, key);
+      assert(value != NULL);
+      if (!LCH_DictSet(child->insertions, key, value, free)) {
         return false;
       }
       continue;
     }
 
-    // modify -> insert => error
-    if (LCH_DictHasKey(parent->modifications, key)) {
-      LCH_LOG_ERROR(
-          "Found subsequent delta modification- & insertion operations for key "
-          "'%s' in table '%s'.",
-          key, child->table_id);
+    LCH_LOG_DEBUG(
+        "Compressing 'insert -> noop => insert' for key '%s' in table '%s'.",
+        key, child->table_id);
+    char *value = LCH_DictRemove(parent->insertions, key);
+    assert(value != NULL);
+    if (!LCH_DictSet(child->insertions, key, value, free)) {
       return false;
     }
-
-    LCH_LOG_DEBUG(
-        "Compressing 'NOOP -> insert => insert' for key '%s' in table '%s'.",
-        key, child->table_id);
   }
 
   return true;
@@ -453,18 +460,21 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
     const char *const key = LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    // insert -> delete => NOOP
-    if (LCH_DictHasKey(parent->insertions, key)) {
+    // delete -> insert => modify
+    if (LCH_DictHasKey(child->insertions, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'insert -> delete => NOOP' for key '%s' in table '%s'.",
+          "Compressing 'delete -> insert => modify' for key '%s' in table '%s'.",
           key, child->table_id);
-      char *value = LCH_DictRemove(child->deletions, key);
-      assert(value == NULL);
+      char *value = LCH_DictRemove(child->insertions, key);
+      assert(value != NULL);
+      if (!LCH_DictSet(child->modifications, key, value, free)) {
+        return false;
+      }
       continue;
     }
 
     // delete -> delete => error
-    if (LCH_DictHasKey(parent->deletions, key)) {
+    if (LCH_DictHasKey(child->deletions, key)) {
       LCH_LOG_ERROR(
           "Found two subsequent delta deletion operations for key '%s' in "
           "table '%s'.",
@@ -472,18 +482,23 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
       return false;
     }
 
-    // modify -> delete => delete
-    if (LCH_DictHasKey(parent->modifications, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'modify -> delete => delete' for key '%s' in table "
-          "'%s'.",
+    // delete -> modify => error
+    if (LCH_DictHasKey(child->modifications, key)) {
+      LCH_LOG_ERROR(
+          "Found two subsequent delta deletion- and modification operations for key '%s' in "
+          "table '%s'.",
           key, child->table_id);
-      continue;
+      return false;
     }
 
     LCH_LOG_DEBUG(
-        "Compressing 'NOOP -> delete => delete' for key '%s' in table '%s'.",
+        "Compressing 'delete -> noop => delete' for key '%s' in table '%s'.",
         key, child->table_id);
+    char *value = LCH_DictRemove(parent->deletions, key);
+    assert(value == NULL);
+    if (!LCH_DictSet(child->deletions, key, NULL, NULL)) {
+      return false;
+    }
   }
 
   return true;
@@ -502,32 +517,26 @@ static bool CompressModificationOperations(const LCH_List *const keys,
     const char *const key = LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    // insert -> modify => insert
-    if (LCH_DictHasKey(parent->insertions, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'insert -> modify => insert' for key '%s' in table "
-          "'%s'.",
-          key, child->table_id);
-      char *value = LCH_DictRemove(child->modifications, key);
-      assert(value != NULL);
-
-      if (!LCH_DictSet(child->insertions, key, value, free)) {
-        return false;
-      }
-      continue;
-    }
-
-    // delete -> modify => error
-    if (LCH_DictHasKey(parent->deletions, key)) {
+    // modify -> insert => err
+    if (LCH_DictHasKey(child->insertions, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta deletion- & modification operations for "
-          "key '%s' in table '%s'.",
+          "Found two subsequent delta modification- and insertion operations for key '%s' in "
+          "table '%s'.",
           key, child->table_id);
       return false;
     }
 
+    // modify -> delete => delete
+    if (LCH_DictHasKey(child->deletions, key)) {
+      LCH_LOG_DEBUG(
+          "Compressing 'modify -> delete => delete' for key '%s' in table "
+          "'%s'.",
+          key, child->table_id);
+      continue;
+    }
+
     // modify -> modify => modify
-    if (LCH_DictHasKey(parent->modifications, key)) {
+    if (LCH_DictHasKey(child->modifications, key)) {
       LCH_LOG_DEBUG(
           "Compressing 'modify -> modify => modify' for key '%s' in table "
           "'%s'.",
@@ -536,8 +545,13 @@ static bool CompressModificationOperations(const LCH_List *const keys,
     }
 
     LCH_LOG_DEBUG(
-        "Compressing 'NOOP -> modify => modify' for key '%s' in table '%s'.",
+        "Compressing 'modify -> noop => modify' for key '%s' in table '%s'.",
         key, child->table_id);
+    char *value = LCH_DictRemove(parent->modifications, key);
+    assert(value != NULL);
+    if (!LCH_DictSet(child->modifications, key, value, free)) {
+      return false;
+    }
   }
 
   return true;
@@ -550,18 +564,18 @@ bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
   assert(parent->table_id != NULL);
   assert(strcmp(child->table_id, parent->table_id) == 0);
 
-  LCH_List *const insertions = LCH_DictGetKeys(child->insertions);
+  LCH_List *const insertions = LCH_DictGetKeys(parent->insertions);
   if (insertions == NULL) {
     return false;
   }
 
-  LCH_List *const deletions = LCH_DictGetKeys(child->deletions);
+  LCH_List *const deletions = LCH_DictGetKeys(parent->deletions);
   if (deletions == NULL) {
     LCH_ListDestroy(insertions);
     return false;
   }
 
-  LCH_List *const modifications = LCH_DictGetKeys(child->modifications);
+  LCH_List *const modifications = LCH_DictGetKeys(parent->modifications);
   if (modifications == NULL) {
     LCH_ListDestroy(deletions);
     LCH_ListDestroy(insertions);

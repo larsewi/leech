@@ -342,7 +342,7 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
       return false;
     }
 
-    if (!LCH_DeltaCompress(parent, child)) {
+    if (!LCH_DeltaCompress(child, parent)) {
       LCH_LOG_ERROR("Failed to compress deltas for table '%s'.", table_id);
       LCH_DeltaDestroy(parent);
     }
@@ -377,7 +377,7 @@ static bool EnumerateBlocks(const LCH_Instance *const instance,
   }
 
   size_t enumerated_blocks = 0;
-  while (strcmp(cursor, LCH_GENISIS_BLOCK_PARENT) != 0) {
+  while (strcmp(cursor, block_id) != 0) {
     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
     if (block == NULL) {
       LCH_DictDestroy(deltas);
