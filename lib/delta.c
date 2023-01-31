@@ -432,9 +432,7 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
       continue;
     }
 
-    LCH_LOG_DEBUG(
-        "Compressing 'insert -> noop => insert' for key '%s' in table '%s'.",
-        key, child->table_id);
+    // insert -> noop => insert
     char *value = LCH_DictRemove(parent->insertions, key);
     assert(value != NULL);
     if (!LCH_DictSet(child->insertions, key, value, free)) {
@@ -491,9 +489,7 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
       return false;
     }
 
-    LCH_LOG_DEBUG(
-        "Compressing 'delete -> noop => delete' for key '%s' in table '%s'.",
-        key, child->table_id);
+    // delete -> noop => delete
     char *value = LCH_DictRemove(parent->deletions, key);
     assert(value == NULL);
     if (!LCH_DictSet(child->deletions, key, NULL, NULL)) {
@@ -544,9 +540,7 @@ static bool CompressModificationOperations(const LCH_List *const keys,
       continue;
     }
 
-    LCH_LOG_DEBUG(
-        "Compressing 'modify -> noop => modify' for key '%s' in table '%s'.",
-        key, child->table_id);
+    // modify -> noop => modify
     char *value = LCH_DictRemove(parent->modifications, key);
     assert(value != NULL);
     if (!LCH_DictSet(child->modifications, key, value, free)) {
