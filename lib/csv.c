@@ -247,6 +247,23 @@ static LCH_List *ParseTable(Parser *const parser) {
   return table;
 }
 
+char *LCH_CSVParseField(const char *const str) {
+  assert(str != NULL);
+
+  Parser parser = {
+      .cursor = str,
+      .row = 1,
+      .column = 1,
+  };
+
+  char *const field = ParseField(&parser);
+  if (field == NULL) {
+    LCH_LOG_ERROR("Failed to parse CSV field");
+    return NULL;
+  }
+  return field;
+}
+
 LCH_List *LCH_CSVParseRecord(const char *const str) {
   assert(str != NULL);
 
@@ -264,7 +281,7 @@ LCH_List *LCH_CSVParseRecord(const char *const str) {
   return table;
 }
 
-LCH_List *LCH_CSVParse(const char *str) {
+LCH_List *LCH_CSVParseTable(const char *str) {
   assert(str != NULL);
 
   Parser parser = {
@@ -288,7 +305,7 @@ LCH_List *LCH_CSVParseFile(const char *const path) {
     return NULL;
   }
 
-  LCH_List *table = LCH_CSVParse(csv);
+  LCH_List *table = LCH_CSVParseTable(csv);
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to parse CSV file '%s'", path, strerror(errno));
     free(csv);
@@ -408,7 +425,7 @@ LCH_Buffer *LCH_CSVComposeRecord(const LCH_List *const record) {
   return buffer;
 }
 
-LCH_Buffer *LCH_CSVCompose(const LCH_List *const table) {
+LCH_Buffer *LCH_CSVComposeTable(const LCH_List *const table) {
   assert(table != NULL);
 
   LCH_Buffer *buffer = LCH_BufferCreate();
@@ -441,7 +458,7 @@ bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
   assert(table != NULL);
   assert(path != NULL);
 
-  LCH_Buffer *const buffer = LCH_CSVCompose(table);
+  LCH_Buffer *const buffer = LCH_CSVComposeTable(table);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose CSV for file '%s'", path);
     return false;

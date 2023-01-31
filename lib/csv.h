@@ -4,17 +4,21 @@
 #include "buffer.h"
 #include "leech.h"
 
-LCH_List *LCH_CSVParse(const char *str);
+LCH_List *LCH_CSVParseTable(const char *str);
 
 LCH_List *LCH_CSVParseRecord(const char *str);
 
+char *LCH_CSVParseField(const char *str);
+
 LCH_List *LCH_CSVParseFile(const char *path);
 
-LCH_Buffer *LCH_CSVCompose(const LCH_List *table);
+/****************************************************************************/
+
+LCH_Buffer *LCH_CSVComposeTable(const LCH_List *table);
 
 LCH_Buffer *LCH_CSVComposeRecord(const LCH_List *record);
 
-char *LCH_CSVComposeField(const char *const str);
+char *LCH_CSVComposeField(const char *const field);
 
 bool LCH_CSVComposeFile(const LCH_List *table, const char *path);
 

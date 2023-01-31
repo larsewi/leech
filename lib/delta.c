@@ -233,7 +233,7 @@ static const char *UnmarshalDeltaOperation(LCH_Dict *const dict,
   memcpy(data, buffer, length);
   data[length] = '\0';
 
-  LCH_List *const table = LCH_CSVParse(data);
+  LCH_List *const table = LCH_CSVParseTable(data);
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to parse delta operations");
     return NULL;

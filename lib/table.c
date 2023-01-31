@@ -43,7 +43,7 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   }
 
   {
-    LCH_List *tmp = LCH_CSVParse(createInfo->primary_fields);
+    LCH_List *tmp = LCH_CSVParseTable(createInfo->primary_fields);
     if (tmp == NULL) {
       LCH_TableDestroy(table);
       return NULL;
@@ -56,7 +56,7 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   }
 
   {
-    LCH_List *tmp = LCH_CSVParse(createInfo->subsidiary_fields);
+    LCH_List *tmp = LCH_CSVParseTable(createInfo->subsidiary_fields);
     if (tmp == NULL) {
       LCH_TableDestroy(table);
       return NULL;
@@ -158,7 +158,7 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
     LCH_ListDestroy(list);
   }
 
-  LCH_Buffer *buf = LCH_CSVCompose(table);
+  LCH_Buffer *buf = LCH_CSVComposeTable(table);
   LCH_ListDestroy(table);
   if (buf == NULL) {
     return NULL;
