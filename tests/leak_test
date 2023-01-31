@@ -9,7 +9,6 @@ LEAK_MESSAGE="are definitely lost"
 # program, looking for memory leaks. If any are found, "exit 1"
 # is invoked, and one must look through the resulting valgrind log
 # file for details on the leak.
-exit 0
 
 rm -f ${VALGRIND_LOG_FILE}
 libtool --mode=execute valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ${UNIT_TEST} no-fork 2>&1 | tee ${VALGRIND_LOG_FILE}

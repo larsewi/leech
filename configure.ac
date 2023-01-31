@@ -17,7 +17,7 @@ AC_PROG_INSTALL
 AM_PROG_AR
 
 # Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h unistd.h])
+AC_CHECK_HEADERS([arpa/inet.h unistd.h stdint.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -28,7 +28,7 @@ AC_TYPE_UINT32_T
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memmove memset strchr strdup strerror strndup])
+AC_CHECK_FUNCS([memmove memset strchr strdup strerror strndup mkdir rmdir])
 
 # Configure arguments.
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),

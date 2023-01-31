@@ -104,6 +104,7 @@ START_TEST(test_LCH_BufferAllocate2) {
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "beatles");
   offset += length;
+  free(str);
 
   /****************************************************/
 
@@ -115,6 +116,7 @@ START_TEST(test_LCH_BufferAllocate2) {
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "pinkfloyd");
   offset += length;
+  free(str);
 
   /****************************************************/
 
