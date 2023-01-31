@@ -79,4 +79,8 @@ bool LCH_BufferBinDump(LCH_Buffer *self, const LCH_Buffer *hex);
 
 void LCH_BufferChop(LCH_Buffer *const self, size_t offset);
 
+void LCH_BufferDestroyShallow(LCH_Buffer *self);
+
+char *LCH_BufferToString(LCH_Buffer *self);
+
 #endif  // _LEECH_BUFFER_H

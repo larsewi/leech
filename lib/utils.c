@@ -8,6 +8,10 @@
 
 #include "definitions.h"
 #include "leech.h"
+#include "buffer.h"
+#include "csv.h"
+#include "list.h"
+#include "dict.h"
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
@@ -286,4 +290,96 @@ bool LCH_WriteTextFile(const char *const path, const char *const str) {
 
   fclose(file);
   return true;
+}
+
+static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *const fields) {
+  LCH_List *indices = LCH_ListCreate();
+  if (indices == NULL) {
+    return NULL;
+  }
+
+  const size_t header_len = LCH_ListLength(header);
+  const size_t fields_len = LCH_ListLength(fields);
+  if (fields_len > header_len) {
+    LCH_LOG_ERROR("Number of fields cannot exceed table header length (%zu > %zu).", fields_len, header_len);
+    LCH_ListDestroy(indices);
+    return NULL;
+  }
+
+  for (size_t i = 0; i < fields_len; i++) {
+    const char *const field = LCH_ListGet(fields, i);
+
+    size_t index = LCH_ListIndex(header, field, (int (*)(const void *, const void *))strcmp);
+
+    if (index >= header_len) {
+      LCH_Buffer *const buffer = LCH_CSVComposeRecord(header);
+      LCH_LOG_ERROR("Field '%s' not found in table header '%s'.", field, LCH_BufferGet(buffer, 0));
+      LCH_BufferDestroy(buffer);
+      LCH_ListDestroy(indices);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(indices, (void *)index, NULL)) {
+      LCH_ListDestroy(indices);
+      return NULL;
+    }
+  }
+
+  return indices;
+}
+
+static LCH_List *ExtractFieldsAtIndices(const char *const record, const char const indices) {
+  LCH_List *const fields = LCH_ListCreate();
+  if (fields == NULL) {
+    return NULL;
+  }
+
+  const size_t indices_len = LCH_ListLength(indices);
+  const size_t record_len = LCH_ListLength(record);
+  assert(record_len >= indices_len);
+
+  for (size_t i = 0; i < indices_len; i++) {
+    const size_t index = (size_t)LCH_ListGet(indices, i);
+    assert(index < record_len);
+
+    char *field = LCH_ListGet(record, index);
+    assert(field != NULL);
+
+    if (!LCH_ListAppend(fields, field, NULL)) {
+      LCH_ListDestroy(fields);
+      return NULL;
+    }
+  }
+
+  return fields;
+}
+
+static char *ComposeFieldsAtIndices(const LCH_List *const record, const LCH_List *const indices) {
+  LCH_List *const extracted = ExtractFieldsAtIndices(record, indices);
+  if (extracted == NULL) {
+    LCH_Buffer *const ind = LCH_CSVComposeRecord(indices);
+    LCH_Buffer *const rec = LCH_CSVComposeRecord(record);
+    LCH_LOG_ERROR("Failed to extract fields at indices '%s' from record '%s'.", LCH_BufferGet(ind, 0), LCH_BufferGet(rec, 0));
+    LCH_BufferDestroy(ind);
+    LCH_BufferDestroy(rec);
+    return NULL;
+  }
+
+  LCH_Buffer *const buffer = LCH_CSVComposeRecord(extracted);
+  if (buffer == NULL) {
+    LCH_ListDestroy(extracted);
+    return NULL;
+  }
+  char *const composed = LCH_BufferStringDup(buffer);
+  LCH_BufferDestroyShallow(buffer);
+
+  return composed;
+}
+
+LCH_Dict *LCH_TableListToDict(LCH_List *const primary, LCH_List *const subsidiary, const LCH_List *const table) {
+  assert(primary != NULL);
+  assert(subsidiary != NULL);
+  assert(table != NULL);
+
+  const LCH_List *const header = LCH_ListGet()
 }

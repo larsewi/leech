@@ -200,3 +200,13 @@ void LCH_BufferChop(LCH_Buffer *const self, size_t offset) {
   self->buffer[offset] = '\0';
   self->length = offset;
 }
+
+void LCH_BufferDestroyShallow(LCH_Buffer *const self) {
+  free(self);
+}
+
+char *LCH_BufferToString(LCH_Buffer *const self) {
+  char *str = self->buffer;
+  free(self);
+  return str;
+}

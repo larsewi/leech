@@ -3,7 +3,7 @@
 
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
-#include "../lib/utils.h"
+#include "../lib/utils.c"
 
 START_TEST(test_LCH_StartsWith) {
   ck_assert(LCH_StringStartsWith("Hello World", "Hello"));
@@ -88,6 +88,21 @@ START_TEST(test_LCH_ReadWriteTextFile) {
 }
 END_TEST
 
+START_TEST(test_GetIndexOfFields) {
+  LCH_List *const header = LCH_CSVParseRecord("zero,one,two,three,four,five");
+  LCH_List *const fields = LCH_CSVParseRecord("two,four");
+  LCH_List *const indices = GetIndexOfFields(header, fields);
+  ck_assert_ptr_nonnull(indices);
+  ck_assert_int_eq(LCH_ListLength(indices), 2);
+  ck_assert_int_eq((size_t) LCH_ListGet(indices, 0), 2);
+  ck_assert_int_eq((size_t) LCH_ListGet(indices, 1), 4);
+  LCH_ListDestroy(header);
+  LCH_ListDestroy(fields);
+  LCH_ListDestroy(indices);
+}
+END_TEST
+
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -118,6 +133,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_ReadWriteTextFile");
     tcase_add_test(tc, test_LCH_ReadWriteTextFile);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("GetIndexOfFields");
+    tcase_add_test(tc, test_GetIndexOfFields);
     suite_add_tcase(s, tc);
   }
   return s;
