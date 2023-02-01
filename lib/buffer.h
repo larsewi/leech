@@ -81,6 +81,12 @@ void LCH_BufferChop(LCH_Buffer *const self, size_t offset);
 
 void LCH_BufferDestroyShallow(LCH_Buffer *self);
 
+/**
+ * @brief get pointer to internal buffer and destroy surrounding data structure.
+ * @param self buffer.
+ * @return pointer to internal char buffer.
+ * @note returned buffer must be freed with free(3).
+ */
 char *LCH_BufferToString(LCH_Buffer *self);
 
 #endif  // _LEECH_BUFFER_H

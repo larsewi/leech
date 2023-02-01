@@ -11,7 +11,6 @@
 #include "buffer.h"
 #include "csv.h"
 #include "list.h"
-#include "dict.h"
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
@@ -328,7 +327,7 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
   return indices;
 }
 
-static LCH_List *ExtractFieldsAtIndices(const char *const record, const char const indices) {
+static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record, const LCH_List *const indices) {
   LCH_List *const fields = LCH_ListCreate();
   if (fields == NULL) {
     return NULL;
@@ -370,16 +369,103 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record, const LCH_List
     LCH_ListDestroy(extracted);
     return NULL;
   }
-  char *const composed = LCH_BufferStringDup(buffer);
-  LCH_BufferDestroyShallow(buffer);
+  LCH_ListDestroy(extracted);
 
+  char *composed = LCH_BufferToString(buffer);
   return composed;
 }
 
-LCH_Dict *LCH_TableListToDict(LCH_List *const primary, LCH_List *const subsidiary, const LCH_List *const table) {
+LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const primary, const LCH_List *const subsidiary) {
   assert(primary != NULL);
   assert(subsidiary != NULL);
   assert(table != NULL);
 
-  const LCH_List *const header = LCH_ListGet()
+  LCH_Dict *dict = LCH_DictCreate();
+  if (dict == NULL) {
+    return NULL;
+  }
+
+  const size_t num_records = LCH_ListLength(table);
+  if (num_records < 1) {
+    LCH_LOG_ERROR("Table is missing required header record.");
+    LCH_DictDestroy(dict);
+    return NULL;
+  }
+
+  const LCH_List *const header = LCH_ListGet(table, 0);
+  assert(header != NULL);
+
+  const size_t header_len = LCH_ListLength(header);
+  const size_t primary_len = LCH_ListLength(primary);
+  const size_t subsidiary_len = LCH_ListLength(subsidiary);
+  if (header_len != primary_len + subsidiary_len) {
+    LCH_LOG_ERROR("Number of primary- and subsidiary fields does not align with number of header fields (%zu + %zu != %zu).", primary_len, subsidiary_len, header_len);
+    LCH_DictDestroy(dict);
+    return NULL;
+  }
+
+  if (num_records == 1) {
+    return dict;
+  }
+
+  LCH_List *primary_indices = GetIndexOfFields(header, primary);
+  if (primary_indices == NULL) {
+    LCH_DictDestroy(dict);
+    return NULL;
+  }
+
+  LCH_List *subsidiary_indices = GetIndexOfFields(header, subsidiary);
+  if (subsidiary_indices == NULL) {
+    LCH_ListDestroy(primary_indices);
+    LCH_DictDestroy(dict);
+    return NULL;
+  }
+
+  for (size_t i = 1; i < num_records; i++) {
+    const LCH_List *const record = LCH_ListGet(table, i);
+    assert(record != NULL);
+
+    const size_t record_len = LCH_ListLength(record);
+    if (record_len != header_len) {
+      LCH_LOG_ERROR("Number of record fields does not align with number of header fields for record %zu (%zu != %zu).", i, record_len, header_len);
+      LCH_ListDestroy(subsidiary_indices);
+      LCH_ListDestroy(primary_indices);
+      LCH_DictDestroy(dict);
+      return NULL;
+    }
+
+    char *const key = ComposeFieldsAtIndices(record, primary_indices);
+    if (key == NULL) {
+      LCH_LOG_ERROR("Failed to compose primary fields for record %zu.", i);
+      LCH_ListDestroy(subsidiary_indices);
+      LCH_ListDestroy(primary_indices);
+      LCH_DictDestroy(dict);
+      return NULL;
+    }
+
+    char *const value = ComposeFieldsAtIndices(record, subsidiary_indices);
+    if (value == NULL) {
+      LCH_LOG_ERROR("Failed to compose subsidiary fields for record %zu.", i);
+      free(key);
+      LCH_ListDestroy(subsidiary_indices);
+      LCH_ListDestroy(primary_indices);
+      LCH_DictDestroy(dict);
+      return NULL;
+    }
+
+    if (!LCH_DictSet(dict, key, value, free)) {
+      free(value);
+      free(key);
+      LCH_ListDestroy(subsidiary_indices);
+      LCH_ListDestroy(primary_indices);
+      LCH_DictDestroy(dict);
+      return NULL;
+    }
+    free(key);
+  }
+
+  LCH_ListDestroy(subsidiary_indices);
+  LCH_ListDestroy(primary_indices);
+
+  return dict;
 }

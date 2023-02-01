@@ -69,7 +69,6 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(self->capacity >= self->length);
-  assert(value != NULL);
 
   if (!ListCapacity(self)) {
     return false;

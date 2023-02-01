@@ -4,6 +4,7 @@
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
 #include "../lib/utils.c"
+#include "../lib/dict.h"
 
 START_TEST(test_LCH_StartsWith) {
   ck_assert(LCH_StringStartsWith("Hello World", "Hello"));
@@ -102,6 +103,34 @@ START_TEST(test_GetIndexOfFields) {
 }
 END_TEST
 
+START_TEST(test_LCH_TableToDict) {
+  const char *const csv =
+    "firstname, lastname,  born\r\n"
+    "Paul,      McCartney, 1942\r\n"
+    "Ringo,     Starr,     1940\r\n"
+    "John,      Lennon,    1940\r\n"
+    "George,    Harrison,  1943\r\n";
+  LCH_List *table = LCH_CSVParseTable(csv);
+  ck_assert_int_eq(LCH_ListLength(table), 5);
+  LCH_List *primary = LCH_CSVParseRecord("lastname,firstname");
+  ck_assert_int_eq(LCH_ListLength(primary), 2);
+  LCH_List *subsidiary = LCH_CSVParseRecord("born");
+  ck_assert_int_eq(LCH_ListLength(subsidiary), 1);
+  LCH_Dict *dict = LCH_TableToDict(table, primary, subsidiary);
+
+  LCH_ListDestroy(table);
+  LCH_ListDestroy(primary);
+  LCH_ListDestroy(subsidiary);
+
+  ck_assert_ptr_nonnull(dict);
+  ck_assert_str_eq(LCH_DictGet(dict, "McCartney,Paul"), "1942");
+  ck_assert_str_eq(LCH_DictGet(dict, "Starr,Ringo"), "1940");
+  ck_assert_str_eq(LCH_DictGet(dict, "Lennon,John"), "1940");
+  ck_assert_str_eq(LCH_DictGet(dict, "Harrison,George"), "1943");
+
+  LCH_DictDestroy(dict);
+}
+END_TEST
 
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
@@ -138,6 +167,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("GetIndexOfFields");
     tcase_add_test(tc, test_GetIndexOfFields);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_TableToDict");
+    tcase_add_test(tc, test_LCH_TableToDict);
     suite_add_tcase(s, tc);
   }
   return s;

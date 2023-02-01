@@ -2,6 +2,7 @@
 #define _LEECH_UTILS
 
 #include "leech.h"
+#include "dict.h"
 
 /**
  * Split a string with delimitor.
@@ -46,5 +47,7 @@ char *LCH_ReadTextFile(const char *path, size_t *length);
  * @return false in case of error.
  */
 bool LCH_WriteTextFile(const char *path, const char *str);
+
+LCH_Dict *LCH_TableToDict(const LCH_List *table, const LCH_List *primary, const LCH_List *subsidiary);
 
 #endif  // _LEECH_UTILS
