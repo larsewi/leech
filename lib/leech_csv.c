@@ -31,7 +31,7 @@ bool LCH_TableInsertCallbackCSV(const void *const locator,
     return false;
   }
 
-  (void) inserts;
+  (void)inserts;
 
   return true;
 }

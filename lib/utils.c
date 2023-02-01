@@ -6,10 +6,10 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "definitions.h"
-#include "leech.h"
 #include "buffer.h"
 #include "csv.h"
+#include "definitions.h"
+#include "leech.h"
 #include "list.h"
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
@@ -291,7 +291,8 @@ bool LCH_WriteTextFile(const char *const path, const char *const str) {
   return true;
 }
 
-static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *const fields) {
+static LCH_List *GetIndexOfFields(const LCH_List *const header,
+                                  const LCH_List *const fields) {
   LCH_List *indices = LCH_ListCreate();
   if (indices == NULL) {
     return NULL;
@@ -300,7 +301,9 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
   const size_t header_len = LCH_ListLength(header);
   const size_t fields_len = LCH_ListLength(fields);
   if (fields_len > header_len) {
-    LCH_LOG_ERROR("Number of fields cannot exceed table header length (%zu > %zu).", fields_len, header_len);
+    LCH_LOG_ERROR(
+        "Number of fields cannot exceed table header length (%zu > %zu).",
+        fields_len, header_len);
     LCH_ListDestroy(indices);
     return NULL;
   }
@@ -308,11 +311,13 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
   for (size_t i = 0; i < fields_len; i++) {
     const char *const field = LCH_ListGet(fields, i);
 
-    size_t index = LCH_ListIndex(header, field, (int (*)(const void *, const void *))strcmp);
+    size_t index = LCH_ListIndex(header, field,
+                                 (int (*)(const void *, const void *))strcmp);
 
     if (index >= header_len) {
       LCH_Buffer *const buffer = LCH_CSVComposeRecord(header);
-      LCH_LOG_ERROR("Field '%s' not found in table header '%s'.", field, LCH_BufferGet(buffer, 0));
+      LCH_LOG_ERROR("Field '%s' not found in table header '%s'.", field,
+                    LCH_BufferGet(buffer, 0));
       LCH_BufferDestroy(buffer);
       LCH_ListDestroy(indices);
       return NULL;
@@ -327,7 +332,8 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header, const LCH_List *
   return indices;
 }
 
-static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record, const LCH_List *const indices) {
+static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
+                                        const LCH_List *const indices) {
   LCH_List *const fields = LCH_ListCreate();
   if (fields == NULL) {
     return NULL;
@@ -353,12 +359,14 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record, const LCH_
   return fields;
 }
 
-static char *ComposeFieldsAtIndices(const LCH_List *const record, const LCH_List *const indices) {
+static char *ComposeFieldsAtIndices(const LCH_List *const record,
+                                    const LCH_List *const indices) {
   LCH_List *const extracted = ExtractFieldsAtIndices(record, indices);
   if (extracted == NULL) {
     LCH_Buffer *const ind = LCH_CSVComposeRecord(indices);
     LCH_Buffer *const rec = LCH_CSVComposeRecord(record);
-    LCH_LOG_ERROR("Failed to extract fields at indices '%s' from record '%s'.", LCH_BufferGet(ind, 0), LCH_BufferGet(rec, 0));
+    LCH_LOG_ERROR("Failed to extract fields at indices '%s' from record '%s'.",
+                  LCH_BufferGet(ind, 0), LCH_BufferGet(rec, 0));
     LCH_BufferDestroy(ind);
     LCH_BufferDestroy(rec);
     return NULL;
@@ -375,13 +383,32 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record, const LCH_List
   return composed;
 }
 
-LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const primary, const LCH_List *const subsidiary) {
+LCH_Dict *LCH_TableToDict(const LCH_List *const table,
+                          const char *const primary,
+                          const char *const subsidiary) {
   assert(primary != NULL);
   assert(subsidiary != NULL);
   assert(table != NULL);
 
+  LCH_List *primary_fields = LCH_CSVParseRecord(primary);
+  if (primary_fields == NULL) {
+    LCH_LOG_ERROR("Failed to parse primary fields '%s'.", primary);
+    return NULL;
+  }
+  LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
+
+  LCH_List *subsidiary_fields = LCH_CSVParseRecord(subsidiary);
+  if (subsidiary_fields == NULL) {
+    LCH_LOG_ERROR("Failed to parse primary fields '%s'.", subsidiary);
+    LCH_ListDestroy(primary_fields);
+    return NULL;
+  }
+  LCH_ListSort(subsidiary_fields, (int (*)(const void *, const void *))strcmp);
+
   LCH_Dict *dict = LCH_DictCreate();
   if (dict == NULL) {
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
     return NULL;
   }
 
@@ -389,6 +416,8 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
   if (num_records < 1) {
     LCH_LOG_ERROR("Table is missing required header record.");
     LCH_DictDestroy(dict);
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
     return NULL;
   }
 
@@ -396,27 +425,38 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
   assert(header != NULL);
 
   const size_t header_len = LCH_ListLength(header);
-  const size_t primary_len = LCH_ListLength(primary);
-  const size_t subsidiary_len = LCH_ListLength(subsidiary);
+  const size_t primary_len = LCH_ListLength(primary_fields);
+  const size_t subsidiary_len = LCH_ListLength(subsidiary_fields);
   if (header_len != primary_len + subsidiary_len) {
-    LCH_LOG_ERROR("Number of primary- and subsidiary fields does not align with number of header fields (%zu + %zu != %zu).", primary_len, subsidiary_len, header_len);
+    LCH_LOG_ERROR(
+        "Number of primary- and subsidiary fields does not align with number "
+        "of header fields (%zu + %zu != %zu).",
+        primary_len, subsidiary_len, header_len);
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
     LCH_DictDestroy(dict);
     return NULL;
   }
 
   if (num_records == 1) {
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
     return dict;
   }
 
-  LCH_List *primary_indices = GetIndexOfFields(header, primary);
+  LCH_List *primary_indices = GetIndexOfFields(header, primary_fields);
   if (primary_indices == NULL) {
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
     LCH_DictDestroy(dict);
     return NULL;
   }
 
-  LCH_List *subsidiary_indices = GetIndexOfFields(header, subsidiary);
+  LCH_List *subsidiary_indices = GetIndexOfFields(header, subsidiary_fields);
   if (subsidiary_indices == NULL) {
     LCH_ListDestroy(primary_indices);
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
     LCH_DictDestroy(dict);
     return NULL;
   }
@@ -427,9 +467,14 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
 
     const size_t record_len = LCH_ListLength(record);
     if (record_len != header_len) {
-      LCH_LOG_ERROR("Number of record fields does not align with number of header fields for record %zu (%zu != %zu).", i, record_len, header_len);
+      LCH_LOG_ERROR(
+          "Number of record fields does not align with number of header fields "
+          "for record %zu (%zu != %zu).",
+          i, record_len, header_len);
       LCH_ListDestroy(subsidiary_indices);
       LCH_ListDestroy(primary_indices);
+      LCH_ListDestroy(subsidiary_fields);
+      LCH_ListDestroy(primary_fields);
       LCH_DictDestroy(dict);
       return NULL;
     }
@@ -439,6 +484,8 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
       LCH_LOG_ERROR("Failed to compose primary fields for record %zu.", i);
       LCH_ListDestroy(subsidiary_indices);
       LCH_ListDestroy(primary_indices);
+      LCH_ListDestroy(subsidiary_fields);
+      LCH_ListDestroy(primary_fields);
       LCH_DictDestroy(dict);
       return NULL;
     }
@@ -449,6 +496,8 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
       free(key);
       LCH_ListDestroy(subsidiary_indices);
       LCH_ListDestroy(primary_indices);
+      LCH_ListDestroy(subsidiary_fields);
+      LCH_ListDestroy(primary_fields);
       LCH_DictDestroy(dict);
       return NULL;
     }
@@ -458,6 +507,8 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
       free(key);
       LCH_ListDestroy(subsidiary_indices);
       LCH_ListDestroy(primary_indices);
+      LCH_ListDestroy(subsidiary_fields);
+      LCH_ListDestroy(primary_fields);
       LCH_DictDestroy(dict);
       return NULL;
     }
@@ -466,6 +517,8 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table, const LCH_List *const pri
 
   LCH_ListDestroy(subsidiary_indices);
   LCH_ListDestroy(primary_indices);
+  LCH_ListDestroy(subsidiary_fields);
+  LCH_ListDestroy(primary_fields);
 
   return dict;
 }

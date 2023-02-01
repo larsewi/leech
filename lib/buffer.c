@@ -173,7 +173,9 @@ bool LCH_BufferBinDump(LCH_Buffer *const bin, const LCH_Buffer *const hex) {
   assert(hex != NULL);
 
   if (hex->length % 2 != 0) {
-    LCH_LOG_WARNING("Performing binary dump with an odd number of hexadecimal characters: Last byte will be stripped.");
+    LCH_LOG_WARNING(
+        "Performing binary dump with an odd number of hexadecimal characters: "
+        "Last byte will be stripped.");
   }
 
   size_t num_bytes = hex->length / 2;
@@ -182,7 +184,8 @@ bool LCH_BufferBinDump(LCH_Buffer *const bin, const LCH_Buffer *const hex) {
   }
 
   for (size_t i = 0; i < num_bytes; i++) {
-    if (sscanf(LCH_BufferGet(hex, i * 2), "%2hhx", bin->buffer + (bin->length + i)) != 1) {
+    if (sscanf(LCH_BufferGet(hex, i * 2), "%2hhx",
+               bin->buffer + (bin->length + i)) != 1) {
       bin->buffer[bin->length] = '\0';
       return false;
     }
@@ -201,9 +204,7 @@ void LCH_BufferChop(LCH_Buffer *const self, size_t offset) {
   self->length = offset;
 }
 
-void LCH_BufferDestroyShallow(LCH_Buffer *const self) {
-  free(self);
-}
+void LCH_BufferDestroyShallow(LCH_Buffer *const self) { free(self); }
 
 char *LCH_BufferToString(LCH_Buffer *const self) {
   char *str = self->buffer;

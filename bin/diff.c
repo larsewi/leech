@@ -1,10 +1,10 @@
 #include "diff.h"
 
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 #include "common.h"
 
@@ -109,7 +109,8 @@ int Diff(int argc, char *argv[]) {
 
   FILE *file = fopen(patch_file, "wb");
   if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for binary writing: %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to open file '%s' for binary writing: %s",
+                  strerror(errno));
     free(diff);
     return EXIT_FAILURE;
   }

@@ -461,7 +461,8 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
     // delete -> insert => modify
     if (LCH_DictHasKey(child->insertions, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'delete -> insert => modify' for key '%s' in table '%s'.",
+          "Compressing 'delete -> insert => modify' for key '%s' in table "
+          "'%s'.",
           key, child->table_id);
       char *value = LCH_DictRemove(child->insertions, key);
       assert(value != NULL);
@@ -483,7 +484,8 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
     // delete -> modify => error
     if (LCH_DictHasKey(child->modifications, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta deletion- and modification operations for key '%s' in "
+          "Found two subsequent delta deletion- and modification operations "
+          "for key '%s' in "
           "table '%s'.",
           key, child->table_id);
       return false;
@@ -516,7 +518,8 @@ static bool CompressModificationOperations(const LCH_List *const keys,
     // modify -> insert => err
     if (LCH_DictHasKey(child->insertions, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta modification- and insertion operations for key '%s' in "
+          "Found two subsequent delta modification- and insertion operations "
+          "for key '%s' in "
           "table '%s'.",
           key, child->table_id);
       return false;

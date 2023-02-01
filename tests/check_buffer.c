@@ -94,7 +94,7 @@ START_TEST(test_LCH_BufferAllocate2) {
   LCH_BufferSet(buffer, offset, &length, sizeof(uint32_t));
 
   /****************************************************/
-  
+
   offset = 0;
   const uint32_t *len_ptr = LCH_BufferGet(buffer, offset);
   length = ntohl(*len_ptr);

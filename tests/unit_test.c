@@ -70,7 +70,9 @@ static void SetupDebugMessenger(void) {
       .severity =
           LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
           LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT | LCH_DEBUG_MESSAGE_TYPE_INFO_BIT |
-          LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT/* | LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT*/,
+          LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT /* |
+                                                LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT*/
+      ,
       .messageCallback = &DebugMessengerCallbackDefault,
   };
   LCH_DebugMessengerInit(&initInfo);

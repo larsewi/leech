@@ -350,7 +350,9 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
     const size_t num_insertions = LCH_DeltaGetNumInsertions(parent);
     const size_t num_deletions = LCH_DeltaGetNumDeletions(parent);
     const size_t num_modifications = LCH_DeltaGetNumModifications(parent);
-    LCH_LOG_VERBOSE("Compressed %zu insertions, %zu deletions and %zu modifications.", num_insertions, num_deletions, num_modifications);
+    LCH_LOG_VERBOSE(
+        "Compressed %zu insertions, %zu deletions and %zu modifications.",
+        num_insertions, num_deletions, num_modifications);
 
     LCH_DeltaDestroy(parent);
   }
@@ -358,7 +360,7 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
 }
 
 static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
-                            const char *const block_id) {
+                                 const char *const block_id) {
   assert(instance != NULL);
   assert(instance->work_dir != NULL);
   assert(block_id != NULL);
@@ -412,8 +414,7 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
 }
 
 char *LCH_InstanceDiff(const LCH_Instance *const self,
-                             const char *const block_id,
-                             size_t *const buf_len) {
+                       const char *const block_id, size_t *const buf_len) {
   assert(self != NULL);
   assert(block_id != NULL);
 

@@ -2,9 +2,9 @@
 #include <limits.h>
 
 #include "../lib/definitions.h"
+#include "../lib/dict.h"
 #include "../lib/leech.h"
 #include "../lib/utils.c"
-#include "../lib/dict.h"
 
 START_TEST(test_LCH_StartsWith) {
   ck_assert(LCH_StringStartsWith("Hello World", "Hello"));
@@ -95,8 +95,8 @@ START_TEST(test_GetIndexOfFields) {
   LCH_List *const indices = GetIndexOfFields(header, fields);
   ck_assert_ptr_nonnull(indices);
   ck_assert_int_eq(LCH_ListLength(indices), 2);
-  ck_assert_int_eq((size_t) LCH_ListGet(indices, 0), 2);
-  ck_assert_int_eq((size_t) LCH_ListGet(indices, 1), 4);
+  ck_assert_int_eq((size_t)LCH_ListGet(indices, 0), 2);
+  ck_assert_int_eq((size_t)LCH_ListGet(indices, 1), 4);
   LCH_ListDestroy(header);
   LCH_ListDestroy(fields);
   LCH_ListDestroy(indices);
@@ -105,28 +105,21 @@ END_TEST
 
 START_TEST(test_LCH_TableToDict) {
   const char *const csv =
-    "firstname, lastname,  born\r\n"
-    "Paul,      McCartney, 1942\r\n"
-    "Ringo,     Starr,     1940\r\n"
-    "John,      Lennon,    1940\r\n"
-    "George,    Harrison,  1943\r\n";
+      "firstname, lastname,  born\r\n"
+      "Paul,      McCartney, 1942\r\n"
+      "Ringo,     Starr,     1940\r\n"
+      "John,      Lennon,    1940\r\n"
+      "George,    Harrison,  1943\r\n";
   LCH_List *table = LCH_CSVParseTable(csv);
-  ck_assert_int_eq(LCH_ListLength(table), 5);
-  LCH_List *primary = LCH_CSVParseRecord("lastname,firstname");
-  ck_assert_int_eq(LCH_ListLength(primary), 2);
-  LCH_List *subsidiary = LCH_CSVParseRecord("born");
-  ck_assert_int_eq(LCH_ListLength(subsidiary), 1);
-  LCH_Dict *dict = LCH_TableToDict(table, primary, subsidiary);
+  LCH_Dict *dict = LCH_TableToDict(table, "lastname,firstname", "born");
 
   LCH_ListDestroy(table);
-  LCH_ListDestroy(primary);
-  LCH_ListDestroy(subsidiary);
 
   ck_assert_ptr_nonnull(dict);
-  ck_assert_str_eq(LCH_DictGet(dict, "McCartney,Paul"), "1942");
-  ck_assert_str_eq(LCH_DictGet(dict, "Starr,Ringo"), "1940");
-  ck_assert_str_eq(LCH_DictGet(dict, "Lennon,John"), "1940");
-  ck_assert_str_eq(LCH_DictGet(dict, "Harrison,George"), "1943");
+  ck_assert_str_eq(LCH_DictGet(dict, "Paul,McCartney"), "1942");
+  ck_assert_str_eq(LCH_DictGet(dict, "Ringo,Starr"), "1940");
+  ck_assert_str_eq(LCH_DictGet(dict, "John,Lennon"), "1940");
+  ck_assert_str_eq(LCH_DictGet(dict, "George,Harrison"), "1943");
 
   LCH_DictDestroy(dict);
 }
