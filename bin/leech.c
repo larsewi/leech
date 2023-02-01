@@ -41,8 +41,8 @@ static const struct option OPTIONS[] = {
 };
 
 static const char *const DESCRIPTIONS[] = {
-    "enable debug messages", "enable verbose messages", "enable info messages",
-    "print version string",  "print help message",
+    "enable info messages", "enable verbose messages", "enable debug messages",
+    "print version string", "print help message",
 };
 
 static const struct command COMMANDS[] = {

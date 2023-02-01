@@ -59,6 +59,8 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   return list;
 }
 
+/******************************************************************************/
+
 static bool SplitStringSubstringMaybeAddElement(LCH_List *const lst,
                                                 const char *const str,
                                                 const size_t from,
@@ -118,6 +120,8 @@ LCH_List *LCH_SplitStringSubstring(const char *const str,
   return lst;
 }
 
+/******************************************************************************/
+
 bool LCH_StringStartsWith(const char *const self, const char *const substr) {
   assert(self != NULL);
   assert(substr != NULL);
@@ -130,6 +134,8 @@ bool LCH_StringStartsWith(const char *const self, const char *const substr) {
   }
   return true;
 }
+
+/******************************************************************************/
 
 char *LCH_StringStrip(char *str, const char *charset) {
   assert(str != NULL);
@@ -150,6 +156,8 @@ char *LCH_StringStrip(char *str, const char *charset) {
   str[end - start] = '\0';
   return str;
 }
+
+/******************************************************************************/
 
 bool LCH_FileSize(FILE *file, size_t *size) {
   if (fseek(file, 0, SEEK_END) != 0) {
@@ -173,20 +181,28 @@ bool LCH_FileSize(FILE *file, size_t *size) {
   return true;
 }
 
+/******************************************************************************/
+
 bool LCH_FileExists(const char *const path) {
   struct stat sb = {0};
   return stat(path, &sb) == 0;
 }
+
+/******************************************************************************/
 
 bool LCH_IsRegularFile(const char *const path) {
   struct stat sb = {0};
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
 }
 
+/******************************************************************************/
+
 bool LCH_IsDirectory(const char *const path) {
   struct stat sb = {0};
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
 }
+
+/******************************************************************************/
 
 bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
                   ...) {
@@ -226,6 +242,8 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
   }
   return true;
 }
+
+/******************************************************************************/
 
 char *LCH_ReadTextFile(const char *const path, size_t *const length) {
   FILE *file = fopen(path, "r");
@@ -273,6 +291,8 @@ char *LCH_ReadTextFile(const char *const path, size_t *const length) {
   return buffer;
 }
 
+/******************************************************************************/
+
 bool LCH_WriteTextFile(const char *const path, const char *const str) {
   FILE *file = fopen(path, "w");
   if (file == NULL) {
@@ -290,6 +310,8 @@ bool LCH_WriteTextFile(const char *const path, const char *const str) {
   fclose(file);
   return true;
 }
+
+/******************************************************************************/
 
 static LCH_List *GetIndexOfFields(const LCH_List *const header,
                                   const LCH_List *const fields) {
@@ -521,4 +543,96 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   LCH_ListDestroy(primary_fields);
 
   return dict;
+}
+
+/******************************************************************************/
+
+static LCH_List *ParseConcatFields(const char *const primary,
+                                   const char *const subsidiary,
+                                   const bool sort) {
+  assert(primary != NULL);
+  assert(subsidiary != NULL);
+
+  LCH_List *primary_fields = LCH_CSVParseRecord(primary);
+  if (primary_fields == NULL) {
+    LCH_LOG_ERROR("Failed to parse primary fields '%s'.", primary);
+    return NULL;
+  }
+
+  if (sort) {
+    LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
+  }
+
+  LCH_List *subsidiary_fields = LCH_CSVParseRecord(subsidiary);
+  if (subsidiary_fields == NULL) {
+    LCH_LOG_ERROR("Failed to parse subsidiary fields '%s'.", subsidiary);
+    LCH_ListDestroy(primary_fields);
+    return NULL;
+  }
+
+  if (sort) {
+    LCH_ListSort(subsidiary_fields,
+                 (int (*)(const void *, const void *))strcmp);
+  }
+
+  LCH_List *record = LCH_ListMoveElements(primary_fields, subsidiary_fields);
+  if (record == NULL) {
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
+    return NULL;
+  }
+
+  return record;
+}
+
+LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
+                          const char *const subsidiary) {
+  assert(dict != NULL);
+
+  LCH_List *const header = ParseConcatFields(primary, subsidiary, true);
+  if (header == NULL) {
+    return NULL;
+  }
+
+  LCH_List *const table = LCH_ListCreate();
+  if (table == NULL) {
+    LCH_ListDestroy(header);
+    return NULL;
+  }
+
+  if (!LCH_ListAppend(table, header, (void (*)(void *))LCH_ListDestroy)) {
+    LCH_ListDestroy(header);
+    LCH_ListDestroy(table);
+    return NULL;
+  }
+
+  LCH_List *const keys = LCH_DictGetKeys(dict);
+  if (keys == NULL) {
+    LCH_ListDestroy(table);
+    return NULL;
+  }
+
+  const size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = LCH_ListGet(keys, i);
+    char *const value = LCH_DictGet(dict, key);
+
+    LCH_List *const record = ParseConcatFields(key, value, false);
+    if (record == NULL) {
+      LCH_ListDestroy(keys);
+      LCH_ListDestroy(table);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy)) {
+      LCH_ListDestroy(record);
+      LCH_ListDestroy(keys);
+      LCH_ListDestroy(table);
+      return NULL;
+    }
+  }
+
+  LCH_ListDestroy(keys);
+
+  return table;
 }

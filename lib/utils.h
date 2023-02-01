@@ -51,4 +51,7 @@ bool LCH_WriteTextFile(const char *path, const char *str);
 LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
                           const char *subsidiary);
 
+LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
+                          const char *subsidiary);
+
 #endif  // _LEECH_UTILS

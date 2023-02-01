@@ -125,6 +125,64 @@ START_TEST(test_LCH_TableToDict) {
 }
 END_TEST
 
+START_TEST(test_LCH_DictToTable) {
+  const char *const csv =
+      "firstname, lastname,  born\r\n"
+      "Paul,      McCartney, 1942\r\n"
+      "Ringo,     Starr,     1940\r\n"
+      "John,      Lennon,    1940\r\n"
+      "George,    Harrison,  1943\r\n";
+  LCH_List *table = LCH_CSVParseTable(csv);
+  LCH_Dict *dict = LCH_TableToDict(table, "firstname", "born,lastname");
+  LCH_ListDestroy(table);
+
+  table = LCH_DictToTable(dict, "firstname", "lastname,born");
+  ck_assert_ptr_nonnull(table);
+  LCH_DictDestroy(dict);
+
+  size_t num_records = LCH_ListLength(table);
+  ck_assert_int_eq(num_records, 5);
+
+  for (size_t i = 0; i < num_records; i++) {
+    LCH_List *record = LCH_ListGet(table, i);
+    ck_assert_ptr_nonnull(record);
+    ck_assert_int_eq(LCH_ListLength(record), 3);
+
+    char *first = LCH_ListGet(record, 0);
+    ck_assert_ptr_nonnull(first);
+
+    char *second = LCH_ListGet(record, 1);
+    ck_assert_ptr_nonnull(second);
+
+    char *third = LCH_ListGet(record, 2);
+    ck_assert_ptr_nonnull(third);
+
+    if (i == 0) {
+      ck_assert_str_eq(first, "firstname");
+      ck_assert_str_eq(second, "born");
+      ck_assert_str_eq(third, "lastname");
+    }
+    else if (strcmp(first, "Paul") == 0) {
+      ck_assert_str_eq(second, "1942");
+      ck_assert_str_eq(third, "McCartney");
+    } else if (strcmp(first, "Ringo") == 0) {
+      ck_assert_str_eq(second, "1940");
+      ck_assert_str_eq(third, "Starr");
+    } else if (strcmp(first, "John") == 0) {
+      ck_assert_str_eq(second, "1940");
+      ck_assert_str_eq(third, "Lennon");
+    } else if (strcmp(first, "George") == 0) {
+      ck_assert_str_eq(second, "1943");
+      ck_assert_str_eq(third, "Harrison");
+    } else {
+      assert(false);
+    }
+  }
+
+  LCH_ListDestroy(table);
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -165,6 +223,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_TableToDict");
     tcase_add_test(tc, test_LCH_TableToDict);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_DictToTable");
+    tcase_add_test(tc, test_LCH_DictToTable);
     suite_add_tcase(s, tc);
   }
   return s;

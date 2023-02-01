@@ -18,6 +18,32 @@ struct LCH_List {
   ListElement **buffer;
 };
 
+static bool EnsureCapacity(LCH_List *const self, const size_t n_items) {
+  assert(self != NULL);
+
+  size_t new_capacity = self->capacity;
+  while (new_capacity < self->length + n_items) {
+    new_capacity *= 2;
+  }
+
+  if (new_capacity == self->capacity) {
+    return true;
+  }
+
+  ListElement **new_buffer =
+      realloc(self->buffer, sizeof(ListElement *) * new_capacity);
+  if (new_buffer == NULL) {
+    LCH_LOG_ERROR("Failed to expand list buffer from %zu to %zu elements: %s",
+                  self->capacity, new_capacity, strerror(errno));
+    return false;
+  }
+
+  self->capacity = new_capacity;
+  self->buffer = new_buffer;
+
+  return true;
+}
+
 LCH_List *LCH_ListCreate() {
   LCH_List *self = (LCH_List *)malloc(sizeof(LCH_List));
   if (self == NULL) {
@@ -44,33 +70,13 @@ size_t LCH_ListLength(const LCH_List *const self) {
   return self->length;
 }
 
-static bool ListCapacity(LCH_List *const self) {
-  if (self->length < self->capacity) {
-    return true;
-  }
-
-  size_t new_capacity = self->capacity * 2;
-  ListElement **new_buffer = (ListElement **)realloc(
-      self->buffer, self->capacity * 2 * sizeof(ListElement *));
-  if (new_buffer == NULL) {
-    LCH_LOG_ERROR("Failed to reallocate memory for list buffer: %s",
-                  strerror(errno));
-    return false;
-  }
-  memset(new_buffer + self->capacity, 0, self->capacity);
-
-  self->capacity = new_capacity;
-  self->buffer = new_buffer;
-  return true;
-}
-
 bool LCH_ListAppend(LCH_List *const self, void *const value,
                     void (*destroy)(void *)) {
   assert(self != NULL);
   assert(self->buffer != NULL);
   assert(self->capacity >= self->length);
 
-  if (!ListCapacity(self)) {
+  if (!EnsureCapacity(self, 1)) {
     return false;
   }
 
@@ -195,4 +201,23 @@ void LCH_ListDestroyShallow(LCH_List *self) {
 
   free(self->buffer);
   free(self);
+}
+
+LCH_List *LCH_ListMoveElements(LCH_List *const destination,
+                               LCH_List *const source) {
+  assert(destination != NULL);
+  assert(source != NULL);
+
+  if (!EnsureCapacity(destination, source->length)) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < source->length; i++) {
+    destination->buffer[destination->length++] = source->buffer[i];
+  }
+
+  free(source->buffer);
+  free(source);
+
+  return destination;
 }
