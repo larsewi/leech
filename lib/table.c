@@ -16,9 +16,12 @@ typedef struct LCH_Table {
   const char *primary_fields;
   const char *subsidiary_fields;
   const void *read_locator;
-  LCH_List *(*read_callback)(const void *);
   const void *write_locator;
+  LCH_List *(*read_callback)(const void *);
   bool (*write_callback)(const void *, const LCH_List *);
+  bool (*insert_callback)(const void *, const char *, const char *, const LCH_Dict *);
+  bool (*delete_callback)(const void *, const char *, const char *, const LCH_Dict *);
+  bool (*update_callback)(const void *, const char *, const char *, const LCH_Dict *);
 } LCH_Table;
 
 const char *LCH_TableGetIdentifier(const LCH_Table *const self) {
@@ -35,6 +38,9 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo->write_locator != NULL);
   assert(createInfo->read_callback != NULL);
   assert(createInfo->write_callback != NULL);
+  assert(createInfo->insert_callback != NULL);
+  assert(createInfo->delete_callback != NULL);
+  assert(createInfo->update_callback != NULL);
 
   LCH_Table *table = (LCH_Table *)calloc(1, sizeof(LCH_Table));
   if (table == NULL) {
@@ -46,9 +52,12 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   table->primary_fields = createInfo->primary_fields;
   table->subsidiary_fields = createInfo->subsidiary_fields;
   table->read_locator = createInfo->read_locator;
-  table->read_callback = createInfo->read_callback;
   table->write_locator = createInfo->write_locator;
+  table->read_callback = createInfo->read_callback;
   table->write_callback = createInfo->write_callback;
+  table->insert_callback = createInfo->insert_callback;
+  table->delete_callback = createInfo->delete_callback;
+  table->update_callback = createInfo->update_callback;
 
   return table;
 }

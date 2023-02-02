@@ -59,6 +59,9 @@ LCH_Instance *SetupInstance(void) {
         .write_locator = "beatles.dest.csv",
         .read_callback = LCH_TableReadCallbackCSV,
         .write_callback = LCH_TableWriteCallbackCSV,
+        .insert_callback = LCH_TableInsertCallbackCSV,
+        .delete_callback = LCH_TableDeleteCallbackCSV,
+        .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
     LCH_Table *table = LCH_TableCreate(&createInfo);
