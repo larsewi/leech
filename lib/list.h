@@ -3,6 +3,8 @@
 
 #include "leech.h"
 
+LCH_List *LCH_ListCreateWithCapacity(size_t capacity);
+
 /**
  * Assing value to list item at index.
  * @param[in] self pointer to list.
@@ -36,5 +38,7 @@ void LCH_ListSort(LCH_List *const self,
 void LCH_ListDestroyShallow(LCH_List *self);
 
 LCH_List *LCH_ListMoveElements(LCH_List *destination, LCH_List *source);
+
+void LCH_ListSwap(LCH_List *self, size_t i, size_t j);
 
 #endif  // _LEECH_LIST_H

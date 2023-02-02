@@ -59,7 +59,8 @@ LCH_Dict *LCH_TableLoadNewState(const LCH_Table *const table) {
     return NULL;
   }
 
-  LCH_Dict *const data = LCH_TableToDict(records, table->primary_fields, table->subsidiary_fields);
+  LCH_Dict *const data =
+      LCH_TableToDict(records, table->primary_fields, table->subsidiary_fields);
   if (data == NULL) {
     LCH_ListDestroy(records);
     return NULL;
@@ -149,6 +150,4 @@ LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
   return snapshot;
 }
 
-void LCH_TableDestroy(LCH_Table *table) {
-  free(table);
-}
+void LCH_TableDestroy(LCH_Table *table) { free(table); }

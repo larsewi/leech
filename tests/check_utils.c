@@ -161,8 +161,7 @@ START_TEST(test_LCH_DictToTable) {
       ck_assert_str_eq(first, "firstname");
       ck_assert_str_eq(second, "born");
       ck_assert_str_eq(third, "lastname");
-    }
-    else if (strcmp(first, "Paul") == 0) {
+    } else if (strcmp(first, "Paul") == 0) {
       ck_assert_str_eq(second, "1942");
       ck_assert_str_eq(third, "McCartney");
     } else if (strcmp(first, "Ringo") == 0) {
