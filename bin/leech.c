@@ -11,8 +11,9 @@
 
 #include "commit.h"
 #include "common.h"
-#include "diff.h"
+#include "delta.h"
 #include "patch.h"
+#include "rebase.h"
 
 #define WORK_DIR ".leech/"
 
@@ -46,8 +47,9 @@ static const char *const DESCRIPTIONS[] = {
 };
 
 static const struct command COMMANDS[] = {
-    {"commit", "commit changes in tables", Commit},
-    {"diff", "calculate changes in tables", Diff},
+    {"commit", "compute and commit changes in tables", Commit},
+    {"delta", "compress changes in tables", Delta},
+    {"rebase", "rebase to current table state", Rebase},
     {"patch", "apply changes to tables", Patch},
     {NULL, NULL, NULL},
 };
@@ -118,7 +120,7 @@ int main(int argc, char *argv[]) {
   SetupDebugMessenger(severity);
 
   if (optind >= argc) {
-    LCH_LOG_WARNING("NOOP: Missing command ...");
+    LCH_LOG_WARNING("Missing command ...");
     return EXIT_SUCCESS;
   }
 

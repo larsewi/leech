@@ -1,4 +1,4 @@
-#include "diff.h"
+#include "delta.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -9,7 +9,8 @@
 #include "common.h"
 
 enum OPTION_VALUE {
-  OPTION_FILE = 1,
+  OPTION_BLOCK = 1,
+  OPTION_FILE,
   OPTION_HELP,
 };
 
@@ -19,42 +20,20 @@ struct arguments {
 };
 
 static const struct option OPTIONS[] = {
+    {"block", required_argument, NULL, OPTION_BLOCK},
     {"file", required_argument, NULL, OPTION_FILE},
     {"help", no_argument, NULL, OPTION_HELP},
     {NULL, 0, NULL, 0},
 };
 
 static const char *const DESCRIPTIONS[] = {
+    "last seen block",
     "output patch file",
     "print help message",
 };
 
-static const struct arguments ARGUMENTS[] = {
-    {"block", "identifier (block hash)"},
-    {NULL, NULL},
-};
-
-static void PrintArguments(void) {
-  size_t longest = 0;
-  for (int i = 0; ARGUMENTS[i].arg != NULL; i++) {
-    const size_t length = strlen(ARGUMENTS[i].arg);
-    longest = (length > longest) ? length : longest;
-  }
-
-  char format[512];
-  int ret = snprintf(format, sizeof(format), "  %%-%zus  %%s\n", longest);
-  assert(ret >= 0 && sizeof(format) > (size_t)ret);
-
-  printf("arguments:\n");
-  for (int i = 0; ARGUMENTS[i].arg != NULL; i++) {
-    printf(format, ARGUMENTS[i].arg, ARGUMENTS[i].desc);
-  }
-}
-
 static void PrintHelp(void) {
   PrintVersion();
-  printf("\n");
-  PrintArguments();
   printf("\n");
   PrintOptions(OPTIONS, DESCRIPTIONS);
   printf("\n");
@@ -62,13 +41,16 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Diff(int argc, char *argv[]) {
+int Delta(int argc, char *argv[]) {
   const char *patch_file = NULL;
-  (void)patch_file;
+  const char *block_id = "0000000000000000000000000000000000000000";
 
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
+      case OPTION_BLOCK:
+        block_id = optarg;
+        break;
       case OPTION_FILE:
         patch_file = optarg;
         break;
@@ -79,12 +61,6 @@ int Diff(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
   }
-
-  if (optind >= argc) {
-    LCH_LOG_ERROR("Missing required argument ...");
-    return EXIT_FAILURE;
-  }
-  const char *const block_id = argv[optind];
 
   LCH_Instance *instance = SetupInstance();
   if (instance == NULL) {

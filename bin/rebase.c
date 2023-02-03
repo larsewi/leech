@@ -1,4 +1,4 @@
-#include "patch.h"
+#include "rebase.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,18 +6,15 @@
 #include "common.h"
 
 enum OPTION_VALUE {
-  OPTION_FILE = 1,
-  OPTION_HELP,
+  OPTION_HELP = 1,
 };
 
 static const struct option OPTIONS[] = {
-    {"file", no_argument, NULL, OPTION_FILE},
     {"help", no_argument, NULL, OPTION_HELP},
     {NULL, 0, NULL, 0},
 };
 
 static const char *const DESCRIPTIONS[] = {
-    "input patch file",
     "print help message",
 };
 
@@ -30,7 +27,7 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Patch(int argc, char *argv[]) {
+int Rebase(int argc, char *argv[]) {
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
