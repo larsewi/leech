@@ -19,9 +19,12 @@ typedef struct LCH_Table {
   const void *write_locator;
   LCH_List *(*read_callback)(const void *);
   bool (*write_callback)(const void *, const LCH_List *);
-  bool (*insert_callback)(const void *, const char *, const char *, const LCH_Dict *);
-  bool (*delete_callback)(const void *, const char *, const char *, const LCH_Dict *);
-  bool (*update_callback)(const void *, const char *, const char *, const LCH_Dict *);
+  bool (*insert_callback)(const void *, const char *, const char *,
+                          const LCH_Dict *);
+  bool (*delete_callback)(const void *, const char *, const char *,
+                          const LCH_Dict *);
+  bool (*update_callback)(const void *, const char *, const char *,
+                          const LCH_Dict *);
 } LCH_Table;
 
 const char *LCH_TableGetIdentifier(const LCH_Table *const self) {

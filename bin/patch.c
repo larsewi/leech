@@ -11,7 +11,7 @@ enum OPTION_VALUE {
 };
 
 static const struct option OPTIONS[] = {
-    {"file", no_argument, NULL, OPTION_FILE},
+    {"file", required_argument, NULL, OPTION_FILE},
     {"help", no_argument, NULL, OPTION_HELP},
     {NULL, 0, NULL, 0},
 };
@@ -31,9 +31,14 @@ static void PrintHelp(void) {
 }
 
 int Patch(int argc, char *argv[]) {
+  const char *patch_file = NULL;
+
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
+      case OPTION_FILE:
+        patch_file = optarg;
+        break;
       case OPTION_HELP:
         PrintHelp();
         return EXIT_SUCCESS;
@@ -41,6 +46,11 @@ int Patch(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
   }
-  LCH_LOG_WARNING("Not implemented ...");
+
+  if (patch_file == NULL) {
+    LCH_LOG_WARNING("No patch file selected ...");
+    return EXIT_SUCCESS;
+  }
+
   return EXIT_SUCCESS;
 }

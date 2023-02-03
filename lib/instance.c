@@ -278,7 +278,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   return true;
 }
 
-LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
+static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
   assert(instance != NULL);
   assert(instance->tables != NULL);
 
@@ -413,8 +413,8 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
   return deltas;
 }
 
-char *LCH_InstanceDiff(const LCH_Instance *const self,
-                       const char *const block_id, size_t *const buf_len) {
+char *LCH_InstanceDelta(const LCH_Instance *const self,
+                        const char *const block_id, size_t *const buf_len) {
   assert(self != NULL);
   assert(block_id != NULL);
 
@@ -468,6 +468,16 @@ char *LCH_InstanceDiff(const LCH_Instance *const self,
   LCH_BufferDestroy(buffer);
 
   return result;
+}
+
+bool LCH_InstancePatch(const LCH_Instance *const self, const char *const patch,
+                       const size_t size) {
+  assert(self != NULL);
+  assert(patch != NULL);
+  (void)self;
+  (void)patch;
+  (void)size;
+  return true;
 }
 
 void LCH_InstanceDestroy(LCH_Instance *instance) {

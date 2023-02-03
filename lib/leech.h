@@ -159,9 +159,12 @@ typedef struct LCH_TableCreateInfo {
   const void *write_locator;
   LCH_List *(*read_callback)(const void *);
   bool (*write_callback)(const void *, const LCH_List *);
-  bool (*insert_callback)(const void *, const char *, const char *, const LCH_Dict *);
-  bool (*delete_callback)(const void *, const char *, const char *, const LCH_Dict *);
-  bool (*update_callback)(const void *, const char *, const char *, const LCH_Dict *);
+  bool (*insert_callback)(const void *, const char *, const char *,
+                          const LCH_Dict *);
+  bool (*delete_callback)(const void *, const char *, const char *,
+                          const LCH_Dict *);
+  bool (*update_callback)(const void *, const char *, const char *,
+                          const LCH_Dict *);
 } LCH_TableCreateInfo;
 
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *createInfo);
@@ -186,8 +189,11 @@ bool LCH_InstanceAddTable(LCH_Instance *instance, LCH_Table *table);
 
 bool LCH_InstanceCommit(const LCH_Instance *instance);
 
-char *LCH_InstanceDiff(const LCH_Instance *instance, const char *block_id,
-                       size_t *buf_len);
+char *LCH_InstanceDelta(const LCH_Instance *instance, const char *block_id,
+                        size_t *buf_len);
+
+bool LCH_InstancePatch(const LCH_Instance *self, const char *patch,
+                       size_t size);
 
 void LCH_InstanceDestroy(LCH_Instance *instance);
 

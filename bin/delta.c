@@ -69,7 +69,7 @@ int Delta(int argc, char *argv[]) {
   }
 
   size_t size;
-  char *diff = LCH_InstanceDiff(instance, block_id, &size);
+  char *diff = LCH_InstanceDelta(instance, block_id, &size);
   if (diff == NULL) {
     LCH_LOG_ERROR("Failed to enumerate blocks.");
     LCH_InstanceDestroy(instance);
