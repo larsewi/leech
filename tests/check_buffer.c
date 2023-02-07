@@ -83,7 +83,6 @@ START_TEST(test_LCH_BufferAllocate2) {
 
   /****************************************************/
 
-  offset;
   ck_assert(LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset));
 
   before = LCH_BufferLength(buffer);

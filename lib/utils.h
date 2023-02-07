@@ -37,7 +37,7 @@ bool LCH_PathJoin(char *path, size_t path_max, size_t n_items, ...);
  *                    the terminating null byte.
  * @return string containing the file content, or NULL in case of error.
  */
-char *LCH_ReadTextFile(const char *path, size_t *length);
+char *LCH_ReadFile(const char *path, size_t *length);
 
 /**
  * @brief Write a text file.
@@ -46,7 +46,7 @@ char *LCH_ReadTextFile(const char *path, size_t *length);
  * @param[in] str string to write to file.
  * @return false in case of error.
  */
-bool LCH_WriteTextFile(const char *path, const char *str);
+bool LCH_WriteFile(const char *path, const char *str);
 
 LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
                           const char *subsidiary);

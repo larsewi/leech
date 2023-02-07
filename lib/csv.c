@@ -301,7 +301,7 @@ LCH_List *LCH_CSVParseTable(const char *str) {
 }
 
 LCH_List *LCH_CSVParseFile(const char *const path) {
-  char *csv = LCH_ReadTextFile(path, NULL);
+  char *csv = LCH_ReadFile(path, NULL);
   if (csv == NULL) {
     LCH_LOG_ERROR("Failed to read CSV file '%s'.", path);
     return NULL;

@@ -477,6 +477,7 @@ bool LCH_InstancePatch(const LCH_Instance *const self, const char *const patch,
   (void)self;
   (void)patch;
   (void)size;
+  LCH_LOG_DEBUG("Patching, patching .... Dudududududu ...");
   return true;
 }
 

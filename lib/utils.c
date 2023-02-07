@@ -245,7 +245,7 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
 
 /******************************************************************************/
 
-char *LCH_ReadTextFile(const char *const path, size_t *const length) {
+char *LCH_ReadFile(const char *const path, size_t *const length) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
@@ -293,7 +293,7 @@ char *LCH_ReadTextFile(const char *const path, size_t *const length) {
 
 /******************************************************************************/
 
-bool LCH_WriteTextFile(const char *const path, const char *const str) {
+bool LCH_WriteFile(const char *const path, const char *const str) {
   FILE *file = fopen(path, "w");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,

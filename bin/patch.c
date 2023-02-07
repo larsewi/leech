@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../lib/utils.h"
 #include "common.h"
 
 enum OPTION_VALUE {
@@ -52,5 +53,29 @@ int Patch(int argc, char *argv[]) {
     return EXIT_SUCCESS;
   }
 
+  size_t size;
+  char *const buffer = LCH_ReadFile(patch_file, &size);
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to load patch file '%s'.", patch_file);
+    return EXIT_FAILURE;
+  }
+  LCH_LOG_DEBUG("Loaded patch file '%s' %zu Bytes.", patch_file, size);
+
+  LCH_Instance *const instance = SetupInstance();
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to setup leech instance.");
+    free(buffer);
+    return EXIT_FAILURE;
+  }
+
+  if (!LCH_InstancePatch(instance, buffer, size)) {
+    LCH_LOG_ERROR("Failed to apply patch from file '%s'.", patch_file);
+    LCH_InstanceDestroy(instance);
+    free(buffer);
+    return EXIT_FAILURE;
+  }
+
+  LCH_InstanceDestroy(instance);
+  free(buffer);
   return EXIT_SUCCESS;
 }

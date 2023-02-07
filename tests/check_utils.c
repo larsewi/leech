@@ -78,10 +78,10 @@ START_TEST(test_LCH_ReadWriteTextFile) {
   char path[] = "testfile";
 
   char expected[] = "Hello World!";
-  ck_assert(LCH_WriteTextFile(path, expected));
+  ck_assert(LCH_WriteFile(path, expected));
 
   size_t size;
-  char *actual = LCH_ReadTextFile("testfile", &size);
+  char *actual = LCH_ReadFile("testfile", &size);
   ck_assert_str_eq(expected, actual);
   ck_assert_int_eq(size, strlen(expected));
   free(actual);
