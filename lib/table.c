@@ -162,4 +162,38 @@ LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
   return snapshot;
 }
 
+bool LCH_TablePatch(const LCH_Table *const table,
+                    const LCH_Delta *const patch) {
+  assert(table != NULL);
+  assert(patch != NULL);
+
+  const char *const path = table->write_locator;
+
+  const LCH_Dict *const inserts = LCH_DeltaGetInsertions(patch);
+  if (!table->insert_callback(path, table->primary_fields,
+                              table->subsidiary_fields, inserts)) {
+    LCH_LOG_ERROR("Failed to patch insertions for table '%s'.",
+                  table->identifier);
+    return false;
+  }
+
+  const LCH_Dict *const deletions = LCH_DeltaGetDeletions(patch);
+  if (!table->delete_callback(path, table->primary_fields,
+                              table->subsidiary_fields, deletions)) {
+    LCH_LOG_ERROR("Failed to patch deletions for table '%s'.",
+                  table->identifier);
+    return false;
+  }
+
+  const LCH_Dict *const modifications = LCH_DeltaGetModifications(patch);
+  if (!table->update_callback(path, table->primary_fields,
+                              table->subsidiary_fields, modifications)) {
+    LCH_LOG_ERROR("Failed to patch modifications for table '%s'.",
+                  table->identifier);
+    return false;
+  }
+
+  return true;
+}
+
 void LCH_TableDestroy(LCH_Table *table) { free(table); }

@@ -376,6 +376,24 @@ size_t LCH_DeltaGetNumModifications(const LCH_Delta *const delta) {
   return LCH_DictLength(delta->modifications);
 }
 
+const LCH_Dict *LCH_DeltaGetInsertions(const LCH_Delta *const delta) {
+  assert(delta != NULL);
+  assert(delta->insertions != NULL);
+  return delta->insertions;
+}
+
+const LCH_Dict *LCH_DeltaGetDeletions(const LCH_Delta *const delta) {
+  assert(delta != NULL);
+  assert(delta->deletions != NULL);
+  return delta->deletions;
+}
+
+const LCH_Dict *LCH_DeltaGetModifications(const LCH_Delta *const delta) {
+  assert(delta != NULL);
+  assert(delta->modifications != NULL);
+  return delta->modifications;
+}
+
 const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
   assert(delta != NULL);
   assert(delta->table_id != NULL);

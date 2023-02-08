@@ -12,12 +12,15 @@ bool LCH_TableWriteCallbackCSV(const void *const locator,
                                const LCH_List *const table);
 
 bool LCH_TableInsertCallbackCSV(const void *locator, const char *primary,
-                                const char *subsidiary, const LCH_Dict *insert);
+                                const char *subsidiary,
+                                const LCH_Dict *insertions);
 
 bool LCH_TableDeleteCallbackCSV(const void *locator, const char *primary,
-                                const char *subsidiary, const LCH_Dict *delete);
+                                const char *subsidiary,
+                                const LCH_Dict *deletions);
 
 bool LCH_TableUpdateCallbackCSV(const void *locator, const char *primary,
-                                const char *subsidiary, const LCH_Dict *update);
+                                const char *subsidiary,
+                                const LCH_Dict *modifications);
 
 #endif  // _LEECH_LEECH_CSV_H

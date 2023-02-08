@@ -106,6 +106,24 @@ bool LCH_InstanceAddTable(LCH_Instance *const instance,
                         (void (*)(void *))LCH_TableDestroy);
 }
 
+static const LCH_Table *InstanceGetTable(const LCH_Instance *const self,
+                                         const char *const table_id) {
+  assert(self != NULL);
+  assert(self->tables != NULL);
+  assert(table_id != NULL);
+
+  const size_t num_tables = LCH_ListLength(self->tables);
+  for (size_t i = 0; i < num_tables; i++) {
+    const LCH_Table *const table = LCH_ListGet(self->tables, 0);
+    assert(table != NULL);
+
+    if (strcmp(LCH_TableGetIdentifier(table), table_id) == 0) {
+      return table;
+    }
+  }
+  return NULL;
+}
+
 bool LCH_InstanceCommit(const LCH_Instance *const self) {
   assert(self != NULL);
   assert(self->tables != NULL);
@@ -470,14 +488,46 @@ char *LCH_InstanceDelta(const LCH_Instance *const self,
   return result;
 }
 
+static bool PatchTable(const LCH_Instance *const self,
+                       const LCH_Delta *const delta) {
+  assert(self != NULL);
+  assert(delta != NULL);
+
+  const char *const table_id = LCH_DeltaGetTableID(delta);
+  const LCH_Table *const table = InstanceGetTable(self, table_id);
+  if (table == NULL) {
+    LCH_LOG_ERROR(
+        "Table from patch with table id '%s' was not found in instance.",
+        table_id);
+    return false;
+  }
+
+  return LCH_TablePatch(table, delta);
+}
+
 bool LCH_InstancePatch(const LCH_Instance *const self, const char *const patch,
                        const size_t size) {
   assert(self != NULL);
   assert(patch != NULL);
-  (void)self;
-  (void)patch;
-  (void)size;
-  LCH_LOG_DEBUG("Patching, patching .... Dudududududu ...");
+
+  const char *buf_ptr = patch;
+  while ((size_t)(buf_ptr - patch) < size) {
+    LCH_Delta *delta;
+    buf_ptr = LCH_DeltaUnmarshal(&delta, buf_ptr);
+    if (buf_ptr == NULL) {
+      LCH_LOG_ERROR("Failed to unmarshal patch.");
+      return false;
+    }
+
+    if (!PatchTable(self, delta)) {
+      LCH_LOG_ERROR("Failed to patch table '%s'.", LCH_DeltaGetTableID(delta));
+      LCH_DeltaDestroy(delta);
+      return false;
+    }
+    LCH_LOG_DEBUG("Patched table '%s'.", LCH_DeltaGetTableID(delta));
+    LCH_DeltaDestroy(delta);
+  }
+
   return true;
 }
 
