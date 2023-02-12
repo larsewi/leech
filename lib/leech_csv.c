@@ -158,7 +158,7 @@ bool LCH_TableDeleteCallbackCSV(const void *const locator,
     }
 
     char *const value = LCH_DictRemove(dict, key);
-    LCH_LOG_ERROR(
+    LCH_LOG_DEBUG(
         "Deleted record with primary field(s) '%s' and subsidiary field(s) "
         "'%s' from table.",
         key, value);

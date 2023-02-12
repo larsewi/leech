@@ -114,7 +114,7 @@ static const LCH_Table *InstanceGetTable(const LCH_Instance *const self,
 
   const size_t num_tables = LCH_ListLength(self->tables);
   for (size_t i = 0; i < num_tables; i++) {
-    const LCH_Table *const table = LCH_ListGet(self->tables, 0);
+    const LCH_Table *const table = LCH_ListGet(self->tables, i);
     assert(table != NULL);
 
     if (strcmp(LCH_TableGetIdentifier(table), table_id) == 0) {
