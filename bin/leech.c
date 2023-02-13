@@ -1,6 +1,3 @@
-#include <../lib/leech.h>
-#include <../lib/leech_csv.h>
-#include <../lib/leech_psql.h>
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
@@ -9,16 +6,19 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "../lib/leech.h"
+#include "../lib/leech_csv.h"
+#include "../lib/leech_psql.h"
+
 #include "commit.h"
 #include "common.h"
 #include "delta.h"
 #include "patch.h"
 #include "rebase.h"
 
-#define WORK_DIR ".leech/"
-
 enum OPTION_VALUE {
-  OPTION_FILE = 1,
+  OPTION_ID = 1,
+  OPTION_WORKDIR,
   OPTION_INFORM,
   OPTION_VERBOSE,
   OPTION_DEBUG,
@@ -33,6 +33,8 @@ struct command {
 };
 
 static const struct option OPTIONS[] = {
+    {"id", required_argument, NULL, OPTION_ID},
+    {"workdir", required_argument, NULL, OPTION_WORKDIR},
     {"inform", no_argument, NULL, OPTION_INFORM},
     {"verbose", no_argument, NULL, OPTION_VERBOSE},
     {"debug", no_argument, NULL, OPTION_DEBUG},
@@ -42,6 +44,7 @@ static const struct option OPTIONS[] = {
 };
 
 static const char *const DESCRIPTIONS[] = {
+    "set unique identifier", "set work directory",
     "enable info messages", "enable verbose messages", "enable debug messages",
     "print version string", "print help message",
 };
@@ -94,9 +97,13 @@ int main(int argc, char *argv[]) {
   unsigned char severity =
       LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT | LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT;
 
+  const char *unique_id = NULL;
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
+      case OPTION_ID:
+        unique_id = optarg;
+        break;
       case OPTION_DEBUG:
         severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
         // fallthrough
@@ -127,7 +134,7 @@ int main(int argc, char *argv[]) {
   for (int i = 0; COMMANDS[i].name != NULL; i++) {
     if (strcmp(argv[optind], COMMANDS[i].name) == 0) {
       optind += 1;
-      return COMMANDS[i].command(argc, argv);
+      return COMMANDS[i].command(unique_id, argc, argv);
     }
   }
   return EXIT_FAILURE;

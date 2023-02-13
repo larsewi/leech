@@ -35,11 +35,11 @@ void PrintBugreport(void) {
   printf("%s home page: <%s>.\n", PACKAGE_NAME, PACKAGE_URL);
 }
 
-LCH_Instance *SetupInstance(void) {
+LCH_Instance *SetupInstance(const char *const unique_id) {
   LCH_Instance *instance = NULL;
   {  // Create instance
     LCH_InstanceCreateInfo createInfo = {
-        .identifier = UNIQUE_ID,
+        .identifier = unique_id,
         .work_dir = WORK_DIR,
     };
 
