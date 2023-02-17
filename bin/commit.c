@@ -1,8 +1,8 @@
 #include "commit.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 
 #include "common.h"
 
@@ -28,8 +28,7 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Commit(const char *const unique_id, const char *const work_dir, int argc, char *argv[]) {
-  assert(unique_id != NULL);
+int Commit(const char *const work_dir, int argc, char *argv[]) {
   assert(work_dir != NULL);
 
   int opt;
@@ -43,7 +42,7 @@ int Commit(const char *const unique_id, const char *const work_dir, int argc, ch
     }
   }
 
-  LCH_Instance *instance = SetupInstance(unique_id, work_dir);
+  LCH_Instance *instance = SetupInstance(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("SetupInstance");
     return EXIT_FAILURE;

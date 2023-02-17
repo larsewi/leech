@@ -1,6 +1,7 @@
 #ifndef _LEECH_UTILS
 #define _LEECH_UTILS
 
+#include "buffer.h"
 #include "dict.h"
 #include "leech.h"
 
@@ -53,5 +54,23 @@ LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
 
 LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
                           const char *subsidiary);
+
+/**
+ * @brief Marshal string to buffer.
+ * @param[in] buffer.
+ * @param[in] string to marshal.
+ * @return false in case of error.
+ * @note String can be retrieved with LCH_UnmarshalString.
+ */
+bool LCH_MarshalString(LCH_Buffer *buffer, const char *str);
+
+/**
+ * @breif Unmarshal string from buffer.
+ * @param[in] buffer.
+ * @param[out] unmarshaled string.
+ * @return pointer to remaining buffer.
+ * @note unmarshaled string must be freed with free(3).
+ */
+const char *LCH_UnmarshalString(const char *buffer, char **str);
 
 #endif  // _LEECH_UTILS

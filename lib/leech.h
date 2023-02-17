@@ -178,7 +178,6 @@ void LCH_TableDestroy(LCH_Table *table);
 typedef struct LCH_Instance LCH_Instance;
 
 typedef struct LCH_InstanceCreateInfo {
-  const char *identifier;
   const char *work_dir;
 } LCH_InstanceCreateInfo;
 
@@ -193,6 +192,7 @@ char *LCH_InstanceDelta(const LCH_Instance *instance, const char *block_id,
                         size_t *buf_len);
 
 bool LCH_InstancePatch(const LCH_Instance *self, const char *patch,
+                       const char *uid_field, const char *uid_value,
                        size_t size);
 
 void LCH_InstanceDestroy(LCH_Instance *instance);

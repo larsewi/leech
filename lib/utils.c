@@ -636,3 +636,41 @@ LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
 
   return table;
 }
+
+bool LCH_MarshalString(LCH_Buffer *const buffer, const char *const str) {
+  assert(buffer != NULL);
+  assert(str != NULL);
+
+  size_t offset;
+  if (!LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset)) {
+    return false;
+  }
+
+  const size_t before = LCH_BufferLength(buffer);
+  if (!LCH_BufferPrintFormat(buffer, str)) {
+    return false;
+  }
+  const size_t after = LCH_BufferLength(buffer);
+
+  const uint32_t network_size = htonl(after - before);
+  LCH_BufferSet(buffer, offset, &network_size, sizeof(uint32_t));
+
+  return true;
+}
+
+const char *LCH_UnmarshalString(const char *buffer, char **const str) {
+  assert(buffer != NULL);
+
+  const uint32_t *const network_size = (uint32_t *)buffer;
+  buffer += sizeof(uint32_t);
+  const uint32_t size = ntohl(*network_size);
+
+  *str = strndup(buffer, size);
+  if (*str == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    return NULL;
+  }
+
+  buffer += size;
+  return buffer;
+}

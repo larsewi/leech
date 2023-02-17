@@ -21,7 +21,6 @@
 #include "utils.h"
 
 struct LCH_Instance {
-  const char *identifier;
   const char *work_dir;
   LCH_List *tables;
 };
@@ -29,7 +28,6 @@ struct LCH_Instance {
 LCH_Instance *LCH_InstanceCreate(
     const LCH_InstanceCreateInfo *const createInfo) {
   assert(createInfo != NULL);
-  assert(createInfo->identifier != NULL);
   assert(createInfo->work_dir != NULL);
 
   LCH_Instance *instance = (LCH_Instance *)malloc(sizeof(LCH_Instance));
@@ -39,7 +37,6 @@ LCH_Instance *LCH_InstanceCreate(
     return NULL;
   }
 
-  instance->identifier = createInfo->identifier;
   instance->work_dir = createInfo->work_dir;
   instance->tables = LCH_ListCreate();
   if (instance->tables == NULL) {
@@ -505,12 +502,17 @@ static bool PatchTable(const LCH_Instance *const self,
   return LCH_TablePatch(table, delta);
 }
 
-bool LCH_InstancePatch(const LCH_Instance *const self, const char *const patch,
-                       const size_t size) {
+bool LCH_InstancePatch(const LCH_Instance *const self,
+                       const char *const uid_field, const char *const uid_value,
+                       const char *const patch, const size_t size) {
   assert(self != NULL);
   assert(patch != NULL);
 
+  (void)uid_field;
+  (void)uid_value;
+
   const char *buf_ptr = patch;
+
   while ((size_t)(buf_ptr - patch) < size) {
     LCH_Delta *delta;
     buf_ptr = LCH_DeltaUnmarshal(&delta, buf_ptr);
