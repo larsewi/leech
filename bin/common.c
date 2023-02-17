@@ -35,12 +35,15 @@ void PrintBugreport(void) {
   printf("%s home page: <%s>.\n", PACKAGE_NAME, PACKAGE_URL);
 }
 
-LCH_Instance *SetupInstance(const char *const unique_id) {
+LCH_Instance *SetupInstance(const char *const unique_id, const char *const work_dir) {
+  assert(unique_id != NULL);
+  assert(work_dir != NULL);
+
   LCH_Instance *instance = NULL;
   {  // Create instance
     LCH_InstanceCreateInfo createInfo = {
         .identifier = unique_id,
-        .work_dir = WORK_DIR,
+        .work_dir = work_dir,
     };
 
     instance = LCH_InstanceCreate(&createInfo);

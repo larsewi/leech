@@ -12,6 +12,6 @@ void PrintOptions(const struct option *const options,
 
 void PrintBugreport(void);
 
-LCH_Instance *SetupInstance(void);
+LCH_Instance *SetupInstance(const char *unique_id, const char *workdir);
 
 #endif  // _LEECH_COMMON

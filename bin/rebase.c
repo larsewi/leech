@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "common.h"
 
@@ -27,7 +28,13 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Rebase(int argc, char *argv[]) {
+int Rebase(const char *const unique_id, const char *const work_dir, int argc, char *argv[]) {
+  assert(unique_id != NULL);
+  assert(work_dir != NULL);
+
+  (void) unique_id; /* TODO: Create instance and remove */
+  (void) work_dir; /* TODO: Create instance and remove */
+
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {

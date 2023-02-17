@@ -41,7 +41,7 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Delta(int argc, char *argv[]) {
+int Delta(const char *const unique_id, const char *const workdir, int argc, char *argv[]) {
   const char *patch_file = NULL;
   const char *block_id = "0000000000000000000000000000000000000000";
 
@@ -62,7 +62,7 @@ int Delta(int argc, char *argv[]) {
     }
   }
 
-  LCH_Instance *instance = SetupInstance();
+  LCH_Instance *instance = SetupInstance(unique_id, workdir);
   if (instance == NULL) {
     LCH_LOG_ERROR("SetupInstance");
     return EXIT_FAILURE;

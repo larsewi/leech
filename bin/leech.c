@@ -29,7 +29,7 @@ enum OPTION_VALUE {
 struct command {
   const char *name;
   const char *desc;
-  int (*command)(int, char *[]);
+  int (*command)(const char *, const char *,int, char *[]);
 };
 
 static const struct option OPTIONS[] = {
@@ -98,10 +98,15 @@ int main(int argc, char *argv[]) {
       LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT | LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT;
 
   const char *unique_id = NULL;
+  const char *work_dir = ".leech";
+
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
       case OPTION_ID:
+        unique_id = optarg;
+        break;
+      case OPTION_WORKDIR:
         unique_id = optarg;
         break;
       case OPTION_DEBUG:
@@ -131,10 +136,15 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
   }
 
+  if (unique_id == NULL) {
+    LCH_LOG_ERROR("Missing required option --id ...");
+    return EXIT_FAILURE;
+  }
+
   for (int i = 0; COMMANDS[i].name != NULL; i++) {
     if (strcmp(argv[optind], COMMANDS[i].name) == 0) {
       optind += 1;
-      return COMMANDS[i].command(unique_id, argc, argv);
+      return COMMANDS[i].command(unique_id, work_dir, argc, argv);
     }
   }
   return EXIT_FAILURE;

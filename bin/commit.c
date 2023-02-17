@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "common.h"
 
@@ -27,7 +28,10 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Commit(int argc, char *argv[]) {
+int Commit(const char *const unique_id, const char *const work_dir, int argc, char *argv[]) {
+  assert(unique_id != NULL);
+  assert(work_dir != NULL);
+
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
@@ -39,7 +43,7 @@ int Commit(int argc, char *argv[]) {
     }
   }
 
-  LCH_Instance *instance = SetupInstance();
+  LCH_Instance *instance = SetupInstance(unique_id, work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("SetupInstance");
     return EXIT_FAILURE;

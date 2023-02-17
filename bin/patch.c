@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "../lib/utils.h"
 #include "common.h"
@@ -31,7 +32,10 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Patch(int argc, char *argv[]) {
+int Patch(const char *const unique_id, const char *const work_dir, int argc, char *argv[]) {
+  assert(unique_id != NULL);
+  assert(work_dir != NULL);
+
   const char *patch_file = NULL;
 
   int opt;
@@ -61,7 +65,7 @@ int Patch(int argc, char *argv[]) {
   }
   LCH_LOG_DEBUG("Loaded patch file '%s' %zu Bytes.", patch_file, size);
 
-  LCH_Instance *const instance = SetupInstance();
+  LCH_Instance *const instance = SetupInstance(unique_id, work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to setup leech instance.");
     free(buffer);
