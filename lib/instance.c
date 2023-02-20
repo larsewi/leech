@@ -486,7 +486,9 @@ char *LCH_InstanceDelta(const LCH_Instance *const self,
 }
 
 static bool PatchTable(const LCH_Instance *const self,
-                       const LCH_Delta *const delta) {
+                       const LCH_Delta *const delta,
+                       const char *const uid_field,
+                       const char *const uid_value) {
   assert(self != NULL);
   assert(delta != NULL);
 
@@ -499,7 +501,7 @@ static bool PatchTable(const LCH_Instance *const self,
     return false;
   }
 
-  return LCH_TablePatch(table, delta);
+  return LCH_TablePatch(table, delta, uid_field, uid_value);
 }
 
 bool LCH_InstancePatch(const LCH_Instance *const self,
@@ -521,7 +523,7 @@ bool LCH_InstancePatch(const LCH_Instance *const self,
       return false;
     }
 
-    if (!PatchTable(self, delta)) {
+    if (!PatchTable(self, delta, uid_field, uid_value)) {
       LCH_LOG_ERROR("Failed to patch table '%s'.", LCH_DeltaGetTableID(delta));
       LCH_DeltaDestroy(delta);
       return false;

@@ -626,9 +626,3 @@ bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
 
   return true;
 }
-
-bool LCH_DeltaPatchTable(const LCH_Delta *const delta, LCH_Dict *const table) {
-  assert(delta != NULL);
-  assert(table != NULL);
-  return false;
-}
