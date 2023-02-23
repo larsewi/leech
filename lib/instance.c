@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <openssl/sha.h>
 
 #include "block.h"
 #include "buffer.h"
@@ -251,7 +252,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
     LCH_DictDestroy(new_state);
   }
 
-  char *const head = LCH_HeadGet(self->work_dir);
+  char *const head = LCH_HeadGet("HEAD", self->work_dir);
   if (head == NULL) {
     LCH_LOG_ERROR("Failed to get head.");
     LCH_BufferDestroy(delta_buffer);
@@ -280,7 +281,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
       "%zu deletions, and %zu modifications, over %zu table(s).",
       block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
 
-  if (!LCH_HeadSet(self->work_dir, block_id)) {
+  if (!LCH_HeadSet("HEAD", self->work_dir, block_id)) {
     LCH_LOG_ERROR("Failed to move head to '%s'.", block_id);
     free(head);
     free(block_id);
@@ -380,7 +381,7 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
   assert(instance->work_dir != NULL);
   assert(block_id != NULL);
 
-  char *cursor = LCH_HeadGet(instance->work_dir);
+  char *cursor = LCH_HeadGet("HEAD", instance->work_dir);
   if (cursor == NULL) {
     LCH_LOG_ERROR("Failed to load head.");
     return NULL;
@@ -444,6 +445,15 @@ char *LCH_InstanceDelta(const LCH_Instance *const self,
     LCH_DictDestroy(deltas);
     return NULL;
   }
+
+  char *const head = LCH_HeadGet("HEAD", self->work_dir);
+  if (!LCH_BufferPrintFormat(buffer, head)) {
+    free(head);
+    LCH_BufferDestroy(buffer);
+    LCH_DictDestroy(deltas);
+    return NULL;
+  }
+  free(head);
 
   LCH_List *keys = LCH_DictGetKeys(deltas);
   if (keys == NULL) {
@@ -510,15 +520,16 @@ bool LCH_InstancePatch(const LCH_Instance *const self,
   assert(self != NULL);
   assert(patch != NULL);
 
-  (void)uid_field;
-  (void)uid_value;
+  const char *buffer = patch;
+  char head[SHA_DIGEST_LENGTH * 2 + 1];
+  memcpy(head, buffer, SHA_DIGEST_LENGTH * 2);
+  head[SHA_DIGEST_LENGTH * 2] = '\0';
+  buffer += SHA_DIGEST_LENGTH * 2;
 
-  const char *buf_ptr = patch;
-
-  while ((size_t)(buf_ptr - patch) < size) {
+  while ((size_t)(buffer - patch) < size) {
     LCH_Delta *delta;
-    buf_ptr = LCH_DeltaUnmarshal(&delta, buf_ptr);
-    if (buf_ptr == NULL) {
+    buffer = LCH_DeltaUnmarshal(&delta, buffer);
+    if (buffer == NULL) {
       LCH_LOG_ERROR("Failed to unmarshal patch.");
       return false;
     }
@@ -530,6 +541,10 @@ bool LCH_InstancePatch(const LCH_Instance *const self,
     }
     LCH_LOG_DEBUG("Patched table '%s'.", LCH_DeltaGetTableID(delta));
     LCH_DeltaDestroy(delta);
+  }
+
+  if (!LCH_HeadSet(uid_value, self->work_dir, head)) {
+    return NULL;
   }
 
   return true;

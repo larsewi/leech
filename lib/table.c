@@ -230,7 +230,6 @@ static LCH_Dict *AddUniqueIdToDict(const LCH_Dict *const dict,
     assert(old_key != NULL);
 
     char *const value = LCH_DictGet(dict, old_key);
-    assert(value != NULL);
 
     char *const new_key = AddUniqueIdToRecord(old_key, unqiue_id, pos);
     if (new_key == NULL) {

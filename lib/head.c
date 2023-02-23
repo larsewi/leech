@@ -9,11 +9,11 @@
 #include "leech.h"
 #include "utils.h"
 
-char *LCH_HeadGet(const char *const work_dir) {
+char *LCH_HeadGet(const char *const name, const char *const work_dir) {
   assert(work_dir != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 2, work_dir, "HEAD")) {
+  if (!LCH_PathJoin(path, sizeof(path), 2, work_dir, name)) {
     return NULL;
   }
 
@@ -29,12 +29,12 @@ char *LCH_HeadGet(const char *const work_dir) {
   return LCH_StringStrip(head, " \t\r\n");
 }
 
-bool LCH_HeadSet(const char *const workdir, const char *const block_id) {
+bool LCH_HeadSet(const char *const name, const char *const workdir, const char *const block_id) {
   assert(workdir != NULL);
   assert(block_id != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 2, workdir, "HEAD")) {
+  if (!LCH_PathJoin(path, sizeof(path), 2, workdir, name)) {
     return false;
   }
 

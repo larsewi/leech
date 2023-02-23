@@ -5,8 +5,8 @@
 
 #define LCH_GENISIS_BLOCK_PARENT "0000000000000000000000000000000000000000"
 
-char *LCH_HeadGet(const char *work_dir);
+char *LCH_HeadGet(const char *const name, const char *work_dir);
 
-bool LCH_HeadSet(const char *workdir, const char *block_id);
+bool LCH_HeadSet(const char *const name, const char *workdir, const char *block_id);
 
 #endif  // _LEECH_HEAD_H
