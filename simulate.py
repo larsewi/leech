@@ -44,9 +44,11 @@ def main():
             for filename in [os.path.join(dirpath, f) for f in filenames]:
                 with open(filename, "r", newline="") as f:
                     reader = csv.reader(f)
-                with open(filename, "w", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerows(reader)
+                    with open("%s.tmp" % filename, "w", newline="") as g:
+                        writer = csv.writer(g)
+                        writer.writerows(reader)
+                os.remove(filename)
+                os.rename("%s.tmp" % filename, filename)
 
     #         if "table_dumps" in dirpath:
     #             timestamp = datetime.fromtimestamp(int(dirpath.split("/")[-1]))
