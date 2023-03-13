@@ -16,16 +16,16 @@ HOSTS = {
 Event = namedtuple("Event", "ts fn")
 
 def commit(workdir, tables):
-    os.makedirs(workdir, exist_ok=True)
+    os.makedirs(os.path.join(workdir, ".leech"), exist_ok=True)
 
     for table in tables:
-        print("Copying '%s' to '%s'" % (table, workdir))
-        shutil.copy(table, workdir)
+        print("Copying '%s' to '%s'" % (table, os.path.join(workdir, ".leech")))
+        shutil.copy(table, os.path.join(workdir, ".leech"))
 
-    command = "cd %s && ../../../bin/leech --inform commit" % workdir
+    command = "cd %s && ../../bin/leech --inform commit" % workdir
     p = subprocess.run(command, shell=True)
     if p.returncode != 0:
-        print("Command '%s' returned %d" % (command, p.returncode))
+        print("Command '%s' returned %d: %s" % (command, p.returncode, p.stderr))
         exit(1)
 
 def patch(workdir):
@@ -35,7 +35,7 @@ def main():
     events = []
 
     for hostname, hostkey in HOSTS.items():
-        workdir = os.path.join(os.getcwd(), "simulate", hostname, "workdir", ".")
+        workdir = os.path.join(os.getcwd(), "simulate", hostname, ".")
 
         for dirpath, _, filenames in os.walk(os.path.join("simulate", hostname)):
             if len(filenames) == 0:
