@@ -1,0 +1,41 @@
+# delta from 1678314921 to 1678315223 at 1678315223
+22        CFR: 0 1678315222 7278
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.047114,0.316375,0.315033,1678314952
+60        Packing reports: delta,0.027053,0.073189,0.096712,1678314922
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004851,0.002353,0.002044,1678315221
+3         EXS
+16        f,335,1678315002
+3         CNG
+66        1678315003,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1678315003,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1678315003,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+211       1678315003,/etc/group,change_management_files_watch_files_report_diffs,"-,44,rey:x:1004:-,46,innerrim:x:1007:-,47,outerrim:x:1008:+,47,jabbathehut:x:1011:+,48,darthsidious:x:1012:+,49,thecolonies:x:1013:"
+
+235       1678315003,/etc/passwd,change_management_files_watch_files_report_diffs,"-,26,rey:x:1004:1004::/home/rey:/bin/bash+,27,jabbathehut:x:1006:1011::/home/jabbathehut:/bin/bash+,28,darthsidious:x:1007:1012::/home/darthsidious:/bin/bash"
+
+3         MOM
+3         MOY
+3         PLG
+537       1678314940,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'thecolonies' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+528       1678314965,88315cda2fd4090725c25ab2fe528f8955508a84d85685c75da8c39db5b15708,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'innerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+528       1678314990,ac6e279c090ec4ad6433274d86fcf779a9eed8e60b94823df89a2fa2928516de,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'outerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+386       1678315002,099f94c2cd3947debf142bcb5ede995d3b84227825ecb1073f7ed0815f12d696,/var/cfengine/inputs/services/cfbs/install_packages.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,install_packages,packages,python3,/default/install_packages/packages/'python3'[1],,[],"[""Error installing package 'python3'""]",40,SHA=40f0424eb16e4fde2a15d5675138b64ba66acbe8dba134dd72f887d45c359f9f
+
+1178      1678315002,de73e685af6ab932f8ed0769f5c066e04d5a2c1945956f83f0713abd0bc51882,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1678314637,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1678314637'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1678314637/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678314637/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678314637/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1678314637/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1678314637/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678314637/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678314637/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+851       1678315003,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1678315003,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1678315003,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=216700d819871ff5b1572fd9aa040e9f15087441a370a1d63aafeb9cc318b783)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+386       1678315104,099df3409e18fad93b89edb3338c630537071075283589121476fdc39daefb75,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],"[""Created user 'cassianandor'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+374       1678315204,7ccdf5e8cb0651ffd66f8521ac3add259f2c2cf1ac0e47af83ff782d612ba250,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Created user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

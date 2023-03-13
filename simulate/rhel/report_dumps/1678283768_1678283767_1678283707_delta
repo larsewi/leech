@@ -1,0 +1,9 @@
+# delta from 1678283707 to 1678283768 at 1678283768
+21        CFR: 0 1678283767 192
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.227942,0.485731,0.325153,1678283722
+60        Packing reports: delta,0.024355,0.059315,0.087774,1678283708
+3         EXS
+15        f,44,1678283687
+3         MOY
+# send QUERY complete successful

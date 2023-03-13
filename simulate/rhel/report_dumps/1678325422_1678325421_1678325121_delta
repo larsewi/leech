@@ -1,0 +1,39 @@
+# delta from 1678325121 to 1678325422 at 1678325422
+22        CFR: 0 1678325421 5701
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.047894,0.320738,0.313940,1678325131
+60        Packing reports: delta,0.031620,0.099980,0.088493,1678325122
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004778,0.002283,0.002418,1678325288
+3         EXS
+16        f,151,1678324814
+3         CNG
+66        1678325183,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1678325182,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1678325182,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+145       1678325182,/etc/group,change_management_files_watch_files_report_diffs,"+,48,jarjarbinks:x:1071:+,49,bobafett:x:1072:+,50,leiaorgana:x:1075:"
+
+241       1678325182,/etc/passwd,change_management_files_watch_files_report_diffs,"+,28,jarjarbinks:x:1071:1071::/home/jarjarbinks:/bin/bash+,29,bobafett:x:1072:1072::/home/bobafett:/bin/bash+,30,leiaorgana:x:1073:1075::/home/leiaorgana:/bin/bash"
+
+3         MOM
+3         MOY
+3         PLG
+380       1678325169,e887e0088ce4bdd3d8816948862add187791335771b43d31dd2ff625229bc5b5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Created user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+851       1678325182,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1678325182,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1678325183,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=ff10e92e292ca3f309dc4a3dab3a9130da176151d7a705aff8b296ad21b814c2)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+383       1678325208,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Removed user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+374       1678325233,ad252c73d4c3ae487396792116aed12668e52a7ba42d02ddf6b64cf49dcd29cb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Removed user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+432       1678325299,b5d8f6dc22944432198c454988deeb7524398d1c0ef44b50e3120608932c61f9,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,churn_local_users,users,hansolo,/default/churn_local_users/users/'hansolo'[8],,[],"[""'/sbin/chpasswd -e' returned non-zero status: 1"",""Failed to create user 'hansolo'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+383       1678325334,3eb6d6e0e7283e9db0394128962964abb39fd6451b29b7645280e9d2aec86c08,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,jabbathehut,/default/churn_local_users/users/'jabbathehut'[5],,[],"[""Created user 'jabbathehut'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+448       1678325414,e2e6d4f32f029df22474ec21672b5b657148508abbd7acf549626f197a4966c3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""'/sbin/chpasswd -e' returned non-zero status: 1"",""Failed to create user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

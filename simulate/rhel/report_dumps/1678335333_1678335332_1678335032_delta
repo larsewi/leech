@@ -1,0 +1,43 @@
+# delta from 1678335032 to 1678335333 at 1678335333
+22        CFR: 0 1678335332 7761
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.228256,0.353813,0.317702,1678335055
+60        Packing reports: delta,0.018931,0.035837,0.026665,1678335033
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004826,0.002329,0.002425,1678335204
+3         EXS
+16        f,383,1678335131
+3         CNG
+66        1678335107,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1678335107,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1678335107,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+218       1678335107,/etc/group,change_management_files_watch_files_report_diffs,"-,44,cassianandor:x:1117:-,45,rey:x:1128:+,45,lukeskywaker:x:1126:+,46,anakinskywalker:x:1127:+,47,deepcore:x:1130:+,48,coreworlds:x:1131:"
+
+303       1678335107,/etc/passwd,change_management_files_watch_files_report_diffs,"-,26,cassianandor:x:1117:1117::/home/cassianandor:/bin/bash-,27,rey:x:1125:1128::/home/rey:/bin/bash+,26,lukeskywaker:x:1126:1126::/home/lukeskywaker:/bin/bash+,27,anakinskywalker:x:1127:1127::/home/anakinskywalker:/bin/bash"
+
+3         MOM
+3         MOY
+3         PLG
+396       1678335043,e9590bf38b43fe7f98cb9d0b2a145b49acc0df8d4af188810a630d07337c05b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,anakinskywalker,/default/churn_local_users/users/'anakinskywalker'[15],,[],"[""Created user 'anakinskywalker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+528       1678335069,2e888d0cc6c3290247ab978f31352a8e50d388fa5d0f69a882d4281d85dc4eb0,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'deepcore' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+534       1678335094,6efa5dd990369c8293b768b1e88c3234ddc466536ad9196ad77a378cb27e743e,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'coreworlds' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+851       1678335107,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1678335107,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1678335107,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=c2722313cd8174003160a4cadf40f6074c849bac7a6fa86f2dfc5b523606e748)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+546       1678335119,5d4c4c7454aa3232aee48b315effd73ec0decc409f7c873ef673442d246ddfce,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'westernreaches' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+386       1678335131,099f94c2cd3947debf142bcb5ede995d3b84227825ecb1073f7ed0815f12d696,/var/cfengine/inputs/services/cfbs/install_packages.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,install_packages,packages,python3,/default/install_packages/packages/'python3'[1],,[],"[""Error installing package 'python3'""]",40,SHA=40f0424eb16e4fde2a15d5675138b64ba66acbe8dba134dd72f887d45c359f9f
+
+1178      1678335131,6a5688ce0410d1627c1a2f7bde8226cb69b9bb54d522aa9551ce1a9feb97db91,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1678334740,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1678334740'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1678334740/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678334740/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678334740/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1678334740/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1678334740/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678334740/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678334740/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+383       1678335207,8f889933d10bb688c85e85dce773c282b796ebe7ebe2528f99dba8fe2cc4d5bb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Created user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+374       1678335308,7ccdf5e8cb0651ffd66f8521ac3add259f2c2cf1ac0e47af83ff782d612ba250,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Created user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

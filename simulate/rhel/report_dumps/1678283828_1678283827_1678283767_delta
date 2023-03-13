@@ -1,0 +1,26 @@
+# delta from 1678283767 to 1678283828 at 1678283828
+22        CFR: 0 1678283827 3189
+3         PRD
+60        Packing reports: delta,0.023679,0.056071,0.048503,1678283768
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004754,0.002260,0.001997,1678283818
+3         EXS
+15        f,44,1678283687
+3         CNG
+66        1678283773,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1678283773,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1678283773,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+160       1678283773,/etc/group,change_management_files_watch_files_report_diffs,"-,44,maul:x:1003:-,45,c3po:x:1004:-,50,coreworlds:x:1009:+,48,obiwankenobi:x:1010:"
+
+223       1678283773,/etc/passwd,change_management_files_watch_files_report_diffs,"-,26,maul:x:1003:1003::/home/maul:/bin/bash-,27,c3po:x:1004:1004::/home/c3po:/bin/bash+,27,obiwankenobi:x:1006:1010::/home/obiwankenobi:/bin/bash"
+
+3         MOM
+3         MOY
+3         PLG
+851       1678283773,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1678283773,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1678283773,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=c787e46e2a9dd8d09dc3798415875444b819db14d37882677afab7c01ab5c228)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+# send QUERY complete successful

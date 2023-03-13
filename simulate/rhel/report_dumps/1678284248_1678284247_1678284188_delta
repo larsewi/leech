@@ -1,0 +1,12 @@
+# delta from 1678284188 to 1678284248 at 1678284248
+21        CFR: 0 1678284247 477
+3         PRD
+60        Packing reports: delta,0.024121,0.058183,0.053268,1678284189
+3         EXS
+16        f,240,1678284012
+3         MOM
+3         MOY
+3         PLG
+386       1678284189,099df3409e18fad93b89edb3338c630537071075283589121476fdc39daefb75,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],"[""Created user 'cassianandor'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

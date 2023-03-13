@@ -1,0 +1,10 @@
+# delta from 1678284067 to 1678284128 at 1678284128
+21        CFR: 0 1678284127 171
+3         PRD
+60        Packing reports: delta,0.024469,0.059875,0.049162,1678284068
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004502,0.002027,0.002034,1678284074
+3         EXS
+16        f,284,1678283928
+3         MOM
+3         MOY
+# send QUERY complete successful

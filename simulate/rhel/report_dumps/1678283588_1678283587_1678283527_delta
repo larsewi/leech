@@ -1,0 +1,67 @@
+# delta from 1678283527 to 1678283588 at 1678283588
+22        CFR: 0 1678283587 8841
+3         PRD
+115       CFEngine Execution (policy filename: '/var/cfengine/inputs/promises.cf'),176.134214,234.932470,59.266986,1678283529
+60        Packing reports: delta,0.021570,0.046525,0.047052,1678283528
+53        default:autorun,0.010036,0.010072,0.007772,1678283530
+84        default:cfe_autorun_inventory_aws_ec2_metadata,0.009330,0.008705,0.010531,1678283530
+90        default:cfe_autorun_inventory_aws_ec2_metadata_cache,0.031623,0.006064,0.006064,1678283530
+68        default:cfe_internal_core_main,0.021522,0.046321,0.033167,1678283530
+74        default:cfe_internal_enterprise_main,0.030652,0.093954,0.077311,1678283530
+77        default:cfe_internal_limit_robot_agents,0.015003,0.022510,0.021014,1678283530
+82        default:cfe_internal_limit_robot_agents_reap,0.013600,0.018495,0.017481,1678283530
+71        default:cfe_internal_log_rotation,0.011688,0.013661,0.006649,1678283530
+69        default:cfe_internal_management,0.042005,0.148545,0.116506,1678283530
+70        default:cfe_internal_permissions,0.021638,0.046821,0.046058,1678283530
+63        default:change_management,0.016595,0.027541,0.014415,1678283530
+66        default:churn_local_groups,20.720766,27.492336,1.132920,1678283571
+68        default:churn_local_users,144.718423,156.800827,40.771536,1678283530
+57        default:cron_access,0.031623,0.010961,0.010961,1678283572
+75        default:default_encrypt_method_sha512,0.031623,0.014269,0.014269,1678283578
+64        default:disable_prelinking,0.003245,0.001053,0.001063,1678283530
+65        default:enable_report_dumps,0.031623,0.004039,0.004039,1678283588
+65        default:hello_world_autorun,0.002046,0.000419,0.000408,1678283530
+64        default:install_packages,0.031623,10.169438,10.169438,1678283578
+63        default:inventory_autorun,0.038268,0.183438,0.168550,1678283529
+87        default:inventory_cfengine_version_support_status,0.009769,0.009543,0.005148,1678283530
+54        default:prunedir,0.006617,0.004379,0.002093,1678283530
+59        default:script_monkey,0.031623,0.003768,0.003768,1678283572
+58        lynis:install_tar_gz,0.031623,0.009118,0.009118,1678283572
+48        lynis:main,0.031623,0.457594,0.457594,1678283572
+83        northerntech_security_hardening:cve_2021_3156,0.031623,5.454478,5.454478,1678283572
+3         EXS
+16        f,171,1678283588
+3         MOM
+3         MOY
+3         PLG
+498       1678283544,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Command returned error while removing user 'jarjarbinks'. (Command line: '/sbin/userdel jarjarbinks')"",""Failed to remove user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+383       1678283544,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Removed user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+383       1678283544,56723c45f5504109a2fc211242b200ead91addfe7d156ca9482e66e0538a9d50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,jabbathehut,/default/churn_local_users/users/'jabbathehut'[5],,[],"[""Removed user 'jabbathehut'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+506       1678283559,2ea1aeb72b8fa9b635038692e4b7f7f3b82d3317e496aa0abcac9d3dac664df5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],"[""Command returned error while creating user 'lukeskywaker'. (Command line: '/sbin/useradd -M lukeskywaker')"",""Failed to create user 'lukeskywaker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+374       1678283569,ad252c73d4c3ae487396792116aed12668e52a7ba42d02ddf6b64cf49dcd29cb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Removed user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+363       1678283570,694b8484bbac8080a9932829d3a07c4ccd93fc41056d40a7dfd51f1628205745,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,maul,/default/churn_local_users/users/'maul'[11],,[],"[""Created user 'maul'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+363       1678283570,cac5f7ab2dec7f87bfe1753d37690ac52aa07a2805e7a074f6822b9e701e47ed,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Created user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+396       1678283571,e9590bf38b43fe7f98cb9d0b2a145b49acc0df8d4af188810a630d07337c05b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,anakinskywalker,/default/churn_local_users/users/'anakinskywalker'[15],,[],"[""Created user 'anakinskywalker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+380       1678283571,2e888d0cc6c3290247ab978f31352a8e50d388fa5d0f69a882d4281d85dc4eb0,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Created group 'deepcore'""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+389       1678283571,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Created group 'thecolonies'""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+380       1678283571,e73379c60180edea5fa97d878bc131ada907979ac41bf504519eeffca6f9aa7d,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],"[""Created group 'outerrim'""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+386       1678283572,6efa5dd990369c8293b768b1e88c3234ddc466536ad9196ad77a378cb27e743e,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Created group 'coreworlds'""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+493       1678283578,ff323aed85da7462522d5901b231b12663ac2ac4ab862646652ac358db93d6dd,/var/cfengine/inputs/services/security-hardening/cves/cve-2021-3156-sudo/cve-2021-3156-sudo.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,northerntech_security_hardening,cve_2021_3156,packages,sudo,/northerntech_security_hardening/cve_2021_3156/packages/'sudo'[1],,[],"[""Should install repo type package: sudo, but only warning promised""]",43,SHA=0efd505fa2d2c419b06d5920f339e0f155ecbb9e9f523aba1ceacaf0d9ab9fdb
+
+386       1678283588,099f94c2cd3947debf142bcb5ede995d3b84227825ecb1073f7ed0815f12d696,/var/cfengine/inputs/services/cfbs/install_packages.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,110,default,install_packages,packages,python3,/default/install_packages/packages/'python3'[1],,[],"[""Error installing package 'python3'""]",40,SHA=40f0424eb16e4fde2a15d5675138b64ba66acbe8dba134dd72f887d45c359f9f
+
+1178      1678283588,0061d2328bb0ba554a444d7dd17d4565bb3fde54a08338d7c6a53f507cb3e20f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1678283529,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1678283529'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1678283529/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678283529/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678283529/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1678283529/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1678283529/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678283529/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678283529/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+# send QUERY complete successful

@@ -1,0 +1,207 @@
+# delta from 1678311021 to 1678311322 at 1678311322
+23        CFR: 0 1678311321 30005
+3         VAD
+89        1678311294,3,default,cfe_autorun_inventory_memory,free,0,13498.09,"source=promise,report"
+103       1678311294,3,default,sys,uptime,1,642,"inventory,time_based,source=agent,attribute_name=Uptime minutes"
+91        1678311294,3,default,cfe_autorun_inventory_loadaverage,value,0,0.00,"source=promise,report"
+3         LSD
+120       1678311294,3,43,SHA=7254f21cc164054e92c513abf4079d0671fd43341cfaf40fedad6bbe00dbdd46,172.31.35.223,299.998384,1678311022
+119       1678311294,3,45,SHA=6c1baabfc29d73409938f0be462bfecd8492b5a47f475c78c8f1817f959053ba,172.31.8.223,300.744100,1678311242
+120       1678311294,3,45,SHA=7254f21cc164054e92c513abf4079d0671fd43341cfaf40fedad6bbe00dbdd46,172.31.35.223,294.448888,1678311170
+120       1678311294,3,45,SHA=f373628225ce71586ae38a844c63a6da1fbe124bb4770b805c1bc4a133a3482e,172.31.32.104,297.502291,1678311212
+120       1678311294,3,43,SHA=f373628225ce71586ae38a844c63a6da1fbe124bb4770b805c1bc4a133a3482e,172.31.32.104,299.998384,1678311022
+118       1678311294,3,45,SHA=0cb07f5bff5865ca5268dc1a5cc8599a7a4e6894d4ee954913016cc699b84e3f,172.31.11.9,185.798004,1678311287
+118       1678311294,3,43,SHA=0cb07f5bff5865ca5268dc1a5cc8599a7a4e6894d4ee954913016cc699b84e3f,172.31.11.9,185.798004,1678311287
+118       1678311294,3,43,SHA=15580be79bd3b71c1b7e0cddf38ad84c0228cefdfc8282ab7f3207fa6dbaf228,172.31.34.6,299.998384,1678311022
+119       1678311294,3,43,SHA=6c1baabfc29d73409938f0be462bfecd8492b5a47f475c78c8f1817f959053ba,172.31.8.223,299.998384,1678311022
+118       1678311294,3,45,SHA=15580be79bd3b71c1b7e0cddf38ad84c0228cefdfc8282ab7f3207fa6dbaf228,172.31.34.6,298.732102,1678311033
+3         ELD
+344       1678311294,3,7ccdf5e8cb0651ffd66f8521ac3add259f2c2cf1ac0e47af83ff782d612ba250,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,99,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1190      1678311294,1,956992c7726389edd884b7452bfde72c1003d1ddf841c944a8537ae5475c8722,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1678311287,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1678311287'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1678311287/lastseen.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678311287/lastseen.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678311287/lastseen.cache' from 'localhost:/var/cfengine/state/previous_state/./lastseen.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+546       1678311294,1,5d4c4c7454aa3232aee48b315effd73ec0decc409f7c873ef673442d246ddfce,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'westernreaches' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+360       1678311294,3,49b290ec562af915050cd79df19a212967f63e0c1867fc7f5f5bffd252efb2f7,/var/cfengine/inputs/services/cfbs/modules/cron-access/cron-access.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,99,default,cron_access,files,/etc/cron.daily,/default/cron_access/files/'/etc/cron.daily'[3],,[],[],21,SHA=6e7a58c2f85e2cb966e84c2228899eb1c7c165a47e3587900cfeb96b37b6cbda
+522       1678311294,1,53b982118c5f1ffb49aed44fb4d9ebd461bfae32e4eb2b93d6ddff9f0a434e36,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+387       1678311294,1,e2e6d4f32f029df22474ec21672b5b657148508abbd7acf549626f197a4966c3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Created user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+349       1678311294,3,e73379c60180edea5fa97d878bc131ada907979ac41bf504519eeffca6f9aa7d,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,99,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+692       1678311294,3,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=a4e7017ebfdd09da95f195b8de255bdfae29e68dfb40f7018f05ae978a634f0d)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+418       1678311294,3,abd7ccdd45aa9b9f14f460476d8ac50483110ccc9c0972bad0db3f67e397d053,/var/cfengine/inputs/services/cfbs/modules/cron-access/cron-access.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,cron_access,files,/etc/cron.monthly,/default/cron_access/files/'/etc/cron.monthly'[5],,[],"[""Owner of '/etc/cron.monthly' was 1004, set to 0""]",21,SHA=6e7a58c2f85e2cb966e84c2228899eb1c7c165a47e3587900cfeb96b37b6cbda
+528       1678311294,1,b67b2edf8db5d8e25a5dc6eeb3fe3aad66099040fd631ec969b3cb949e9bdda5,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'deepcore' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+386       1678311294,1,39abe0e6aef9cf7b872cf50126c8b25d5e003d123f12d2c9281df10b52d159d1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],"[""Removed user 'cassianandor'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+546       1678311294,2,56ae32b65ba0455314ec31577642977fcf27f2270bcc7b26afac5625afced872,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'westernreaches' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+534       1678311294,2,6efa5dd990369c8293b768b1e88c3234ddc466536ad9196ad77a378cb27e743e,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'coreworlds' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+528       1678311294,2,2e888d0cc6c3290247ab978f31352a8e50d388fa5d0f69a882d4281d85dc4eb0,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'deepcore' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+386       1678311294,2,099df3409e18fad93b89edb3338c630537071075283589121476fdc39daefb75,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],"[""Created user 'cassianandor'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+522       1678311294,2,2a00738949efc4f5534d541bf62de1fed4c93753c07cb1123e9ef7bd6c7980e3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1452      1678311294,3,2f71922b4823593cede1993f3ecb41e14d78d54a61cf9ddf8b259fcd9808ac5d,/var/cfengine/inputs/services/autorun/disable_prelinking.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,disable_prelinking,commands,/usr/sbin/prelink -ua,/default/autorun/methods/'autorun'/default/disable_prelinking/commands/'/usr/sbin/prelink -ua'[1],,"[""CFE-3795""]","[""Executing 'no timeout' ... '/usr/sbin/prelink -ua'"",""Q: \""...in/prelink -ua\"": prelink: /usr/lib/snapd/snap-seccomp: Could not parse `lookup 0x00007fffb05c6000 0xfffffffffff54ab0 -> 0x00007fffb05c6000 0x0000000000000c10 /0 __vdso_clock_gettime'\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/cat: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin..."",""Q: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/run-init: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/nfsmount: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/false: Using /lib/klibc..."",""Last 35 quoted lines were generated by promiser '/usr/sbin/prelink -ua'"",""Completed execution of '/usr/sbin/prelink -ua'""]",43,SHA=07f04e3cb8c488ec4dca8ae0b09b111c1b1eb9e61f2178180044c06137348de5
+337       1678311294,3,369729ef797e65207cc29c1cf07f54d4a76677334810dd2800afa496927bb5e0,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,99,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+534       1678311294,1,1ba386e9093e4e1678a64e7f8ea7ac89b54730e68a5038c2c64261ada3ca3970,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'coreworlds' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1190      1678311294,2,b6687f43a10708862d1c93eba8ba3a76c6855304505ce88e10e684ff4a095a65,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1678310935,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1678310935'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1678310935/lastseen.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678310935/lastseen.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678310935/lastseen.cache' from 'localhost:/var/cfengine/state/previous_state/./lastseen.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1678310935/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1678310935/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678310935/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678310935/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+353       1678311294,2,c1a3779b76d76e5edde2668bac31f237efb11ce8a83bf017195e39d8744a22b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,99,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+3         PRD
+110       CFEngine Execution (policy filename: '/var/cfengine/inputs/promises.cf'),0.208123,7.372919,7.146914,1678311287
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.116561,0.761020,0.896119,1678311286
+56        DBReportCollectAll,0.038596,0.271931,0.237991,1678311022
+60        Packing reports: delta,0.045023,0.151039,0.112860,1678311022
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004426,0.001959,0.001735,1678311312
+3         EXS
+16        f,333,1678311294
+3         CNG
+66        1678311289,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1678311289,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1678311289,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+256       1678311289,/etc/group,change_management_files_watch_files_report_diffs,"-,65,c3po:x:1074:-,66,midrim:x:1075:+,65,cassianandor:x:1076:+,66,bobafett:x:1077:+,67,deepcore:x:1078:+,68,outerrim:x:1079:+,69,coreworlds:x:1080:+,70,westernreaches:x:1081:"
+
+225       1678311289,/etc/passwd,change_management_files_watch_files_report_diffs,"-,39,c3po:x:1074:1074::/home/c3po:/bin/sh+,39,cassianandor:x:1075:1076::/home/cassianandor:/bin/sh+,40,bobafett:x:1076:1077::/home/bobafett:/bin/sh"
+
+3         MOM
+15        M:entropy_avail
+33        834 8.0000 24.0800 60.3101 0.0000
+34        835 95.0000 66.5000 79.4827 0.0000
+12        M:mem_cached
+39        834 1606.3828 1461.8075 481.9176 0.0000
+40        835 1607.0117 1124.9082 1344.5225 0.0000
+10        M:mem_free
+39        834 13498.0898 12283.5956 0.0000 0.0000
+38        835 13492.0469 9444.4328 0.0000 0.0000
+11        M:mem_total
+39        834 15817.1836 14393.6371 0.0000 0.0000
+39        835 15817.1836 11072.0285 0.0000 0.0000
+16        M:io_writtendata
+31        834 0.0322 0.0449 0.0423 0.0000
+31        835 0.0889 0.0622 0.0744 0.0000
+11        M:io_writes
+31        834 2.0000 3.0800 3.6000 0.0000
+31        835 6.0000 4.2000 5.0200 0.0000
+13        M:postgres_in
+31        834 1.0000 0.9100 0.3000 0.0000
+31        835 1.0000 0.7000 0.8367 0.0000
+6         M:cpu3
+31        834 0.2065 0.4847 0.9273 0.0000
+31        835 2.5959 1.8172 2.1719 0.0000
+6         M:cpu2
+31        834 0.3598 0.6409 0.9371 0.0000
+31        835 0.8467 0.5927 0.7084 0.0000
+6         M:cpu1
+31        834 0.2731 0.3717 0.3286 0.0000
+31        835 2.0869 1.4609 1.7461 0.0000
+6         M:cpu0
+31        834 0.2331 0.5424 1.0309 0.0000
+31        835 0.5332 0.3733 0.4461 0.0000
+5         M:cpu
+31        834 0.2698 0.5107 0.8032 0.0000
+31        835 1.5154 1.0607 1.2678 0.0000
+8         M:syslog
+34        834 0.0000 1561.3500 0.0000 0.0000
+37        835 7196.0000 5037.2000 0.0000 0.0000
+9         M:ssh_out
+31        835 5.0000 3.5000 4.1833 0.0000
+8         M:ssh_in
+31        834 2.0000 1.8200 0.6000 0.0000
+31        835 2.0000 1.4000 1.6733 0.0000
+8         M:www_in
+31        834 1.0000 0.9100 0.3000 0.0000
+31        835 1.0000 0.7000 0.8367 0.0000
+14        M:cfengine_out
+31        835 1.0000 0.7000 0.8367 0.0000
+13        M:cfengine_in
+31        834 1.0000 0.9100 0.3000 0.0000
+31        835 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+31        834 0.0000 0.0048 0.0171 0.0000
+31        835 0.0562 0.0393 0.0470 0.0000
+10        M:diskfree
+34        834 67.0000 60.9700 20.1000 0.0000
+34        835 67.0000 46.9000 56.0562 0.0000
+12        M:otherprocs
+33        834 26.0000 23.6600 7.8000 0.0000
+34        835 26.0000 18.2000 21.7532 0.0000
+11        M:rootprocs
+36        834 114.0000 103.7400 34.2000 0.0000
+35        835 115.0000 80.5000 96.2159 0.0000
+7         M:users
+31        834 8.0000 7.2800 2.4000 0.0000
+31        835 8.0000 5.6000 6.6933 0.0000
+3         MOY
+15        M:entropy_avail
+36        155 165.5000 175.8050 34.6370 0.0000
+12        M:mem_cached
+39        155 1537.7871 1399.3141 461.7041 0.0000
+16        M:io_writtendata
+31        155 0.1587 0.1255 0.1011 0.0000
+11        M:io_writes
+31        155 9.0000 7.3500 5.7379 0.0000
+13        M:postgres_in
+31        155 1.0000 0.9100 0.3000 0.0000
+6         M:cpu3
+31        155 0.6105 0.5206 0.3278 0.0000
+6         M:cpu2
+31        155 1.9920 1.4595 1.9880 0.0000
+6         M:cpu1
+31        155 0.8745 0.6906 0.6019 0.0000
+6         M:cpu0
+31        155 0.7402 0.6057 0.4670 0.0000
+5         M:cpu
+31        155 1.0541 0.8189 0.8345 0.0000
+8         M:syslog
+39        155 3647.5000 2583.5950 114.4214 0.0000
+9         M:ssh_out
+31        155 2.5000 1.7500 2.9580 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+8         M:www_in
+31        155 1.0000 0.9100 0.3000 0.0000
+14        M:cfengine_out
+31        155 3.0000 2.6250 1.2145 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0234 0.0194 0.0225 0.0000
+10        M:diskfree
+34        155 67.5000 61.4250 20.2506 0.0000
+12        M:otherprocs
+33        155 24.5000 22.2950 7.3638 0.0000
+11        M:rootprocs
+36        155 114.5000 104.0900 34.7036 0.0000
+7         M:users
+31        155 8.0000 7.2800 2.4000 0.0000
+3         PLG
+526       1678311288,78e5cb57938898e210726b9581be3a868e9b1624a91b4115bb9ab136bfaa570d,/var/cfengine/inputs/services/autorun/compliance-report-imports.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,compliance_report_imports,commands,/var/cfengine/bin/compliance-report-definition-importer.sh,/default/autorun/methods/'autorun'/default/compliance_report_imports/commands/'/var/cfengine/bin/compliance-report-definition-importer.sh'[1],,"[""CFE-3795""]",[],53,SHA=b66052a46dcbca8c3170f06e8832742b60c8df423237409864b3adbf4e2c0375
+
+664       1678311288,d063f04e139c08041cb1854b488b71591fdfcb54b11b2d93408679f9b530d494,/var/cfengine/inputs/services/autorun/disable_prelinking.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,disable_prelinking,files,/etc/default/prelink,/default/autorun/methods/'autorun'/default/disable_prelinking/files/'/etc/default/prelink'[1],,"[""CFE-3795"",""CCE-27078-5""]","[""Replaced pattern '^\\s*(PRELINKING\\s*=\\s*(?!no$).*|PRELINKING)$' in '/etc/default/prelink'"",""replace_patterns promise '^\\s*(PRELINKING\\s*=\\s*(?!no$).*|PRELINKING)$' repaired"",""Edited file '/etc/default/prelink'""]",33,SHA=07f04e3cb8c488ec4dca8ae0b09b111c1b1eb9e61f2178180044c06137348de5
+
+1452      1678311288,2f71922b4823593cede1993f3ecb41e14d78d54a61cf9ddf8b259fcd9808ac5d,/var/cfengine/inputs/services/autorun/disable_prelinking.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,disable_prelinking,commands,/usr/sbin/prelink -ua,/default/autorun/methods/'autorun'/default/disable_prelinking/commands/'/usr/sbin/prelink -ua'[1],,"[""CFE-3795""]","[""Executing 'no timeout' ... '/usr/sbin/prelink -ua'"",""Q: \""...in/prelink -ua\"": prelink: /usr/lib/snapd/snap-seccomp: Could not parse `lookup 0x00007fffb05c6000 0xfffffffffff54ab0 -> 0x00007fffb05c6000 0x0000000000000c10 /0 __vdso_clock_gettime'\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/cat: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin..."",""Q: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/run-init: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/nfsmount: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/false: Using /lib/klibc..."",""Last 35 quoted lines were generated by promiser '/usr/sbin/prelink -ua'"",""Completed execution of '/usr/sbin/prelink -ua'""]",43,SHA=07f04e3cb8c488ec4dca8ae0b09b111c1b1eb9e61f2178180044c06137348de5
+
+851       1678311289,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1678311289,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1678311289,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=a4e7017ebfdd09da95f195b8de255bdfae29e68dfb40f7018f05ae978a634f0d)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+669       1678311291,1eb9cc521bf98bbc3894d8b3bdae9742a872bb858aa2f260a224a6a4efb99570,/var/cfengine/inputs/cfe_internal/enterprise/CFE_hub_specific.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,cfe_internal_refresh_events_table,commands,/var/cfengine/httpd/php/bin/php,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'Enterprise Maintenance'/default/cfe_internal_enterprise_maintenance/methods/'Enterprise Maintenance'/default/cfe_internal_refresh_events_table/commands/'/var/cfengine/httpd/php/bin/php'[1],mpf_fresh_events_table,[],[],685,SHA=9a0000a41d340a8b74e3a8da98d2f821fdebbb384b8c2848150c1a1b8a94ed39
+
+675       1678311291,5406fc43452ea02ffb0eb1619ea91c39ad8efbdd0e1974948bb007f5e74cc766,/var/cfengine/inputs/cfe_internal/enterprise/CFE_hub_specific.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,cfe_internal_refresh_inventory_view,commands,/var/cfengine/httpd/php/bin/php,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'Enterprise Maintenance'/default/cfe_internal_enterprise_maintenance/methods/'Enterprise Maintenance'/default/cfe_internal_refresh_inventory_view/commands/'/var/cfengine/httpd/php/bin/php'[1],mpf_fresh_inventory_view,[],[],607,SHA=9a0000a41d340a8b74e3a8da98d2f821fdebbb384b8c2848150c1a1b8a94ed39
+
+691       1678311291,81a040733abe3dee0293e79025fb6c686d4696601ce624b6615a37ad199089b9,/var/cfengine/inputs/cfe_internal/enterprise/CFE_hub_specific.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,cfe_internal_update_health_failures,commands,/var/cfengine/httpd/php/bin/php,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'Enterprise Maintenance'/default/cfe_internal_enterprise_maintenance/methods/'Enterprise Maintenance'/default/cfe_internal_update_health_failures/commands/'/var/cfengine/httpd/php/bin/php'[1],mpf_update_health_failures,"[""ENT-6228""]",[],709,SHA=9a0000a41d340a8b74e3a8da98d2f821fdebbb384b8c2848150c1a1b8a94ed39
+
+386       1678311293,39abe0e6aef9cf7b872cf50126c8b25d5e003d123f12d2c9281df10b52d159d1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],"[""Removed user 'cassianandor'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+387       1678311293,e2e6d4f32f029df22474ec21672b5b657148508abbd7acf549626f197a4966c3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Created user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+528       1678311293,b67b2edf8db5d8e25a5dc6eeb3fe3aad66099040fd631ec969b3cb949e9bdda5,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'deepcore' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+534       1678311293,1ba386e9093e4e1678a64e7f8ea7ac89b54730e68a5038c2c64261ada3ca3970,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'coreworlds' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+522       1678311293,53b982118c5f1ffb49aed44fb4d9ebd461bfae32e4eb2b93d6ddff9f0a434e36,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+546       1678311293,5d4c4c7454aa3232aee48b315effd73ec0decc409f7c873ef673442d246ddfce,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'westernreaches' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+418       1678311293,abd7ccdd45aa9b9f14f460476d8ac50483110ccc9c0972bad0db3f67e397d053,/var/cfengine/inputs/services/cfbs/modules/cron-access/cron-access.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,cron_access,files,/etc/cron.monthly,/default/cron_access/files/'/etc/cron.monthly'[5],,[],"[""Owner of '/etc/cron.monthly' was 1004, set to 0""]",21,SHA=6e7a58c2f85e2cb966e84c2228899eb1c7c165a47e3587900cfeb96b37b6cbda
+
+668       1678311293,47ae4cd44cd898a73db815844eb316518182768451c1703fa2bc7d13aee9383a,/var/cfengine/inputs/services/security-hardening/default-encrypt-method-sha512/default-encrypt-method-sha512.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,default_encrypt_method_sha512,files,/etc/login.defs,/default/default_encrypt_method_sha512/files/'/etc/login.defs'[1],,[],"[""Replaced pattern '^\\s*(ENCRYPT_METHOD\\s+(?!SHA512$).*|ENCRYPT_METHOD)$' in '/etc/login.defs'"",""replace_patterns promise '^\\s*(ENCRYPT_METHOD\\s+(?!SHA512$).*|ENCRYPT_METHOD)$' repaired"",""Edited file '/etc/login.defs'""]",31,SHA=0cdd5e84a71277e07bf3284177049562de47456eec212fe38a27223ff42edce1
+
+442       1678311293,349986bf5671bec25d6e62844bb70e0f2a6092dc0f730407c8f0a8d1cad7744b,/var/cfengine/inputs/services/cfbs/delete-home-dotrhosts/main.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,delete_home_dotrhosts,main,files,/home/script_monkey/.rhosts,/delete_home_dotrhosts/main/files/'/home/script_monkey/.rhosts'[1],,[],"[""Deleted file '/home/script_monkey/.rhosts'""]",68,SHA=8438722b7ce4380aa3f8c994e83470329bea936d87a590fdeefb37d470ee56ce
+
+1190      1678311294,956992c7726389edd884b7452bfde72c1003d1ddf841c944a8537ae5475c8722,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,8af0881154d3f47819d283f74d07f1d471fbaa3b,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1678311287,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1678311287'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1678311287/lastseen.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678311287/lastseen.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678311287/lastseen.cache' from 'localhost:/var/cfengine/state/previous_state/./lastseen.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1678311287/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+# send QUERY complete successful
