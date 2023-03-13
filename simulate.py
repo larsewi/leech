@@ -1,9 +1,8 @@
 import os
 from datetime import datetime
-from collections import namedtuple
 import shutil
 import subprocess
-import csv
+from abc import ABC, abstractmethod
 
 HOSTS = {
     "hub":    "SHA=0cb07f5bff5865ca5268dc1a5cc8599a7a4e6894d4ee954913016cc699b84e3f",
@@ -13,9 +12,40 @@ HOSTS = {
     "ubuntu": "SHA=6c1baabfc29d73409938f0be462bfecd8492b5a47f475c78c8f1817f959053ba",
 }
 
-Event = namedtuple("Event", "ts fn")
+class Event(ABC):
+    def __init__(self, hostname, hostkey, timestamp, workdir):
+        self.hostname = hostname
+        self.hostkey = hostkey
+        self.timestamp = timestamp
+        self.workdir = workdir
 
-def commit(workdir, tables):
+    @abstractmethod
+    def work(self):
+        pass
+
+    def __lt__(self, other):
+        return self.timestamp < other.timestamp
+
+class Commit(Event):
+    def __init__(self, hostname, hostkey, timestamp, workdir, tables):
+        super().__init__(hostname, hostkey, timestamp, workdir)
+        self.tables = tables
+
+    def work(self):
+        print(f"Commit {self.timestamp} {self.hostname}")
+
+class Patch(Event):
+    def __init__(self, hostname, hostkey, timestamp, workdir):
+        super().__init__(hostname, hostkey, timestamp, workdir)
+
+    def work(self):
+        print(f"Patch  {self.timestamp} {self.hostname}")
+
+
+def commit(timestamp, workdir, tables):
+    print(timestamp)
+    print(workdir)
+    return
     os.makedirs(os.path.join(workdir, ".leech"), exist_ok=True)
 
     for table in tables:
@@ -25,7 +55,7 @@ def commit(workdir, tables):
     command = "cd %s && ../../bin/leech --inform commit" % workdir
     p = subprocess.run(command, shell=True)
     if p.returncode != 0:
-        print("Command '%s' returned %d: %s" % (command, p.returncode, p.stderr))
+        print("Command '%s' returned %d" % (command, p.returncode))
         exit(1)
 
 def patch(workdir):
@@ -53,17 +83,18 @@ def main():
             if "table_dumps" in dirpath:
                 timestamp = datetime.fromtimestamp(int(dirpath.split("/")[-1]))
                 tables = [os.path.join(dirpath, f) for f in filenames]
-                events.append(Event(timestamp, lambda: commit(workdir, tables)))
+                event = Commit(hostname, hostkey, timestamp, workdir, tables)
+                events.append(event)
             elif "report_dumps" in dirpath:
                 for filename in filenames:
                     timestamp = datetime.fromtimestamp(int(filename.split("_")[0]))
-                    events.append(Event(timestamp, lambda: patch(workdir)))
+                    event = Patch(hostname, hostkey, timestamp, workdir)
+                    events.append(event)
 
-    events = sorted(events, key=lambda ev: ev.ts)
+    events = sorted(events)
 
     for event in events:
-        print(event.ts)
-        event.fn()
+        event.work()
 
 if __name__ == "__main__":
     main()

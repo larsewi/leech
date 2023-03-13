@@ -2,13 +2,13 @@
 #include <errno.h>
 #include <limits.h>
 #include <memory.h>
+#include <openssl/sha.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <openssl/sha.h>
 
 #include "block.h"
 #include "buffer.h"

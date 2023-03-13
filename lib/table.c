@@ -36,7 +36,6 @@ LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo != NULL);
   assert(createInfo->identifier != NULL);
   assert(createInfo->primary_fields != NULL);
-  assert(createInfo->subsidiary_fields != NULL);
   assert(createInfo->read_locator != NULL);
   assert(createInfo->write_locator != NULL);
   assert(createInfo->read_callback != NULL);

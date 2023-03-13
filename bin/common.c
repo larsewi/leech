@@ -183,7 +183,10 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
     LCH_TableCreateInfo createInfo = {
         .identifier = "ELD",
         .primary_fields = "promise_hash",
-        .subsidiary_fields = "policy_filename,release_id,promise_outcome,namespace,bundle,promise_type,promiser,stack_path,handle,promisee,messages,line_number,policy_file_hash",
+        .subsidiary_fields =
+            "policy_filename,release_id,promise_outcome,namespace,bundle,"
+            "promise_type,promiser,stack_path,handle,promisee,messages,line_"
+            "number,policy_file_hash",
         .read_locator = ".leech/execution_log.cache",
         .write_locator = ".leech/execution_log.csv",
         .read_callback = LCH_TableReadCallbackCSV,

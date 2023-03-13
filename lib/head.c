@@ -29,7 +29,8 @@ char *LCH_HeadGet(const char *const name, const char *const work_dir) {
   return LCH_StringStrip(head, " \t\r\n");
 }
 
-bool LCH_HeadSet(const char *const name, const char *const workdir, const char *const block_id) {
+bool LCH_HeadSet(const char *const name, const char *const workdir,
+                 const char *const block_id) {
   assert(workdir != NULL);
   assert(block_id != NULL);
 

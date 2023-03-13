@@ -409,7 +409,6 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
                           const char *const primary,
                           const char *const subsidiary) {
   assert(primary != NULL);
-  assert(subsidiary != NULL);
   assert(table != NULL);
 
   LCH_List *primary_fields = LCH_CSVParseRecord(primary);
@@ -419,7 +418,8 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   }
   LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
 
-  LCH_List *subsidiary_fields = LCH_CSVParseRecord(subsidiary);
+  LCH_List *subsidiary_fields =
+      (subsidiary == NULL) ? LCH_ListCreate() : LCH_CSVParseRecord(subsidiary);
   if (subsidiary_fields == NULL) {
     LCH_LOG_ERROR("Failed to parse primary fields '%s'.", subsidiary);
     LCH_ListDestroy(primary_fields);
