@@ -33,6 +33,17 @@ class Commit(Event):
 
     def work(self):
         print(f"Commit {self.timestamp} {self.hostname}")
+        os.makedirs(os.path.join(self.workdir, ".leech"), exist_ok=True)
+
+        for table in self.tables:
+            print("Copying '%s' to '%s'" % (table, os.path.join(self.workdir, ".leech")))
+            shutil.copy(table, os.path.join(self.workdir, ".leech"))
+
+        command = "cd %s && ../../bin/leech --inform commit" % self.workdir
+        p = subprocess.run(command, shell=True)
+        if p.returncode != 0:
+            print("Command '%s' returned %d" % (command, p.returncode))
+            exit(1)
 
 class Patch(Event):
     def __init__(self, hostname, hostkey, timestamp, workdir):
@@ -41,28 +52,10 @@ class Patch(Event):
     def work(self):
         print(f"Patch  {self.timestamp} {self.hostname}")
 
-
-def commit(timestamp, workdir, tables):
-    print(timestamp)
-    print(workdir)
-    return
-    os.makedirs(os.path.join(workdir, ".leech"), exist_ok=True)
-
-    for table in tables:
-        print("Copying '%s' to '%s'" % (table, os.path.join(workdir, ".leech")))
-        shutil.copy(table, os.path.join(workdir, ".leech"))
-
-    command = "cd %s && ../../bin/leech --inform commit" % workdir
-    p = subprocess.run(command, shell=True)
-    if p.returncode != 0:
-        print("Command '%s' returned %d" % (command, p.returncode))
-        exit(1)
-
-def patch(workdir):
-    pass
-
 def main():
     events = []
+
+    subprocess.run("rm -rf simulate/**/.leech")
 
     for hostname, hostkey in HOSTS.items():
         workdir = os.path.join(os.getcwd(), "simulate", hostname, ".")
