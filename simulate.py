@@ -3,6 +3,7 @@ from datetime import datetime
 from collections import namedtuple
 import shutil
 import subprocess
+import csv
 
 HOSTS = {
     "hub":    "SHA=0cb07f5bff5865ca5268dc1a5cc8599a7a4e6894d4ee954913016cc699b84e3f",
@@ -34,26 +35,33 @@ def main():
     events = []
 
     for hostname, hostkey in HOSTS.items():
-        workdir = os.path.join("simulate", hostname, ".leech", ".")
+        workdir = os.path.join("simulate", hostname, ".")
 
-        for dirpath, _, filenames in os.walk(hostname):
+        for dirpath, _, filenames in os.walk(os.path.join("simulate", hostname)):
             if len(filenames) == 0:
                 continue
 
-            if "cache_dumps" in dirpath:
-                timestamp = datetime.fromtimestamp(int(dirpath.split("/")[-1]))
-                tables = [os.path.join(dirpath, f) for f in filenames]
-                events.append(Event(timestamp, lambda: commit(workdir, tables)))
-            elif "report_dumps" in dirpath:
-                for filename in filenames:
-                    timestamp = datetime.fromtimestamp(int(filename.split("_")[0]))
-                    events.append(Event(timestamp, lambda: patch(workdir)))
+            for filename in [os.path.join(dirpath, f) for f in filenames]:
+                with open(filename, "r", newline="") as f:
+                    reader = csv.reader(f)
+                with open(filename, "w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(reader)
 
-    sorted(events, key=lambda ev: ev.ts)
+    #         if "table_dumps" in dirpath:
+    #             timestamp = datetime.fromtimestamp(int(dirpath.split("/")[-1]))
+    #             tables = [os.path.join(dirpath, f) for f in filenames]
+    #             events.append(Event(timestamp, lambda: commit(workdir, tables)))
+    #         elif "report_dumps" in dirpath:
+    #             for filename in filenames:
+    #                 timestamp = datetime.fromtimestamp(int(filename.split("_")[0]))
+    #                 events.append(Event(timestamp, lambda: patch(workdir)))
 
-    for event in events:
-        print(event.ts)
-        event.fn()
+    # events = sorted(events, key=lambda ev: ev.ts)
+
+    # for event in events:
+    #     print(event.ts)
+    #     event.fn()
 
 if __name__ == "__main__":
     main()
