@@ -131,7 +131,7 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
     LCH_TableCreateInfo createInfo = {
         .identifier = "SDI",
         .primary_fields = "name,version,architecture",
-        .subsidiary_fields = "",
+        .subsidiary_fields = NULL,
         .read_locator = "software.cache",
         .write_locator = "software.csv",
         .read_callback = LCH_TableReadCallbackCSV,
