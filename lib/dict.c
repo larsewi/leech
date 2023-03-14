@@ -252,12 +252,15 @@ LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
       continue;
     }
 
-    void *value = duplicate(item->value);
-    if (value == NULL) {
-      LCH_DictDestroy(result);
-      LCH_LOG_ERROR("Failed to duplicate value from dict entry at key '%s'.",
-                    key);
-      return NULL;
+    void *value = NULL;
+    if (item->value != NULL) {
+      value = duplicate(item->value);
+      if (value == NULL) {
+        LCH_DictDestroy(result);
+        LCH_LOG_ERROR("Failed to duplicate value from dict entry at key '%s'.",
+                      key);
+        return NULL;
+      }
     }
 
     if (!LCH_DictSet(result, key, value, destroy)) {

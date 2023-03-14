@@ -206,50 +206,14 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
       continue;
     }
 
-    char path[PATH_MAX];
-    if (!LCH_PathJoin(path, sizeof(path), 3, self->work_dir, "snapshot",
-                      table_id)) {
-      LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
+    if (!LCH_TableStoreNewState(table, self->work_dir, new_state)) {
+      LCH_LOG_ERROR("Failed to store new state for table '%s'.", table_id);
       LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(new_state);
       return false;
     }
-
-    FILE *const file = fopen(path, "w");
-    if (file == NULL) {
-      LCH_LOG_ERROR(
-          "Filed to create snapshot for table '%s': Failed to open file '%s': "
-          "%s",
-          table_id, strerror(errno));
-      LCH_BufferDestroy(delta_buffer);
-      LCH_DictDestroy(new_state);
-      return false;
-    }
-
-    LCH_DictIter *iter = LCH_DictIterCreate(new_state);
-    if (iter == NULL) {
-      LCH_LOG_ERROR("Failed to create snapshot for table '%s'.", table_id);
-      fclose(file);
-      LCH_BufferDestroy(delta_buffer);
-      LCH_DictDestroy(new_state);
-      return false;
-    }
-
-    while (LCH_DictIterHasNext(iter)) {
-      const char *const key = LCH_DictIterGetKey(iter);
-      assert(key != NULL);
-      assert(fprintf(file, "%s\r\n", key) > 0);
-
-      const char *const value = (char *)LCH_DictIterGetValue(iter);
-      assert(fprintf(file, "%s\r\n", value) > 0);
-      assert(value != NULL);
-    }
-
-    LCH_LOG_VERBOSE("Created new snapshot for table '%s'.", table_id);
-
-    free(iter);
-    fclose(file);
-    LCH_DictDestroy(new_state);
+    LCH_LOG_VERBOSE("Stored new state for table '%s' containing %zu rows.",
+                    table_id, LCH_DictLength(new_state));
   }
 
   char *const head = LCH_HeadGet("HEAD", self->work_dir);
@@ -277,17 +241,18 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   }
   free(block);
   LCH_LOG_INFO(
-      "Created block '%s' with a deltas containing a total of %zu insertions, "
+      "Created block '%.5s' with a deltas containing a total of %zu "
+      "insertions, "
       "%zu deletions, and %zu modifications, over %zu table(s).",
       block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
 
   if (!LCH_HeadSet("HEAD", self->work_dir, block_id)) {
-    LCH_LOG_ERROR("Failed to move head to '%s'.", block_id);
+    LCH_LOG_ERROR("Failed to move head to '%.5s'.", block_id);
     free(head);
     free(block_id);
     return false;
   }
-  LCH_LOG_VERBOSE("Moved head from '%s' to '%s'.", head, block_id);
+  LCH_LOG_VERBOSE("Moved head from '%.5s' to '%.5s'.", head, block_id);
 
   free(head);
   free(block_id);

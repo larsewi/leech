@@ -82,63 +82,6 @@ LCH_Dict *LCH_TableLoadNewState(const LCH_Table *const table) {
   return data;
 }
 
-static LCH_Dict *LoadSnapshot(const char *const path) {
-  LCH_List *table = LCH_CSVParseFile(path);
-  if (table == NULL) {
-    return NULL;
-  }
-
-  LCH_Dict *snapshot = LCH_DictCreate();
-  if (snapshot == NULL) {
-    return NULL;
-  }
-
-  assert(LCH_ListLength(table) % 2 == 0);
-  char *key = NULL, *val = NULL;
-  for (size_t i = 0; i < LCH_ListLength(table); i++) {
-    const LCH_List *const record = LCH_ListGet(table, i);
-
-    LCH_Buffer *const buffer = LCH_CSVComposeRecord(record);
-    if (buffer == NULL) {
-      LCH_ListDestroy(table);
-      LCH_DictDestroy(snapshot);
-      return NULL;
-    }
-
-    char *str = LCH_BufferStringDup(buffer);
-    if (str == NULL) {
-      LCH_LOG_ERROR("Failed to get snapshot string from string buffer");
-      free(key);
-      free(val);
-      LCH_BufferDestroy(buffer);
-      LCH_ListDestroy(table);
-      LCH_DictDestroy(snapshot);
-      return NULL;
-    }
-    LCH_BufferDestroy(buffer);
-
-    if (i % 2 == 0) {
-      key = str;
-      continue;
-    }
-    val = str;
-
-    if (!LCH_DictSet(snapshot, key, val, free)) {
-      free(key);
-      free(val);
-      LCH_ListDestroy(table);
-      LCH_DictDestroy(snapshot);
-      return NULL;
-    }
-    free(key);
-    key = NULL;
-    val = NULL;
-  }
-
-  LCH_ListDestroy(table);
-  return snapshot;
-}
-
 LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
                                 const char *const work_dir) {
   assert(table != NULL);
@@ -151,14 +94,44 @@ LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
     return NULL;
   }
 
-  LCH_Dict *const snapshot =
-      (LCH_IsRegularFile(path)) ? LoadSnapshot(path) : LCH_DictCreate();
-  if (snapshot == NULL) {
-    LCH_LOG_ERROR("Failed to load snapshot for table %s", table->identifier);
+  if (LCH_IsRegularFile(path)) {
+    LCH_List *const records = LCH_CSVParseFile(path);
+    if (records == NULL) {
+      return NULL;
+    }
+
+    LCH_Dict *const snapshot = LCH_TableToDict(records, table->primary_fields,
+                                               table->subsidiary_fields);
+    if (snapshot == NULL) {
+      LCH_ListDestroy(records);
+      return NULL;
+    }
+
+    return snapshot;
+  }
+
+  LCH_Dict *const snapshot = LCH_DictCreate();
+  return snapshot;
+}
+
+bool LCH_TableStoreNewState(const LCH_Table *const self,
+                            const char *const work_dir,
+                            const LCH_Dict *const new_state) {
+  LCH_List *const records =
+      LCH_DictToTable(new_state, self->primary_fields, self->subsidiary_fields);
+  if (records == NULL) {
     return NULL;
   }
 
-  return snapshot;
+  char path[PATH_MAX];
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
+                    self->identifier)) {
+    return false;
+  }
+
+  const bool success = LCH_CSVComposeFile(records, path);
+  LCH_ListDestroy(records);
+  return success;
 }
 
 static char *AddUniqueIdToRecord(const char *const record, const char *const id,

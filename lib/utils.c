@@ -512,16 +512,19 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
       return NULL;
     }
 
-    char *const value = ComposeFieldsAtIndices(record, subsidiary_indices);
-    if (value == NULL) {
-      LCH_LOG_ERROR("Failed to compose subsidiary fields for record %zu.", i);
-      free(key);
-      LCH_ListDestroy(subsidiary_indices);
-      LCH_ListDestroy(primary_indices);
-      LCH_ListDestroy(subsidiary_fields);
-      LCH_ListDestroy(primary_fields);
-      LCH_DictDestroy(dict);
-      return NULL;
+    char *value = NULL;
+    if (LCH_ListLength(subsidiary_indices) > 0) {
+      value = ComposeFieldsAtIndices(record, subsidiary_indices);
+      if (value == NULL) {
+        LCH_LOG_ERROR("Failed to compose subsidiary fields for record %zu.", i);
+        free(key);
+        LCH_ListDestroy(subsidiary_indices);
+        LCH_ListDestroy(primary_indices);
+        LCH_ListDestroy(subsidiary_fields);
+        LCH_ListDestroy(primary_fields);
+        LCH_DictDestroy(dict);
+        return NULL;
+      }
     }
 
     if (!LCH_DictSet(dict, key, value, free)) {
@@ -562,7 +565,8 @@ static LCH_List *ParseConcatFields(const char *const primary,
     LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
   }
 
-  LCH_List *subsidiary_fields = (subsidiary == NULL) ? LCH_ListCreate() : LCH_CSVParseRecord(subsidiary);
+  LCH_List *subsidiary_fields =
+      (subsidiary == NULL) ? LCH_ListCreate() : LCH_CSVParseRecord(subsidiary);
   if (subsidiary_fields == NULL) {
     LCH_LOG_ERROR("Failed to parse subsidiary fields '%s'.", subsidiary);
     LCH_ListDestroy(primary_fields);
