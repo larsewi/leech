@@ -272,7 +272,7 @@ char *LCH_ReadFile(const char *const path, size_t *const length) {
     bytes_read =
         fread(buffer + total_read, 1, buffer_size - total_read - 1, file);
     total_read += bytes_read;
-    buffer_size *= LCH_BUFFER_SIZE;
+    buffer_size *= 2;
   } while (bytes_read != 0);
 
   if (ferror(file)) {
@@ -551,7 +551,6 @@ static LCH_List *ParseConcatFields(const char *const primary,
                                    const char *const subsidiary,
                                    const bool sort) {
   assert(primary != NULL);
-  assert(subsidiary != NULL);
 
   LCH_List *primary_fields = LCH_CSVParseRecord(primary);
   if (primary_fields == NULL) {
@@ -563,7 +562,7 @@ static LCH_List *ParseConcatFields(const char *const primary,
     LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
   }
 
-  LCH_List *subsidiary_fields = LCH_CSVParseRecord(subsidiary);
+  LCH_List *subsidiary_fields = (subsidiary == NULL) ? LCH_ListCreate() : LCH_CSVParseRecord(subsidiary);
   if (subsidiary_fields == NULL) {
     LCH_LOG_ERROR("Failed to parse subsidiary fields '%s'.", subsidiary);
     LCH_ListDestroy(primary_fields);

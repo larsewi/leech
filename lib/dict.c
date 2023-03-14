@@ -131,11 +131,6 @@ static bool EnsureCapacity(LCH_Dict *const self) {
   self->in_use = self->length;
   free(old_buffer);
 
-  LCH_LOG_DEBUG(
-      "%s. New buffer capacity %zu/%zu.",
-      (expand) ? "Expanded dictionary buffer" : "Removed invalidated items",
-      self->in_use, self->capacity);
-
   return true;
 }
 

@@ -102,11 +102,6 @@ bool LCH_TableInsertCallbackCSV(const void *const locator,
       LCH_DictDestroy(dict);
       return false;
     }
-    LCH_LOG_DEBUG(
-        "Inserted record with primary field(s) '%s' and subsidiary field(s) "
-        "'%s' into "
-        "table.",
-        key, value);
   }
   LCH_ListDestroy(keys);
 
