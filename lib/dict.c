@@ -298,8 +298,14 @@ LCH_Dict *LCH_DictSetChangedIntersection(
       continue;
     }
 
-    if (compare(LCH_DictGet(self, key), LCH_DictGet(other, key)) == 0) {
+    if (LCH_DictGet(self, key) == NULL && LCH_DictGet(other, key) == NULL) {
       continue;
+    }
+
+    if (LCH_DictGet(self, key) != NULL || LCH_DictGet(other, key) != NULL) {
+      if (compare(LCH_DictGet(self, key), LCH_DictGet(other, key)) == 0) {
+        continue;
+      }
     }
 
     void *value = duplicate(item->value);

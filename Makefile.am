@@ -6,3 +6,4 @@ format:
 
 super-clean:
 	git clean -fxd
+	rm -rf simulate/**/.leech

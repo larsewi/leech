@@ -390,8 +390,8 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
 
     // delete -> noop => delete
     char *value = LCH_DictRemove(parent->delete, key);
-    assert(value == NULL);
-    if (!LCH_DictSet(child->delete, key, NULL, NULL)) {
+    assert(value != NULL);
+    if (!LCH_DictSet(child->delete, key, value, free)) {
       return false;
     }
   }
