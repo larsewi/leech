@@ -36,11 +36,9 @@ class Commit(Event):
         os.makedirs(os.path.join(self.workdir, ".leech"), exist_ok=True)
 
         for table in self.tables:
-            print("Copying '%s' to '%s'" % (table, os.path.join(self.workdir, ".leech")))
             shutil.copy(table, os.path.join(self.workdir, ".leech"))
 
-        command = "cd %s && ../../bin/leech --verbose commit" % self.workdir
-        print("Running command: %s" % command)
+        command = "cd %s && ../../bin/leech --info commit" % self.workdir
         p = subprocess.run(command, shell=True)
         if p.returncode != 0:
             print("Command '%s' returned %d" % (command, p.returncode))
@@ -55,21 +53,18 @@ class Patch(Event):
         lastseen_block = "0000000000000000000000000000000000000000"
         lastseen_block_path = os.path.join(self.workdir, "../hub/.leech", self.hostkey)
         if os.path.exists(lastseen_block_path):
-            print("Loading last seen block from %s" % lastseen_block_path)
             with open(lastseen_block_path, "r") as f:
                 lastseen_block = f.read().strip()
         patch_file = os.path.join(self.workdir, ".leech", "%s_patchfile" % self.timestamp.timestamp())
 
-        command = "cd %s && ../../bin/leech --verbose delta --block %s --file %s" % (self.workdir, lastseen_block, patch_file)
-        print("Running command: %s" % command)
+        command = "cd %s && ../../bin/leech --info delta --block %s --file %s" % (self.workdir, lastseen_block, patch_file)
         p = subprocess.run(command, shell=True)
         if p.returncode != 0:
             print("Command '%s' returned %d" % (command, p.returncode))
             exit(1)
 
         print(f"*** Patch {self.timestamp} {self.hostname} ***")
-        command = "cd %s && ../../bin/leech --verbose patch --field %s --value %s --file %s" %(os.path.join(os.getcwd(), "simulate/hub"), "host_key", self.hostkey, patch_file)
-        print("Running command: %s" % command)
+        command = "cd %s && ../../bin/leech --info patch --field %s --value %s --file %s" %(os.path.join(os.getcwd(), "simulate/hub"), "host_key", self.hostkey, patch_file)
         p = subprocess.run(command, shell=True)
         if p.returncode != 0:
             print("Command '%s' returned %d" % (command, p.returncode))

@@ -490,6 +490,7 @@ bool LCH_InstancePatch(const LCH_Instance *const self,
   head[SHA_DIGEST_LENGTH * 2] = '\0';
   buffer += SHA_DIGEST_LENGTH * 2;
 
+  size_t num_tables = 0, tot_insert = 0, tot_delete = 0, tot_update = 0;
   while ((size_t)(buffer - patch) < size) {
     LCH_Delta *delta;
     buffer = LCH_DeltaUnmarshal(&delta, self, buffer);
@@ -504,10 +505,27 @@ bool LCH_InstancePatch(const LCH_Instance *const self,
       LCH_DeltaDestroy(delta);
       return false;
     }
-    LCH_LOG_DEBUG("Patched table '%s'.",
-                  LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)));
+
+    const size_t num_insert = LCH_DeltaGetNumInsertions(delta);
+    const size_t num_delete = LCH_DeltaGetNumDeletions(delta);
+    const size_t num_update = LCH_DeltaGetNumUpdates(delta);
+    tot_insert += num_insert;
+    tot_delete += num_delete;
+    tot_update += num_update;
+    num_tables += 1;
+
+    LCH_LOG_VERBOSE(
+        "Patched table '%s' with %zu insertions, %zu deletions, and %zu "
+        "updates.",
+        LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)), num_insert,
+        num_delete, num_update);
     LCH_DeltaDestroy(delta);
   }
+
+  LCH_LOG_INFO(
+      "Patched %zu tables with a total of %zu insertions, %zu deletions, and "
+      "%zu updates",
+      num_tables, tot_insert, tot_delete, tot_update);
 
   if (!LCH_HeadSet(uid_value, self->work_dir, head)) {
     return NULL;
