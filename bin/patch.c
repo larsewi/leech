@@ -81,7 +81,7 @@ int Patch(const char *const work_dir, int argc, char *argv[]) {
   }
 
   size_t size;
-  char *const buffer = LCH_ReadFile(patch_file, &size);
+  char *const buffer = LCH_FileRead(patch_file, &size);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to load patch file '%s'.", patch_file);
     return EXIT_FAILURE;

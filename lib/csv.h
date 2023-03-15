@@ -14,9 +14,9 @@ LCH_List *LCH_CSVParseFile(const char *path);
 
 /****************************************************************************/
 
-LCH_Buffer *LCH_CSVComposeTable(const LCH_List *table);
+bool LCH_CSVComposeTable(LCH_Buffer **buffer, const LCH_List *table);
 
-LCH_Buffer *LCH_CSVComposeRecord(const LCH_List *record);
+bool LCH_CSVComposeRecord(LCH_Buffer **buffer, const LCH_List *record);
 
 char *LCH_CSVComposeField(const char *const field);
 

@@ -7,20 +7,23 @@
 #include <string.h>
 
 #include "csv.h"
+#include "instance.h"
 #include "leech.h"
 #include "list.h"
+#include "table.h"
+#include "utils.h"
 
 struct LCH_Delta {
-  char *table_id;
-  LCH_Dict *insertions;
-  LCH_Dict *deletions;
-  LCH_Dict *modifications;
+  const LCH_Table *table;
+  LCH_Dict *insert;
+  LCH_Dict *delete;
+  LCH_Dict *update;
 };
 
-LCH_Delta *LCH_DeltaCreate(const char *const table_id,
+LCH_Delta *LCH_DeltaCreate(const LCH_Table *const table,
                            const LCH_Dict *const new_state,
                            const LCH_Dict *const old_state) {
-  assert(table_id != NULL);
+  assert(table != NULL);
   assert((new_state != NULL && old_state != NULL) ||
          (new_state == NULL && old_state == NULL));
 
@@ -30,50 +33,41 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  delta->table_id = strdup(table_id);
-  if (delta->table_id == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for delta table id: '%s'",
-                  strerror(errno));
-    free(delta);
-    return NULL;
-  }
+  delta->table = table;
 
   const bool create_empty = (new_state == NULL) && (old_state == NULL);
 
-  delta->insertions =
-      (create_empty) ? LCH_DictCreate()
-                     : LCH_DictSetMinus(new_state, old_state,
-                                        (void *(*)(const void *))strdup, free);
-  if (delta->insertions == NULL) {
+  delta->insert = (create_empty)
+                      ? LCH_DictCreate()
+                      : LCH_DictSetMinus(new_state, old_state,
+                                         (void *(*)(const void *))strdup, free);
+  if (delta->insert == NULL) {
     LCH_LOG_ERROR("Failed to compute insertions for delta.");
-    free(delta->table_id);
     free(delta);
     return NULL;
   }
 
-  delta->deletions =
-      (create_empty) ? LCH_DictCreate()
-                     : LCH_DictSetMinus(old_state, new_state,
-                                        (void *(*)(const void *))strdup, free);
-  if (delta->deletions == NULL) {
+  delta->delete = (create_empty)
+                      ? LCH_DictCreate()
+                      : LCH_DictSetMinus(old_state, new_state,
+                                         (void *(*)(const void *))strdup, free);
+  if (delta->delete == NULL) {
     LCH_LOG_ERROR("Failed to compute deletions for delta.");
-    LCH_DictDestroy(delta->insertions);
-    free(delta->table_id);
+    LCH_DictDestroy(delta->insert);
     free(delta);
     return NULL;
   }
 
-  delta->modifications =
+  delta->update =
       (create_empty)
           ? LCH_DictCreate()
           : LCH_DictSetChangedIntersection(
                 new_state, old_state, (void *(*)(const void *))strdup, free,
                 (int (*)(const void *, const void *))strcmp);
-  if (delta->modifications == NULL) {
+  if (delta->update == NULL) {
     LCH_LOG_ERROR("Failed to compute modifications for delta.");
-    LCH_DictDestroy(delta->deletions);
-    LCH_DictDestroy(delta->insertions);
-    free(delta->table_id);
+    LCH_DictDestroy(delta->delete);
+    LCH_DictDestroy(delta->insert);
     free(delta);
     return NULL;
   }
@@ -83,49 +77,22 @@ LCH_Delta *LCH_DeltaCreate(const char *const table_id,
 
 void LCH_DeltaDestroy(LCH_Delta *const delta) {
   if (delta != NULL) {
-    assert(delta->insertions != NULL);
-    LCH_DictDestroy(delta->insertions);
+    assert(delta->insert != NULL);
+    LCH_DictDestroy(delta->insert);
 
-    assert(delta->deletions != NULL);
-    LCH_DictDestroy(delta->deletions);
+    assert(delta->delete != NULL);
+    LCH_DictDestroy(delta->delete);
 
-    assert(delta->modifications != NULL);
-    LCH_DictDestroy(delta->modifications);
-
-    assert(delta->table_id != NULL);
-    free(delta->table_id);
+    assert(delta->update != NULL);
+    LCH_DictDestroy(delta->update);
 
     free(delta);
   }
 }
 
-static bool MarshalTableId(LCH_Buffer *const buffer,
-                           const char *const table_id) {
-  size_t offset;
-  if (!LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset)) {
-    return false;
-  }
-
-  const size_t before = LCH_BufferLength(buffer);
-  if (!LCH_BufferPrintFormat(buffer, table_id)) {
-    return false;
-  }
-  const size_t after = LCH_BufferLength(buffer);
-
-  if (after - before > UINT32_MAX) {
-    LCH_LOG_ERROR("Table id too long (%zu > %zu).", after - before, UINT32_MAX);
-    return false;
-  }
-
-  const uint32_t length = htonl(after - before);
-  LCH_BufferSet(buffer, offset, &length, sizeof(uint32_t));
-
-  return true;
-}
-
-static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
-                                   const LCH_Dict *const dict,
-                                   const bool keep_value) {
+static bool MarshalDeltaOperations(LCH_Buffer *buffer,
+                                   const LCH_Table *const table,
+                                   const LCH_Dict *const dict) {
   size_t offset;
   if (!LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset)) {
     return false;
@@ -133,33 +100,18 @@ static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
 
   const size_t before = LCH_BufferLength(buffer);
 
-  LCH_DictIter *iter = LCH_DictIterCreate(dict);
-  if (iter == NULL) {
-    LCH_LOG_ERROR("Failed to create iterator for marshaling delta.");
-    return NULL;
+  LCH_List *const records =
+      LCH_DictToTable(dict, LCH_TableGetPrimaryFields(table),
+                      LCH_TableGetSubsidiaryFields(table), false);
+  if (records == NULL) {
+    return false;
   }
 
-  while (LCH_DictIterHasNext(iter)) {
-    const char *const key = LCH_DictIterGetKey(iter);
-    assert(key != NULL);
-
-    if (!LCH_BufferPrintFormat(buffer, "%s\r\n", key)) {
-      free(iter);
-      return false;
-    }
-
-    if (keep_value) {
-      const char *const value = (char *)LCH_DictIterGetValue(iter);
-      assert(value != NULL);
-
-      if (!LCH_BufferPrintFormat(buffer, "%s\r\n", value)) {
-        free(iter);
-        return false;
-      }
-      continue;
-    }
+  if (!LCH_CSVComposeTable(&buffer, records)) {
+    free(records);
+    return false;
   }
-  free(iter);
+  free(records);
 
   const size_t after = LCH_BufferLength(buffer);
   if (after - before > UINT32_MAX) {
@@ -175,27 +127,27 @@ static bool MarshalDeltaOperations(LCH_Buffer *const buffer,
 bool LCH_DeltaMarshal(LCH_Buffer *const buffer, const LCH_Delta *const delta) {
   assert(buffer != NULL);
   assert(delta != NULL);
-  assert(delta->table_id != NULL);
-  assert(delta->insertions != NULL);
-  assert(delta->deletions != NULL);
-  assert(delta->modifications != NULL);
+  assert(delta->table != NULL);
+  assert(delta->insert != NULL);
+  assert(delta->delete != NULL);
+  assert(delta->update != NULL);
 
-  if (!MarshalTableId(buffer, delta->table_id)) {
-    LCH_LOG_ERROR("Failed to marshal delta table id.");
+  if (!LCH_MarshalString(buffer, LCH_TableGetIdentifier(delta->table))) {
+    LCH_LOG_ERROR("Failed to marshal delta table identifier.");
     return false;
   }
 
-  if (!MarshalDeltaOperations(buffer, delta->insertions, true)) {
+  if (!MarshalDeltaOperations(buffer, delta->table, delta->insert)) {
     LCH_LOG_ERROR("Failed to marshal delta insertion operations.");
     return false;
   }
 
-  if (!MarshalDeltaOperations(buffer, delta->deletions, false)) {
+  if (!MarshalDeltaOperations(buffer, delta->table, delta->delete)) {
     LCH_LOG_ERROR("Failed to marshal delta deletion operations.");
     return false;
   }
 
-  if (!MarshalDeltaOperations(buffer, delta->modifications, true)) {
+  if (!MarshalDeltaOperations(buffer, delta->table, delta->update)) {
     LCH_LOG_ERROR("Failed to marshal delta modification operations.");
     return false;
   }
@@ -203,93 +155,35 @@ bool LCH_DeltaMarshal(LCH_Buffer *const buffer, const LCH_Delta *const delta) {
   return true;
 }
 
-static const char *UnmarshalTableId(LCH_Delta *const delta,
-                                    const char *buffer) {
-  const uint32_t *const len_ptr = (uint32_t *)buffer;
-  const uint32_t length = ntohl(*len_ptr);
-  buffer += sizeof(uint32_t);
-
-  delta->table_id = strndup(buffer, length);
-  if (delta->table_id == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+static const char *UnmarshalDeltaOperation(LCH_Dict **const dict,
+                                           const LCH_Table *const table,
+                                           const char *buffer) {
+  char *csv;
+  buffer = LCH_UnmarshalBinary(buffer, &csv);
+  if (buffer == NULL) {
     return NULL;
   }
 
-  buffer += length;
-  return buffer;
-}
-
-static const char *UnmarshalDeltaOperation(LCH_Dict *const dict,
-                                           const char *buffer,
-                                           const bool take_value) {
-  const uint32_t *const len_ptr = (uint32_t *)buffer;
-  const uint32_t length = ntohl(*len_ptr);
-  buffer += sizeof(uint32_t);
-  if (length == 0) {
-    return buffer;
-  }
-
-  char data[length + 1];
-  memcpy(data, buffer, length);
-  data[length] = '\0';
-
-  LCH_List *const table = LCH_CSVParseTable(data);
-  if (table == NULL) {
-    LCH_LOG_ERROR("Failed to parse delta operations");
+  LCH_List *const records =
+      (strcmp(csv, "") == 0) ? LCH_ListCreate() : LCH_CSVParseTable(csv);
+  free(csv);
+  if (records == NULL) {
     return NULL;
   }
 
-  char *key = NULL, *value = NULL;
-  const size_t n_records = LCH_ListLength(table);
-  for (size_t i = 0; i < n_records; i++) {
-    LCH_List *const record = LCH_ListGet(table, i);
-    assert(record != NULL);
-
-    LCH_Buffer *const comp_buf = LCH_CSVComposeRecord(record);
-    if (comp_buf == NULL) {
-      free(key);
-      free(value);
-      LCH_ListDestroy(table);
-      return NULL;
-    }
-
-    char *const comp_str = LCH_BufferStringDup(comp_buf);
-    if (comp_str == NULL) {
-      LCH_BufferDestroy(comp_buf);
-      free(key);
-      free(value);
-      LCH_ListDestroy(table);
-      return NULL;
-    }
-    LCH_BufferDestroy(comp_buf);
-
-    if (take_value) {
-      if (i % 2 == 0) {
-        key = comp_str;
-        continue;
-      }
-      value = comp_str;
-    } else {
-      key = comp_str;
-    }
-
-    if (!LCH_DictSet(dict, key, value, free)) {
-      free(key);
-      free(value);
-      LCH_ListDestroy(table);
-      return NULL;
-    }
-    free(key);
-    key = NULL;
-    value = NULL;
+  *dict = LCH_TableToDict(records, LCH_TableGetPrimaryFields(table),
+                          LCH_TableGetSubsidiaryFields(table), false);
+  LCH_ListDestroy(records);
+  if (*dict == NULL) {
+    return NULL;
   }
 
-  LCH_ListDestroy(table);
-  buffer += length;
   return buffer;
 }
 
-const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
+const char *LCH_DeltaUnmarshal(LCH_Delta **delta,
+                               const LCH_Instance *const instance,
+                               const char *buffer) {
   assert(buffer != NULL);
 
   LCH_Delta *const _delta = malloc(sizeof(LCH_Delta));
@@ -298,58 +192,47 @@ const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
     return NULL;
   }
 
-  buffer = UnmarshalTableId(_delta, buffer);
+  char *table_id;
+  buffer = LCH_UnmarshalString(buffer, &table_id);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to unmarshal table id.");
     free(_delta);
     return NULL;
   }
 
-  _delta->insertions = LCH_DictCreate();
-  if (_delta->insertions == NULL) {
-    free(_delta->table_id);
+  const LCH_Table *table = LCH_InstanceGetTable(instance, table_id);
+  if (table == NULL) {
+    LCH_LOG_ERROR("Table with identifier '%s' does not exist.", table_id);
+    free(table_id);
     free(_delta);
     return NULL;
   }
+  free(table_id);
+  _delta->table = table;
 
-  buffer = UnmarshalDeltaOperation(_delta->insertions, buffer, true);
+  buffer = UnmarshalDeltaOperation(&_delta->insert, _delta->table, buffer);
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal delta insertion operations.");
-    free(_delta->insertions);
-    free(_delta->table_id);
+    LCH_LOG_ERROR("Failed to unmarshal delta insert operations for table '%s'.",
+                  LCH_TableGetIdentifier(table));
+    free(_delta->insert);
     free(_delta);
     return NULL;
   }
 
-  _delta->deletions = LCH_DictCreate();
-  if (_delta->deletions == NULL) {
-    free(_delta->insertions);
-    free(_delta->table_id);
-    free(_delta);
-  }
-
-  buffer = UnmarshalDeltaOperation(_delta->deletions, buffer, false);
+  buffer = UnmarshalDeltaOperation(&_delta->delete, _delta->table, buffer);
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal delta deletion operations.");
-    free(_delta->deletions);
-    free(_delta->insertions);
-    free(_delta->table_id);
+    LCH_LOG_ERROR("Failed to unmarshal delta delete operations for table '%s'.",
+                  LCH_TableGetIdentifier(table));
+    free(_delta->delete);
+    free(_delta->insert);
     free(_delta);
     return NULL;
   }
 
-  _delta->modifications = LCH_DictCreate();
-  if (_delta->modifications == NULL) {
-    free(_delta->deletions);
-    free(_delta->insertions);
-    free(_delta->table_id);
-    free(_delta);
-    return NULL;
-  }
-
-  buffer = UnmarshalDeltaOperation(_delta->modifications, buffer, true);
+  buffer = UnmarshalDeltaOperation(&_delta->update, _delta->table, buffer);
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal delta modification operations.");
+    LCH_LOG_ERROR("Failed to unmarshal delta update operations for table '%s'.",
+                  LCH_TableGetIdentifier(table));
     LCH_DeltaDestroy(_delta);
     return NULL;
   }
@@ -360,55 +243,55 @@ const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const char *buffer) {
 
 size_t LCH_DeltaGetNumInsertions(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->insertions != NULL);
-  return LCH_DictLength(delta->insertions);
+  assert(delta->insert != NULL);
+  return LCH_DictLength(delta->insert);
 }
 
 size_t LCH_DeltaGetNumDeletions(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->deletions != NULL);
-  return LCH_DictLength(delta->deletions);
+  assert(delta->delete != NULL);
+  return LCH_DictLength(delta->delete);
 }
 
-size_t LCH_DeltaGetNumModifications(const LCH_Delta *const delta) {
+size_t LCH_DeltaGetNumUpdates(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->modifications != NULL);
-  return LCH_DictLength(delta->modifications);
+  assert(delta->update != NULL);
+  return LCH_DictLength(delta->update);
 }
 
 const LCH_Dict *LCH_DeltaGetInsertions(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->insertions != NULL);
-  return delta->insertions;
+  assert(delta->insert != NULL);
+  return delta->insert;
 }
 
 const LCH_Dict *LCH_DeltaGetDeletions(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->deletions != NULL);
-  return delta->deletions;
+  assert(delta->delete != NULL);
+  return delta->delete;
 }
 
-const LCH_Dict *LCH_DeltaGetModifications(const LCH_Delta *const delta) {
+const LCH_Dict *LCH_DeltaGetUpdates(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->modifications != NULL);
-  return delta->modifications;
+  assert(delta->update != NULL);
+  return delta->update;
 }
 
-const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
+const LCH_Table *LCH_DeltaGetTable(const LCH_Delta *const delta) {
   assert(delta != NULL);
-  assert(delta->table_id != NULL);
-  return delta->table_id;
+  assert(delta->table != NULL);
+  return delta->table;
 }
 
 static bool CompressInsertionOperations(const LCH_List *const keys,
                                         LCH_Delta *const child,
                                         const LCH_Delta *const parent) {
   assert(keys != NULL);
-  assert(child->table_id != NULL);
-  assert(child->modifications != NULL);
-  assert(parent->insertions != NULL);
-  assert(parent->deletions != NULL);
-  assert(parent->modifications != NULL);
+  assert(child->table != NULL);
+  assert(child->update != NULL);
+  assert(parent->insert != NULL);
+  assert(parent->delete != NULL);
+  assert(parent->update != NULL);
 
   size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
@@ -416,44 +299,41 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
     assert(key != NULL);
 
     // insert -> insert => error
-    if (LCH_DictHasKey(child->insertions, key)) {
+    if (LCH_DictHasKey(child->insert, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta insertion operations for key '%s' in "
+          "Found two subsequent delta insert operations for key '%s' in "
           "table '%s'.",
-          key, child->table_id);
+          key, LCH_TableGetIdentifier(child->table));
       return false;
     }
 
     // insert -> delete => noop
-    if (LCH_DictHasKey(child->deletions, key)) {
+    if (LCH_DictHasKey(child->delete, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'insert -> delete => noop' for key '%s' in table "
-          "'%s'.",
-          key, child->table_id);
-      char *value = LCH_DictRemove(child->deletions, key);
+          "Compressing 'insert -> delete => noop' for key '%s' in table '%s'.",
+          key, LCH_TableGetIdentifier(child->table));
+      char *value = LCH_DictRemove(child->delete, key);
       assert(value == NULL);
       continue;
     }
 
-    // insert -> modify => insert
-    if (LCH_DictHasKey(child->modifications, key)) {
+    // insert -> update => insert
+    if (LCH_DictHasKey(child->update, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'insert -> modify => insert' for key '%s' in table "
+          "Compressing 'insert -> update => insert' for key '%s' in table "
           "'%s'.",
-          key, child->table_id);
-
-      char *value = LCH_DictRemove(child->modifications, key);
+          key, LCH_TableGetIdentifier(child->table));
+      char *value = LCH_DictRemove(child->update, key);
       assert(value != NULL);
-      if (!LCH_DictSet(child->insertions, key, value, free)) {
+      if (!LCH_DictSet(child->insert, key, value, free)) {
         return false;
       }
       continue;
     }
 
     // insert -> noop => insert
-    char *value = LCH_DictRemove(parent->insertions, key);
-    assert(value != NULL);
-    if (!LCH_DictSet(child->insertions, key, value, free)) {
+    char *value = LCH_DictRemove(parent->insert, key);
+    if (!LCH_DictSet(child->insert, key, value, free)) {
       return false;
     }
   }
@@ -465,54 +345,53 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
                                        LCH_Delta *const child,
                                        const LCH_Delta *const parent) {
   assert(keys != NULL);
-  assert(child->table_id != NULL);
-  assert(child->deletions != NULL);
-  assert(parent->insertions != NULL);
-  assert(parent->deletions != NULL);
-  assert(parent->modifications != NULL);
+  assert(child->table != NULL);
+  assert(child->delete != NULL);
+  assert(parent->insert != NULL);
+  assert(parent->delete != NULL);
+  assert(parent->update != NULL);
 
   size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
     const char *const key = LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    // delete -> insert => modify
-    if (LCH_DictHasKey(child->insertions, key)) {
+    // delete -> insert => update
+    if (LCH_DictHasKey(child->insert, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'delete -> insert => modify' for key '%s' in table "
+          "Compressing 'delete -> insert => update' for key '%s' in table "
           "'%s'.",
-          key, child->table_id);
-      char *value = LCH_DictRemove(child->insertions, key);
+          key, LCH_TableGetIdentifier(child->table));
+      char *value = LCH_DictRemove(child->insert, key);
       assert(value != NULL);
-      if (!LCH_DictSet(child->modifications, key, value, free)) {
+      if (!LCH_DictSet(child->update, key, value, free)) {
         return false;
       }
       continue;
     }
 
     // delete -> delete => error
-    if (LCH_DictHasKey(child->deletions, key)) {
+    if (LCH_DictHasKey(child->delete, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta deletion operations for key '%s' in "
-          "table '%s'.",
-          key, child->table_id);
+          "Found two subsequent delta delete operations for key '%s' in table "
+          "'%s'.",
+          key, LCH_TableGetIdentifier(child->table));
       return false;
     }
 
-    // delete -> modify => error
-    if (LCH_DictHasKey(child->modifications, key)) {
+    // delete -> update => error
+    if (LCH_DictHasKey(child->update, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta deletion- and modification operations "
-          "for key '%s' in "
-          "table '%s'.",
-          key, child->table_id);
+          "Found two subsequent delta delete- and update operations for key "
+          "'%s' in table '%s'.",
+          key, LCH_TableGetIdentifier(child->table));
       return false;
     }
 
     // delete -> noop => delete
-    char *value = LCH_DictRemove(parent->deletions, key);
+    char *value = LCH_DictRemove(parent->delete, key);
     assert(value == NULL);
-    if (!LCH_DictSet(child->deletions, key, NULL, NULL)) {
+    if (!LCH_DictSet(child->delete, key, NULL, NULL)) {
       return false;
     }
   }
@@ -520,51 +399,51 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
   return true;
 }
 
-static bool CompressModificationOperations(const LCH_List *const keys,
-                                           LCH_Delta *const child,
-                                           const LCH_Delta *const parent) {
+static bool CompressUpdateOperations(const LCH_List *const keys,
+                                     LCH_Delta *const child,
+                                     const LCH_Delta *const parent) {
   assert(keys != NULL);
-  assert(parent->insertions != NULL);
-  assert(parent->deletions != NULL);
-  assert(parent->modifications != NULL);
+  assert(parent->insert != NULL);
+  assert(parent->delete != NULL);
+  assert(parent->update != NULL);
+  assert(child->insert != NULL);
 
   size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
     const char *const key = LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    // modify -> insert => err
-    if (LCH_DictHasKey(child->insertions, key)) {
+    // update -> insert => err
+    if (LCH_DictHasKey(child->insert, key)) {
       LCH_LOG_ERROR(
-          "Found two subsequent delta modification- and insertion operations "
-          "for key '%s' in "
-          "table '%s'.",
-          key, child->table_id);
+          "Found two subsequent delta update- and insert operations for key "
+          "'%s' in table '%s'.",
+          key, LCH_TableGetIdentifier(child->table));
       return false;
     }
 
-    // modify -> delete => delete
-    if (LCH_DictHasKey(child->deletions, key)) {
+    // update -> delete => delete
+    if (LCH_DictHasKey(child->delete, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'modify -> delete => delete' for key '%s' in table "
+          "Compressing 'update -> delete => delete' for key '%s' in table "
           "'%s'.",
-          key, child->table_id);
+          key, LCH_TableGetIdentifier(child->table));
       continue;
     }
 
-    // modify -> modify => modify
-    if (LCH_DictHasKey(child->modifications, key)) {
+    // update -> update => update
+    if (LCH_DictHasKey(child->update, key)) {
       LCH_LOG_DEBUG(
-          "Compressing 'modify -> modify => modify' for key '%s' in table "
+          "Compressing 'update -> update => update' for key '%s' in table "
           "'%s'.",
-          key, child->table_id);
+          key, LCH_TableGetIdentifier(child->table));
       continue;
     }
 
-    // modify -> noop => modify
-    char *value = LCH_DictRemove(parent->modifications, key);
+    // update -> noop => update
+    char *value = LCH_DictRemove(parent->update, key);
     assert(value != NULL);
-    if (!LCH_DictSet(child->modifications, key, value, free)) {
+    if (!LCH_DictSet(child->update, key, value, free)) {
       return false;
     }
   }
@@ -575,54 +454,55 @@ static bool CompressModificationOperations(const LCH_List *const keys,
 bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
   assert(child != NULL);
   assert(parent != NULL);
-  assert(child->table_id != NULL);
-  assert(parent->table_id != NULL);
-  assert(strcmp(child->table_id, parent->table_id) == 0);
+  assert(child->table != NULL);
+  assert(parent->table != NULL);
+  assert(strcmp(LCH_TableGetIdentifier(child->table),
+                LCH_TableGetIdentifier(parent->table)) == 0);
 
-  LCH_List *const insertions = LCH_DictGetKeys(parent->insertions);
-  if (insertions == NULL) {
+  LCH_List *const insert = LCH_DictGetKeys(parent->insert);
+  if (insert == NULL) {
     return false;
   }
 
-  LCH_List *const deletions = LCH_DictGetKeys(parent->deletions);
-  if (deletions == NULL) {
-    LCH_ListDestroy(insertions);
+  LCH_List *const delete = LCH_DictGetKeys(parent->delete);
+  if (delete == NULL) {
+    LCH_ListDestroy(insert);
     return false;
   }
 
-  LCH_List *const modifications = LCH_DictGetKeys(parent->modifications);
-  if (modifications == NULL) {
-    LCH_ListDestroy(deletions);
-    LCH_ListDestroy(insertions);
+  LCH_List *const update = LCH_DictGetKeys(parent->update);
+  if (update == NULL) {
+    LCH_ListDestroy(delete);
+    LCH_ListDestroy(insert);
     return false;
   }
 
-  if (!CompressInsertionOperations(insertions, child, parent)) {
-    LCH_LOG_ERROR("Failed to compress insertion operations for table '%s'.",
-                  child->table_id);
-    LCH_ListDestroy(modifications);
-    LCH_ListDestroy(deletions);
-    LCH_ListDestroy(insertions);
+  if (!CompressInsertionOperations(insert, child, parent)) {
+    LCH_LOG_ERROR("Failed to compress insert operations for table '%s'.",
+                  LCH_TableGetIdentifier(child->table));
+    LCH_ListDestroy(update);
+    LCH_ListDestroy(delete);
+    LCH_ListDestroy(insert);
     return false;
   }
-  LCH_ListDestroy(insertions);
+  LCH_ListDestroy(insert);
 
-  if (!CompressDeletionOperations(deletions, child, parent)) {
-    LCH_LOG_ERROR("Failed to compress deletion operations for table '%s'.",
-                  child->table_id);
-    LCH_ListDestroy(modifications);
-    LCH_ListDestroy(deletions);
+  if (!CompressDeletionOperations(delete, child, parent)) {
+    LCH_LOG_ERROR("Failed to compress delete operations for table '%s'.",
+                  LCH_TableGetIdentifier(child->table));
+    LCH_ListDestroy(update);
+    LCH_ListDestroy(delete);
     return false;
   }
-  LCH_ListDestroy(deletions);
+  LCH_ListDestroy(delete);
 
-  if (!CompressModificationOperations(modifications, child, parent)) {
-    LCH_LOG_ERROR("Failed to compress modification operations for table '%s'.",
-                  child->table_id);
-    LCH_ListDestroy(modifications);
+  if (!CompressUpdateOperations(update, child, parent)) {
+    LCH_LOG_ERROR("Failed to compress update operations for table '%s'.",
+                  LCH_TableGetIdentifier(child->table));
+    LCH_ListDestroy(update);
     return false;
   }
-  LCH_ListDestroy(modifications);
+  LCH_ListDestroy(update);
 
   return true;
 }

@@ -34,7 +34,7 @@ static LCH_Dict *LoadTableAsDict(const char *const filename,
       return NULL;
     }
 
-    LCH_Dict *const dict = LCH_TableToDict(table, primary, subsidiary);
+    LCH_Dict *const dict = LCH_TableToDict(table, primary, subsidiary, true);
     LCH_ListDestroy(table);
     return dict;
   }
@@ -46,7 +46,7 @@ static bool StoreTableAsDict(const LCH_Dict *const dict,
                              const char *const filename,
                              const char *const primary,
                              const char *const subsidiary) {
-  LCH_List *const table = LCH_DictToTable(dict, primary, subsidiary);
+  LCH_List *const table = LCH_DictToTable(dict, primary, subsidiary, true);
   if (table == NULL) {
     return false;
   }

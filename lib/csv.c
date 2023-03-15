@@ -301,7 +301,7 @@ LCH_List *LCH_CSVParseTable(const char *str) {
 }
 
 LCH_List *LCH_CSVParseFile(const char *const path) {
-  char *csv = LCH_ReadFile(path, NULL);
+  char *csv = LCH_FileRead(path, NULL);
   if (csv == NULL) {
     LCH_LOG_ERROR("Failed to read CSV file '%s'.", path);
     return NULL;
@@ -409,89 +409,89 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
   return true;
 }
 
-LCH_Buffer *LCH_CSVComposeRecord(const LCH_List *const record) {
+bool LCH_CSVComposeRecord(LCH_Buffer **const buffer,
+                          const LCH_List *const record) {
   assert(record != NULL);
 
-  LCH_Buffer *buffer = LCH_BufferCreate();
-  if (buffer == NULL) {
+  const bool create_buffer = *buffer == NULL;
+  LCH_Buffer *const buf = (create_buffer) ? LCH_BufferCreate() : *buffer;
+  if (buf == NULL) {
+    return false;
+  }
+  const size_t offset = LCH_BufferLength(buf);
+
+  if (!ComposeRecord(buf, record)) {
     LCH_LOG_ERROR("Failed to compose CSV record");
-    return NULL;
+    if (create_buffer) {
+      LCH_BufferDestroy(buf);
+    } else {
+      LCH_BufferChop(buf, offset);
+    }
+    return false;
   }
 
-  if (!ComposeRecord(buffer, record)) {
-    LCH_LOG_ERROR("Failed to compose CSV record");
-    LCH_BufferDestroy(buffer);
-    return NULL;
-  }
-
-  return buffer;
+  *buffer = buf;
+  return true;
 }
 
-LCH_Buffer *LCH_CSVComposeTable(const LCH_List *const table) {
+bool LCH_CSVComposeTable(LCH_Buffer **const buffer,
+                         const LCH_List *const table) {
   assert(table != NULL);
+  assert(buffer != NULL);
 
-  LCH_Buffer *buffer = LCH_BufferCreate();
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to compose CSV");
-    return NULL;
+  const bool create_buffer = *buffer == NULL;
+  LCH_Buffer *const buf = (create_buffer) ? LCH_BufferCreate() : *buffer;
+  if (buf == NULL) {
+    return false;
   }
+  const size_t offset = LCH_BufferLength(buf);
 
   const size_t length = LCH_ListLength(table);
   for (size_t i = 0; i < length; i++) {
     if (i > 0) {
-      if (!LCH_BufferPrintFormat(buffer, "\r\n")) {
+      if (!LCH_BufferPrintFormat(buf, "\r\n")) {
         LCH_LOG_ERROR("Failed to compose CSV");
-        LCH_BufferDestroy(buffer);
-        return NULL;
+        if (create_buffer) {
+          LCH_BufferDestroy(buf);
+        } else {
+          LCH_BufferChop(buf, offset);
+        }
+        return false;
       }
     }
 
     LCH_List *record = (LCH_List *)LCH_ListGet(table, i);
-    if (!ComposeRecord(buffer, record)) {
+    if (!ComposeRecord(buf, record)) {
       LCH_LOG_ERROR("Failed to compose CSV");
-      LCH_BufferDestroy(buffer);
-      return NULL;
+      if (create_buffer) {
+        LCH_BufferDestroy(buf);
+      } else {
+        LCH_BufferChop(buf, offset);
+      }
+      return false;
     }
   }
-  return buffer;
+
+  *buffer = buf;
+  return true;
 }
 
 bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
   assert(table != NULL);
   assert(path != NULL);
 
-  LCH_Buffer *const buffer = LCH_CSVComposeTable(table);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to compose CSV for file '%s'", path);
-    return false;
-  }
-
-  char *const csv = LCH_BufferStringDup(buffer);
-  if (csv == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to get string from buffer after composing CSV for file '%s'",
-        path);
+  LCH_Buffer *buffer = NULL;
+  if (!LCH_CSVComposeTable(&buffer, table)) {
     return false;
   }
 
   const size_t length = LCH_BufferLength(buffer);
-  LCH_BufferDestroy(buffer);
-
-  FILE *const file = fopen(path, "w");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
-                  strerror(errno));
+  char *const csv = LCH_BufferToString(buffer);
+  if (csv == NULL) {
     return false;
   }
 
-  if (fwrite(csv, 1, length, file) != length) {
-    LCH_LOG_ERROR("Failed to write composed CSV (%zu bytes) to file '%s': %s",
-                  length, path, strerror(errno));
-    fclose(file);
-    return false;
-  }
-
-  fclose(file);
+  const bool success = LCH_FileWriteBinary(path, csv, length);
   free(csv);
-  return true;
+  return success;
 }

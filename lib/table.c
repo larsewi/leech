@@ -32,6 +32,16 @@ const char *LCH_TableGetIdentifier(const LCH_Table *const self) {
   return self->identifier;
 }
 
+const char *LCH_TableGetPrimaryFields(const LCH_Table *const self) {
+  assert(self != NULL);
+  return self->primary_fields;
+}
+
+const char *LCH_TableGetSubsidiaryFields(const LCH_Table *const self) {
+  assert(self != NULL);
+  return self->subsidiary_fields;
+}
+
 LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
   assert(createInfo != NULL);
   assert(createInfo->identifier != NULL);
@@ -70,8 +80,8 @@ LCH_Dict *LCH_TableLoadNewState(const LCH_Table *const table) {
     return NULL;
   }
 
-  LCH_Dict *const data =
-      LCH_TableToDict(records, table->primary_fields, table->subsidiary_fields);
+  LCH_Dict *const data = LCH_TableToDict(records, table->primary_fields,
+                                         table->subsidiary_fields, true);
   if (data == NULL) {
     LCH_ListDestroy(records);
     return NULL;
@@ -101,7 +111,7 @@ LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
     }
 
     LCH_Dict *const snapshot = LCH_TableToDict(records, table->primary_fields,
-                                               table->subsidiary_fields);
+                                               table->subsidiary_fields, true);
     if (snapshot == NULL) {
       LCH_ListDestroy(records);
       return NULL;
@@ -117,8 +127,8 @@ LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
 bool LCH_TableStoreNewState(const LCH_Table *const self,
                             const char *const work_dir,
                             const LCH_Dict *const new_state) {
-  LCH_List *const records =
-      LCH_DictToTable(new_state, self->primary_fields, self->subsidiary_fields);
+  LCH_List *const records = LCH_DictToTable(new_state, self->primary_fields,
+                                            self->subsidiary_fields, true);
   if (records == NULL) {
     return NULL;
   }
@@ -174,11 +184,12 @@ static char *AddUniqueIdToRecord(const char *const record, const char *const id,
     }
   }
 
-  LCH_Buffer *const composed = LCH_CSVComposeRecord(list);
-  LCH_ListDestroy(list);
-  if (composed == NULL) {
+  LCH_Buffer *composed = NULL;
+  if (!LCH_CSVComposeRecord(&composed, list)) {
+    LCH_ListDestroy(list);
     return NULL;
   }
+  LCH_ListDestroy(list);
 
   return LCH_BufferToString(composed);
 }
@@ -288,7 +299,7 @@ bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
   }
   LCH_DictDestroy(new_deletions);
 
-  const LCH_Dict *const modifications = LCH_DeltaGetModifications(patch);
+  const LCH_Dict *const modifications = LCH_DeltaGetUpdates(patch);
   assert(modifications != NULL);
   LCH_Dict *const new_modifications =
       AddUniqueIdToDict(modifications, uid_value, &pos);

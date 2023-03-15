@@ -7,6 +7,10 @@
 
 const char *LCH_TableGetIdentifier(const LCH_Table *table);
 
+const char *LCH_TableGetPrimaryFields(const LCH_Table *table);
+
+const char *LCH_TableGetSubsidiaryFields(const LCH_Table *table);
+
 LCH_Dict *LCH_TableLoadNewState(const LCH_Table *table);
 
 LCH_Dict *LCH_TableLoadOldState(const LCH_Table *table, const char *work_dir);

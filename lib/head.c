@@ -21,7 +21,7 @@ char *LCH_HeadGet(const char *const name, const char *const work_dir) {
     return strdup(LCH_GENISIS_BLOCK_PARENT);
   }
 
-  char *head = LCH_ReadFile(path, NULL);
+  char *head = LCH_FileRead(path, NULL);
   if (head == NULL) {
     return NULL;
   }
@@ -39,7 +39,7 @@ bool LCH_HeadSet(const char *const name, const char *const workdir,
     return false;
   }
 
-  if (!LCH_WriteFile(path, block_id)) {
+  if (!LCH_FileWriteString(path, block_id)) {
     return false;
   }
 

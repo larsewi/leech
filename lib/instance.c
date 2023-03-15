@@ -104,8 +104,8 @@ bool LCH_InstanceAddTable(LCH_Instance *const instance,
                         (void (*)(void *))LCH_TableDestroy);
 }
 
-static const LCH_Table *InstanceGetTable(const LCH_Instance *const self,
-                                         const char *const table_id) {
+const LCH_Table *LCH_InstanceGetTable(const LCH_Instance *const self,
+                                      const char *const table_id) {
   assert(self != NULL);
   assert(self->tables != NULL);
   assert(table_id != NULL);
@@ -163,7 +163,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     /************************************************************************/
 
-    LCH_Delta *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
+    LCH_Delta *const delta = LCH_DeltaCreate(table, new_state, old_state);
     if (delta == NULL) {
       LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
       LCH_BufferDestroy(delta_buffer);
@@ -174,7 +174,7 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
 
     const size_t num_ins = LCH_DeltaGetNumInsertions(delta);
     const size_t num_del = LCH_DeltaGetNumDeletions(delta);
-    const size_t num_mod = LCH_DeltaGetNumModifications(delta);
+    const size_t num_mod = LCH_DeltaGetNumUpdates(delta);
     LCH_LOG_VERBOSE(
         "Computed delta for table '%s' including %zu insertions, %zu "
         "deletions, and %zu modifications.",
@@ -273,16 +273,13 @@ static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
     const LCH_Table *const table = LCH_ListGet(instance->tables, i);
     assert(table != NULL);
 
-    const char *const table_id = LCH_TableGetIdentifier(table);
-    assert(table_id != NULL);
-
-    LCH_Delta *const delta = LCH_DeltaCreate(table_id, NULL, NULL);
+    LCH_Delta *const delta = LCH_DeltaCreate(table, NULL, NULL);
     if (delta == NULL) {
       LCH_DictDestroy(deltas);
       return NULL;
     }
 
-    if (!LCH_DictSet(deltas, table_id, delta,
+    if (!LCH_DictSet(deltas, LCH_TableGetIdentifier(table), delta,
                      (void (*)(void *))LCH_DeltaDestroy)) {
       LCH_DeltaDestroy(delta);
       LCH_DictDestroy(deltas);
@@ -293,20 +290,22 @@ static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
   return deltas;
 }
 
-static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
-                           const size_t buf_len) {
+static bool CompressDeltas(LCH_Dict *const deltas,
+                           const LCH_Instance *const instance,
+                           const char *const buffer, const size_t buf_len) {
   const char *buf_ptr = buffer;
 
   while ((size_t)(buf_ptr - buffer) < buf_len) {
     LCH_Delta *parent = NULL;
-    buf_ptr = LCH_DeltaUnmarshal(&parent, buf_ptr);
+    buf_ptr = LCH_DeltaUnmarshal(&parent, instance, buf_ptr);
     if (buf_ptr == NULL) {
       return false;
     }
     assert(buf_ptr - buffer >= 0);
     assert(parent != NULL);
 
-    const char *const table_id = LCH_DeltaGetTableID(parent);
+    const char *const table_id =
+        LCH_TableGetIdentifier(LCH_DeltaGetTable(parent));
     assert(table_id != NULL);
 
     if (!LCH_DictHasKey(deltas, table_id)) {
@@ -330,10 +329,11 @@ static bool CompressDeltas(LCH_Dict *const deltas, const char *const buffer,
 
     const size_t num_insertions = LCH_DeltaGetNumInsertions(parent);
     const size_t num_deletions = LCH_DeltaGetNumDeletions(parent);
-    const size_t num_modifications = LCH_DeltaGetNumModifications(parent);
+    const size_t num_modifications = LCH_DeltaGetNumUpdates(parent);
     LCH_LOG_VERBOSE(
-        "Compressed %zu insertions, %zu deletions and %zu modifications.",
-        num_insertions, num_deletions, num_modifications);
+        "Compressed %zu insertions, %zu deletions and %zu modifications for "
+        "table '%s'.",
+        num_insertions, num_deletions, num_modifications, table_id);
 
     LCH_DeltaDestroy(parent);
   }
@@ -374,7 +374,7 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
     assert(block_data != NULL);
     const size_t block_data_len = LCH_BlockGetDataLength(block);
 
-    if (!CompressDeltas(deltas, block_data, block_data_len)) {
+    if (!CompressDeltas(deltas, instance, block_data, block_data_len)) {
       LCH_LOG_ERROR("Failed to compress deltas in block '%s'.", cursor);
       free(block);
       LCH_DictDestroy(deltas);
@@ -467,12 +467,11 @@ static bool PatchTable(const LCH_Instance *const self,
   assert(self != NULL);
   assert(delta != NULL);
 
-  const char *const table_id = LCH_DeltaGetTableID(delta);
-  const LCH_Table *const table = InstanceGetTable(self, table_id);
+  const LCH_Table *const table = LCH_DeltaGetTable(delta);
   if (table == NULL) {
     LCH_LOG_ERROR(
         "Table from patch with table id '%s' was not found in instance.",
-        table_id);
+        LCH_TableGetIdentifier(table));
     return false;
   }
 
@@ -493,18 +492,20 @@ bool LCH_InstancePatch(const LCH_Instance *const self,
 
   while ((size_t)(buffer - patch) < size) {
     LCH_Delta *delta;
-    buffer = LCH_DeltaUnmarshal(&delta, buffer);
+    buffer = LCH_DeltaUnmarshal(&delta, self, buffer);
     if (buffer == NULL) {
       LCH_LOG_ERROR("Failed to unmarshal patch.");
       return false;
     }
 
     if (!PatchTable(self, delta, uid_field, uid_value)) {
-      LCH_LOG_ERROR("Failed to patch table '%s'.", LCH_DeltaGetTableID(delta));
+      LCH_LOG_ERROR("Failed to patch table '%s'.",
+                    LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)));
       LCH_DeltaDestroy(delta);
       return false;
     }
-    LCH_LOG_DEBUG("Patched table '%s'.", LCH_DeltaGetTableID(delta));
+    LCH_LOG_DEBUG("Patched table '%s'.",
+                  LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)));
     LCH_DeltaDestroy(delta);
   }
 

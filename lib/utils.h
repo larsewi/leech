@@ -38,7 +38,7 @@ bool LCH_PathJoin(char *path, size_t path_max, size_t n_items, ...);
  *                    the terminating null byte.
  * @return string containing the file content, or NULL in case of error.
  */
-char *LCH_ReadFile(const char *path, size_t *length);
+char *LCH_FileRead(const char *path, size_t *length);
 
 /**
  * @brief Write a text file.
@@ -47,13 +47,15 @@ char *LCH_ReadFile(const char *path, size_t *length);
  * @param[in] str string to write to file.
  * @return false in case of error.
  */
-bool LCH_WriteFile(const char *path, const char *str);
+bool LCH_FileWriteString(const char *path, const char *str);
+
+bool LCH_FileWriteBinary(const char *path, const void *buffer, size_t size);
 
 LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
-                          const char *subsidiary);
+                          const char *subsidiary, bool has_header);
 
 LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
-                          const char *subsidiary);
+                          const char *subsidiary, bool keep_header);
 
 /**
  * @brief Marshal string to buffer.
@@ -71,6 +73,8 @@ bool LCH_MarshalString(LCH_Buffer *buffer, const char *str);
  * @return pointer to remaining buffer.
  * @note unmarshaled string must be freed with free(3).
  */
-const char *LCH_UnmarshalString(const char *buffer, char **str);
+const char *LCH_UnmarshalString(const char *buffer, char **const str);
+
+const char *LCH_UnmarshalBinary(const char *buffer, char **str);
 
 #endif  // _LEECH_UTILS

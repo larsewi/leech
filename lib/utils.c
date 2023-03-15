@@ -245,7 +245,7 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
 
 /******************************************************************************/
 
-char *LCH_ReadFile(const char *const path, size_t *const length) {
+char *LCH_FileRead(const char *const path, size_t *const length) {
   FILE *file = fopen(path, "r");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
@@ -293,7 +293,7 @@ char *LCH_ReadFile(const char *const path, size_t *const length) {
 
 /******************************************************************************/
 
-bool LCH_WriteFile(const char *const path, const char *const str) {
+bool LCH_FileWriteString(const char *const path, const char *const str) {
   FILE *file = fopen(path, "w");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
@@ -302,6 +302,25 @@ bool LCH_WriteFile(const char *const path, const char *const str) {
   }
 
   if (fputs(str, file) == EOF) {
+    LCH_LOG_ERROR("Failed to write to file '%s'.", path);
+    fclose(file);
+    return false;
+  }
+
+  fclose(file);
+  return true;
+}
+
+bool LCH_FileWriteBinary(const char *const path, const void *const buffer,
+                         const size_t size) {
+  FILE *file = fopen(path, "w");
+  if (file == NULL) {
+    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
+                  strerror(errno));
+    return false;
+  }
+
+  if (fwrite(buffer, 1, size, file) != size) {
     LCH_LOG_ERROR("Failed to write to file '%s'.", path);
     fclose(file);
     return false;
@@ -337,7 +356,8 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header,
                                  (int (*)(const void *, const void *))strcmp);
 
     if (index >= header_len) {
-      LCH_Buffer *const buffer = LCH_CSVComposeRecord(header);
+      LCH_Buffer *buffer = NULL;
+      LCH_CSVComposeRecord(&buffer, header);
       LCH_LOG_ERROR("Field '%s' not found in table header '%s'.", field,
                     LCH_BufferGet(buffer, 0));
       LCH_BufferDestroy(buffer);
@@ -385,8 +405,10 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
                                     const LCH_List *const indices) {
   LCH_List *const extracted = ExtractFieldsAtIndices(record, indices);
   if (extracted == NULL) {
-    LCH_Buffer *const ind = LCH_CSVComposeRecord(indices);
-    LCH_Buffer *const rec = LCH_CSVComposeRecord(record);
+    LCH_Buffer *ind = NULL;
+    LCH_CSVComposeRecord(&ind, indices);
+    LCH_Buffer *rec = NULL;
+    LCH_CSVComposeRecord(&rec, record);
     LCH_LOG_ERROR("Failed to extract fields at indices '%s' from record '%s'.",
                   LCH_BufferGet(ind, 0), LCH_BufferGet(rec, 0));
     LCH_BufferDestroy(ind);
@@ -394,8 +416,8 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
     return NULL;
   }
 
-  LCH_Buffer *const buffer = LCH_CSVComposeRecord(extracted);
-  if (buffer == NULL) {
+  LCH_Buffer *buffer = NULL;
+  if (!LCH_CSVComposeRecord(&buffer, extracted)) {
     LCH_ListDestroy(extracted);
     return NULL;
   }
@@ -405,9 +427,49 @@ static char *ComposeFieldsAtIndices(const LCH_List *const record,
   return composed;
 }
 
+/******************************************************************************/
+
+static LCH_List *ParseConcatFields(const char *const primary,
+                                   const char *const subsidiary,
+                                   const bool sort) {
+  assert(primary != NULL);
+
+  LCH_List *primary_fields = LCH_CSVParseRecord(primary);
+  if (primary_fields == NULL) {
+    LCH_LOG_ERROR("Failed to parse primary fields '%s'.", primary);
+    return NULL;
+  }
+
+  if (sort) {
+    LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
+  }
+
+  LCH_List *subsidiary_fields =
+      (subsidiary == NULL) ? LCH_ListCreate() : LCH_CSVParseRecord(subsidiary);
+  if (subsidiary_fields == NULL) {
+    LCH_LOG_ERROR("Failed to parse subsidiary fields '%s'.", subsidiary);
+    LCH_ListDestroy(primary_fields);
+    return NULL;
+  }
+
+  if (sort) {
+    LCH_ListSort(subsidiary_fields,
+                 (int (*)(const void *, const void *))strcmp);
+  }
+
+  LCH_List *record = LCH_ListMoveElements(primary_fields, subsidiary_fields);
+  if (record == NULL) {
+    LCH_ListDestroy(subsidiary_fields);
+    LCH_ListDestroy(primary_fields);
+    return NULL;
+  }
+
+  return record;
+}
+
 LCH_Dict *LCH_TableToDict(const LCH_List *const table,
                           const char *const primary,
-                          const char *const subsidiary) {
+                          const char *const subsidiary, const bool has_header) {
   assert(primary != NULL);
   assert(table != NULL);
 
@@ -435,7 +497,7 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   }
 
   const size_t num_records = LCH_ListLength(table);
-  if (num_records < 1) {
+  if (has_header && num_records < 1) {
     LCH_LOG_ERROR("Table is missing required header record.");
     LCH_DictDestroy(dict);
     LCH_ListDestroy(subsidiary_fields);
@@ -443,7 +505,10 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
     return NULL;
   }
 
-  const LCH_List *const header = LCH_ListGet(table, 0);
+  LCH_List *const fake_header =
+      (has_header) ? NULL : ParseConcatFields(primary, subsidiary, true);
+  const LCH_List *const header =
+      (has_header) ? LCH_ListGet(table, 0) : fake_header;
   assert(header != NULL);
 
   const size_t header_len = LCH_ListLength(header);
@@ -454,13 +519,15 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
         "Number of primary- and subsidiary fields does not align with number "
         "of header fields (%zu + %zu != %zu).",
         primary_len, subsidiary_len, header_len);
+    LCH_ListDestroy(fake_header);
     LCH_ListDestroy(subsidiary_fields);
     LCH_ListDestroy(primary_fields);
     LCH_DictDestroy(dict);
     return NULL;
   }
 
-  if (num_records == 1) {
+  if (num_records == (has_header) ? 1 : 0) {
+    LCH_ListDestroy(fake_header);
     LCH_ListDestroy(subsidiary_fields);
     LCH_ListDestroy(primary_fields);
     return dict;
@@ -468,6 +535,7 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
 
   LCH_List *primary_indices = GetIndexOfFields(header, primary_fields);
   if (primary_indices == NULL) {
+    LCH_ListDestroy(fake_header);
     LCH_ListDestroy(subsidiary_fields);
     LCH_ListDestroy(primary_fields);
     LCH_DictDestroy(dict);
@@ -475,6 +543,7 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   }
 
   LCH_List *subsidiary_indices = GetIndexOfFields(header, subsidiary_fields);
+  LCH_ListDestroy(fake_header);
   if (subsidiary_indices == NULL) {
     LCH_ListDestroy(primary_indices);
     LCH_ListDestroy(subsidiary_fields);
@@ -483,7 +552,7 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
     return NULL;
   }
 
-  for (size_t i = 1; i < num_records; i++) {
+  for (size_t i = (has_header) ? 1 : 0; i < num_records; i++) {
     const LCH_List *const record = LCH_ListGet(table, i);
     assert(record != NULL);
 
@@ -548,53 +617,17 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   return dict;
 }
 
-/******************************************************************************/
-
-static LCH_List *ParseConcatFields(const char *const primary,
-                                   const char *const subsidiary,
-                                   const bool sort) {
-  assert(primary != NULL);
-
-  LCH_List *primary_fields = LCH_CSVParseRecord(primary);
-  if (primary_fields == NULL) {
-    LCH_LOG_ERROR("Failed to parse primary fields '%s'.", primary);
-    return NULL;
-  }
-
-  if (sort) {
-    LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
-  }
-
-  LCH_List *subsidiary_fields =
-      (subsidiary == NULL) ? LCH_ListCreate() : LCH_CSVParseRecord(subsidiary);
-  if (subsidiary_fields == NULL) {
-    LCH_LOG_ERROR("Failed to parse subsidiary fields '%s'.", subsidiary);
-    LCH_ListDestroy(primary_fields);
-    return NULL;
-  }
-
-  if (sort) {
-    LCH_ListSort(subsidiary_fields,
-                 (int (*)(const void *, const void *))strcmp);
-  }
-
-  LCH_List *record = LCH_ListMoveElements(primary_fields, subsidiary_fields);
-  if (record == NULL) {
-    LCH_ListDestroy(subsidiary_fields);
-    LCH_ListDestroy(primary_fields);
-    return NULL;
-  }
-
-  return record;
-}
-
 LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
-                          const char *const subsidiary) {
+                          const char *const subsidiary,
+                          const bool keep_header) {
   assert(dict != NULL);
 
-  LCH_List *const header = ParseConcatFields(primary, subsidiary, true);
-  if (header == NULL) {
-    return NULL;
+  LCH_List *header = NULL;
+  if (keep_header) {
+    header = ParseConcatFields(primary, subsidiary, true);
+    if (header == NULL) {
+      return NULL;
+    }
   }
 
   LCH_List *const table = LCH_ListCreate();
@@ -603,10 +636,12 @@ LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
     return NULL;
   }
 
-  if (!LCH_ListAppend(table, header, (void (*)(void *))LCH_ListDestroy)) {
-    LCH_ListDestroy(header);
-    LCH_ListDestroy(table);
-    return NULL;
+  if (keep_header) {
+    if (!LCH_ListAppend(table, header, (void (*)(void *))LCH_ListDestroy)) {
+      LCH_ListDestroy(header);
+      LCH_ListDestroy(table);
+      return NULL;
+    }
   }
 
   LCH_List *const keys = LCH_DictGetKeys(dict);
@@ -661,6 +696,24 @@ bool LCH_MarshalString(LCH_Buffer *const buffer, const char *const str) {
   return true;
 }
 
+const char *LCH_UnmarshalBinary(const char *buffer, char **const bin) {
+  assert(buffer != NULL);
+
+  const uint32_t *const network_size = (uint32_t *)buffer;
+  buffer += sizeof(uint32_t);
+  const uint32_t size = ntohl(*network_size);
+
+  *bin = malloc(size + 1);
+  if (*bin == NULL) {
+    return NULL;
+  }
+
+  memcpy(*bin, buffer, size);
+  (*bin)[size] = '\0';
+  buffer += size;
+  return buffer;
+}
+
 const char *LCH_UnmarshalString(const char *buffer, char **const str) {
   assert(buffer != NULL);
 
@@ -670,7 +723,6 @@ const char *LCH_UnmarshalString(const char *buffer, char **const str) {
 
   *str = strndup(buffer, size);
   if (*str == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
