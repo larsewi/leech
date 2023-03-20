@@ -25,6 +25,10 @@ const LCH_Dict *LCH_DeltaGetUpdates(const LCH_Delta *delta);
 
 const LCH_Table *LCH_DeltaGetTable(const LCH_Delta *delta);
 
+size_t LCH_DeltaGetNumMergedOperations(const LCH_Delta *delta);
+
+size_t LCH_DeltaGetNumCanceledOperations(const LCH_Delta *delta);
+
 bool LCH_DeltaMarshal(LCH_Buffer *buffer, const LCH_Delta *delta);
 
 const char *LCH_DeltaUnmarshal(LCH_Delta **delta, const LCH_Instance *instance,

@@ -18,6 +18,8 @@ struct LCH_Delta {
   LCH_Dict *insert;
   LCH_Dict *delete;
   LCH_Dict *update;
+  size_t num_merged;
+  size_t num_canceled;
 };
 
 LCH_Delta *LCH_DeltaCreate(const LCH_Table *const table,
@@ -34,6 +36,8 @@ LCH_Delta *LCH_DeltaCreate(const LCH_Table *const table,
   }
 
   delta->table = table;
+  delta->num_merged = 0;
+  delta->num_canceled = 0;
 
   const bool create_empty = (new_state == NULL) && (old_state == NULL);
 
@@ -283,6 +287,16 @@ const LCH_Table *LCH_DeltaGetTable(const LCH_Delta *const delta) {
   return delta->table;
 }
 
+size_t LCH_DeltaGetNumMergedOperations(const LCH_Delta *const delta) {
+  assert(delta != NULL);
+  return delta->num_merged;
+}
+
+size_t LCH_DeltaGetNumCanceledOperations(const LCH_Delta *const delta) {
+  assert(delta != NULL);
+  return delta->num_canceled;
+}
+
 static bool CompressInsertionOperations(const LCH_List *const keys,
                                         LCH_Delta *const child,
                                         const LCH_Delta *const parent) {
@@ -314,6 +328,7 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
           key, LCH_TableGetIdentifier(child->table));
       char *value = LCH_DictRemove(child->delete, key);
       assert(value == NULL);
+      child->num_canceled += 1;
       continue;
     }
 
@@ -328,6 +343,7 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
       if (!LCH_DictSet(child->insert, key, value, free)) {
         return false;
       }
+      child->num_merged += 1;
       continue;
     }
 
@@ -367,6 +383,7 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
       if (!LCH_DictSet(child->update, key, value, free)) {
         return false;
       }
+      child->num_merged += 1;
       continue;
     }
 
@@ -390,7 +407,6 @@ static bool CompressDeletionOperations(const LCH_List *const keys,
 
     // delete -> noop => delete
     char *value = LCH_DictRemove(parent->delete, key);
-    assert(value != NULL);
     if (!LCH_DictSet(child->delete, key, value, free)) {
       return false;
     }
@@ -428,6 +444,7 @@ static bool CompressUpdateOperations(const LCH_List *const keys,
           "Compressing 'update -> delete => delete' for key '%s' in table "
           "'%s'.",
           key, LCH_TableGetIdentifier(child->table));
+      child->num_merged += 1;
       continue;
     }
 
@@ -437,6 +454,7 @@ static bool CompressUpdateOperations(const LCH_List *const keys,
           "Compressing 'update -> update => update' for key '%s' in table "
           "'%s'.",
           key, LCH_TableGetIdentifier(child->table));
+      child->num_merged += 1;
       continue;
     }
 
@@ -459,43 +477,37 @@ bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
   assert(strcmp(LCH_TableGetIdentifier(child->table),
                 LCH_TableGetIdentifier(parent->table)) == 0);
 
+  child->num_merged = parent->num_merged;
+  child->num_canceled = parent->num_canceled;
+
   LCH_List *const insert = LCH_DictGetKeys(parent->insert);
   if (insert == NULL) {
     return false;
   }
-
-  LCH_List *const delete = LCH_DictGetKeys(parent->delete);
-  if (delete == NULL) {
-    LCH_ListDestroy(insert);
-    return false;
-  }
-
-  LCH_List *const update = LCH_DictGetKeys(parent->update);
-  if (update == NULL) {
-    LCH_ListDestroy(delete);
-    LCH_ListDestroy(insert);
-    return false;
-  }
-
   if (!CompressInsertionOperations(insert, child, parent)) {
     LCH_LOG_ERROR("Failed to compress insert operations for table '%s'.",
                   LCH_TableGetIdentifier(child->table));
-    LCH_ListDestroy(update);
-    LCH_ListDestroy(delete);
     LCH_ListDestroy(insert);
     return false;
   }
   LCH_ListDestroy(insert);
 
+  LCH_List *const delete = LCH_DictGetKeys(parent->delete);
+  if (delete == NULL) {
+    return false;
+  }
   if (!CompressDeletionOperations(delete, child, parent)) {
     LCH_LOG_ERROR("Failed to compress delete operations for table '%s'.",
                   LCH_TableGetIdentifier(child->table));
-    LCH_ListDestroy(update);
     LCH_ListDestroy(delete);
     return false;
   }
   LCH_ListDestroy(delete);
 
+  LCH_List *const update = LCH_DictGetKeys(parent->update);
+  if (update == NULL) {
+    return false;
+  }
   if (!CompressUpdateOperations(update, child, parent)) {
     LCH_LOG_ERROR("Failed to compress update operations for table '%s'.",
                   LCH_TableGetIdentifier(child->table));

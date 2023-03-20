@@ -241,9 +241,8 @@ bool LCH_InstanceCommit(const LCH_Instance *const self) {
   }
   free(block);
   LCH_LOG_INFO(
-      "Created block '%.5s' with a deltas containing a total of %zu "
-      "insertions, "
-      "%zu deletions, and %zu modifications, over %zu table(s).",
+      "Created block '%.5s' containing %zu insertions, %zu deletions, and %zu "
+      "updates, over %zu table(s).",
       block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
 
   if (!LCH_HeadSet("HEAD", self->work_dir, block_id)) {
@@ -292,7 +291,9 @@ static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
 
 static bool CompressDeltas(LCH_Dict *const deltas,
                            const LCH_Instance *const instance,
-                           const char *const buffer, const size_t buf_len) {
+                           const char *const buffer, const size_t buf_len,
+                           size_t *const num_merged,
+                           size_t *const num_canceled) {
   const char *buf_ptr = buffer;
 
   while ((size_t)(buf_ptr - buffer) < buf_len) {
@@ -327,6 +328,9 @@ static bool CompressDeltas(LCH_Dict *const deltas,
       LCH_DeltaDestroy(parent);
     }
 
+    *num_merged += LCH_DeltaGetNumMergedOperations(child);
+    *num_canceled += LCH_DeltaGetNumCanceledOperations(child);
+
     const size_t num_insertions = LCH_DeltaGetNumInsertions(parent);
     const size_t num_deletions = LCH_DeltaGetNumDeletions(parent);
     const size_t num_modifications = LCH_DeltaGetNumUpdates(parent);
@@ -341,7 +345,10 @@ static bool CompressDeltas(LCH_Dict *const deltas,
 }
 
 static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
-                                 const char *const block_id) {
+                                 const char *const block_id,
+                                 size_t *const num_merged,
+                                 size_t *const num_canceled,
+                                 size_t *const num_blocks) {
   assert(instance != NULL);
   assert(instance->work_dir != NULL);
   assert(block_id != NULL);
@@ -359,7 +366,9 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
     return NULL;
   }
 
-  size_t enumerated_blocks = 0;
+  *num_merged = 0;
+  *num_canceled = 0;
+  *num_blocks = 0;
   while (strcmp(cursor, block_id) != 0) {
     LCH_Block *const block = LCH_BlockLoad(instance->work_dir, cursor);
     if (block == NULL) {
@@ -374,7 +383,8 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
     assert(block_data != NULL);
     const size_t block_data_len = LCH_BlockGetDataLength(block);
 
-    if (!CompressDeltas(deltas, instance, block_data, block_data_len)) {
+    if (!CompressDeltas(deltas, instance, block_data, block_data_len,
+                        num_merged, num_canceled)) {
       LCH_LOG_ERROR("Failed to compress deltas in block '%s'.", cursor);
       free(block);
       LCH_DictDestroy(deltas);
@@ -385,10 +395,9 @@ static LCH_Dict *EnumerateBlocks(const LCH_Instance *const instance,
     free(cursor);
     cursor = LCH_BlockGetParentID(block);
     free(block);
-    enumerated_blocks += 1;
+    *num_blocks += 1;
   }
 
-  LCH_LOG_VERBOSE("Enumerated %zu blocks.", enumerated_blocks);
   free(cursor);
 
   return deltas;
@@ -399,11 +408,17 @@ char *LCH_InstanceDelta(const LCH_Instance *const self,
   assert(self != NULL);
   assert(block_id != NULL);
 
-  LCH_Dict *deltas = EnumerateBlocks(self, block_id);
+  size_t num_merged, num_canceled, num_blocks;
+  LCH_Dict *deltas =
+      EnumerateBlocks(self, block_id, &num_merged, &num_canceled, &num_blocks);
   if (deltas == NULL) {
     LCH_LOG_ERROR("Failed to enumerate blocks.");
     return NULL;
   }
+  LCH_LOG_INFO(
+      "Enumerated %zu block(s); %zu operations were merged, and %zu operations "
+      "canceled each other out.",
+      num_blocks, num_merged, num_canceled);
 
   LCH_Buffer *const buffer = LCH_BufferCreate();
   if (buffer == NULL) {
