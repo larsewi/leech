@@ -3,6 +3,8 @@ from datetime import datetime
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
+import pandas as pd
+import re
 
 HOSTS = {
     "hub":    "SHA=0cb07f5bff5865ca5268dc1a5cc8599a7a4e6894d4ee954913016cc699b84e3f",
@@ -11,6 +13,9 @@ HOSTS = {
     "rhel":   "SHA=15580be79bd3b71c1b7e0cddf38ad84c0228cefdfc8282ab7f3207fa6dbaf228",
     "ubuntu": "SHA=6c1baabfc29d73409938f0be462bfecd8492b5a47f475c78c8f1817f959053ba",
 }
+
+report_df = pd.DataFrame(columns=["Timestamp", "Hostname", "Classes size", "Execution log size", "Last seen size", "Patch size", "Software size", "Variables size", "Full state size", "CFEngine report size", "Leech report size"])
+
 
 class Event(ABC):
     def __init__(self, hostname, hostkey, timestamp):
@@ -46,8 +51,28 @@ class Commit(Event):
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
 
+def strip_surrounding_comments(buf):
+    left = ""
+    right = ""
+
+    for ch in buf:
+        if re.match(r"^#(?!\r\n).*\r\n$", left):
+            break
+        else:
+            left = left + ch
+
+    for ch in reversed(buf):
+        if re.match(r"^#(?!\r\n).*\r\n$", right):
+            break
+        else:
+            right = ch + right
+
+    return buf[len(left) : -len(right)]
+
+
 class Patch(Event):
-    def __init__(self, hostname, hostkey, timestamp):
+    def __init__(self, hostname, hostkey, timestamp, dump_file):
+        self.dump_file = dump_file
         super().__init__(hostname, hostkey, timestamp)
 
     def work(self):
@@ -78,10 +103,31 @@ class Patch(Event):
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
 
+        classes_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/classes.cache"))
+        execlog_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/execution_log.cache"))
+        lastseen_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/lastseen.cache"))
+        patch_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/patch.cache"))
+        software_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/software.cache"))
+        variables_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/variables.cache"))
+        fullstate_size = classes_size + execlog_size + lastseen_size + patch_size + software_size + variables_size
+        leech_size = os.path.getsize(patch_file)
+
+        cfengine_size = 0
+        tables_include = ["CLD", "VAD", "LSD", "SDI", "SPD", "ELD"]
+        tables_exclude = ["EXS", "PRD", "CNG", "CND", "MOM", "MOY", "MOH", "PLG"]
+
+        with open(self.dump_file, "r") as f:
+            buf = f.read()
+
+        buf = strip_surrounding_comments(buf)
+
+
+        report_df.loc[len(report_df)] = [self.timestamp, self.hostname, classes_size, execlog_size, lastseen_size, patch_size, software_size, variables_size, fullstate_size, cfengine_size, leech_size]
+
 def main():
     events = []
 
-    subprocess.run("rm -rf simulate/**/.leech", shell=True)
+    subprocess.run("rm -rf simulate/**/.leech simulate/report.csv", shell=True)
 
     for hostname, hostkey in HOSTS.items():
         for dirpath, _, filenames in os.walk(os.path.join("simulate", hostname)):
@@ -96,11 +142,10 @@ def main():
             elif "report_dumps" in dirpath:
                 for filename in filenames:
                     timestamp = datetime.fromtimestamp(int(filename.split("_")[0]))
-                    event = Patch(hostname, hostkey, timestamp)
+                    event = Patch(hostname, hostkey, timestamp, filename)
                     events.append(event)
 
     events = sorted(events)
-
     for event in events:
         event.work()
 
