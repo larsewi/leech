@@ -78,6 +78,14 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
 
   va_list ap;
 
+  /* TODO:
+   * Concerning the return value of snprintf(), SUSv2 and C99 contradict each
+   * other: when snprintf() is called with size=0 then SUSv2 stipulates an
+   * unspecified return value less than 1, while C99 allows str to be NULL in
+   * this case, and gives the return value (as always) as the number of
+   * characters that would have been written in case the output string has
+   * been large enough. */
+
   // Figure out how many bytes we need
   va_start(ap, format);
   const int length = vsnprintf(NULL, 0, format, ap);

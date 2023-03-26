@@ -680,7 +680,7 @@ bool LCH_MarshalString(LCH_Buffer *const buffer, const char *const str) {
   }
 
   const size_t before = LCH_BufferLength(buffer);
-  if (!LCH_BufferPrintFormat(buffer, str)) {
+  if (!LCH_BufferPrintFormat(buffer, "%s", str)) {
     return false;
   }
   const size_t after = LCH_BufferLength(buffer);

@@ -427,7 +427,7 @@ char *LCH_InstanceDelta(const LCH_Instance *const self,
   }
 
   char *const head = LCH_HeadGet("HEAD", self->work_dir);
-  if (!LCH_BufferPrintFormat(buffer, head)) {
+  if (!LCH_BufferPrintFormat(buffer, "%s", head)) {
     free(head);
     LCH_BufferDestroy(buffer);
     LCH_DictDestroy(deltas);

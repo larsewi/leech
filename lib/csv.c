@@ -344,7 +344,7 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
       return false;
     }
   } else {
-    if (!LCH_BufferPrintFormat(buffer, str)) {
+    if (!LCH_BufferPrintFormat(buffer, "%s", str)) {
       free(str);
       return false;
     }

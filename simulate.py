@@ -266,7 +266,7 @@ def main():
             elif "report_dumps" in dirpath:
                 for filename in filenames:
                     dump_file = os.path.join(dirpath, filename)
-                    timestamp = datetime.fromtimestamp(int(filename.split("_")[0]))
+                    timestamp = datetime.fromtimestamp(int(filename.split("_")[1]))
                     event = Patch(hostname, hostkey, timestamp, dump_file)
                     events.append(event)
 
