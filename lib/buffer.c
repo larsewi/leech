@@ -81,6 +81,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   // Figure out how many bytes we need
   va_start(ap, format);
   const int length = vsnprintf(NULL, 0, format, ap);
+  assert(length >= 0);
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR(
@@ -98,6 +99,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   va_start(ap, format);
   const int ret = vsnprintf(self->buffer + self->length,
                             self->capacity - self->length, format, ap);
+  assert(length >= 0);
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR("Failed to print formatted string to buffer: %s",
