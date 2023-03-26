@@ -5,16 +5,54 @@ import subprocess
 from abc import ABC, abstractmethod
 import pandas as pd
 import re
+import csv
 
 HOSTS = {
-    "hub":    "SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3",
+    "hub": "SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3",
     "centos": "SHA=8b6026383587874304eb95eed145b002c8bf591cbb3acb1598b97e9a9484a8fa",
     "debian": "SHA=5602656702d53c57d14701cf8e0e269623edabc89a0dac4bba604d833900b4ea",
-    "rhel":   "SHA=25378825585c9d7b6ccdd73db2ffd6cce72601b72d0e5efe55b1bdb6bc7e8b07",
+    "rhel": "SHA=25378825585c9d7b6ccdd73db2ffd6cce72601b72d0e5efe55b1bdb6bc7e8b07",
     "ubuntu": "SHA=7119ca477f28b65baee37d8de62629d4c2c98a7a5cbe1455ada86f1f7ecb0608",
 }
 
-report_df = pd.DataFrame(columns=["Timestamp", "Hostname", "Classes size", "Execution log size", "Last seen size", "Patch size", "Software size", "Variables size", "Full state size", "CFEngine report size", "Leech report size"])
+HEADER_FIELDS = {
+    "classes.cache": ["name", "meta"],
+    "variables.cache": ["namespace", "bundle", "name", "type", "value", "meta"],
+    "lastseen.cache": ["direction", "hostkey", "address", "interval", "lastseen"],
+    "software.cache": ["name", "version", "architecture"],
+    "patch.cache": ["name", "version", "architecture", "status"],
+    "execution_log.cache": [
+        "policy_filename",
+        "release_id",
+        "promise_outcome",
+        "namespace",
+        "bundle",
+        "promise_type",
+        "promiser",
+        "stack_path",
+        "handle",
+        "promisee",
+        "messages",
+        "line_number",
+        "policy_file_hash",
+    ],
+}
+
+report_df = pd.DataFrame(
+    columns=[
+        "Timestamp",
+        "Hostname",
+        "Classes size",
+        "Execution log size",
+        "Last seen size",
+        "Patch size",
+        "Software size",
+        "Variables size",
+        "Full state size",
+        "CFEngine report size",
+        "Leech report size",
+    ]
+)
 
 
 class Event(ABC):
@@ -30,6 +68,7 @@ class Event(ABC):
     def __lt__(self, other):
         return self.timestamp < other.timestamp
 
+
 class Commit(Event):
     def __init__(self, hostname, hostkey, timestamp, tables):
         super().__init__(hostname, hostkey, timestamp)
@@ -39,8 +78,18 @@ class Commit(Event):
         print(f"*** Commit {self.timestamp} {self.hostname} ***")
         os.makedirs(os.path.join("simulate", self.hostname, ".leech"), exist_ok=True)
 
+        # Copy a sanatized CSV with table header fields to leech work directory
         for table in self.tables:
-            shutil.copy(table, os.path.join("simulate", self.hostname, ".leech"))
+            basename = os.path.basename(table)
+            with open(table, "r", newline="") as r:
+                reader = csv.reader(r)
+                with open(
+                    os.path.join("simulate", self.hostname, ".leech", basename)
+                ) as w:
+                    writer = csv.writer(w)
+                    writer.writerow(HEADER_FIELDS[basename])
+                    writer.writerows(reader)
+            # shutil.copy(table, os.path.join("simulate", self.hostname, ".leech"))
 
         cwd = os.getcwd()
         os.chdir(os.path.join("simulate", self.hostname))
@@ -50,6 +99,7 @@ class Commit(Event):
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
+
 
 def strip_surrounding_comments(buf):
     left = ""
@@ -83,11 +133,24 @@ class Patch(Event):
         if os.path.exists(lastseen_block_path):
             with open(lastseen_block_path, "r") as f:
                 lastseen_block = f.read().strip()
-        patch_file = os.path.join(os.getcwd(), "simulate", self.hostname, f".leech/{int(self.timestamp.timestamp())}_patchfile")
+        patch_file = os.path.join(
+            os.getcwd(),
+            "simulate",
+            self.hostname,
+            f".leech/{int(self.timestamp.timestamp())}_patchfile",
+        )
 
         cwd = os.getcwd()
         os.chdir(os.path.join("simulate", self.hostname))
-        command = ["../../bin/leech", "--info", "delta", "--block", lastseen_block, "--file", patch_file]
+        command = [
+            "../../bin/leech",
+            "--info",
+            "delta",
+            "--block",
+            lastseen_block,
+            "--file",
+            patch_file,
+        ]
         p = subprocess.run(command)
         os.chdir(cwd)
         if p.returncode != 0:
@@ -96,20 +159,49 @@ class Patch(Event):
 
         print(f"*** Patch {self.timestamp} {self.hostname} ***")
         os.chdir("simulate/hub")
-        command = ["../../bin/leech", "--info", "patch", "--field", "uid", "--value", self.hostkey, "--file", patch_file]
+        command = [
+            "../../bin/leech",
+            "--info",
+            "patch",
+            "--field",
+            "uid",
+            "--value",
+            self.hostkey,
+            "--file",
+            patch_file,
+        ]
         p = subprocess.run(command)
         os.chdir(cwd)
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
 
-        classes_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/classes.cache"))
-        execlog_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/execution_log.cache"))
-        lastseen_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/lastseen.cache"))
-        patch_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/patch.cache"))
-        software_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/software.cache"))
-        variables_size = os.path.getsize(os.path.join("simulate", self.hostname, ".leech/variables.cache"))
-        fullstate_size = classes_size + execlog_size + lastseen_size + patch_size + software_size + variables_size
+        classes_size = os.path.getsize(
+            os.path.join("simulate", self.hostname, ".leech/classes.cache")
+        )
+        execlog_size = os.path.getsize(
+            os.path.join("simulate", self.hostname, ".leech/execution_log.cache")
+        )
+        lastseen_size = os.path.getsize(
+            os.path.join("simulate", self.hostname, ".leech/lastseen.cache")
+        )
+        patch_size = os.path.getsize(
+            os.path.join("simulate", self.hostname, ".leech/patch.cache")
+        )
+        software_size = os.path.getsize(
+            os.path.join("simulate", self.hostname, ".leech/software.cache")
+        )
+        variables_size = os.path.getsize(
+            os.path.join("simulate", self.hostname, ".leech/variables.cache")
+        )
+        fullstate_size = (
+            classes_size
+            + execlog_size
+            + lastseen_size
+            + patch_size
+            + software_size
+            + variables_size
+        )
         leech_size = os.path.getsize(patch_file)
 
         cfengine_size = 0
@@ -121,8 +213,20 @@ class Patch(Event):
 
         buf = strip_surrounding_comments(buf)
 
+        report_df.loc[len(report_df)] = [
+            self.timestamp,
+            self.hostname,
+            classes_size,
+            execlog_size,
+            lastseen_size,
+            patch_size,
+            software_size,
+            variables_size,
+            fullstate_size,
+            cfengine_size,
+            leech_size,
+        ]
 
-        report_df.loc[len(report_df)] = [self.timestamp, self.hostname, classes_size, execlog_size, lastseen_size, patch_size, software_size, variables_size, fullstate_size, cfengine_size, leech_size]
 
 def main():
     events = []
@@ -148,6 +252,7 @@ def main():
     events = sorted(events)
     for event in events:
         event.work()
+
 
 if __name__ == "__main__":
     main()
