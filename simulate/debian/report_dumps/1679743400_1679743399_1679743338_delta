@@ -1,0 +1,800 @@
+# delta from 1679743338 to 1679743400 at 1679743400
+23        CFR: 0 1679743399 40956
+3         CLD
+62        1679743338,1,lukeskywaker_password_invalid_hash,source=promise
+62        1679743338,1,obiwankenobi_password_invalid_hash,source=promise
+88        1679743338,1,ssh_in_high_ldt,"monitoring,source=environment,hardclass,source=persistent"
+78        1679743338,1,entropy_cfengine_in_low,"monitoring,source=environment,hardclass"
+60        1679743338,2,leiaorgana_password_invalid_hash,source=promise
+59        1679743338,1,chewbacca_password_invalid_hash,source=promise
+66        1679743338,1,cpu1_normal,"monitoring,source=environment,hardclass"
+3         VAD
+114       1679743338,1,nickanderson_parsed,_etc_group,local_group[lukeskywaker][users],3," {""""}","source=promise,noreport"
+107       1679743338,1,nickanderson_parsed,_etc_group,local_group[lukeskywaker][gid],0,1084,"source=promise,noreport"
+101       1679743338,1,nickanderson_parsed,_etc_group,local_group[midrim][gid],0,1087,"source=promise,noreport"
+107       1679743338,1,nickanderson_parsed,_etc_group,local_group[obiwankenobi][gid],0,1081,"source=promise,noreport"
+108       1679743338,1,nickanderson_parsed,_etc_group,local_group[midrim][users],3," {""""}","source=promise,noreport"
+104       1679743338,1,nickanderson_parsed,_etc_group,local_group[chewbacca][gid],0,1080,"source=promise,noreport"
+102       1679743338,3,default,host_info_report_cfengine,last_agent_run,0,2023-03-25 11:17:42 UTC,source=promise
+111       1679743338,1,nickanderson_parsed,_etc_group,local_group[chewbacca][users],3," {""""}","source=promise,noreport"
+112       1679743338,1,nickanderson_parsed,_etc_group,local_group[coreworlds][users],3," {""""}","source=promise,noreport"
+105       1679743338,1,nickanderson_parsed,_etc_group,local_group[coreworlds][gid],0,1086,"source=promise,noreport"
+114       1679743338,1,nickanderson_parsed,_etc_group,local_group[obiwankenobi][users],3," {""""}","source=promise,noreport"
+110       1679743338,1,default,parsed_etc_passwd_shadow,max_password_age[lukeskywaker],0,99999,"source=promise,noreport"
+107       1679743338,1,default,parsed_etc_passwd_shadow,max_password_age[chewbacca],0,99999,"source=promise,noreport"
+110       1679743338,1,default,parsed_etc_passwd_shadow,max_password_age[obiwankenobi],0,99999,"source=promise,noreport"
+103       1679743338,1,default,parsed_etc_passwd_shadow,min_password_age[chewbacca],0,0,"source=promise,noreport"
+1263      1679743338,3,default,postgresql_conf_recommendations,mem_info_data,15,"{
+  ""Active"": [
+    """",
+    ""419452"",
+    ""kB""
+  ],
+  ""Active(anon)"": [
+    """",
+    ""58120"",
+    ""kB""
+  ],
+  ""Active(file)"": [
+    """",
+    ""361332"",
+    ""kB""
+  ],
+  ""AnonHugePages"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""AnonPages"": [
+    """",
+    ""45196"",
+    ""kB""
+  ],
+  ""Bounce"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""Buffers"": [
+    """",
+    ""79060"",
+    ""kB""
+  ],
+  ""Cached"": [
+    """",
+    ""1075920"",
+    ""kB""
+  ],
+  ""CommitLimit"": [
+    """",
+    ""7701592"",
+    ""kB""
+  ],
+  ""Committed_AS"": [
+    """",
+    ""157016"",
+    ""kB""
+  ],
+  ""DirectMap2M"": [
+    """",
+    ""15661056"",
+    ""kB""
+  ],
+  ""DirectMap4k"": [
+    """",
+    ""67584"",
+    ""kB""
+  ],
+  ""Dirty"": [
+    """",
+    ""288"",
+    ""kB""
+  ],
+  ""HardwareCorrupted"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""HugePages_Free"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Rsvd"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Surp"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Total"": [
+    """",
+    ""0""
+  ],
+  ""Hugepagesize"": [
+    """",
+    ""2048"",
+    ""kB""
+  ],
+  ""Inactive"": [
+    """",
+    ""780692"",
+    ""kB""
+  ],
+  ""Ina",source=promise
+113       1679743338,1,nickanderson_parsed,_etc_group,local_group[thecolonies][users],3," {""""}","source=promise,noreport"
+106       1679743338,1,nickanderson_parsed,_etc_group,local_group[thecolonies][gid],0,1085,"source=promise,noreport"
+104       1679743338,1,nickanderson_parsed,_etc_group,local_group[wildspace][gid],0,1088,"source=promise,noreport"
+495       1679743338,3,default,inventory_passwd_users_password_empty,local_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-timesync"",""systemd-network"",""systemd-resolve"",""systemd-bus-proxy"",""_apt"",""uuidd"",""_chrony"",""messagebus"",""sshd"",""admin"",""script_monkey"",""maul"",""chewbacca"",""obiwankenobi"",""lukeskywaker""}","source=promise,noreport"
+111       1679743338,1,nickanderson_parsed,_etc_group,local_group[wildspace][users],3," {""""}","source=promise,noreport"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu3.domain1.max_newidle_lb_cost],0,1152,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu3.domain1.max_newidle_lb_cost"
+139       1679743338,1,nickanderson_inventory,_etc_groups,inventory[thecolonies],0,thecolonies,"source=promise,inventory,attribute_name=Local Groups"
+140       1679743338,1,default,inventory_passwd_users_all,inventory[obiwankenobi],0,obiwankenobi,"source=promise,inventory,attribute_name=Local users"
+135       1679743338,1,nickanderson_inventory,_etc_groups,inventory[wildspace],0,wildspace,"source=promise,inventory,attribute_name=Local Groups"
+164       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.inode-nr],0,50552	160,"source=promise,inventory,attribute_name=Sysctl fs.inode-nr"
+183       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.dentry-state],0,88636	78277	45	0	0	0,"source=promise,inventory,attribute_name=Sysctl fs.dentry-state"
+141       1679743338,1,nickanderson_inventory,_etc_groups,inventory[lukeskywaker],0,lukeskywaker,"source=promise,inventory,attribute_name=Local Groups"
+137       1679743338,1,nickanderson_inventory,_etc_groups,inventory[coreworlds],0,coreworlds,"source=promise,inventory,attribute_name=Local Groups"
+140       1679743338,1,default,inventory_passwd_users_all,inventory[lukeskywaker],0,lukeskywaker,"source=promise,inventory,attribute_name=Local users"
+141       1679743338,1,nickanderson_inventory,_etc_groups,inventory[obiwankenobi],0,obiwankenobi,"source=promise,inventory,attribute_name=Local Groups"
+129       1679743338,1,nickanderson_inventory,_etc_groups,inventory[midrim],0,midrim,"source=promise,inventory,attribute_name=Local Groups"
+180       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.inode-state],0,50552	160	0	0	0	0	0,"source=promise,inventory,attribute_name=Sysctl fs.inode-state"
+240       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu1.domain1.max_newidle_lb_cost],0,880,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu1.domain1.max_newidle_lb_cost"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu1.domain0.max_newidle_lb_cost],0,2373,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu1.domain0.max_newidle_lb_cost"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu2.domain0.max_newidle_lb_cost],0,2250,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu2.domain0.max_newidle_lb_cost"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu3.domain0.max_newidle_lb_cost],0,2035,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu3.domain0.max_newidle_lb_cost"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu2.domain1.max_newidle_lb_cost],0,1100,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu2.domain1.max_newidle_lb_cost"
+191       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.random.entropy_avail],0,2122,"source=promise,inventory,attribute_name=Sysctl kernel.random.entropy_avail"
+174       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.ns_last_pid],0,18150,"source=promise,inventory,attribute_name=Sysctl kernel.ns_last_pid"
+205       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.random.uuid],0,eed13ae9-a018-4cf5-8689-1f0a655460bb,"source=promise,inventory,attribute_name=Sysctl kernel.random.uuid"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu0.domain1.max_newidle_lb_cost],0,1663,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu0.domain1.max_newidle_lb_cost"
+241       1679743338,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu0.domain0.max_newidle_lb_cost],0,1206,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu0.domain0.max_newidle_lb_cost"
+71        1679743338,3,default,sys,systime,1,1679743332,"time_based,source=agent"
+94        1679743338,1,default,parsed_etc_passwd_shadow,shell[obiwankenobi],0,,"source=promise,noreport"
+90        1679743338,3,default,testing_generic_report,timestamp,0,2023-03-25T11:22:12,source=promise
+105       1679743338,3,default,cfe_internal_cleanup_agent_reports,total_report_size,2,1153935.000000,source=promise
+215       1679743338,3,default,cfe_internal_cleanup_agent_reports,tmpmap,3," {""7200"",""11269"",""75595"",""0"",""0"",""399858"",""0"",""139788"",""2868"",""0"",""213"",""497813"",""0"",""0"",""0"",""19331""}",source=promise
+144       1679743338,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/variables.cache],1,497813,source=promise
+147       1679743338,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/execution_log.cache],1,75595,source=promise
+1307      1679743338,3,default,parsed_etc_passwd_shadow,shadow_data,15,"{
+  ""_apt"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""_chrony"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""admin"": [
+    ""!"",
+    ""19440"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""backup"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""bin"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""chewbacca"": [
+    ""x"",
+    ""19441"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""daemon"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""games"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""gnats"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""irc"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""list"": [
+    ""*"",
+    ""17946"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    ""","source=promise,noreport"
+94        1679743338,1,default,parsed_etc_passwd_shadow,shell[lukeskywaker],0,,"source=promise,noreport"
+91        1679743338,1,default,parsed_etc_passwd_shadow,shell[chewbacca],0,,"source=promise,noreport"
+104       1679743338,3,default,sys,uptime,1,1575,"inventory,time_based,source=agent,attribute_name=Uptime minutes"
+83        1679743338,3,default,mon,value_mem_cached,0,1050.62,"monitoring,source=environment"
+86        1679743338,3,default,mon,value_entropy_avail,0,2073.00,"monitoring,source=environment"
+82        1679743338,3,default,mon,value_mem_free,0,13708.24,"monitoring,source=environment"
+78        1679743338,3,default,mon,value_syslog,0,235.00,"monitoring,source=environment"
+76        1679743338,3,default,mon,value_ssh_in,0,3.00,"monitoring,source=environment"
+81        1679743338,3,default,churn_local_users,user[obiwankenobi],0,absent,source=promise
+78        1679743338,3,default,churn_local_users,user[chewbacca],0,absent,source=promise
+73        1679743338,3,default,churn_local_users,user[rey],0,present,source=promise
+74        1679743338,3,default,mon,value_cpu1,0,0.01,"monitoring,source=environment"
+481       1679743338,3,default,inventory_passwd_users_locked,users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-timesync"",""systemd-network"",""systemd-resolve"",""systemd-bus-proxy"",""_apt"",""uuidd"",""_chrony"",""messagebus"",""sshd"",""admin"",""script_monkey"",""maul"",""chewbacca"",""obiwankenobi"",""lukeskywaker""}","source=promise,noreport"
+141       1679743338,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/classes.cache],1,19331,source=promise
+109       1679743338,1,default,parsed_etc_passwd_shadow,numeric_group_id[lukeskywaker],0,1084,"source=promise,noreport"
+106       1679743338,1,default,parsed_etc_passwd_shadow,numeric_group_id[chewbacca],0,1080,"source=promise,noreport"
+109       1679743338,1,default,parsed_etc_passwd_shadow,numeric_group_id[obiwankenobi],0,1081,"source=promise,noreport"
+108       1679743338,1,default,parsed_etc_passwd_shadow,numeric_user_id[lukeskywaker],0,1082,"source=promise,noreport"
+105       1679743338,1,default,parsed_etc_passwd_shadow,numeric_user_id[chewbacca],0,1080,"source=promise,noreport"
+106       1679743338,1,default,parsed_etc_passwd_shadow,min_password_age[obiwankenobi],0,0,"source=promise,noreport"
+106       1679743338,1,default,parsed_etc_passwd_shadow,min_password_age[lukeskywaker],0,0,"source=promise,noreport"
+153       1679743338,1,default,inventory_passwd_users_locked,notlocked[chewbacca],0,chewbacca,"source=promise,inventory,attribute_name=Local user account unlocked"
+159       1679743338,1,default,inventory_passwd_users_locked,notlocked[obiwankenobi],0,obiwankenobi,"source=promise,inventory,attribute_name=Local user account unlocked"
+159       1679743338,1,default,inventory_passwd_users_locked,notlocked[lukeskywaker],0,lukeskywaker,"source=promise,inventory,attribute_name=Local user account unlocked"
+108       1679743338,1,default,parsed_etc_passwd_shadow,numeric_user_id[obiwankenobi],0,1081,"source=promise,noreport"
+113       1679743338,1,default,parsed_etc_passwd_shadow,password_warning_period[obiwankenobi],0,7,"source=promise,noreport"
+113       1679743338,1,default,parsed_etc_passwd_shadow,password_warning_period[lukeskywaker],0,7,"source=promise,noreport"
+129       1679743338,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/diff/classes.diff],1,7200,source=promise
+133       1679743338,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/diff/variables.diff],1,399858,source=promise
+137       1679743338,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/diff/execution_log.diff],1,139788,source=promise
+112       1679743338,1,default,parsed_etc_passwd_shadow,password_inactivity_period[chewbacca],0,,"source=promise,noreport"
+1251      1679743338,3,default,parsed_etc_passwd_shadow,passwd_data,15,"{
+  ""_apt"": [
+    ""x"",
+    ""104"",
+    ""65534"",
+    """",
+    ""/nonexistent"",
+    ""/bin/false""
+  ],
+  ""_chrony"": [
+    ""x"",
+    ""106"",
+    ""111"",
+    ""Chrony daemon,,,"",
+    ""/var/lib/chrony"",
+    ""/bin/false""
+  ],
+  ""admin"": [
+    ""x"",
+    ""1000"",
+    ""1000"",
+    ""Debian"",
+    ""/home/admin"",
+    ""/bin/bash""
+  ],
+  ""backup"": [
+    ""x"",
+    ""34"",
+    ""34"",
+    ""backup"",
+    ""/var/backups"",
+    ""/usr/sbin/nologin""
+  ],
+  ""bin"": [
+    ""x"",
+    ""2"",
+    ""2"",
+    ""bin"",
+    ""/bin"",
+    ""/usr/sbin/nologin""
+  ],
+  ""chewbacca"": [
+    ""x"",
+    ""1080"",
+    ""1080"",
+    """",
+    ""/home/chewbacca"",
+    """"
+  ],
+  ""daemon"": [
+    ""x"",
+    ""1"",
+    ""1"",
+    ""daemon"",
+    ""/usr/sbin"",
+    ""/usr/sbin/nologin""
+  ],
+  ""games"": [
+    ""x"",
+    ""5"",
+    ""60"",
+    ""games"",
+    ""/usr/games"",
+    ""/usr/sbin/nologin""
+  ],
+  ""gnats"": [
+    ""x"",
+    ""41"",
+    ""41"",
+    ""Gnats Bug-Reporting System (admin)"",
+    ""/var/lib/gnats"",
+    ""/usr/sbin/nologin""
+  ],
+  ""irc"": [
+    ""x"",
+    ""39"",
+    ""39"",
+    ""ircd"",
+    ""/var/run/ircd"",
+    ""/usr/sb","source=promise,noreport"
+115       1679743338,1,default,parsed_etc_passwd_shadow,password_inactivity_period[lukeskywaker],0,,"source=promise,noreport"
+110       1679743338,1,default,parsed_etc_passwd_shadow,password_warning_period[chewbacca],0,7,"source=promise,noreport"
+115       1679743338,1,default,parsed_etc_passwd_shadow,password_inactivity_period[obiwankenobi],0,,"source=promise,noreport"
+134       1679743338,1,default,inventory_passwd_users_all,inventory[chewbacca],0,chewbacca,"source=promise,inventory,attribute_name=Local users"
+107       1679743338,1,default,inventory_local_user_pw_hashing_algo,_hashing_algo[chewbacca],0,UNKNOWN,source=promise
+121       1679743338,1,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][obiwankenobi],0,UNKNOWN,source=promise
+110       1679743338,1,default,inventory_local_user_pw_hashing_algo,_hashing_algo[lukeskywaker],0,UNKNOWN,source=promise
+84        1679743338,3,default,cfe_autorun_inventory_timezone,_now,1,1679743332,source=promise
+110       1679743338,1,default,inventory_local_user_pw_hashing_algo,_hashing_algo[obiwankenobi],0,UNKNOWN,source=promise
+92        1679743338,2,default,parsed_etc_passwd_shadow,shell[leiaorgana],0,,"source=promise,noreport"
+111       1679743338,2,default,parsed_etc_passwd_shadow,password_warning_period[leiaorgana],0,7,"source=promise,noreport"
+1222      1679743338,3,default,inventory_kernel_settings_sysctl_current,_d,15,"{
+  ""abi.vsyscall32"": ""1"",
+  ""debug.exception-trace"": ""1"",
+  ""debug.kprobes-optimization"": ""1"",
+  ""dev.hpet.max-user-freq"": ""64"",
+  ""dev.mac_hid.mouse_button2_keycode"": ""97"",
+  ""dev.mac_hid.mouse_button3_keycode"": ""100"",
+  ""dev.mac_hid.mouse_button_emulation"": ""0"",
+  ""dev.scsi.logging_level"": ""0"",
+  ""fs.aio-max-nr"": ""65536"",
+  ""fs.aio-nr"": ""0"",
+  ""fs.binfmt_misc.status"": ""enabled"",
+  ""fs.dentry-state"": ""88636\t78277\t45\t0\t0\t0"",
+  ""fs.dir-notify-enable"": ""1"",
+  ""fs.epoll.max_user_watches"": ""3150069"",
+  ""fs.file-max"": ""1534095"",
+  ""fs.file-nr"": ""608\t0\t1534095"",
+  ""fs.inode-nr"": ""50552\t160"",
+  ""fs.inode-state"": ""50552\t160\t0\t0\t0\t0\t0"",
+  ""fs.inotify.max_queued_events"": ""16384"",
+  ""fs.inotify.max_user_instances"": ""128"",
+  ""fs.inotify.max_user_watches"": ""8192"",
+  ""fs.lease-break-time"": ""45"",
+  ""fs.leases-enable"": ""1"",
+  ""fs.mount-max"": ""100000"",
+  ""fs.mqueue.msg_default"": ""10"",
+  ""fs.mqueue.msg_max"": ""10"",
+  ""fs.mqueue.msgsize_default"": ""8192"",
+  ""fs.mqueue.msgsize_max"": ""8192"",
+  ""fs.mqueue.queues_max""",source=promise
+121       1679743338,1,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][lukeskywaker],0,UNKNOWN,source=promise
+118       1679743338,1,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][chewbacca],0,UNKNOWN,source=promise
+111       1679743338,3,northerntech_security_hardening,tmp_file_age,_old_file_mtime_threshold,0,1679138532,source=promise
+112       1679743338,1,default,parsed_etc_passwd_shadow,account_expiration_date[lukeskywaker],0,,"source=promise,noreport"
+109       1679743338,1,default,parsed_etc_passwd_shadow,account_expiration_date[chewbacca],0,,"source=promise,noreport"
+112       1679743338,1,default,parsed_etc_passwd_shadow,account_expiration_date[obiwankenobi],0,,"source=promise,noreport"
+125       1679743338,1,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[chewbacca],0,chewbacca,"source=promise,noreport"
+486       1679743338,3,default,parsed_etc_passwd_shadow,all_local_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-timesync"",""systemd-network"",""systemd-resolve"",""systemd-bus-proxy"",""_apt"",""uuidd"",""_chrony"",""messagebus"",""sshd"",""admin"",""script_monkey"",""maul"",""chewbacca"",""obiwankenobi"",""lukeskywaker""}","source=promise,noreport"
+104       1679743338,1,default,parsed_etc_passwd_shadow,_passwd_passwd[lukeskywaker],0,x,"source=promise,noreport"
+101       1679743338,1,default,parsed_etc_passwd_shadow,_passwd_passwd[chewbacca],0,x,"source=promise,noreport"
+104       1679743338,1,default,parsed_etc_passwd_shadow,_passwd_passwd[obiwankenobi],0,x,"source=promise,noreport"
+470       1679743338,3,nickanderson,_inventory_sudoers_main,_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-timesync"",""systemd-network"",""systemd-resolve"",""systemd-bus-proxy"",""_apt"",""uuidd"",""_chrony"",""messagebus"",""sshd"",""admin"",""script_monkey"",""maul"",""chewbacca"",""obiwankenobi"",""lukeskywaker""}",source=promise
+470       1679743338,3,default,inventory_passwd_users_locked,_unlocked_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-timesync"",""systemd-network"",""systemd-resolve"",""systemd-bus-proxy"",""_apt"",""uuidd"",""_chrony"",""messagebus"",""sshd"",""script_monkey"",""maul"",""chewbacca"",""obiwankenobi"",""lukeskywaker""}",source=promise
+113       1679743338,2,default,parsed_etc_passwd_shadow,password_inactivity_period[leiaorgana],0,,"source=promise,noreport"
+106       1679743338,2,default,parsed_etc_passwd_shadow,encrypted_password[leiaorgana],0,x,"source=promise,noreport"
+94        1679743338,2,default,parsed_etc_passwd_shadow,comment[leiaorgana],0,,"source=promise,noreport"
+118       1679743338,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[leiaorgana],0,19441,"source=promise,noreport"
+133       1679743338,2,nickanderson_inventory,_etc_groups,inventory[innerrim],0,innerrim,"source=promise,inventory,attribute_name=Local Groups"
+117       1679743338,2,default,parsed_etc_passwd_shadow,home_directory[leiaorgana],0,/home/leiaorgana,"source=promise,noreport"
+108       1679743338,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[leiaorgana],0,UNKNOWN,source=promise
+119       1679743338,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][leiaorgana],0,UNKNOWN,source=promise
+102       1679743338,2,default,parsed_etc_passwd_shadow,_passwd_passwd[leiaorgana],0,x,"source=promise,noreport"
+127       1679743338,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[leiaorgana],0,leiaorgana,"source=promise,noreport"
+110       1679743338,2,default,parsed_etc_passwd_shadow,account_expiration_date[leiaorgana],0,,"source=promise,noreport"
+137       1679743338,2,nickanderson_inventory,_etc_groups,inventory[leiaorgana],0,leiaorgana,"source=promise,inventory,attribute_name=Local Groups"
+104       1679743338,2,default,parsed_etc_passwd_shadow,min_password_age[leiaorgana],0,0,"source=promise,noreport"
+108       1679743338,2,default,parsed_etc_passwd_shadow,max_password_age[leiaorgana],0,99999,"source=promise,noreport"
+155       1679743338,2,default,inventory_passwd_users_locked,notlocked[leiaorgana],0,leiaorgana,"source=promise,inventory,attribute_name=Local user account unlocked"
+106       1679743338,2,default,parsed_etc_passwd_shadow,numeric_user_id[leiaorgana],0,1078,"source=promise,noreport"
+107       1679743338,2,default,parsed_etc_passwd_shadow,numeric_group_id[leiaorgana],0,1078,"source=promise,noreport"
+103       1679743338,2,nickanderson_parsed,_etc_group,local_group[innerrim][gid],0,1083,"source=promise,noreport"
+136       1679743338,2,default,inventory_passwd_users_all,inventory[leiaorgana],0,leiaorgana,"source=promise,inventory,attribute_name=Local users"
+110       1679743338,2,nickanderson_parsed,_etc_group,local_group[innerrim][users],3," {""""}","source=promise,noreport"
+112       1679743338,2,nickanderson_parsed,_etc_group,local_group[leiaorgana][users],3," {""""}","source=promise,noreport"
+105       1679743338,2,nickanderson_parsed,_etc_group,local_group[leiaorgana][gid],0,1078,"source=promise,noreport"
+108       1679743338,1,default,parsed_etc_passwd_shadow,encrypted_password[obiwankenobi],0,x,"source=promise,noreport"
+108       1679743338,1,default,parsed_etc_passwd_shadow,encrypted_password[lukeskywaker],0,x,"source=promise,noreport"
+86        1679743338,3,default,mon,env_time,0,Sat Mar 25 11:21:08 2023,"time_based,source=agent"
+120       1679743338,1,default,parsed_etc_passwd_shadow,epoch_last_password_change[lukeskywaker],0,19441,"source=promise,noreport"
+117       1679743338,1,default,parsed_etc_passwd_shadow,epoch_last_password_change[chewbacca],0,19441,"source=promise,noreport"
+81        1679743338,3,default,mon,dev_mem_cached,0,1125.86,"monitoring,source=environment"
+75        1679743338,3,default,mon,dev_loadavg,0,0.02,"monitoring,source=environment"
+74        1679743338,3,default,mon,dev_ssh_in,0,3.03,"monitoring,source=environment"
+105       1679743338,1,default,parsed_etc_passwd_shadow,encrypted_password[chewbacca],0,x,"source=promise,noreport"
+76        1679743338,3,default,mon,dev_syslog,0,382.76,"monitoring,source=environment"
+120       1679743338,1,default,parsed_etc_passwd_shadow,epoch_last_password_change[obiwankenobi],0,19441,"source=promise,noreport"
+121       1679743338,1,default,parsed_etc_passwd_shadow,home_directory[obiwankenobi],0,/home/obiwankenobi,"source=promise,noreport"
+121       1679743338,1,default,parsed_etc_passwd_shadow,home_directory[lukeskywaker],0,/home/lukeskywaker,"source=promise,noreport"
+1213      1679743338,3,default,sys,inet6,15,"{
+  ""addresses"": {
+    ""eth0"": {
+      ""address"": ""fe80:0:0:0:80f:20ff:febd:63f5"",
+      ""device_number"": 2,
+      ""interface"": ""eth0"",
+      ""prefix_length"": 64,
+      ""raw_flags"": ""80"",
+      ""scope"": 32
+    },
+    ""lo"": {
+      ""address"": ""0:0:0:0:0:0:0:1"",
+      ""device_number"": 1,
+      ""interface"": ""lo"",
+      ""prefix_length"": 128,
+      ""raw_flags"": ""80"",
+      ""scope"": 16
+    }
+  },
+  ""routes"": [
+    {
+      ""dest"": ""0:0:0:0:0:0:0:0"",
+      ""dest_prefix"": ""40"",
+      ""flags"": [
+        ""up"",
+        ""net"",
+        ""local""
+      ],
+      ""interface"": ""eth0"",
+      ""metric"": 256,
+      ""next_hop"": ""0:0:0:0:0:0:0:0"",
+      ""refcnt"": 0,
+      ""source_prefix"": ""00"",
+      ""use"": 0
+    },
+    {
+      ""dest"": ""0:0:0:0:0:0:0:0"",
+      ""dest_prefix"": ""80"",
+      ""flags"": [
+        ""up"",
+        ""net"",
+        ""local""
+      ],
+      ""interface"": ""lo"",
+      ""metric"": 0,
+      ""next_hop"": ""0:0:0:0:0:0:0:0"",
+      ""refcnt"": 3,
+      ""source_prefix"": ""00"",
+      ""use"": 6
+    },
+    {
+      ""dest"": ""0:0:0:0:0:0:0:","networking,/proc,source=agent,procfs"
+135       1679743338,1,nickanderson_inventory,_etc_groups,inventory[chewbacca],0,chewbacca,"source=promise,inventory,attribute_name=Local Groups"
+1224      1679743338,3,default,sys,interfaces_data,15,"{
+  ""eth0"": {
+    ""device"": ""eth0"",
+    ""receive_bytes"": ""155388408"",
+    ""receive_compressed"": ""0"",
+    ""receive_drop"": ""0"",
+    ""receive_errors"": ""0"",
+    ""receive_fifo"": ""0"",
+    ""receive_frame"": ""0"",
+    ""receive_multicast"": ""0"",
+    ""receive_packets"": ""172398"",
+    ""transmit_bytes"": ""42254991"",
+    ""transmit_compressed"": ""0"",
+    ""transmit_drop"": ""0"",
+    ""transmit_errors"": ""0"",
+    ""transmit_fifo"": ""0"",
+    ""transmit_frame"": ""0"",
+    ""transmit_multicast"": ""0"",
+    ""transmit_packets"": ""110700""
+  },
+  ""lo"": {
+    ""device"": ""lo"",
+    ""receive_bytes"": ""31784"",
+    ""receive_compressed"": ""0"",
+    ""receive_drop"": ""0"",
+    ""receive_errors"": ""0"",
+    ""receive_fifo"": ""0"",
+    ""receive_frame"": ""0"",
+    ""receive_multicast"": ""0"",
+    ""receive_packets"": ""626"",
+    ""transmit_bytes"": ""31784"",
+    ""transmit_compressed"": ""0"",
+    ""transmit_drop"": ""0"",
+    ""transmit_errors"": ""0"",
+    ""transmit_fifo"": ""0"",
+    ""transmit_frame"": ""0"",
+    ""transmit_multicast"": ""0"",
+    ""transmit_packets"": ""626""
+  }
+}","networking,/proc,source=agent,procfs"
+1287      1679743338,3,nickanderson_parsed,_etc_group,group_data,15,"{
+  ""_chrony"": [
+    ""x"",
+    ""111"",
+    """"
+  ],
+  ""adm"": [
+    ""x"",
+    ""4"",
+    ""admin""
+  ],
+  ""admin"": [
+    ""x"",
+    ""1000"",
+    """"
+  ],
+  ""audio"": [
+    ""x"",
+    ""29"",
+    ""admin""
+  ],
+  ""backup"": [
+    ""x"",
+    ""34"",
+    """"
+  ],
+  ""bin"": [
+    ""x"",
+    ""2"",
+    """"
+  ],
+  ""cdrom"": [
+    ""x"",
+    ""24"",
+    ""admin""
+  ],
+  ""chewbacca"": [
+    ""x"",
+    ""1080"",
+    """"
+  ],
+  ""coreworlds"": [
+    ""x"",
+    ""1086"",
+    """"
+  ],
+  ""crontab"": [
+    ""x"",
+    ""107"",
+    """"
+  ],
+  ""daemon"": [
+    ""x"",
+    ""1"",
+    """"
+  ],
+  ""dialout"": [
+    ""x"",
+    ""20"",
+    ""admin""
+  ],
+  ""dip"": [
+    ""x"",
+    ""30"",
+    ""admin""
+  ],
+  ""disk"": [
+    ""x"",
+    ""6"",
+    """"
+  ],
+  ""fax"": [
+    ""x"",
+    ""21"",
+    """"
+  ],
+  ""floppy"": [
+    ""x"",
+    ""25"",
+    ""admin""
+  ],
+  ""games"": [
+    ""x"",
+    ""60"",
+    """"
+  ],
+  ""gnats"": [
+    ""x"",
+    ""41"",
+    """"
+  ],
+  ""input"": [
+    ""x"",
+    ""106"",
+    """"
+  ],
+  ""irc"": [
+    ""x"",
+    ""39"",
+    """"
+  ],
+  ""kmem"": [
+    ""x"",
+    ""15"",
+    """"
+  ],
+  ""list"": [
+    ""x"",
+    ""38"",
+    """"
+  ],
+  ""lp"": [
+   ","source=promise,noreport"
+89        1679743338,3,default,cfe_autorun_inventory_memory,free,0,13708.24,"source=promise,report"
+779       1679743338,3,nickanderson_parsed,_etc_group,groups,3," {""root"",""daemon"",""bin"",""sys"",""adm"",""tty"",""disk"",""lp"",""mail"",""news"",""uucp"",""man"",""proxy"",""kmem"",""dialout"",""fax"",""voice"",""cdrom"",""floppy"",""tape"",""sudo"",""audio"",""dip"",""www-data"",""backup"",""operator"",""list"",""irc"",""src"",""gnats"",""shadow"",""utmp"",""video"",""sasl"",""plugdev"",""staff"",""games"",""users"",""nogroup"",""systemd-journal"",""systemd-timesync"",""systemd-network"",""systemd-resolve"",""systemd-bus-proxy"",""input"",""crontab"",""netdev"",""uuidd"",""ssh"",""_chrony"",""messagebus"",""admin"",""script_monkey"",""maul"",""chewbacca"",""obiwankenobi"",""lukeskywaker"",""thecolonies"",""coreworlds"",""midrim"",""wildspace""}","source=promise,noreport"
+115       1679743338,1,default,parsed_etc_passwd_shadow,home_directory[chewbacca],0,/home/chewbacca,"source=promise,noreport"
+244       1679743338,3,default,inventory_local_user_pw_hashing_algo,hash_users[UNKNOWN],3," {""obiwankenobi"",""chewbacca"",""lukeskywaker"",""maul"",""script_monkey""}","source=promise,inventory,attribute_name=Local users using UNKNOWN password hashing"
+82        1679743338,3,default,mon,dev_io_writtendata,0,0.07,"monitoring,source=environment"
+78        1679743338,3,default,mon,av_mem_free,0,9595.77,"monitoring,source=environment"
+79        1679743338,3,default,mon,av_mem_cached,0,735.43,"monitoring,source=environment"
+73        1679743338,3,default,mon,av_ssh_in,0,2.10,"monitoring,source=environment"
+83        1679743338,3,default,sys,cdate,0,Sat_Mar_25_11_22_12_2023,"time_based,source=agent"
+75        1679743338,3,default,mon,av_syslog,0,164.50,"monitoring,source=environment"
+131       1679743338,1,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[obiwankenobi],0,obiwankenobi,"source=promise,noreport"
+131       1679743338,1,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[lukeskywaker],0,lukeskywaker,"source=promise,noreport"
+71        1679743338,3,default,mon,av_cpu1,0,0.01,"monitoring,source=environment"
+83        1679743338,3,default,mon,av_entropy_avail,0,1451.10,"monitoring,source=environment"
+71        1679743338,3,default,mon,av_cpu3,0,0.06,"monitoring,source=environment"
+93        1679743338,1,default,parsed_etc_passwd_shadow,comment[chewbacca],0,,"source=promise,noreport"
+72        1679743338,3,default,mon,dev_cpu2,0,0.75,"monitoring,source=environment"
+72        1679743338,3,default,mon,dev_cpu1,0,0.86,"monitoring,source=environment"
+72        1679743338,3,default,mon,dev_cpu3,0,0.45,"monitoring,source=environment"
+77        1679743338,3,default,mon,dev_io_writes,0,3.35,"monitoring,source=environment"
+84        1679743338,3,default,mon,dev_entropy_avail,0,2208.42,"monitoring,source=environment"
+96        1679743338,1,default,parsed_etc_passwd_shadow,comment[obiwankenobi],0,,"source=promise,noreport"
+96        1679743338,1,default,parsed_etc_passwd_shadow,comment[lukeskywaker],0,,"source=promise,noreport"
+82        1679743338,3,default,sys,date,0,Sat Mar 25 11:22:12 2023,"time_based,source=agent"
+72        1679743338,3,default,mon,dev_cpu0,0,0.53,"monitoring,source=environment"
+80        1679743338,3,default,mon,dev_cfengine_out,0,0.01,"monitoring,source=environment"
+3         LSD
+117       1679743338,3,45,SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3,172.31.6.65,59.997309,1679743279
+118       1679743338,3,43,SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3,172.31.6.65,297.535662,1679743332
+3         ELD
+351       1679743338,3,a482cc3792e95022febda13f4f85899b88caf20ee8ac450e954c091b7ee758d6,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,wildspace,/default/churn_local_groups/groups/'wildspace'[7],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+386       1679743338,1,b1cb3a2db6ecbc8395b7ee2ef55bc2bd65f99db85212672546380f8e3969cfce,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Removed user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+353       1679743338,3,6efa5dd990369c8293b768b1e88c3234ddc466536ad9196ad77a378cb27e743e,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+349       1679743338,3,88315cda2fd4090725c25ab2fe528f8955508a84d85685c75da8c39db5b15708,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1190      1679743338,1,df57d41146da48f085df63793cbeb5b0e7322723ab816ab3ff04a56cd06f2777,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679743332,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679743332'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679743332/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679743332/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679743332/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1679743332/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679743332/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679743332/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679743332/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+348       1679743338,3,fd1dfb412e86652816cf68575603d66a416220ac43a7a7b1fc3bce38010012fd,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+377       1679743338,1,bb30e433c50518e12b4a89114cfa9aae6e780cc296fcc0eb07ebada8781cb2ea,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,chewbacca,/default/churn_local_users/users/'chewbacca'[3],,[],"[""Removed user 'chewbacca'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+692       1679743338,3,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=abbf5abff5b78ff0813853ba5114d51033841e9270983dfd35f2ff9fb8655e2f)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+1190      1679743338,2,adcb52dd15aa63f1461a289f08bd47890edb3bf860ce00d89865cab2abb072e9,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679743056,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679743056'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679743056/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679743056/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679743056/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1679743056/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679743056/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679743056/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679743056/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+335       1679743338,2,b52cdb7c7447c8cf6201a3bd28ed50d37e9d7b6e5d7cc4192a723e0194d57b50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+377       1679743338,2,45515e325a9f698dee71cac8560404b967e6137a743cd402b784217f28fc6729,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,chewbacca,/default/churn_local_users/users/'chewbacca'[3],,[],"[""Created user 'chewbacca'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+386       1679743338,2,4e266614f38ae754839a35e7fc574b6b752029e43ed511fc912b5e826bb3b01b,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Created user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+360       1679743338,1,5820946305f58f0ceb4dd427ba58a6bdff713a12bc3cbc4169caacb3cf1110f1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],"[""Created user 'rey'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+355       1679743338,3,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+352       1679743338,3,2ea1aeb72b8fa9b635038692e4b7f7f3b82d3317e496aa0abcac9d3dac664df5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+345       1679743338,3,53b982118c5f1ffb49aed44fb4d9ebd461bfae32e4eb2b93d6ddff9f0a434e36,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+3         PRD
+60        Packing reports: delta,0.030644,0.093907,0.095741,1679743339
+3         EXS
+16        f,289,1679743338
+3         MOM
+15        M:entropy_avail
+41        1576 2073.0000 1451.1000 1734.3962 0.0000
+12        M:mem_cached
+39        1576 1050.6172 735.4320 879.0094 0.0000
+10        M:mem_free
+39        1576 13708.2383 9595.7668 0.0000 0.0000
+11        M:mem_total
+40        1576 15042.1719 10529.5203 0.0000 0.0000
+16        M:io_writtendata
+32        1576 0.0312 0.0219 0.0261 0.0000
+11        M:io_writes
+32        1576 2.0000 1.4000 1.6733 0.0000
+6         M:cpu3
+32        1576 0.0866 0.0606 0.0724 0.0000
+6         M:cpu2
+32        1576 0.2398 0.1679 0.2007 0.0000
+6         M:cpu1
+32        1576 0.0133 0.0093 0.0111 0.0000
+6         M:cpu0
+32        1576 0.0133 0.0093 0.0111 0.0000
+5         M:cpu
+32        1576 0.0882 0.0618 0.0738 0.0000
+8         M:syslog
+38        1576 235.0000 164.5000 196.6151 0.0000
+8         M:ssh_in
+32        1576 3.0000 2.1000 2.5100 0.0000
+13        M:cfengine_in
+32        1576 1.0000 0.7000 0.8367 0.0000
+10        M:diskfree
+35        1576 79.0000 55.3000 66.0961 0.0000
+12        M:otherprocs
+32        1576 3.0000 2.1000 2.5100 0.0000
+11        M:rootprocs
+35        1576 94.0000 65.8000 78.6460 0.0000
+7         M:users
+32        1576 4.0000 2.8000 3.3466 0.0000
+3         MOY
+15        M:entropy_avail
+40        155 1934.0000 1353.8000 3052.5656 0.0000
+12        M:mem_cached
+37        155 567.7695 397.4387 537.7864 0.0000
+16        M:io_writtendata
+31        155 0.0586 0.0410 0.0585 0.0000
+11        M:io_writes
+31        155 2.0000 1.4000 2.3664 0.0000
+6         M:cpu3
+31        155 0.6365 0.4455 0.7492 0.0000
+6         M:cpu2
+31        155 0.9225 0.6457 1.0836 0.0000
+6         M:cpu1
+31        155 0.4430 0.3101 0.4722 0.0000
+6         M:cpu0
+31        155 0.5662 0.3964 0.5767 0.0000
+5         M:cpu
+31        155 0.6404 0.4483 0.7176 0.0000
+10        M:messages
+37        155 154.0000 107.8000 182.2153 0.0000
+8         M:syslog
+39        155 4248.0000 2973.6000 139.0279 0.0000
+8         M:ssh_in
+31        155 2.0000 1.4000 1.6733 0.0000
+14        M:cfengine_out
+31        155 0.5000 0.3500 0.5916 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+31        155 0.0500 0.0350 0.0592 0.0000
+10        M:diskfree
+34        155 83.0000 58.1000 69.4629 0.0000
+12        M:otherprocs
+31        155 3.0000 2.1000 2.5100 0.0000
+11        M:rootprocs
+34        155 94.0000 65.8000 78.6505 0.0000
+7         M:users
+31        155 4.0000 2.8000 3.3466 0.0000
+# send QUERY complete successful

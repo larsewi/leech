@@ -1,0 +1,85 @@
+# delta from 1679700738 to 1679700799 at 1679700799
+22        CFR: 0 1679700798 2510
+3         PRD
+60        Packing reports: delta,0.015587,0.024295,0.027138,1679700739
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004866,0.002368,0.002167,1679700770
+3         EXS
+16        f,121,1679700632
+3         MOM
+15        M:entropy_avail
+41        1434 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1434 2086.1484 1900.8880 617.5348 0.0000
+10        M:mem_free
+40        1434 12359.1250 11243.5742 0.0000 0.0000
+11        M:mem_total
+40        1434 14863.5820 13525.8596 0.0000 0.0000
+16        M:io_writtendata
+32        1434 0.5889 0.6218 0.1098 0.0000
+11        M:io_writes
+32        1434 8.0000 8.9600 3.2000 0.0000
+6         M:cpu3
+32        1434 1.1794 1.0061 0.6235 0.0000
+6         M:cpu2
+32        1434 1.0662 2.1187 3.5083 0.0000
+6         M:cpu1
+32        1434 1.0993 1.0075 0.3060 0.0000
+6         M:cpu0
+32        1434 1.0867 0.8910 0.6156 0.0000
+5         M:cpu
+32        1434 1.1079 1.2554 0.4916 0.0000
+10        M:messages
+40        1434 538.0000 1160.9500 1737.3245 0.0000
+8         M:ssh_in
+32        1434 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1434 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1434 0.0400 0.0343 0.0210 0.0000
+10        M:diskfree
+35        1434 74.0000 67.3400 22.2000 0.0000
+12        M:otherprocs
+32        1434 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        1434 109.0000 99.8200 30.6000 0.0000
+7         M:users
+32        1434 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+776       1679700759,6f3673ca615a23ea0bfd799066fdf4d9ea465a83998e5454f1039efde1f1e1d7,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers,files,/var/cfengine/state/_users_with_sudo.module.cache.d/root,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'/nickanderson/_inventory_sudoers/files/'/var/cfengine/state/_users_with_sudo.module.cache.d/root'[1],nickanderson__inventory_sudoers_inventory_user_with_sudo_access_root,[],"[""Created file '/var/cfengine/state/_users_with_sudo.module.cache.d/root', mode 0600"",""Touched (updated time stamps) for path '/var/cfengine/state/_users_with_sudo.module.cache.d/root'""]",77,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+
+# send QUERY complete successful

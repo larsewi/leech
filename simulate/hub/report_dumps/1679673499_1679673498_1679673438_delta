@@ -1,0 +1,110 @@
+# delta from 1679673438 to 1679673499 at 1679673499
+22        CFR: 0 1679673498 5196
+3         PRD
+56        DBReportCollectAll,0.087793,0.350534,0.327544,1679673439
+60        Packing reports: delta,0.033605,0.130590,0.131676,1679673439
+3         EXS
+16        f,319,1679673232
+3         CNG
+66        1679673498,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1679673498,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1679673498,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+259       1679673498,/etc/group,change_management_files_watch_files_report_diffs,"-,65,chewbacca:x:1018:-,66,leiaorgana:x:1019:-,67,hansolo:x:1023:-,69,innerrim:x:1025:-,70,outerrim:x:1026:+,68,jarjarbinks:x:1021:+,69,darthsidious:x:1022:+,70,deepcore:x:1029:"
+
+343       1679673498,/etc/passwd,change_management_files_watch_files_report_diffs,"-,39,chewbacca:x:1018:1018::/home/chewbacca:/bin/sh-,40,leiaorgana:x:1019:1019::/home/leiaorgana:/bin/sh-,41,hansolo:x:1020:1023::/home/hansolo:/bin/sh+,39,jarjarbinks:x:1021:1021::/home/jarjarbinks:/bin/sh+,40,darthsidious:x:1022:1022::/home/darthsidious:/bin/sh"
+
+3         MOM
+15        M:entropy_avail
+35        1343 59.0000 41.3000 49.3629 0.0000
+12        M:mem_cached
+38        1343 3321.8867 2325.3207 0.0000 0.0000
+10        M:mem_free
+39        1343 11667.4883 8167.2418 0.0000 0.0000
+11        M:mem_total
+40        1343 15817.1836 11072.0285 0.0000 0.0000
+16        M:io_writtendata
+32        1343 0.3164 0.2215 0.2647 0.0000
+11        M:io_writes
+35        1343 20.0000 14.0000 16.7332 0.0000
+13        M:postgres_in
+32        1343 1.0000 0.7000 0.8367 0.0000
+6         M:cpu3
+32        1343 8.3873 5.8711 7.0173 0.0000
+6         M:cpu2
+32        1343 7.9844 5.5890 6.6802 0.0000
+6         M:cpu1
+32        1343 8.3283 5.8298 6.9679 0.0000
+6         M:cpu0
+32        1343 8.4635 5.9245 7.0811 0.0000
+5         M:cpu
+32        1343 8.2895 5.8027 6.9355 0.0000
+8         M:syslog
+38        1343 145.0000 101.5000 121.3157 0.0000
+8         M:ssh_in
+32        1343 2.0000 1.4000 1.6733 0.0000
+8         M:www_in
+32        1343 1.0000 0.7000 0.8367 0.0000
+14        M:cfengine_out
+32        1343 5.0000 3.5000 4.1833 0.0000
+13        M:cfengine_in
+32        1343 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1343 0.1626 0.1138 0.1360 0.0000
+10        M:diskfree
+35        1343 55.0000 38.5000 46.0163 0.0000
+12        M:otherprocs
+35        1343 26.0000 18.2000 21.7532 0.0000
+11        M:rootprocs
+36        1343 115.0000 80.5000 96.2159 0.0000
+7         M:users
+32        1343 8.0000 5.6000 6.6933 0.0000
+3         MOY
+15        M:entropy_avail
+36        155 311.5000 288.7150 70.5984 0.0000
+12        M:mem_cached
+39        155 2500.4707 2275.1462 688.5663 0.0000
+16        M:io_writtendata
+31        155 0.2676 0.2020 0.1967 0.0000
+11        M:io_writes
+34        155 14.0000 10.6400 10.1177 0.0000
+13        M:postgres_in
+31        155 1.0000 0.9100 0.3000 0.0000
+6         M:cpu3
+31        155 5.6157 4.0684 5.6166 0.0000
+6         M:cpu2
+31        155 6.9570 5.0045 7.2414 0.0000
+6         M:cpu1
+31        155 4.6086 3.3564 4.4307 0.0000
+6         M:cpu0
+31        155 8.9643 6.3865 9.6397 0.0000
+5         M:cpu
+31        155 8.5530 6.1152 9.1097 0.0000
+8         M:syslog
+39        155 1188.0000 861.9450 1774.3258 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+8         M:www_in
+31        155 1.0000 0.9100 0.3000 0.0000
+14        M:cfengine_out
+31        155 5.0000 4.5500 1.5000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.3083 0.2329 0.3196 0.0000
+10        M:diskfree
+34        155 60.5000 55.0550 18.2248 0.0000
+12        M:otherprocs
+33        155 26.0000 23.6600 7.8000 0.0000
+11        M:rootprocs
+36        155 114.5000 103.9850 35.0603 0.0000
+7         M:users
+31        155 8.0000 7.2800 2.4000 0.0000
+3         PLG
+851       1679673498,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1679673498,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1679673498,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=8cc79706350d2b85813cf708880791b17ed431d6588c6ecf1c086e50c25bf1db)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+# send QUERY complete successful

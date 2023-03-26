@@ -1,0 +1,89 @@
+# delta from 1679725399 to 1679725459 at 1679725459
+22        CFR: 0 1679725458 3146
+3         PRD
+60        Packing reports: delta,0.013549,0.018357,0.018650,1679725400
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004841,0.002343,0.002194,1679725413
+3         EXS
+16        f,385,1679725042
+3         MOM
+15        M:entropy_avail
+41        1516 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1516 2190.6328 1993.4430 657.2992 0.0000
+10        M:mem_free
+38        1516 8559.0340 8559.0340 0.0000 0.0000
+11        M:mem_total
+40        1516 10404.5074 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1516 0.7734 0.6513 0.4165 0.0000
+11        M:io_writes
+34        1516 12.0000 10.0800 6.4894 0.0000
+6         M:cpu3
+32        1516 0.7732 0.5916 0.5182 0.0000
+6         M:cpu2
+32        1516 0.6465 0.4974 0.4273 0.0000
+6         M:cpu1
+32        1516 2.0384 1.4842 1.5506 0.0000
+6         M:cpu0
+32        1516 1.3324 0.9802 0.9876 0.0000
+5         M:cpu
+32        1516 1.1961 0.8883 0.8655 0.0000
+10        M:messages
+39        1516 169.0000 652.9600 1784.0780 0.0000
+8         M:ssh_in
+32        1516 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1516 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1516 0.0200 0.0140 0.0167 0.0000
+10        M:diskfree
+35        1516 73.0000 66.4300 21.9000 0.0000
+12        M:otherprocs
+32        1516 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1516 118.0000 106.3300 38.9000 0.0000
+7         M:users
+32        1516 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+492       1679725426,b67b2edf8db5d8e25a5dc6eeb3fe3aad66099040fd631ec969b3cb949e9bdda5,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Failed to delete group 'deepcore': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'deepcore' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+537       1679725452,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'thecolonies' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+383       1679725452,8f889933d10bb688c85e85dce773c282b796ebe7ebe2528f99dba8fe2cc4d5bb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Created user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

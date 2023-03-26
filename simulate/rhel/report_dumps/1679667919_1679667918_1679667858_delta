@@ -1,0 +1,91 @@
+# delta from 1679667858 to 1679667919 at 1679667919
+22        CFR: 0 1679667918 3056
+3         PRD
+60        Packing reports: delta,0.035512,0.126110,0.126026,1679667859
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004854,0.002356,0.002202,1679667864
+3         EXS
+16        f,102,1679667216
+3         MOM
+15        M:entropy_avail
+40        1324 3780.0000 3439.8000 948.7725 0.0000
+12        M:mem_cached
+40        1324 1991.7227 1812.4479 597.5824 0.0000
+10        M:mem_free
+38        1324 8696.5320 8696.5320 0.0000 0.0000
+11        M:mem_total
+40        1324 10404.5074 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1324 1.0830 0.9560 0.4233 0.0000
+11        M:io_writes
+34        1324 14.0000 12.3200 5.6000 0.0000
+6         M:cpu3
+32        1324 0.5401 0.4648 0.2827 0.0000
+6         M:cpu2
+32        1324 1.3126 1.0406 0.8039 0.0000
+6         M:cpu1
+32        1324 0.9195 0.7962 0.4109 0.0000
+6         M:cpu0
+32        1324 1.4198 1.0806 0.9647 0.0000
+5         M:cpu
+32        1324 1.0464 0.8448 0.6134 0.0000
+10        M:messages
+39        1324 635.0000 979.1600 1147.2000 0.0000
+8         M:ssh_in
+32        1324 2.0000 1.8200 0.6000 0.0000
+14        M:cfengine_out
+32        1324 0.0000 0.2100 0.7436 0.0000
+13        M:cfengine_in
+32        1324 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1324 0.0200 0.0140 0.0167 0.0000
+10        M:diskfree
+35        1324 75.0000 68.2500 22.5000 0.0000
+12        M:otherprocs
+32        1324 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1324 117.0000 106.4700 35.1000 0.0000
+7         M:users
+32        1324 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1315.7734 1198.4567 433.2226 0.0000
+16        M:io_writtendata
+31        155 0.7695 0.8305 0.2055 0.0000
+11        M:io_writes
+33        155 13.0000 12.6700 2.5495 0.0000
+6         M:cpu3
+31        155 1.0967 1.1038 1.2109 0.0000
+6         M:cpu2
+31        155 0.5861 0.7020 0.7706 0.0000
+6         M:cpu1
+31        155 3.5019 2.7815 3.2061 0.0000
+6         M:cpu0
+31        155 0.9457 1.1279 1.7377 0.0000
+5         M:cpu
+31        155 1.5341 1.4295 1.5096 0.0000
+10        M:messages
+39        155 927.0000 1573.2150 1356.1705 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0200 0.0329 0.0515 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 111.5000 102.8300 29.3820 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+386       1679667876,099df3409e18fad93b89edb3338c630537071075283589121476fdc39daefb75,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],"[""Created user 'cassianandor'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+504       1679667895,5699c9f4f17a43cc74e8194c877aa6680c39cfd0f5541c854296905bcd5410d3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Failed to delete group 'thecolonies': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'thecolonies' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+383       1679667901,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Removed user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

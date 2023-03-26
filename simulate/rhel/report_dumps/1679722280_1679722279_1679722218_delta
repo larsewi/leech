@@ -1,0 +1,89 @@
+# delta from 1679722218 to 1679722280 at 1679722280
+22        CFR: 0 1679722279 3810
+3         PRD
+60        Packing reports: delta,0.032977,0.108747,0.109881,1679722219
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004743,0.002250,0.002288,1679722257
+3         EXS
+16        f,318,1679722220
+3         MOM
+15        M:entropy_avail
+38        1506 3780.0000 2646.0000 0.0000 0.0000
+12        M:mem_cached
+41        1506 2179.7930 1525.8551 1823.7456 0.0000
+10        M:mem_free
+39        1506 12238.4727 8566.9309 0.0000 0.0000
+11        M:mem_total
+40        1506 14863.5820 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1506 1.5586 1.0910 1.3040 0.0000
+11        M:io_writes
+35        1506 18.0000 12.6000 15.0599 0.0000
+6         M:cpu3
+32        1506 0.3267 0.2287 0.2733 0.0000
+6         M:cpu2
+32        1506 0.8993 0.6295 0.7524 0.0000
+6         M:cpu1
+32        1506 0.5530 0.3871 0.4627 0.0000
+6         M:cpu0
+32        1506 0.3737 0.2616 0.3127 0.0000
+5         M:cpu
+32        1506 0.5333 0.3733 0.4462 0.0000
+10        M:messages
+38        1506 3823.0000 2676.1000 0.0000 0.0000
+8         M:ssh_in
+32        1506 2.0000 1.4000 1.6733 0.0000
+13        M:cfengine_in
+32        1506 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1506 0.0100 0.0070 0.0084 0.0000
+10        M:diskfree
+35        1506 73.0000 51.1000 61.0762 0.0000
+12        M:otherprocs
+32        1506 4.0000 2.8000 3.3466 0.0000
+11        M:rootprocs
+36        1506 112.0000 78.4000 93.7059 0.0000
+7         M:users
+32        1506 5.0000 3.5000 4.1833 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+537       1679722219,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'thecolonies' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+1178      1679722219,31bbb722a5397d8606e20f036099e340638f4631b95515691b626dd9188623cc,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679721680,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679721680'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679721680/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721680/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721680/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+363       1679722279,cac5f7ab2dec7f87bfe1753d37690ac52aa07a2805e7a074f6822b9e701e47ed,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Created user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

@@ -1,0 +1,94 @@
+# delta from 1679701458 to 1679701519 at 1679701519
+22        CFR: 0 1679701518 4160
+3         PRD
+60        Packing reports: delta,0.016773,0.028132,0.028664,1679701459
+3         EXS
+16        f,121,1679700632
+3         MOM
+15        M:entropy_avail
+41        1436 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1436 2104.1602 1911.0500 643.7004 0.0000
+10        M:mem_free
+38        1436 8634.8336 8634.8336 0.0000 0.0000
+11        M:mem_total
+40        1436 10404.5074 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1436 0.5400 0.4892 0.1695 0.0000
+11        M:io_writes
+33        1436 10.0000 8.6800 4.4000 0.0000
+6         M:cpu3
+32        1436 1.6936 1.2485 1.2489 0.0000
+6         M:cpu2
+32        1436 0.7865 0.6316 0.4666 0.0000
+6         M:cpu1
+32        1436 1.1722 0.8695 0.8509 0.0000
+6         M:cpu0
+32        1436 1.1729 0.8952 0.7911 0.0000
+5         M:cpu
+32        1436 1.2062 0.9108 0.8365 0.0000
+10        M:messages
+37        1436 169.0000 1638.0700 0.0000 0.0000
+8         M:ssh_in
+32        1436 2.0000 1.8200 0.6000 0.0000
+14        M:cfengine_out
+32        1436 1.0000 0.7000 0.8367 0.0000
+13        M:cfengine_in
+32        1436 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1436 0.0500 0.0350 0.0418 0.0000
+10        M:diskfree
+35        1436 74.0000 67.3400 22.2000 0.0000
+12        M:otherprocs
+32        1436 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1436 118.0000 106.5400 38.2000 0.0000
+7         M:users
+32        1436 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+360       1679701468,5820946305f58f0ceb4dd427ba58a6bdff713a12bc3cbc4169caacb3cf1110f1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],"[""Created user 'rey'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+528       1679701483,88315cda2fd4090725c25ab2fe528f8955508a84d85685c75da8c39db5b15708,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'innerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+528       1679701494,2e888d0cc6c3290247ab978f31352a8e50d388fa5d0f69a882d4281d85dc4eb0,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'deepcore' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+528       1679701509,e73379c60180edea5fa97d878bc131ada907979ac41bf504519eeffca6f9aa7d,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'outerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+522       1679701519,2a00738949efc4f5534d541bf62de1fed4c93753c07cb1123e9ef7bd6c7980e3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+# send QUERY complete successful

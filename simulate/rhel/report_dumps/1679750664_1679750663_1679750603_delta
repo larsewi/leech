@@ -1,0 +1,97 @@
+# delta from 1679750603 to 1679750664 at 1679750664
+22        CFR: 0 1679750663 5238
+3         PRD
+60        Packing reports: delta,0.016415,0.026945,0.028082,1679750604
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004831,0.002334,0.002423,1679750661
+3         EXS
+16        f,298,1679750658
+3         MOM
+15        M:entropy_avail
+41        1600 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1600 2286.0312 2078.6987 691.1086 0.0000
+10        M:mem_free
+38        1600 8456.7820 8456.7820 0.0000 0.0000
+11        M:mem_total
+40        1600 10404.5074 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1600 1.3818 1.1154 0.8104 0.0000
+11        M:io_writes
+34        1600 18.0000 15.1200 9.7341 0.0000
+6         M:cpu3
+32        1600 1.6526 1.3192 0.9950 0.0000
+6         M:cpu2
+32        1600 0.4596 0.7319 0.9078 0.0000
+6         M:cpu1
+32        1600 1.4068 1.1819 0.7605 0.0000
+6         M:cpu0
+32        1600 0.4932 0.6545 0.5376 0.0000
+5         M:cpu
+32        1600 1.0046 0.9733 0.1044 0.0000
+10        M:messages
+40        1600 1502.0000 1754.2700 703.5474 0.0000
+8         M:ssh_in
+34        1600 26.0000 24.7100 4.3000 0.0000
+14        M:cfengine_out
+32        1600 0.0000 0.2100 0.7436 0.0000
+13        M:cfengine_in
+32        1600 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1600 0.0900 0.0819 0.0270 0.0000
+10        M:diskfree
+35        1600 72.0000 65.5200 21.6000 0.0000
+12        M:otherprocs
+32        1600 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1600 113.0000 109.7600 10.8000 0.0000
+7         M:users
+32        1600 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+387       1679750607,c1a3779b76d76e5edde2668bac31f237efb11ce8a83bf017195e39d8744a22b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Removed user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+506       1679750616,2ea1aeb72b8fa9b635038692e4b7f7f3b82d3317e496aa0abcac9d3dac664df5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],"[""Command returned error while creating user 'lukeskywaker'. (Command line: '/sbin/useradd -M lukeskywaker')"",""Failed to create user 'lukeskywaker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+464       1679750622,369729ef797e65207cc29c1cf07f54d4a76677334810dd2800afa496927bb5e0,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Command returned error while removing user 'c3po'. (Command line: '/sbin/userdel c3po')"",""Failed to remove user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+537       1679750657,5699c9f4f17a43cc74e8194c877aa6680c39cfd0f5541c854296905bcd5410d3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'thecolonies' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+383       1679750657,8f889933d10bb688c85e85dce773c282b796ebe7ebe2528f99dba8fe2cc4d5bb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Created user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+1178      1679750657,d77c53f97e1687950a7b1de06e547f196f3d24682bd5f45662703cc952775967,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679749018,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679749018'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679749018/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679749018/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679749018/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679749018/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679749018/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679749018/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679749018/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+# send QUERY complete successful

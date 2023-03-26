@@ -1,0 +1,990 @@
+# delta from 1679735178 to 1679735239 at 1679735239
+24        CFR: 0 1679735238 186989
+3         CLD
+61        1679735178,1,have_mount_unit__sys_kernel_debug,source=promise
+49        1679735178,3,io_writes_high_ldt,source=persistent
+62        1679735178,1,have_mount_unit__sys_kernel_config,source=promise
+55        1679735178,1,have_mount_unit__dev_mqueue,source=promise
+68        1679735178,1,have_mount_unit__proc_sys_fs_binfmt_misc,source=promise
+61        1679735178,1,jarjarbinks_password_invalid_hash,source=promise
+62        1679735178,1,obiwankenobi_password_invalid_hash,source=promise
+73        1679735178,1,ssh_in_high_normal,"monitoring,source=environment,hardclass"
+77        1679735178,1,messages_normal_normal,"monitoring,source=environment,hardclass"
+67        1679735178,1,lynis:lynis_supported_platform,"source=promise,report"
+92        1679735178,3,mem_cached_high_ldt,"monitoring,source=environment,hardclass,source=persistent"
+58        1679735178,1,have_mount_unit__dev_hugepages,source=promise
+57        1679735178,2,hansolo_password_invalid_hash,source=promise
+71        1679735178,2,io_readdata_high,"monitoring,source=environment,hardclass"
+76        1679735178,2,entropy_ssh_in_medium,"monitoring,source=environment,hardclass"
+54        1679735178,2,c3po_password_invalid_hash,source=promise
+52        1679735178,2,cfengine_out_high_ldt,source=persistent
+54        1679735178,2,io_writtendata_high_ldt,source=persistent
+45        1679735178,1,cpu0_high_dev2,source=persistent
+86        1679735178,3,cpu0_high_ldt,"monitoring,source=environment,hardclass,source=persistent"
+48        1679735178,1,cpu0_high_anomaly,source=persistent
+62        1679735178,2,lukeskywaker_password_invalid_hash,source=promise
+73        1679735178,1,cfengine_in_normal,"monitoring,source=environment,hardclass"
+3         VAD
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu0.domain1.max_newidle_lb_cost],0,4047,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu0.domain1.max_newidle_lb_cost"
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu0.domain0.max_newidle_lb_cost],0,2802,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu0.domain0.max_newidle_lb_cost"
+205       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.random.uuid],0,eb1ed787-695b-48d7-b5ef-8f9c9416b0ca,"source=promise,inventory,attribute_name=Sysctl kernel.random.uuid"
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu1.domain0.max_newidle_lb_cost],0,3381,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu1.domain0.max_newidle_lb_cost"
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu2.domain1.max_newidle_lb_cost],0,5111,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu2.domain1.max_newidle_lb_cost"
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu2.domain0.max_newidle_lb_cost],0,3229,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu2.domain0.max_newidle_lb_cost"
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu1.domain1.max_newidle_lb_cost],0,3127,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu1.domain1.max_newidle_lb_cost"
+175       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.ns_last_pid],0,150012,"source=promise,inventory,attribute_name=Sysctl kernel.ns_last_pid"
+133       1679735178,1,nickanderson_inventory,_etc_groups,inventory[outerrim],0,outerrim,"source=promise,inventory,attribute_name=Local Groups"
+140       1679735178,1,default,inventory_passwd_users_all,inventory[obiwankenobi],0,obiwankenobi,"source=promise,inventory,attribute_name=Local users"
+141       1679735178,1,nickanderson_inventory,_etc_groups,inventory[obiwankenobi],0,obiwankenobi,"source=promise,inventory,attribute_name=Local Groups"
+187       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.dentry-state],0,96694	78216	45	0	19851	0,"source=promise,inventory,attribute_name=Sysctl fs.dentry-state"
+180       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.inode-state],0,74038	130	0	0	0	0	0,"source=promise,inventory,attribute_name=Sysctl fs.inode-state"
+164       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.inode-nr],0,74038	130,"source=promise,inventory,attribute_name=Sysctl fs.inode-nr"
+167       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.file-nr],0,1440	0	1513187,"source=promise,inventory,attribute_name=Sysctl fs.file-nr"
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu3.domain0.max_newidle_lb_cost],0,1995,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu3.domain0.max_newidle_lb_cost"
+103       1679735178,1,nickanderson_parsed,_etc_group,local_group[outerrim][gid],0,1046,"source=promise,noreport"
+114       1679735178,1,nickanderson_parsed,_etc_group,local_group[obiwankenobi][users],3," {""""}","source=promise,noreport"
+107       1679735178,1,nickanderson_parsed,_etc_group,local_group[obiwankenobi][gid],0,1043,"source=promise,noreport"
+110       1679735178,1,nickanderson_parsed,_etc_group,local_group[outerrim][users],3," {""""}","source=promise,noreport"
+109       1679735178,1,default,parsed_etc_passwd_shadow,max_password_age[jarjarbinks],0,99999,"source=promise,noreport"
+90        1679735178,1,default,inventory_yum_update_info_data,low_security_notices,3,,source=promise
+412       1679735178,3,default,inventory_passwd_users_password_empty,local_users,3," {""root"",""bin"",""daemon"",""adm"",""lp"",""sync"",""shutdown"",""halt"",""mail"",""operator"",""games"",""ftp"",""nobody"",""dbus"",""systemd-coredump"",""systemd-resolve"",""tss"",""polkitd"",""unbound"",""sssd"",""sshd"",""chrony"",""rngd"",""ec2-user"",""script_monkey"",""jarjarbinks"",""obiwankenobi""}","source=promise,noreport"
+108       1679735178,1,nickanderson_parsed,_etc_group,local_group[midrim][users],3," {""""}","source=promise,noreport"
+102       1679735178,3,default,host_info_report_cfengine,last_agent_run,0,2023-03-25 09:01:16 UTC,source=promise
+58        1679735178,1,default,set_line_based,kp,0,.*,source=promise
+241       1679735178,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.sched_domain.cpu3.domain1.max_newidle_lb_cost],0,2809,"source=promise,inventory,attribute_name=Sysctl kernel.sched_domain.cpu3.domain1.max_newidle_lb_cost"
+103       1679735178,3,nickanderson_parsed,_etc_group,local_group[innerrim][gid],0,1048,"source=promise,noreport"
+101       1679735178,1,nickanderson_parsed,_etc_group,local_group[midrim][gid],0,1047,"source=promise,noreport"
+113       1679735178,1,nickanderson_parsed,_etc_group,local_group[jarjarbinks][users],3," {""""}","source=promise,noreport"
+106       1679735178,1,nickanderson_parsed,_etc_group,local_group[jarjarbinks][gid],0,1040,"source=promise,noreport"
+129       1679735178,1,nickanderson_inventory,_etc_groups,inventory[midrim],0,midrim,"source=promise,inventory,attribute_name=Local Groups"
+119       1679735178,1,default,parsed_etc_passwd_shadow,epoch_last_password_change[jarjarbinks],0,19441,"source=promise,noreport"
+86        1679735178,3,default,mon,env_time,0,Sat Mar 25 09:01:20 2023,"time_based,source=agent"
+108       1679735178,1,default,parsed_etc_passwd_shadow,encrypted_password[obiwankenobi],0,x,"source=promise,noreport"
+120       1679735178,1,default,parsed_etc_passwd_shadow,epoch_last_password_change[obiwankenobi],0,19441,"source=promise,noreport"
+79        1679735178,3,default,churn_local_groups,group[deepcore],0,absent,source=promise
+89        1679735178,3,default,cfe_autorun_inventory_memory,free,0,12179.90,"source=promise,report"
+78        1679735178,1,default,set_line_based,ev[ENCRYPT_METHOD],0,SHA512,source=promise
+107       1679735178,1,default,parsed_etc_passwd_shadow,encrypted_password[jarjarbinks],0,x,"source=promise,noreport"
+74        1679735178,3,default,mon,dev_ssh_in,0,2.27,"monitoring,source=environment"
+79        1679735178,3,default,mon,dev_rootprocs,0,121.47,"monitoring,source=environment"
+78        1679735178,3,default,mon,dev_otherprocs,0,4.29,"monitoring,source=environment"
+73        1679735178,3,default,mon,dev_users,0,5.36,"monitoring,source=environment"
+99        1679735178,1,default,cronjob,e_mins,0,"0\,5\,10\,15\,20\,25\,30\,35\,40\,45\,50\,55",source=promise
+56        1679735178,1,default,cronjob,e_hours,0,\*,source=promise
+163       1679735178,1,default,cronjob,e_commands,0,\/usr\/bin\/python3\ \/var\/cfengine\/masterfiles\/script\_monkey\.py\ \>\ \~\/script\_monkey\.log\ 2\>\&1,source=promise
+77        1679735178,3,default,churn_local_groups,group[midrim],0,absent,source=promise
+140       1679735178,1,default,inventory_yum_update_info_data,important_security_notices_info,0,        26 Important Security notice(s),source=promise
+160       1679735178,1,default,inventory_yum_update_info_data,important_security_notices_fields,3," {"""",""26"",""Important"",""Security"",""notice(s)""}",source=promise
+144       1679735178,1,default,inventory_yum_update_info_data,important_security_notices,3," {""        26 Important Security notice(s)""}",source=promise
+88        1679735178,1,default,set_variable_values_ini,index,3," {""crypt_style""}",source=promise
+138       1679735178,1,default,inventory_passwd_users_all,inventory[jarjarbinks],0,jarjarbinks,"source=promise,inventory,attribute_name=Local users"
+139       1679735178,1,nickanderson_inventory,_etc_groups,inventory[jarjarbinks],0,jarjarbinks,"source=promise,inventory,attribute_name=Local Groups"
+1224      1679735178,3,default,sys,interfaces_data,15,"{
+  ""eth0"": {
+    ""device"": ""eth0"",
+    ""receive_bytes"": ""770454508"",
+    ""receive_compressed"": ""0"",
+    ""receive_drop"": ""0"",
+    ""receive_errors"": ""0"",
+    ""receive_fifo"": ""0"",
+    ""receive_frame"": ""0"",
+    ""receive_multicast"": ""0"",
+    ""receive_packets"": ""594739"",
+    ""transmit_bytes"": ""29105386"",
+    ""transmit_compressed"": ""0"",
+    ""transmit_drop"": ""0"",
+    ""transmit_errors"": ""0"",
+    ""transmit_fifo"": ""0"",
+    ""transmit_frame"": ""0"",
+    ""transmit_multicast"": ""0"",
+    ""transmit_packets"": ""169371""
+  },
+  ""lo"": {
+    ""device"": ""lo"",
+    ""receive_bytes"": ""27600"",
+    ""receive_compressed"": ""0"",
+    ""receive_drop"": ""0"",
+    ""receive_errors"": ""0"",
+    ""receive_fifo"": ""0"",
+    ""receive_frame"": ""0"",
+    ""receive_multicast"": ""0"",
+    ""receive_packets"": ""552"",
+    ""transmit_bytes"": ""27600"",
+    ""transmit_compressed"": ""0"",
+    ""transmit_drop"": ""0"",
+    ""transmit_errors"": ""0"",
+    ""transmit_fifo"": ""0"",
+    ""transmit_frame"": ""0"",
+    ""transmit_multicast"": ""0"",
+    ""transmit_packets"": ""552""
+  }
+}","networking,/proc,source=agent,procfs"
+78        1679735178,1,default,set_line_based,i,3," {""ENCRYPT_METHOD""}",source=promise
+1294      1679735178,3,nickanderson_parsed,_etc_group,group_data,15,"{
+  ""adm"": [
+    ""x"",
+    ""4"",
+    ""ec2-user""
+  ],
+  ""audio"": [
+    ""x"",
+    ""63"",
+    """"
+  ],
+  ""bin"": [
+    ""x"",
+    ""1"",
+    """"
+  ],
+  ""cdrom"": [
+    ""x"",
+    ""11"",
+    """"
+  ],
+  ""chrony"": [
+    ""x"",
+    ""992"",
+    """"
+  ],
+  ""daemon"": [
+    ""x"",
+    ""2"",
+    """"
+  ],
+  ""dbus"": [
+    ""x"",
+    ""81"",
+    """"
+  ],
+  ""dialout"": [
+    ""x"",
+    ""18"",
+    """"
+  ],
+  ""disk"": [
+    ""x"",
+    ""6"",
+    """"
+  ],
+  ""ec2-user"": [
+    ""x"",
+    ""1000"",
+    """"
+  ],
+  ""floppy"": [
+    ""x"",
+    ""19"",
+    """"
+  ],
+  ""ftp"": [
+    ""x"",
+    ""50"",
+    """"
+  ],
+  ""games"": [
+    ""x"",
+    ""20"",
+    """"
+  ],
+  ""innerrim"": [
+    ""x"",
+    ""1048"",
+    """"
+  ],
+  ""input"": [
+    ""x"",
+    ""999"",
+    """"
+  ],
+  ""jarjarbinks"": [
+    ""x"",
+    ""1040"",
+    """"
+  ],
+  ""kmem"": [
+    ""x"",
+    ""9"",
+    """"
+  ],
+  ""kvm"": [
+    ""x"",
+    ""36"",
+    """"
+  ],
+  ""lock"": [
+    ""x"",
+    ""54"",
+    """"
+  ],
+  ""lp"": [
+    ""x"",
+    ""7"",
+    """"
+  ],
+  ""mail"": [
+    ""x"",
+    ""12"",
+    """"
+  ],
+  ""man"": [
+    ""x"",
+    ""15"",
+    """"
+  ],
+  ""mem"": [
+    ""x"",
+    ""8"",
+    """"
+  ],
+  ""","source=promise,noreport"
+80        1679735178,3,default,churn_local_groups,group[wildspace],0,absent,source=promise
+79        1679735178,3,default,churn_local_groups,group[outerrim],0,absent,source=promise
+610       1679735178,3,nickanderson_parsed,_etc_group,groups,3," {""root"",""bin"",""daemon"",""sys"",""adm"",""tty"",""disk"",""lp"",""mem"",""kmem"",""wheel"",""cdrom"",""mail"",""man"",""dialout"",""floppy"",""games"",""tape"",""video"",""ftp"",""lock"",""audio"",""users"",""nobody"",""dbus"",""utmp"",""utempter"",""input"",""kvm"",""render"",""systemd-journal"",""systemd-coredump"",""systemd-resolve"",""tss"",""polkitd"",""unbound"",""ssh_keys"",""sssd"",""sshd"",""chrony"",""rngd"",""ec2-user"",""script_monkey"",""jarjarbinks"",""outerrim"",""obiwankenobi"",""midrim"",""innerrim""}","source=promise,noreport"
+121       1679735178,1,default,parsed_etc_passwd_shadow,home_directory[obiwankenobi],0,/home/obiwankenobi,"source=promise,noreport"
+119       1679735178,1,default,parsed_etc_passwd_shadow,home_directory[jarjarbinks],0,/home/jarjarbinks,"source=promise,noreport"
+220       1679735178,3,default,inventory_local_user_pw_hashing_algo,hash_users[UNKNOWN],3," {""obiwankenobi"",""script_monkey"",""jarjarbinks""}","source=promise,inventory,attribute_name=Local users using UNKNOWN password hashing"
+110       1679735178,1,default,parsed_etc_passwd_shadow,max_password_age[obiwankenobi],0,99999,"source=promise,noreport"
+80        1679735178,3,default,churn_local_users,user[jabbathehut],0,absent,source=promise
+79        1679735178,3,default,churn_local_users,user[chewbacca],0,present,source=promise
+73        1679735178,3,default,churn_local_users,user[c3po],0,absent,source=promise
+81        1679735178,3,default,churn_local_users,user[lukeskywaker],0,absent,source=promise
+398       1679735178,3,default,inventory_passwd_users_locked,users,3," {""root"",""bin"",""daemon"",""adm"",""lp"",""sync"",""shutdown"",""halt"",""mail"",""operator"",""games"",""ftp"",""nobody"",""dbus"",""systemd-coredump"",""systemd-resolve"",""tss"",""polkitd"",""unbound"",""sssd"",""sshd"",""chrony"",""rngd"",""ec2-user"",""script_monkey"",""jarjarbinks"",""obiwankenobi""}","source=promise,noreport"
+73        1679735178,3,default,churn_local_users,user[r2d2],0,absent,source=promise
+81        1679735178,3,default,churn_local_users,user[obiwankenobi],0,absent,source=promise
+104       1679735178,3,default,sys,uptime,1,1435,"inventory,time_based,source=agent,attribute_name=Uptime minutes"
+90        1679735178,3,default,testing_generic_report,timestamp,0,2023-03-25T09:02:15,source=promise
+121       1679735178,1,default,set_variable_values_ini,tab,0,default:default_encrypt_method_sha512._etc_libuser_conf,source=promise
+71        1679735178,3,default,sys,systime,1,1679734935,"time_based,source=agent"
+177       1679735178,3,default,cfe_internal_cleanup_agent_reports,tmpmap,3," {""14891"",""163308"",""0"",""0"",""0"",""70"",""213"",""717697"",""0"",""0"",""0"",""20354""}",source=promise
+528       1679735178,1,default,inventory_yum_update_info_data,updateinfo_lines,3," {""Last metadata expiration check: 1:28:40 ago on Sat Mar 25 07:23:58 2023."",""Updates Information Summary: available"",""    34 Security notice(s)"",""        26 Important Security notice(s)"",""         8 Moderate Security notice(s)"",""     9 Bugfix notice(s)"",""Security: kernel-core-4.18.0-425.13.1.el8_7.x86_64 is an installed security update"",""Security: kernel-core-4.18.0-193.el8.x86_64 is the currently running version"",""""}",source=promise
+488       1679735178,1,default,inventory_yum_update_info_data,updateinfo_data,0,"Last metadata expiration check: 1:28:40 ago on Sat Mar 25 07:23:58 2023.
+Updates Information Summary: available
+    34 Security notice(s)
+        26 Important Security notice(s)
+         8 Moderate Security notice(s)
+     9 Bugfix notice(s)
+Security: kernel-core-4.18.0-425.13.1.el8_7.x86_64 is an installed security update
+Security: kernel-core-4.18.0-193.el8.x86_64 is the currently running version
+",source=promise
+104       1679735178,1,default,cfe_internal_cleanup_agent_reports,total_report_size,2,916533.000000,source=promise
+108       1679735178,1,default,set_line_based,v,0,default:default_encrypt_method_sha512._etc_login_defs,source=promise
+83        1679735178,3,default,mon,value_mem_cached,0,2236.51,"monitoring,source=environment"
+77        1679735178,3,default,mon,value_loadavg,0,0.22,"monitoring,source=environment"
+84        1679735178,3,default,mon,value_io_writtendata,0,0.80,"monitoring,source=environment"
+82        1679735178,3,default,mon,value_mem_free,0,12179.90,"monitoring,source=environment"
+82        1679735178,1,default,set_line_based,vkeys,3," {""ENCRYPT_METHOD""}",source=promise
+81        1679735178,3,default,mon,value_rootprocs,0,113.00,"monitoring,source=environment"
+81        1679735178,3,default,mon,value_messages,0,4386.00,"monitoring,source=environment"
+80        1679735178,3,default,mon,value_io_writes,0,12.00,"monitoring,source=environment"
+73        1679735178,3,default,mon,value_cpu,0,2.18,"monitoring,source=environment"
+63        1679735178,1,ntp_config,server_option,value,0,10,source=promise
+91        1679735178,3,default,cfe_autorun_inventory_loadaverage,value,0,0.22,"source=promise,report"
+74        1679735178,3,default,mon,value_cpu0,0,3.13,"monitoring,source=environment"
+74        1679735178,3,default,mon,value_cpu3,0,0.56,"monitoring,source=environment"
+74        1679735178,3,default,mon,value_cpu2,0,0.43,"monitoring,source=environment"
+74        1679735178,3,default,mon,value_cpu1,0,4.59,"monitoring,source=environment"
+72        1679735178,1,ntp_config,server_option,suboption,0,maxpoll,source=promise
+159       1679735178,1,default,inventory_passwd_users_locked,notlocked[obiwankenobi],0,obiwankenobi,"source=promise,inventory,attribute_name=Local user account unlocked"
+157       1679735178,1,default,inventory_passwd_users_locked,notlocked[jarjarbinks],0,jarjarbinks,"source=promise,inventory,attribute_name=Local user account unlocked"
+134       1679735178,3,default,inventory_yum_update_info_data,n_security_notices,1,34,"source=promise,inventory,attribute_name=Security updates"
+108       1679735178,1,default,parsed_etc_passwd_shadow,numeric_group_id[jarjarbinks],0,1040,"source=promise,noreport"
+108       1679735178,1,default,parsed_etc_passwd_shadow,numeric_user_id[obiwankenobi],0,1043,"source=promise,noreport"
+107       1679735178,1,default,parsed_etc_passwd_shadow,numeric_user_id[jarjarbinks],0,1040,"source=promise,noreport"
+109       1679735178,1,default,parsed_etc_passwd_shadow,numeric_group_id[obiwankenobi],0,1043,"source=promise,noreport"
+151       1679735178,3,default,inventory_yum_update_info_data,n_moderate_security_notices,1,8,"source=promise,inventory,attribute_name=Moderate Security updates"
+106       1679735178,1,default,parsed_etc_passwd_shadow,min_password_age[obiwankenobi],0,0,"source=promise,noreport"
+105       1679735178,1,default,parsed_etc_passwd_shadow,min_password_age[jarjarbinks],0,0,"source=promise,noreport"
+1263      1679735178,3,default,postgresql_conf_recommendations,mem_info_data,15,"{
+  ""Active"": [
+    """",
+    ""816700"",
+    ""kB""
+  ],
+  ""Active(anon)"": [
+    """",
+    ""155340"",
+    ""kB""
+  ],
+  ""Active(file)"": [
+    """",
+    ""661360"",
+    ""kB""
+  ],
+  ""AnonHugePages"": [
+    """",
+    ""57344"",
+    ""kB""
+  ],
+  ""AnonPages"": [
+    """",
+    ""150608"",
+    ""kB""
+  ],
+  ""Bounce"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""Buffers"": [
+    """",
+    ""2716"",
+    ""kB""
+  ],
+  ""Cached"": [
+    """",
+    ""2278936"",
+    ""kB""
+  ],
+  ""CommitLimit"": [
+    """",
+    ""7610152"",
+    ""kB""
+  ],
+  ""Committed_AS"": [
+    """",
+    ""443600"",
+    ""kB""
+  ],
+  ""DirectMap2M"": [
+    """",
+    ""15540224"",
+    ""kB""
+  ],
+  ""DirectMap4k"": [
+    """",
+    ""188416"",
+    ""kB""
+  ],
+  ""Dirty"": [
+    """",
+    ""28704"",
+    ""kB""
+  ],
+  ""HardwareCorrupted"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""HugePages_Free"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Rsvd"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Surp"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Total"": [
+    """",
+    ""0""
+  ],
+  ""Hugepagesize"": [
+    """",
+    ""2048"",
+    ""kB""
+  ],
+  ""Hugetlb"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""I",source=promise
+142       1679735178,1,default,inventory_yum_update_info_data,moderate_security_notices,3," {""         8 Moderate Security notice(s)""}",source=promise
+154       1679735178,3,default,inventory_yum_update_info_data,n_important_security_notices,1,26,"source=promise,inventory,attribute_name=Important Security updates"
+138       1679735178,1,default,inventory_yum_update_info_data,moderate_security_notices_info,0,         8 Moderate Security notice(s),source=promise
+157       1679735178,1,default,inventory_yum_update_info_data,moderate_security_notices_fields,3," {"""",""8"",""Moderate"",""Security"",""notice(s)""}",source=promise
+1263      1679735178,3,default,parsed_etc_passwd_shadow,passwd_data,15,"{
+  ""adm"": [
+    ""x"",
+    ""3"",
+    ""4"",
+    ""adm"",
+    ""/var/adm"",
+    ""/sbin/nologin""
+  ],
+  ""bin"": [
+    ""x"",
+    ""1"",
+    ""1"",
+    ""bin"",
+    ""/bin"",
+    ""/sbin/nologin""
+  ],
+  ""chrony"": [
+    ""x"",
+    ""995"",
+    ""992"",
+    """",
+    ""/var/lib/chrony"",
+    ""/sbin/nologin""
+  ],
+  ""daemon"": [
+    ""x"",
+    ""2"",
+    ""2"",
+    ""daemon"",
+    ""/sbin"",
+    ""/sbin/nologin""
+  ],
+  ""dbus"": [
+    ""x"",
+    ""81"",
+    ""81"",
+    ""System message bus"",
+    ""/"",
+    ""/sbin/nologin""
+  ],
+  ""ec2-user"": [
+    ""x"",
+    ""1000"",
+    ""1000"",
+    ""Cloud User"",
+    ""/home/ec2-user"",
+    ""/bin/bash""
+  ],
+  ""ftp"": [
+    ""x"",
+    ""14"",
+    ""50"",
+    ""FTP User"",
+    ""/var/ftp"",
+    ""/sbin/nologin""
+  ],
+  ""games"": [
+    ""x"",
+    ""12"",
+    ""100"",
+    ""games"",
+    ""/usr/games"",
+    ""/sbin/nologin""
+  ],
+  ""halt"": [
+    ""x"",
+    ""7"",
+    ""0"",
+    ""halt"",
+    ""/sbin"",
+    ""/sbin/halt""
+  ],
+  ""jarjarbinks"": [
+    ""x"",
+    ""1040"",
+    ""1040"",
+    """",
+    ""/home/jarjarbinks"",
+    ""/bin/bash""
+  ],
+  ""lp"": [
+    ""x"",
+    ""4"",
+    ""7"",
+    ""lp"",
+    ""","source=promise,noreport"
+116       1679735178,1,default,inventory_yum_update_info_data,security_notices_info,0,    34 Security notice(s),source=promise
+136       1679735178,1,default,inventory_yum_update_info_data,security_notices_fields,3," {"""",""34"",""Security"",""notice(s)""}",source=promise
+120       1679735178,1,default,inventory_yum_update_info_data,security_notices,3," {""    34 Security notice(s)""}",source=promise
+58        1679735178,1,default,set_line_based,sep,0, ,source=promise
+103       1679735178,1,default,parsed_etc_passwd_shadow,shell[obiwankenobi],0,/bin/bash,"source=promise,noreport"
+102       1679735178,1,default,parsed_etc_passwd_shadow,shell[jarjarbinks],0,/bin/bash,"source=promise,noreport"
+1310      1679735178,3,default,parsed_etc_passwd_shadow,shadow_data,15,"{
+  ""adm"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""bin"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""chrony"": [
+    ""!!"",
+    ""18375"",
+    """",
+    """",
+    """",
+    """",
+    """",
+    """"
+  ],
+  ""daemon"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""dbus"": [
+    ""!!"",
+    ""18375"",
+    """",
+    """",
+    """",
+    """",
+    """",
+    """"
+  ],
+  ""ec2-user"": [
+    ""!!"",
+    ""19440"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""ftp"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""games"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""halt"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""jarjarbinks"": [
+    ""x"",
+    ""19441"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ],
+  ""lp"": [
+    ""*"",
+    ""18199"",
+    ""0"",
+    ""99999"",
+    ""7"",
+    """",
+    """",
+    """"
+  ]","source=promise,noreport"
+82        1679735178,1,default,set_variable_values_ini,sectionName,0,defaults,source=promise
+112       1679735178,1,default,parsed_etc_passwd_shadow,password_warning_period[jarjarbinks],0,7,"source=promise,noreport"
+115       1679735178,1,default,parsed_etc_passwd_shadow,password_inactivity_period[obiwankenobi],0,,"source=promise,noreport"
+114       1679735178,1,default,parsed_etc_passwd_shadow,password_inactivity_period[jarjarbinks],0,,"source=promise,noreport"
+113       1679735178,1,default,parsed_etc_passwd_shadow,password_warning_period[obiwankenobi],0,7,"source=promise,noreport"
+144       1679735178,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/variables.cache],1,717697,source=promise
+148       1679735178,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/execution_log.cache],1,163308,source=promise
+141       1679735178,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/classes.cache],1,20354,source=promise
+109       1679735178,2,nickanderson_parsed,_etc_group,local_group[hansolo][users],3," {""""}","source=promise,noreport"
+102       1679735178,2,nickanderson_parsed,_etc_group,local_group[hansolo][gid],0,1045,"source=promise,noreport"
+110       1679735178,2,nickanderson_parsed,_etc_group,local_group[deepcore][users],3," {""""}","source=promise,noreport"
+107       1679735178,2,nickanderson_parsed,_etc_group,local_group[lukeskywaker][gid],0,1043,"source=promise,noreport"
+113       1679735178,2,nickanderson_parsed,_etc_group,local_group[thecolonies][users],3," {""""}","source=promise,noreport"
+106       1679735178,2,nickanderson_parsed,_etc_group,local_group[thecolonies][gid],0,1096,"source=promise,noreport"
+114       1679735178,2,nickanderson_parsed,_etc_group,local_group[lukeskywaker][users],3," {""""}","source=promise,noreport"
+103       1679735178,2,nickanderson_parsed,_etc_group,local_group[deepcore][gid],0,1093,"source=promise,noreport"
+139       1679735178,2,nickanderson_inventory,_etc_groups,inventory[thecolonies],0,thecolonies,"source=promise,inventory,attribute_name=Local Groups"
+140       1679735178,2,default,inventory_passwd_users_all,inventory[lukeskywaker],0,lukeskywaker,"source=promise,inventory,attribute_name=Local users"
+141       1679735178,2,nickanderson_inventory,_etc_groups,inventory[lukeskywaker],0,lukeskywaker,"source=promise,inventory,attribute_name=Local Groups"
+145       1679735178,2,nickanderson_inventory,_etc_groups,inventory[westernreaches],0,westernreaches,"source=promise,inventory,attribute_name=Local Groups"
+106       1679735178,2,nickanderson_parsed,_etc_group,local_group[c3po][users],3," {""""}","source=promise,noreport"
+99        1679735178,2,nickanderson_parsed,_etc_group,local_group[c3po][gid],0,1040,"source=promise,noreport"
+135       1679735178,2,nickanderson_inventory,_etc_groups,inventory[wildspace],0,wildspace,"source=promise,inventory,attribute_name=Local Groups"
+109       1679735178,2,nickanderson_parsed,_etc_group,local_group[westernreaches][gid],0,1098,"source=promise,noreport"
+149       1679735178,2,default,inventory_passwd_users_locked,notlocked[hansolo],0,hansolo,"source=promise,inventory,attribute_name=Local user account unlocked"
+143       1679735178,2,default,inventory_passwd_users_locked,notlocked[c3po],0,c3po,"source=promise,inventory,attribute_name=Local user account unlocked"
+106       1679735178,2,default,parsed_etc_passwd_shadow,min_password_age[lukeskywaker],0,0,"source=promise,noreport"
+159       1679735178,2,default,inventory_passwd_users_locked,notlocked[lukeskywaker],0,lukeskywaker,"source=promise,inventory,attribute_name=Local user account unlocked"
+109       1679735178,2,default,parsed_etc_passwd_shadow,numeric_group_id[lukeskywaker],0,1043,"source=promise,noreport"
+104       1679735178,2,default,parsed_etc_passwd_shadow,numeric_group_id[hansolo],0,1045,"source=promise,noreport"
+101       1679735178,2,default,parsed_etc_passwd_shadow,numeric_group_id[c3po],0,1040,"source=promise,noreport"
+101       1679735178,2,default,parsed_etc_passwd_shadow,min_password_age[hansolo],0,0,"source=promise,noreport"
+111       1679735178,2,nickanderson_parsed,_etc_group,local_group[wildspace][users],3," {""""}","source=promise,noreport"
+104       1679735178,2,nickanderson_parsed,_etc_group,local_group[wildspace][gid],0,1097,"source=promise,noreport"
+116       1679735178,2,nickanderson_parsed,_etc_group,local_group[westernreaches][users],3," {""""}","source=promise,noreport"
+102       1679735178,2,default,parsed_etc_passwd_shadow,max_password_age[c3po],0,99999,"source=promise,noreport"
+98        1679735178,2,default,parsed_etc_passwd_shadow,min_password_age[c3po],0,0,"source=promise,noreport"
+110       1679735178,2,default,parsed_etc_passwd_shadow,max_password_age[lukeskywaker],0,99999,"source=promise,noreport"
+105       1679735178,2,default,parsed_etc_passwd_shadow,max_password_age[hansolo],0,99999,"source=promise,noreport"
+130       1679735178,2,default,inventory_passwd_users_all,inventory[hansolo],0,hansolo,"source=promise,inventory,attribute_name=Local users"
+107       1679735178,2,default,parsed_etc_passwd_shadow,account_expiration_date[hansolo],0,,"source=promise,noreport"
+104       1679735178,2,default,parsed_etc_passwd_shadow,account_expiration_date[c3po],0,,"source=promise,noreport"
+104       1679735178,2,default,parsed_etc_passwd_shadow,_passwd_passwd[lukeskywaker],0,x,"source=promise,noreport"
+112       1679735178,2,default,parsed_etc_passwd_shadow,account_expiration_date[lukeskywaker],0,,"source=promise,noreport"
+131       1679735178,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[lukeskywaker],0,lukeskywaker,"source=promise,noreport"
+121       1679735178,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[hansolo],0,hansolo,"source=promise,noreport"
+115       1679735178,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[c3po],0,c3po,"source=promise,noreport"
+99        1679735178,2,default,parsed_etc_passwd_shadow,_passwd_passwd[hansolo],0,x,"source=promise,noreport"
+121       1679735178,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][lukeskywaker],0,UNKNOWN,source=promise
+116       1679735178,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][hansolo],0,UNKNOWN,source=promise
+113       1679735178,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][c3po],0,UNKNOWN,source=promise
+102       1679735178,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[c3po],0,UNKNOWN,source=promise
+96        1679735178,2,default,parsed_etc_passwd_shadow,_passwd_passwd[c3po],0,x,"source=promise,noreport"
+110       1679735178,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[lukeskywaker],0,UNKNOWN,source=promise
+105       1679735178,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[hansolo],0,UNKNOWN,source=promise
+88        1679735178,2,default,parsed_etc_passwd_shadow,comment[c3po],0,,"source=promise,noreport"
+121       1679735178,2,default,parsed_etc_passwd_shadow,home_directory[lukeskywaker],0,/home/lukeskywaker,"source=promise,noreport"
+111       1679735178,2,default,parsed_etc_passwd_shadow,home_directory[hansolo],0,/home/hansolo,"source=promise,noreport"
+105       1679735178,2,default,parsed_etc_passwd_shadow,home_directory[c3po],0,/home/c3po,"source=promise,noreport"
+125       1679735178,2,nickanderson_inventory,_etc_groups,inventory[c3po],0,c3po,"source=promise,inventory,attribute_name=Local Groups"
+131       1679735178,2,nickanderson_inventory,_etc_groups,inventory[hansolo],0,hansolo,"source=promise,inventory,attribute_name=Local Groups"
+133       1679735178,2,nickanderson_inventory,_etc_groups,inventory[deepcore],0,deepcore,"source=promise,inventory,attribute_name=Local Groups"
+124       1679735178,2,default,inventory_passwd_users_all,inventory[c3po],0,c3po,"source=promise,inventory,attribute_name=Local users"
+120       1679735178,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[lukeskywaker],0,19441,"source=promise,noreport"
+100       1679735178,2,default,parsed_etc_passwd_shadow,encrypted_password[c3po],0,x,"source=promise,noreport"
+96        1679735178,2,default,parsed_etc_passwd_shadow,comment[lukeskywaker],0,,"source=promise,noreport"
+91        1679735178,2,default,parsed_etc_passwd_shadow,comment[hansolo],0,,"source=promise,noreport"
+103       1679735178,2,default,parsed_etc_passwd_shadow,encrypted_password[hansolo],0,x,"source=promise,noreport"
+115       1679735178,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[hansolo],0,19441,"source=promise,noreport"
+112       1679735178,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[c3po],0,19441,"source=promise,noreport"
+108       1679735178,2,default,parsed_etc_passwd_shadow,encrypted_password[lukeskywaker],0,x,"source=promise,noreport"
+100       1679735178,2,default,parsed_etc_passwd_shadow,numeric_user_id[c3po],0,1040,"source=promise,noreport"
+126       1679735178,3,nickanderson,_inventory_sudoers,cache,0,/var/cfengine/state/$(with)_users_with_sudo.module.cache.d,source=promise
+59        1679735178,1,default,set_line_based,bp,0,\s+,source=promise
+77        1679735178,3,default,mon,av_rootprocs,0,79.10,"monitoring,source=environment"
+83        1679735178,3,default,sys,cdate,0,Sat_Mar_25_09_02_15_2023,"time_based,source=agent"
+95        1679735178,1,default,parsed_etc_passwd_shadow,comment[jarjarbinks],0,,"source=promise,noreport"
+93        1679735178,1,default,set_variable_values_ini,cindex[crypt_style],0,crypt_style,source=promise
+86        1679735178,1,default,set_line_based,ci[ENCRYPT_METHOD],0,ENCRYPT_METHOD,source=promise
+78        1679735178,3,default,mon,av_messages,0,3070.20,"monitoring,source=environment"
+76        1679735178,3,default,mon,av_io_writes,0,8.40,"monitoring,source=environment"
+71        1679735178,3,default,mon,av_cpu3,0,0.39,"monitoring,source=environment"
+71        1679735178,3,default,mon,av_cpu2,0,0.30,"monitoring,source=environment"
+81        1679735178,3,default,mon,av_io_writtendata,0,0.56,"monitoring,source=environment"
+78        1679735178,3,default,mon,av_mem_free,0,8525.93,"monitoring,source=environment"
+80        1679735178,3,default,mon,av_mem_cached,0,1565.56,"monitoring,source=environment"
+74        1679735178,3,default,mon,av_loadavg,0,0.15,"monitoring,source=environment"
+96        1679735178,1,default,parsed_etc_passwd_shadow,comment[obiwankenobi],0,,"source=promise,noreport"
+78        1679735178,3,default,mon,dev_io_writes,0,13.32,"monitoring,source=environment"
+72        1679735178,3,default,mon,dev_cpu3,0,0.91,"monitoring,source=environment"
+72        1679735178,3,default,mon,dev_cpu2,0,0.90,"monitoring,source=environment"
+82        1679735178,3,default,mon,dev_io_writtendata,0,0.92,"monitoring,source=environment"
+79        1679735178,3,default,mon,dev_messages,0,1349.50,"monitoring,source=environment"
+81        1679735178,3,default,mon,dev_mem_cached,0,2393.89,"monitoring,source=environment"
+75        1679735178,3,default,mon,dev_loadavg,0,0.21,"monitoring,source=environment"
+72        1679735178,3,default,mon,dev_cpu1,0,4.76,"monitoring,source=environment"
+95        1679735178,1,default,inventory_yum_update_info_data,critical_security_notices,3,,source=promise
+63        1679735178,1,default,set_line_based,cp,0,\s*#\s*,source=promise
+85        1679735178,1,default,set_line_based,comment_matches_ENCRYPT_METHOD,1,0,source=promise
+82        1679735178,3,default,sys,date,0,Sat Mar 25 09:02:15 2023,"time_based,source=agent"
+72        1679735178,3,default,mon,dev_cpu0,0,3.03,"monitoring,source=environment"
+71        1679735178,3,default,mon,dev_cpu,0,2.21,"monitoring,source=environment"
+79        1679735178,3,default,mon,dev_cfengine_in,0,1.07,"monitoring,source=environment"
+71        1679735178,3,default,mon,av_cpu1,0,3.21,"monitoring,source=environment"
+103       1679735178,2,default,parsed_etc_passwd_shadow,shell[lukeskywaker],0,/bin/bash,"source=promise,noreport"
+98        1679735178,2,default,parsed_etc_passwd_shadow,shell[hansolo],0,/bin/bash,"source=promise,noreport"
+95        1679735178,2,default,parsed_etc_passwd_shadow,shell[c3po],0,/bin/bash,"source=promise,noreport"
+128       1679735178,2,nickanderson,_inventory_sudoers,sudo[ec2-user],0,ec2-user,"source=promise,inventory,attribute_name=Users with sudo"
+1221      1679735178,3,default,inventory_kernel_settings_sysctl_current,_d,15,"{
+  ""abi.vsyscall32"": ""1"",
+  ""crypto.fips_enabled"": ""0"",
+  ""debug.exception-trace"": ""1"",
+  ""debug.kprobes-optimization"": ""1"",
+  ""dev.hpet.max-user-freq"": ""64"",
+  ""dev.mac_hid.mouse_button2_keycode"": ""97"",
+  ""dev.mac_hid.mouse_button3_keycode"": ""100"",
+  ""dev.mac_hid.mouse_button_emulation"": ""0"",
+  ""dev.raid.speed_limit_max"": ""200000"",
+  ""dev.raid.speed_limit_min"": ""1000"",
+  ""dev.scsi.logging_level"": ""0"",
+  ""fs.aio-max-nr"": ""65536"",
+  ""fs.aio-nr"": ""0"",
+  ""fs.binfmt_misc.status"": ""enabled"",
+  ""fs.dentry-state"": ""96694\t78216\t45\t0\t19851\t0"",
+  ""fs.dir-notify-enable"": ""1"",
+  ""fs.epoll.max_user_watches"": ""3107778"",
+  ""fs.file-max"": ""1513187"",
+  ""fs.file-nr"": ""1440\t0\t1513187"",
+  ""fs.inode-nr"": ""74038\t130"",
+  ""fs.inode-state"": ""74038\t130\t0\t0\t0\t0\t0"",
+  ""fs.inotify.max_queued_events"": ""16384"",
+  ""fs.inotify.max_user_instances"": ""128"",
+  ""fs.inotify.max_user_watches"": ""8192"",
+  ""fs.lease-break-time"": ""45"",
+  ""fs.leases-enable"": ""1"",
+  ""fs.mount-max"": ""100000"",
+  ""fs.mqueue.msg_default"": ""10"",
+  ""fs.mqueue.m",source=promise
+94        1679735178,2,nickanderson,_inventory_sudoers,users,3," {""ec2-user"",""root""}",source=promise
+120       1679735178,2,nickanderson,_inventory_sudoers,sudo[root],0,root,"source=promise,inventory,attribute_name=Users with sudo"
+113       1679735178,2,default,parsed_etc_passwd_shadow,password_warning_period[lukeskywaker],0,7,"source=promise,noreport"
+107       1679735178,2,default,parsed_etc_passwd_shadow,password_inactivity_period[c3po],0,,"source=promise,noreport"
+108       1679735178,2,default,parsed_etc_passwd_shadow,numeric_user_id[lukeskywaker],0,1043,"source=promise,noreport"
+103       1679735178,2,default,parsed_etc_passwd_shadow,numeric_user_id[hansolo],0,1045,"source=promise,noreport"
+110       1679735178,2,default,parsed_etc_passwd_shadow,password_inactivity_period[hansolo],0,,"source=promise,noreport"
+108       1679735178,2,default,parsed_etc_passwd_shadow,password_warning_period[hansolo],0,7,"source=promise,noreport"
+105       1679735178,2,default,parsed_etc_passwd_shadow,password_warning_period[c3po],0,7,"source=promise,noreport"
+115       1679735178,2,default,parsed_etc_passwd_shadow,password_inactivity_period[lukeskywaker],0,,"source=promise,noreport"
+120       1679735178,1,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][jarjarbinks],0,UNKNOWN,source=promise
+112       1679735178,1,default,parsed_etc_passwd_shadow,account_expiration_date[obiwankenobi],0,,"source=promise,noreport"
+111       1679735178,1,default,parsed_etc_passwd_shadow,account_expiration_date[jarjarbinks],0,,"source=promise,noreport"
+387       1679735178,3,nickanderson,_inventory_sudoers_main,_users,3," {""root"",""bin"",""daemon"",""adm"",""lp"",""sync"",""shutdown"",""halt"",""mail"",""operator"",""games"",""ftp"",""nobody"",""dbus"",""systemd-coredump"",""systemd-resolve"",""tss"",""polkitd"",""unbound"",""sssd"",""sshd"",""chrony"",""rngd"",""ec2-user"",""script_monkey"",""jarjarbinks"",""obiwankenobi""}",source=promise
+403       1679735178,3,default,parsed_etc_passwd_shadow,all_local_users,3," {""root"",""bin"",""daemon"",""adm"",""lp"",""sync"",""shutdown"",""halt"",""mail"",""operator"",""games"",""ftp"",""nobody"",""dbus"",""systemd-coredump"",""systemd-resolve"",""tss"",""polkitd"",""unbound"",""sssd"",""sshd"",""chrony"",""rngd"",""ec2-user"",""script_monkey"",""jarjarbinks"",""obiwankenobi""}","source=promise,noreport"
+71        1679735178,3,default,mon,av_cpu0,0,2.19,"monitoring,source=environment"
+131       1679735178,1,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[obiwankenobi],0,obiwankenobi,"source=promise,noreport"
+129       1679735178,1,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[jarjarbinks],0,jarjarbinks,"source=promise,noreport"
+255       1679735178,3,default,inventory_passwd_users_locked,_unlocked_users,3," {""bin"",""daemon"",""adm"",""lp"",""sync"",""shutdown"",""halt"",""mail"",""operator"",""games"",""ftp"",""nobody"",""script_monkey"",""jarjarbinks"",""obiwankenobi""}",source=promise
+110       1679735178,1,default,inventory_local_user_pw_hashing_algo,_hashing_algo[obiwankenobi],0,UNKNOWN,source=promise
+109       1679735178,1,default,inventory_local_user_pw_hashing_algo,_hashing_algo[jarjarbinks],0,UNKNOWN,source=promise
+121       1679735178,1,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][obiwankenobi],0,UNKNOWN,source=promise
+84        1679735178,3,default,cfe_autorun_inventory_timezone,_now,1,1679734935,source=promise
+104       1679735178,1,default,parsed_etc_passwd_shadow,_passwd_passwd[obiwankenobi],0,x,"source=promise,noreport"
+103       1679735178,1,default,parsed_etc_passwd_shadow,_passwd_passwd[jarjarbinks],0,x,"source=promise,noreport"
+111       1679735178,3,northerntech_security_hardening,tmp_file_age,_old_file_mtime_threshold,0,1679130135,source=promise
+3         LSD
+117       1679735178,3,45,SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3,172.31.6.65,60.400000,1679735120
+118       1679735178,3,43,SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3,172.31.6.65,310.311178,1679734935
+3         ELD
+1178      1679735178,1,6fbea629b2efe894c08dd039ee0793cb81bce5b3b413fb036dc9b22f697fd254,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679731320,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679731320'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679731320/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731320/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731320/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679731320/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679731320/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731320/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731320/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+500       1679735178,3,6efa5dd990369c8293b768b1e88c3234ddc466536ad9196ad77a378cb27e743e,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Failed to create group 'coreworlds': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'coreworlds' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,722828c44220771e407db4b1ccf9628b31783123ad8a2a1e7935e9092fbdc8fc,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679732525,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679732525'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679732525/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679732525/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679732525/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679732525/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679732525/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679732525/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679732525/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,717b48b1cb4d1bb1383e765ab4e02eaeeba40e7a2a788fe7824a9e18233a2dc0,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679728910,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679728910'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679728910/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728910/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728910/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679728910/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679728910/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728910/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728910/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,6629e960346d225b152fcb4a8d0d48ca270039c0c9427cbead2cccb2d3639b23,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679730115,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679730115'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679730115/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679730115/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679730115/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679730115/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679730115/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679730115/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679730115/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,5a41039bf5731ce19aafe27c2c025fdbe18a27d66f7cc02ee5933f52e4f86bdb,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679734619,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679734619'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679734619/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679734619/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679734619/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679734619/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679734619/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679734619/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679734619/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+337       1679735178,3,694b8484bbac8080a9932829d3a07c4ccd93fc41056d40a7dfd51f1628205745,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,maul,/default/churn_local_users/users/'maul'[11],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,6946d55f96d76a55d81f08129e0ed64880809c7801cad9b8e02046f018c5d627,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679723834,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679723834'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679723834/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679723834/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679723834/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679723834/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679723834/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679723834/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679723834/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+337       1679735178,3,76b8ce6dea7da5ec13203d391c64f18d5fa43ac332d09fc0dee99d62a912cacd,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,maul,/default/churn_local_users/users/'maul'[11],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+528       1679735178,3,88315cda2fd4090725c25ab2fe528f8955508a84d85685c75da8c39db5b15708,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'innerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,87a400fd0a2bf1d4de94c193c69abbb9e8e97da8544cfe8e3c2fcad3224ca50e,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679724723,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679724723'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679724723/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724723/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724723/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679724723/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679724723/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724723/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724723/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+528       1679735178,3,8e8d71823c02009eb37a8dac953a4692ca10c47136b3d930ca239a889afe44ce,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'innerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,8da1bc57f16c0da6c1134886aa86ebeb866a8371fc28af83c6d71168b96ba8e3,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679721997,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679721997'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679721997/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721997/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721997/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679721997/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679721997/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721997/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721997/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,7ec03706c059bf27c07fc99cd87794699f7332511386cf53756e642994b4931e,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679727389,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679727389'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679727389/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679727389/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679727389/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679727389/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679727389/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679727389/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679727389/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+374       1679735178,3,7ccdf5e8cb0651ffd66f8521ac3add259f2c2cf1ac0e47af83ff782d612ba250,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Created user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,879cf68c6be18e866751c2f4b671143f52a6d0672cff5d6a487f88b3242f6a0f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679730431,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679730431'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679730431/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679730431/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679730431/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679730431/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679730431/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679730431/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679730431/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,833b10cbb1096421f1e718f6a1270749eca6f9d162cce349a8d9ac3482c11163,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679734935,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679734935'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679734935/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679734935/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679734935/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679734935/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679734935/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679734935/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679734935/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,2911e7d2e192770831565aa80c84e3ad57fbb7aa033f290086077a3569ab601d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679721108,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679721108'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679721108/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721108/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721108/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679721108/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679721108/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721108/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721108/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,28eeee0df4142d44842c3dbb89b79e7e630309e1608c0ed22f79c5718f497d5c,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679733097,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679733097'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679733097/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733097/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733097/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679733097/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679733097/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733097/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733097/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+528       1679735178,3,2e888d0cc6c3290247ab978f31352a8e50d388fa5d0f69a882d4281d85dc4eb0,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'deepcore' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+522       1679735178,3,2a00738949efc4f5534d541bf62de1fed4c93753c07cb1123e9ef7bd6c7980e3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,149065e0c17106cf0d23d55e6656b29b6c2fcdc857eeabcdb3f73e812055ec11,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679731004,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679731004'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679731004/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731004/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731004/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679731004/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679731004/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731004/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731004/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+352       1679735178,3,099df3409e18fad93b89edb3338c630537071075283589121476fdc39daefb75,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,cassianandor,/default/churn_local_users/users/'cassianandor'[1],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,21ebe645fe943a225d5830ef25e42c145aa201244256ef773a2824ef0054c7f7,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679724979,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679724979'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679724979/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724979/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724979/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679724979/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679724979/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724979/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724979/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,1b2894d3eee7a66b709720c94a5b7cdcdc1813270242f2d693824bebbf111274,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679728278,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679728278'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679728278/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728278/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728278/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679728278/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679728278/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728278/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728278/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+352       1679735178,3,2ea1aeb72b8fa9b635038692e4b7f7f3b82d3317e496aa0abcac9d3dac664df5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,4ef45f71b3d3b213250b2fd9483f7567571058c5170941e49c44a8dc74d5e2b6,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679721424,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679721424'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679721424/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721424/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721424/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679721424/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679721424/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721424/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721424/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,4bea1119c0e6f304fa15fc74c2398ee8325dbde079d401afe710f88640ac901b,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722313,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722313'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722313/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722313/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722313/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722313/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722313/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722313/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722313/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+546       1679735178,3,56ae32b65ba0455314ec31577642977fcf27f2270bcc7b26afac5625afced872,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'westernreaches' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,50a1b75a517b19453b626af6ac914337a494e398d89fc503502df3149b4c0ec7,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679733986,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679733986'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679733986/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733986/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733986/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679733986/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679733986/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733986/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733986/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,31bbb722a5397d8606e20f036099e340638f4631b95515691b626dd9188623cc,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679721680,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679721680'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679721680/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721680/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721680/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679721680/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,2ede4f2dbc8b9796a3881f7fedf76cc7eab796dc0c06b591b80d151e8d5c35f2,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679733730,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679733730'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679733730/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733730/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733730/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679733730/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679733730/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733730/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733730/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,3b60b6946127edcae1f319c22996bcaa248d6218339e3aee040264f792c33736,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679733414,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679733414'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679733414/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733414/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733414/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679733414/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679733414/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679733414/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679733414/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,378d5eef36a6c38835e9de81e5acb3a5b72503ebe314b8c50021264c727567b5,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679731892,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679731892'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679731892/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731892/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731892/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679731892/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679731892/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731892/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731892/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,9534ec2dfb1ba38a22ab82ec389ee3aac054049d2632a0ad90bc2c88eebd4dae,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679725295,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679725295'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679725295/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679725295/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679725295/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679725295/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679725295/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679725295/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679725295/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+363       1679735178,3,cac5f7ab2dec7f87bfe1753d37690ac52aa07a2805e7a074f6822b9e701e47ed,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Created user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,c2b114a071625f871af53ebdd987918acf944897ba8131664199144ec8346f45,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679729226,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679729226'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679729226/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729226/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729226/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679729226/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679729226/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729226/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729226/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+692       1679735178,3,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=ed3132f2d9437e25a7aef3f91806a9024eafbd905b58009c2124a3a7b77341ef)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+1178      1679735178,1,cbe5c0f12755660e6418880bef990157b406a729edf0821fca3b8100576e566d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722885,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722885'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722885/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722885/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722885/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722885/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722885/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722885/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722885/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+352       1679735178,3,bcda38d1967717db7626c980f5a68decdffe2dd5c55862f9b4a5abd4184f0199,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+349       1679735178,3,b67b2edf8db5d8e25a5dc6eeb3fe3aad66099040fd631ec969b3cb949e9bdda5,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,c1aa597519e66597ca722bc05f61ad332c7380e71c5ef93ffcf72a0510d8b4fb,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679732781,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679732781'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679732781/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679732781/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679732781/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679732781/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679732781/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679732781/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679732781/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+387       1679735178,3,c1a3779b76d76e5edde2668bac31f237efb11ce8a83bf017195e39d8744a22b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Removed user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,d4c293517afbd4c4f390585b13e56f6e0ab86e019bce9a76f2304e9f47d39524,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679725611,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679725611'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679725611/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679725611/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679725611/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679725611/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679725611/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679725611/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679725611/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,f30f5c807c6d00fb3b417145a0f83b2fe60d19de404f606911b0d51d5c1a0819,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679734303,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679734303'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679734303/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679734303/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679734303/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679734303/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679734303/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679734303/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679734303/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,ed3002cc985a1e6b8257afc69bbafe3d7bed8dcfbf90f1623760be5366f396ae,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679723518,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679723518'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679723518/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679723518/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679723518/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679723518/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679723518/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679723518/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679723518/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,fbd31f7dd9c01c4ac986ce672827cffeb406eed7b112072466574b7c4a2c4a2f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679724407,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679724407'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679724407/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724407/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724407/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679724407/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679724407/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724407/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724407/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,fb711ed4f20a32ec5f0be9b6ad76b942e06bdd952e264aa60e46eb8f7043cd17,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679726500,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679726500'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679726500/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679726500/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679726500/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679726500/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679726500/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679726500/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679726500/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,e54a66dee991c6c6957e4877c4e34e7e1e110685cabf96f6cdec2f66c3aaf5aa,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722629,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722629'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722629/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722629/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722629/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+353       1679735178,3,e2e6d4f32f029df22474ec21672b5b657148508abbd7acf549626f197a4966c3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,e985d4a42e96e01174944dc98418bb195f805812f9420dec00e8149e1799478f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679724090,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679724090'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679724090/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724090/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724090/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679724090/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679724090/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679724090/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679724090/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+380       1679735178,3,e887e0088ce4bdd3d8816948862add187791335771b43d31dd2ff625229bc5b5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Created user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+531       1679735178,3,a482cc3792e95022febda13f4f85899b88caf20ee8ac450e954c091b7ee758d6,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,wildspace,/default/churn_local_groups/groups/'wildspace'[7],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'wildspace' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,a4471fb14cd8c7acbf16c0dd0ac146597a80956424919ea7291f52325aa3cfb5,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679730687,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679730687'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679730687/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679730687/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679730687/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679730687/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679730687/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679730687/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679730687/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,a5059a1d364434c8c513102bf9e9d2ef4aa55120a07e6d70b9315c1168ee2d4e,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679729799,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679729799'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679729799/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729799/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729799/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,a48aa6e8704d9a6d7cf72e4f30ecc781f03e9a82838bfa0e078324e813014447,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679727133,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679727133'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679727133/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679727133/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679727133/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679727133/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679727133/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679727133/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679727133/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,9fe567ed328c4fe455b71de6ed59a96d8c9593c4573dc99d30a2a279446c9cee,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679728021,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679728021'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679728021/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728021/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728021/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679728021/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679728021/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728021/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728021/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,9947e90169ac4f41154176e97abcaadead8b3c5e78f36b53ab60acbef88da310,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679726184,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679726184'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679726184/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679726184/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679726184/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679726184/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679726184/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679726184/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679726184/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,a18493b694ec6b5caf84887722ae82e4d57f6ffca54a83f9a228c6df06089785,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679727705,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679727705'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679727705/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679727705/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679727705/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679727705/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679727705/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679727705/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679727705/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,a097b0b42dbcd1e5afe7360feb389231a8dbfae170c080cad03c1dfcd05b0521,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679729483,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679729483'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679729483/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729483/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729483/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679729483/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679729483/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729483/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729483/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,a84769d2362dfdcc1740b9c74e0268d3c7042964c8f88cd518053407e0dd50d0,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679723202,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679723202'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679723202/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679723202/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679723202/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679723202/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679723202/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679723202/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679723202/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,b3ca130856963aaf43bf08a01f51d676b5a5558404e105280f11683cc2cd50a0,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679732209,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679732209'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679732209/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679732209/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679732209/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679732209/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679732209/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679732209/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679732209/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+386       1679735178,3,b1cb3a2db6ecbc8395b7ee2ef55bc2bd65f99db85212672546380f8e3969cfce,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Removed user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,b61b7905a0b2b55e37c94026681a6adf55c78c6ab81ead4cecb035ab28bfd6ed,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679731576,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679731576'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679731576/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731576/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731576/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679731576/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679731576/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679731576/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679731576/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+360       1679735178,3,b52cdb7c7447c8cf6201a3bd28ed50d37e9d7b6e5d7cc4192a723e0194d57b50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],"[""Removed user 'rey'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,1,aca1592fedc90eaf14e9825ff07ff211d2cb2871e0f39801e880948423b39263,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679725928,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679725928'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679725928/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679725928/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679725928/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679725928/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679725928/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679725928/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679725928/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+492       1679735178,3,ac6e279c090ec4ad6433274d86fcf779a9eed8e60b94823df89a2fa2928516de,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],"[""Failed to delete group 'outerrim': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'outerrim' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1178      1679735178,1,ae97df77a49ed9ba592a3681b166f493a9d04e21c919a3aac053d7832cf00522,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679728594,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679728594'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679728594/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728594/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728594/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679728594/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679728594/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679728594/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679728594/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+344       1679735178,3,ad252c73d4c3ae487396792116aed12668e52a7ba42d02ddf6b64cf49dcd29cb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+383       1679735178,3,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Removed user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1178      1679735178,2,471863645e849ddea0525daba536d59ca59b8cf82d2f3d16d06fe98783a94267,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679716027,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679716027'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679716027/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716027/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716027/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679716027/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679716027/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716027/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716027/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,42cc131f4e3ebc22779dd22e48a66cfd58d3632a1271c5a161d34eb4a0a8ec51,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679700679,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679700679'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679700679/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679700679/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679700679/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679700679/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679700679/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679700679/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679700679/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,4e26e3443ac697b83250fb4625cf494afd9cc452f63d9910aa855c77b1dee9e8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679705815,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679705815'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679705815/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679705815/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679705815/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679705815/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679705815/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679705815/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679705815/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,485f36e1ce79b4a9e8e61e64e2c26cc372ca1be63eda26bf1366ae641f8c5d73,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679714506,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679714506'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679714506/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679714506/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679714506/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679714506/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679714506/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679714506/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679714506/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,2f4a230a4889392dd20e943fd5071185926577284811053f722b3ad030e9fdb8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679709686,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679709686'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679709686/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679709686/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679709686/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679709686/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679709686/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679709686/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679709686/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,2d7bf2ab10ecd2a3794cb9adbb11d082f7bd87f75d285c612afa95af50b261ed,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679713933,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679713933'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679713933/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679713933/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679713933/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679713933/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679713933/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679713933/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679713933/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,33a93cfa41d36db3f519db417945468862a2481bd570c8cb82658bcb28303dee,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679715078,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679715078'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679715078/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679715078/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679715078/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679715078/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679715078/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679715078/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679715078/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,329efbf62394827f40badcc0a74a02e5fc9099df757f075db79ad54ab287b4e8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679719587,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679719587'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679719587/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719587/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719587/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679719587/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679719587/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719587/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719587/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,4ee4cf9c9b833d51cf363dc0bbb9a43d00fab69085e36ced1978c5945b497baf,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679712096,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679712096'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679712096/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712096/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712096/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679712096/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679712096/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712096/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712096/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,665295c08113f4f19c27b3037ddb45d7d1ca5f66bee96da58e10f646e8fba1b7,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679717488,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679717488'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679717488/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679717488/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679717488/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679717488/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679717488/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679717488/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679717488/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,62f5f141884fff127f0da84ea904826876944a733d4a224c7a124d132f07340a,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679708225,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679708225'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679708225/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679708225/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679708225/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679708225/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679708225/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679708225/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679708225/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,6d363aca47af4e4c52b21ae80c21d03d1e7d9ca226d926d85d45212efe28c03d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679704926,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679704926'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679704926/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679704926/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679704926/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679704926/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679704926/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679704926/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679704926/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,6c9ef667ff612e90a41849694ddc5fcd78aece4bf2b313d69a3e5257fd786567,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679705499,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679705499'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679705499/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679705499/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679705499/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679705499/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679705499/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679705499/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679705499/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,54daa287cbe76dd827834c3dcbdd0964cc0df57e746314de9390406ff862d70a,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679713617,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679713617'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679713617/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679713617/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679713617/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679713617/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679713617/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679713617/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679713617/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,54d804f57a348bab50d4cc58f57d09c484016a872f8da398ce391fdef55c9f14,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679719330,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679719330'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679719330/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719330/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719330/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679719330/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679719330/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719330/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719330/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,5e5c6fcf6d89106da025f00225b6d27546eb99ab36f74996de1c0cf1e32cc8df,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679720791,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679720791'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679720791/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679720791/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679720791/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679720791/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679720791/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679720791/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679720791/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,5cfbcea67598a02497de85259048b25777c4f71ae6d15fb59b9f4e04cea94d5a,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679710634,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679710634'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679710634/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710634/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710634/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679710634/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679710634/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710634/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710634/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,0911d248948a71aca2d3ccc909e602af5153f954667a7ead2f14532854ee7bc5,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679707909,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679707909'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679707909/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707909/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707909/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679707909/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679707909/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707909/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707909/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,08e1188aeb004c0127053e2944faf5f1df307d2969e3253a18f675927a1acf29,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679703721,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679703721'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679703721/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703721/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703721/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679703721/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679703721/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703721/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703721/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,0fc181e3baba906a166633d3e99de10401ff1a50c494b28b342da61cfa10c198,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679701884,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679701884'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679701884/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679701884/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679701884/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679701884/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679701884/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679701884/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679701884/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,0f7cbc05cc536dfd42df14ce49d6585f4f2cc439b6c334eaf1d9eef1c3fbf4b0,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679711523,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679711523'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679711523/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679711523/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679711523/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679711523/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679711523/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679711523/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679711523/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,02be209e83a47f1016b2c33c8f440d4129da33ecc492181955e4555858b7482f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679717232,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679717232'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679717232/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679717232/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679717232/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679717232/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679717232/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679717232/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679717232/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,00148da097c51dec0a313ce570215a25d2acfdabaa0bbe0be778ec0ed608286c,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679709113,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679709113'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679709113/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679709113/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679709113/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679709113/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679709113/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679709113/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679709113/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,05952bde812198c0c263696c85a9d8adfcae63606ae7c2583356330e6c8ae044,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679720219,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679720219'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679720219/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679720219/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679720219/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679720219/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679720219/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679720219/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679720219/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,04f9388ac62a110de57f1905832faad4312e4b9465fbbeadacbcca6c7380f355,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679702200,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679702200'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679702200/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679702200/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679702200/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679702200/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679702200/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679702200/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679702200/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,0fc95e11ea965fa83743ad85e8132e6edf6fef258a0deb62a01d2146ab1f5d3d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679704294,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679704294'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679704294/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679704294/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679704294/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679704294/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679704294/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679704294/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679704294/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,24a768aa32a414290fd2c8ff9ea0c5f7bd9c9e015b16131646b902ed30cb6ad9,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679712984,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679712984'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679712984/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712984/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712984/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679712984/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679712984/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712984/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712984/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,1d5f48dd78f1ffabfad1c9874dae7b12060f771f61c3f8517e886465e1783c40,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679710318,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679710318'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679710318/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710318/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710318/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679710318/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679710318/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710318/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710318/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,2d717996a9297d03e91d96fc06222d853d19e8cc00f64f01a569919e7fd18efd,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679712728,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679712728'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679712728/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712728/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712728/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679712728/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679712728/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712728/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712728/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,2c1483b2cc7e5400d0ada6446cab7253f903d0671fc0d20f7808be99cb34cbf8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679701628,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679701628'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679701628/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679701628/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679701628/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679701628/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679701628/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679701628/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679701628/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,14db6a2e8d28180b23414a6260ee33db2ec579b71918ee7e7ba65c291b2b82e8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679712412,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679712412'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679712412/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712412/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712412/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679712412/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679712412/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679712412/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679712412/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,143fca47ca9fb0e9582339a060ef7ac2288807ae7aeb7fb931905946e0e2240d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679702516,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679702516'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679702516/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679702516/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679702516/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679702516/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679702516/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679702516/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679702516/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,1c6f01c02abe96e84c0c3cc7fca80b4fc847da18cc498757af3465b617cc3dc9,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679706387,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679706387'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679706387/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679706387/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679706387/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679706387/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679706387/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679706387/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679706387/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,1b3c13e2737d4e60e92c4f245a437c604b1c74021bec5e0b6ffe7c3982c0d8c4,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679707592,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679707592'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679707592/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707592/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707592/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679707592/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679707592/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707592/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707592/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,71424fcd6e51178cb1225994b4c709f9213fb794696ab14eef522259346f25c8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679720535,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679720535'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679720535/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679720535/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679720535/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679720535/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679720535/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679720535/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679720535/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,e0447147b81b91f645f67193357dccf459cab35584967ca982c842e1de02c7af,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679702833,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679702833'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679702833/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679702833/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679702833/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679702833/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679702833/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679702833/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679702833/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,dd3dc27704cbec8d4293ff5e921f3a9d08a32918335433e56ce6d5bdd5964fa6,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679707020,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679707020'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679707020/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707020/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707020/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679707020/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679707020/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707020/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707020/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,e767b8d4c692442fa1335d0817d4f4bab838a80d5f2dce5407071df8793144b7,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679716599,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679716599'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679716599/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716599/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716599/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679716599/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679716599/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716599/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716599/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,e2e4a770c25e89e5508ee4e51a7fb53d79c119b4ee3ba8b71a36cf90520c791c,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679715394,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679715394'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679715394/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679715394/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679715394/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679715394/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679715394/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679715394/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679715394/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,d20c8f7e8b9a2755cbb97ecc94f0aaf49eda6fe47f30b0a58611ebe4c1957207,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679715711,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679715711'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679715711/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679715711/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679715711/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679715711/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679715711/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679715711/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679715711/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,cc475b1a32ec597bca03b8cf3bac9f251a6e2040e24334f3a178c0d833bf7e57,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679710891,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679710891'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679710891/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710891/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710891/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679710891/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679710891/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710891/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710891/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,da1dba4ae4c38e0453fda4dbbbeeeda684e48c60b625caa77cb2f363be35265c,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679718120,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679718120'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679718120/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679718120/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679718120/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679718120/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679718120/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679718120/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679718120/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,d25c5bf2dd6b191fc4485324e237e815fba4b922ce4c298fd30522770bd51e4f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679716915,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679716915'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679716915/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716915/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716915/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679716915/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679716915/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716915/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716915/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,eb1159991c0534b9074ee9beb67bfb08b9daef7420901e0b17d5b8d19a63c089,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679713301,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679713301'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679713301/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679713301/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679713301/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679713301/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679713301/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679713301/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679713301/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,f969d8a6157da4b2e8c57c7d825f8ff3eae8f1c27194a6970f8efc7e35bf8a0d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679719014,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679719014'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679719014/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719014/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719014/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679719014/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679719014/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719014/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719014/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,f8fd7e2493570f10f36d2c23aaa7a104a84127712940a5fcc44684c99e351120,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679701312,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679701312'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679701312/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679701312/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679701312/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679701312/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679701312/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679701312/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679701312/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,1,02271105d1b10b83b7771c99ad2e294b461cf2f7e8d60466434c3f2ad0351b4f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679726816,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679726816'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679726816/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679726816/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679726816/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679726816/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679726816/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679726816/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679726816/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,fbfe3dc8905142364e7e88cbc4d4cc614c08d68ab89fbe1007b6a0c042d65027,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679705182,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679705182'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679705182/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679705182/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679705182/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679705182/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679705182/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679705182/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679705182/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,f432b1667a4258da37ebd41cc44389da4bd8fc5fa5df80b1a3ad32547e317b00,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679717804,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679717804'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679717804/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679717804/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679717804/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679717804/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679717804/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679717804/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679717804/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,ed50cc70df061ba69fb0db90a703a294e66e6396be5c9e860e8c71844e8ebfaf,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679700995,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679700995'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679700995/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679700995/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679700995/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679700995/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679700995/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679700995/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679700995/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,f614546a3e66073688e6f05b85d2d086f3e276bc11e6c7986daacec7972cb67e,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679703089,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679703089'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679703089/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703089/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703089/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679703089/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679703089/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703089/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703089/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,f5f09cbbf7142fa95fbb7652ddd01396cf4d74ab5d7d64a52ef5112256d208f9,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679706131,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679706131'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679706131/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679706131/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679706131/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679706131/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679706131/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679706131/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679706131/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,8e742007bdb30c7046c803ac81278a87c9da0e3e9f4b0c891a31ce721db915c7,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679708797,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679708797'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679708797/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679708797/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679708797/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679708797/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679708797/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679708797/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679708797/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,8c6ba019cefb044c2dd4589917793bc4b2b8d9a3fbc2d8ee085c4b33d52333ac,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679706704,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679706704'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679706704/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679706704/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679706704/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679706704/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679706704/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679706704/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679706704/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,959c1b78e1e563d608c5751d64f71a946da983396750381a42ce1dc451440aab,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679718377,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679718377'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679718377/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679718377/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679718377/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679718377/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679718377/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679718377/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679718377/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,8f89ea380eabac305694ca6415b48d17a43c2423bdcfc9573ab513d276e1f569,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679711207,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679711207'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679711207/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679711207/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679711207/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679711207/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679711207/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679711207/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679711207/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,763758583dbf398b50271601eaebef9cf8b5fc000361e666a9c9e305ccffc3d3,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679704610,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679704610'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679704610/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679704610/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679704610/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679704610/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679704610/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679704610/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679704610/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,720a50de1f4aa9dc23e513163c829f61f5af85f5362db56d6e2c8c291246d387,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679710002,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679710002'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679710002/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710002/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710002/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679710002/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679710002/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679710002/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679710002/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,89d10ac5ab38b8691d3765ebfcccb196e9862aa67bcb4c8ed39301148abbe29d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679714822,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679714822'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679714822/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679714822/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679714822/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679714822/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679714822/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679714822/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679714822/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,839a0922412cb4b1279a07f98df96109e52e11eb6351e2691875c6b2f9e6f66b,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679703977,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679703977'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679703977/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703977/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703977/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679703977/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679703977/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703977/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703977/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,978da2422f72e23cbecccd885cd35a5860188dca4a3cfec0fa63ba6b48ff3dd7,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679709430,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679709430'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679709430/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679709430/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679709430/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679709430/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679709430/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679709430/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679709430/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,c59b18da04277f87e1cafe5921c4cb7bd8747570cb190b16018e064f68b7e471,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679711780,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679711780'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679711780/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679711780/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679711780/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679711780/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679711780/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679711780/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679711780/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,c198c8681588928e116cb63446323dbefb1da2eec8ed2d9fd085aab1c9d817af,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679718698,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679718698'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679718698/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679718698/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679718698/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679718698/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679718698/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679718698/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679718698/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,ca847cb42ae5d45bd2104b902efc058a8b9a6b4006f66f4eaeb3860e36af0b9d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679703405,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679703405'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679703405/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703405/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703405/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679703405/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679703405/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679703405/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679703405/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,c9ba8a5d611158aa3a7d28c91595c63d94c35e14112f5454b185251544014d6f,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679716283,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679716283'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679716283/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716283/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716283/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679716283/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679716283/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679716283/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679716283/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,a42560910e4aab23532fca95ef08dbeb3909a373c46411a55f868b5bbef3cc65,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679708481,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679708481'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679708481/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679708481/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679708481/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679708481/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679708481/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679708481/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679708481/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,9d48bb91e865286e456d411d40004d9ac93f32bf1a1018ea10ecb77b78a7c1ec,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679719903,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679719903'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679719903/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719903/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719903/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679719903/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679719903/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679719903/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679719903/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,b5f3a8578bb1f6cfdf3bc2f0149af4733a87c1ba973257402fd9b1b62d36d7a8,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679714189,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679714189'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679714189/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679714189/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679714189/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679714189/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679714189/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679714189/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679714189/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+1178      1679735178,2,b5299cb94e764fd99733d6f30219e8713d427a12d51a20c3bba1bd2f3eab0d35,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679707276,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679707276'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679707276/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707276/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707276/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679707276/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679707276/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679707276/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679707276/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.048305,0.332339,0.330616,1679735191
+60        Packing reports: delta,0.024127,0.058213,0.065712,1679735179
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004746,0.002252,0.002216,1679735181
+3         EXS
+16        f,128,1679735178
+3         MOM
+15        M:entropy_avail
+38        1549 3780.0000 2646.0000 0.0000 0.0000
+12        M:mem_cached
+41        1549 2205.8945 1544.1262 1845.5838 0.0000
+10        M:mem_free
+39        1549 12257.1562 8580.0094 0.0000 0.0000
+11        M:mem_total
+40        1549 14863.5820 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1549 0.8320 0.5824 0.6961 0.0000
+11        M:io_writes
+34        1549 12.0000 8.4000 10.0399 0.0000
+6         M:cpu3
+32        1549 1.4199 0.9939 1.1880 0.0000
+6         M:cpu2
+32        1549 5.4701 3.8290 4.5766 0.0000
+6         M:cpu1
+32        1549 1.0662 0.7463 0.8920 0.0000
+6         M:cpu0
+32        1549 1.2339 0.8637 1.0324 0.0000
+5         M:cpu
+32        1549 2.3013 1.6109 1.9254 0.0000
+10        M:messages
+38        1549 4163.0000 2914.1000 0.0000 0.0000
+8         M:ssh_in
+32        1549 2.0000 1.4000 1.6733 0.0000
+13        M:cfengine_in
+32        1549 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1549 0.1500 0.1050 0.1255 0.0000
+10        M:diskfree
+35        1549 73.0000 51.1000 61.0762 0.0000
+12        M:otherprocs
+32        1549 4.0000 2.8000 3.3466 0.0000
+11        M:rootprocs
+36        1549 106.0000 74.2000 88.6860 0.0000
+7         M:users
+32        1549 5.0000 3.5000 4.1833 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+# send QUERY complete successful

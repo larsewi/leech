@@ -1,0 +1,104 @@
+# delta from 1679689338 to 1679689399 at 1679689399
+22        CFR: 0 1679689398 7353
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.030364,0.381766,0.382853,1679689393
+60        Packing reports: delta,0.032213,0.147983,0.147451,1679689339
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004969,0.002469,0.002431,1679689378
+3         EXS
+16        f,293,1679689108
+3         MOM
+15        M:entropy_avail
+41        1396 3112.0000 2810.9200 1003.6000 0.0000
+12        M:mem_cached
+40        1396 1722.0352 1567.0495 516.6188 0.0000
+10        M:mem_free
+40        1396 12757.0117 11608.9241 0.0000 0.0000
+11        M:mem_total
+40        1396 14875.9336 13537.0996 0.0000 0.0000
+16        M:io_writtendata
+32        1396 0.0303 0.0468 0.0552 0.0000
+11        M:io_writes
+32        1396 2.0000 2.6600 2.2000 0.0000
+6         M:cpu3
+32        1396 0.1398 0.6432 1.8406 0.0000
+6         M:cpu2
+32        1396 0.1265 0.3723 0.9238 0.0000
+6         M:cpu1
+32        1396 0.1398 0.4419 1.1286 0.0000
+6         M:cpu0
+32        1396 0.0999 0.2616 0.5390 0.0000
+5         M:cpu
+32        1396 0.1281 0.4309 1.1258 0.0000
+10        M:messages
+38        1396 300.0000 539.4900 798.3000 0.0000
+8         M:ssh_in
+32        1396 2.0000 1.8200 0.6000 0.0000
+9         M:smtp_in
+32        1396 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1396 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1396 0.0000 0.0021 0.0074 0.0000
+10        M:diskfree
+35        1396 86.0000 78.2600 25.8000 0.0000
+12        M:otherprocs
+32        1396 6.0000 5.4600 1.8000 0.0000
+11        M:rootprocs
+35        1396 97.0000 88.2700 29.1000 0.0000
+7         M:users
+32        1396 6.0000 5.4600 1.8000 0.0000
+3         MOY
+15        M:entropy_avail
+40        155 3071.5000 2467.2550 4839.3563 0.0000
+12        M:mem_cached
+38        155 1098.6758 945.6121 469.4713 0.0000
+16        M:io_writtendata
+31        155 0.0303 0.0327 0.0303 0.0000
+11        M:io_writes
+31        155 1.0000 1.3300 1.5556 0.0000
+6         M:cpu3
+31        155 0.0965 0.2074 0.6379 0.0000
+6         M:cpu2
+31        155 0.0899 0.2572 0.9414 0.0000
+6         M:cpu1
+31        155 0.0999 0.2573 0.8754 0.0000
+6         M:cpu0
+31        155 0.1764 0.2613 0.5270 0.0000
+5         M:cpu
+31        155 0.1157 0.2456 0.7663 0.0000
+10        M:messages
+37        155 113.5000 275.9050 209.2837 0.0000
+8         M:ssh_in
+31        155 2.0000 1.6100 1.2570 0.0000
+9         M:smtp_in
+31        155 2.0000 1.6100 1.2570 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.6557 0.0000
+9         M:loadavg
+31        155 0.0100 0.0112 0.0241 0.0000
+10        M:diskfree
+34        155 88.0000 70.6300 56.2834 0.0000
+12        M:otherprocs
+31        155 6.0000 5.5650 4.1719 0.0000
+11        M:rootprocs
+34        155 96.5000 77.6300 60.8923 0.0000
+7         M:users
+31        155 6.0000 4.8300 3.7709 0.0000
+3         PLG
+1572      1679689397,c85393e0c5c5b089cbb7252e2e5aa37fe0e583a52ede1c007aaacf6ed3d57517,/var/cfengine/inputs/services/inventory-lastlog/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,inventory_lastlog,commands,"/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ 	]+Port[ 	]+From[ 	]+[ 	]+Latest/       &&       !/\*\*Never logged in\*\*/       {
+        print ""^context=inventory_lastlog
+^meta=inventory,attribute_name=Last logged in ""$1""
+=lastlog[""$1""]=""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF
+      }' > ""/var/cfengine/state/lastlog.module.cache""","/default/inventory_lastlog/commands/'/usr/bin/lastlog | ...stlog.module.cache""'[1]",,[],"[""Executing 'no timeout' ... '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'"",""Completed execution of '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'""]",50,SHA=9eccbb87b98fc832d3f0924a4f4d00d465dba2aae1b83c884f575d753710c241
+
+652       1679689397,3b037a17d0c53360bbee7d7b81b0c83ad7c1ab9915205754bd0afdedf8cb648c,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers,files,/var/cfengine/state/_users_with_sudo.module.cache.d/.*,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'/nickanderson/_inventory_sudoers/files/'/var/cfengine/state/_users_with_sudo.module.cache.d/.:'[1],nickanderson__inventory_sudoers_purge_inventory_sudoers_cache,[],"[""Deleted file '/var/cfengine/state/_users_with_sudo.module.cache.d/root'""]",66,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+
+776       1679689397,6f3673ca615a23ea0bfd799066fdf4d9ea465a83998e5454f1039efde1f1e1d7,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers,files,/var/cfengine/state/_users_with_sudo.module.cache.d/root,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'/nickanderson/_inventory_sudoers/files/'/var/cfengine/state/_users_with_sudo.module.cache.d/root'[1],nickanderson__inventory_sudoers_inventory_user_with_sudo_access_root,[],"[""Created file '/var/cfengine/state/_users_with_sudo.module.cache.d/root', mode 0600"",""Touched (updated time stamps) for path '/var/cfengine/state/_users_with_sudo.module.cache.d/root'""]",77,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+
+698       1679689397,48bf83e5afd754023f13f1891347f5b690111f2b98927b550db0b20e48e68464,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers,files,/var/cfengine/state/_users_with_sudo.module.cache.d/centos,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'/nickanderson/_inventory_sudoers/files/'/var/cfengine/state/_users_with_sudo.module.cache.d/centos'[23],nickanderson__inventory_sudoers_inventory_user_with_sudo_access_centos,[],"[""Touched (updated time stamps) for path '/var/cfengine/state/_users_with_sudo.module.cache.d/centos'""]",77,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+
+1092      1679689397,74b62291a06042c23486f83a4a3a880400c21171afc6b11b4e466b9814d0ff8c,/var/cfengine/inputs/services/inventory-systemd/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,inventory_systemd_service_units_running,commands,/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat,/default/inventory_systemd_service_units_running/commands/'/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .:/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'[1],,[],"[""Executing 'no timeout' ... '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'"",""Completed execution of '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'""]",21,SHA=5e9611e04ce99bfd1a0a13eccb912e3b6826714387d632c3f2241535931336cc
+
+645       1679689398,b627a695b1bca4ff71abe7b74bda4af347f3e1dd581ef67f96685421a0410305,/var/cfengine/inputs/services/autorun/inventory_yum_update_info.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,update_yum_update_info_cache,commands,/usr/bin/yum updateinfo summary > /var/cfengine/state/yum_updateinfo_summary.txt,/default/autorun/methods/'autorun'/default/inventory_yum_update_info/methods/'Refresh updateinfo cache'/default/update_yum_update_info_cache/commands/'/usr/bin/yum updateinfo summary > /var/cfengine/state/yum_updateinfo_summary.txt'[1],,"[""CFE-3795""]",[],97,SHA=9e3f16bf069b1a7296cc2840735eb3e15b69086151023e87e529d6841be8b3cd
+
+# send QUERY complete successful

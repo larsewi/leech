@@ -1,0 +1,90 @@
+# delta from 1679693298 to 1679693359 at 1679693359
+22        CFR: 0 1679693358 4396
+3         PRD
+60        Packing reports: delta,0.028352,0.080385,0.081161,1679693299
+3         EXS
+16        f,302,1679693304
+3         MOM
+15        M:entropy_avail
+41        1409 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1409 2071.0234 1886.4573 615.2203 0.0000
+10        M:mem_free
+40        1409 12327.5508 11221.1769 0.0000 0.0000
+11        M:mem_total
+40        1409 14863.5820 13525.8596 0.0000 0.0000
+16        M:io_writtendata
+32        1409 0.7217 0.7139 0.0258 0.0000
+11        M:io_writes
+34        1409 12.0000 10.9200 3.6000 0.0000
+6         M:cpu3
+32        1409 0.5599 0.4325 0.3661 0.0000
+6         M:cpu2
+32        1409 1.9991 1.4609 1.5069 0.0000
+6         M:cpu1
+32        1409 1.3332 0.9891 0.9671 0.0000
+6         M:cpu0
+32        1409 1.2461 0.9142 0.9300 0.0000
+5         M:cpu
+32        1409 1.2829 0.9488 0.9385 0.0000
+10        M:messages
+39        1409 169.0000 652.9600 1784.0780 0.0000
+8         M:ssh_in
+32        1409 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1409 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1409 0.0800 0.0560 0.0669 0.0000
+10        M:diskfree
+35        1409 74.0000 67.3400 22.2000 0.0000
+12        M:otherprocs
+32        1409 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1409 116.0000 105.3500 35.5000 0.0000
+7         M:users
+32        1409 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+492       1679693303,2e888d0cc6c3290247ab978f31352a8e50d388fa5d0f69a882d4281d85dc4eb0,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,deepcore,/default/churn_local_groups/groups/'deepcore'[1],,[],"[""Failed to create group 'deepcore': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'deepcore' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+1178      1679693303,c62065cce9a8b9a31253bc334d33fe3ec10468b6a02acf7142e9eea94fdb8771,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679691732,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679691732'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679691732/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679691732/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679691732/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679691732/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679691732/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679691732/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679691732/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+649       1679693303,0433bc69cf5953ccc1e84763d5dc7212f94ebdd6c2804bf35dd32e35d6c5bb07,/var/cfengine/inputs/services/security-hardening/cves/cve-2021-44228-log4j/cve-2021-44228-log4j-inventory-log4shell.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,northerntech_security_hardening,cve_2021_44228_log4j_inventory_log4shell,files,/var/cfengine/bin/yahoo-check-log4j.sh.tmp,/northerntech_security_hardening/cve_2021_44228_log4j_inventory_log4shell/files/'/var/cfengine/bin/yahoo-check-log4j.sh.tmp'[1],,[],"[""Updated file '/var/cfengine/bin/yahoo-check-log4j.sh.tmp' with content ''""]",88,SHA=ea4d986a44c907d38a90e1d616545b37e5c01ba0b1c94cb5b76556e4da5b7db1
+
+424       1679693325,694b8484bbac8080a9932829d3a07c4ccd93fc41056d40a7dfd51f1628205745,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,maul,/default/churn_local_users/users/'maul'[11],,[],"[""'/sbin/chpasswd -e' returned non-zero status: 1"",""Failed to create user 'maul'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

@@ -1,0 +1,90 @@
+# delta from 1679708959 to 1679709019 at 1679709019
+22        CFR: 0 1679709018 3330
+3         PRD
+60        Packing reports: delta,0.022040,0.048576,0.049124,1679708960
+3         EXS
+16        f,194,1679708874
+3         MOM
+15        M:entropy_avail
+41        1461 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1461 2140.3867 1951.5204 629.5543 0.0000
+10        M:mem_free
+40        1461 12283.4961 11168.0614 0.0000 0.0000
+11        M:mem_total
+40        1461 14863.5820 13525.8596 0.0000 0.0000
+16        M:io_writtendata
+32        1461 1.3535 1.0605 0.8537 0.0000
+11        M:io_writes
+35        1461 18.0000 14.2800 11.0033 0.0000
+6         M:cpu3
+32        1461 1.5068 1.1219 1.0833 0.0000
+6         M:cpu2
+32        1461 4.2211 3.0108 3.3777 0.0000
+6         M:cpu1
+32        1461 5.8804 4.1932 4.7084 0.0000
+6         M:cpu0
+32        1461 2.3414 1.7048 1.7813 0.0000
+5         M:cpu
+32        1461 3.4859 2.5069 2.7340 0.0000
+10        M:messages
+39        1461 2281.0000 2298.9400 50.0323 0.0000
+8         M:ssh_in
+32        1461 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1461 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1461 0.0700 0.0490 0.0586 0.0000
+10        M:diskfree
+35        1461 73.0000 66.4300 21.9000 0.0000
+12        M:otherprocs
+32        1461 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1461 114.0000 104.5800 31.4000 0.0000
+7         M:users
+32        1461 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+498       1679708963,56723c45f5504109a2fc211242b200ead91addfe7d156ca9482e66e0538a9d50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,jabbathehut,/default/churn_local_users/users/'jabbathehut'[5],,[],"[""Command returned error while removing user 'jabbathehut'. (Command line: '/sbin/userdel jabbathehut')"",""Failed to remove user 'jabbathehut'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+421       1679708984,5820946305f58f0ceb4dd427ba58a6bdff713a12bc3cbc4169caacb3cf1110f1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],"[""'/sbin/chpasswd -e' returned non-zero status: 1"",""Failed to create user 'rey'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+386       1679708994,b1cb3a2db6ecbc8395b7ee2ef55bc2bd65f99db85212672546380f8e3969cfce,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Removed user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+371       1679709019,fcb0be413f509f4ab47fc99d1d719ce50ce13137d95fe4356a62ce080f44c3d3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,hansolo,/default/churn_local_users/users/'hansolo'[8],,[],"[""Removed user 'hansolo'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

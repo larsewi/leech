@@ -1,0 +1,89 @@
+# delta from 1679724078 to 1679724139 at 1679724139
+22        CFR: 0 1679724138 3686
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.040468,0.333217,0.331787,1679724090
+60        Packing reports: delta,0.015608,0.024362,0.024424,1679724079
+3         EXS
+16        f,172,1679724111
+3         MOM
+15        M:entropy_avail
+38        1512 3780.0000 2646.0000 0.0000 0.0000
+12        M:mem_cached
+41        1512 2195.1719 1536.6203 1836.6126 0.0000
+10        M:mem_free
+39        1512 12223.1172 8556.1820 0.0000 0.0000
+11        M:mem_total
+40        1512 14863.5820 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1512 1.5889 1.1122 1.3293 0.0000
+11        M:io_writes
+35        1512 20.0000 14.0000 16.7332 0.0000
+6         M:cpu3
+32        1512 0.4135 0.2894 0.3460 0.0000
+6         M:cpu2
+32        1512 5.5570 3.8899 4.6494 0.0000
+6         M:cpu1
+32        1512 0.7326 0.5129 0.6130 0.0000
+6         M:cpu0
+32        1512 1.7738 1.2417 1.4841 0.0000
+5         M:cpu
+32        1512 2.1228 1.4860 1.7761 0.0000
+10        M:messages
+38        1512 4153.0000 2907.1000 0.0000 0.0000
+8         M:ssh_in
+32        1512 3.0000 2.1000 2.5100 0.0000
+13        M:cfengine_in
+32        1512 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1512 0.0900 0.0630 0.0753 0.0000
+10        M:diskfree
+35        1512 73.0000 51.1000 61.0762 0.0000
+12        M:otherprocs
+32        1512 4.0000 2.8000 3.3466 0.0000
+11        M:rootprocs
+36        1512 111.0000 77.7000 92.8693 0.0000
+7         M:users
+32        1512 5.0000 3.5000 4.1833 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+380       1679724106,e887e0088ce4bdd3d8816948862add187791335771b43d31dd2ff625229bc5b5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Created user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+1178      1679724110,e54a66dee991c6c6957e4877c4e34e7e1e110685cabf96f6cdec2f66c3aaf5aa,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722629,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722629'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722629/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722629/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722629/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722629/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+371       1679724131,fcb0be413f509f4ab47fc99d1d719ce50ce13137d95fe4356a62ce080f44c3d3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,hansolo,/default/churn_local_users/users/'hansolo'[8],,[],"[""Removed user 'hansolo'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

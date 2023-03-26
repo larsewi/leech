@@ -1,0 +1,96 @@
+# delta from 1679739678 to 1679739739 at 1679739739
+22        CFR: 0 1679739738 5611
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.058032,0.336776,0.332997,1679739695
+60        Packing reports: delta,0.028157,0.079283,0.078901,1679739679
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.008187,0.006703,0.016650,1679739690
+3         EXS
+16        f,496,1679739718
+3         MOM
+15        M:entropy_avail
+38        1564 3780.0000 2646.0000 0.0000 0.0000
+12        M:mem_cached
+41        1564 2244.8945 1571.4262 1878.2135 0.0000
+10        M:mem_free
+39        1564 12142.2695 8499.5887 0.0000 0.0000
+11        M:mem_total
+40        1564 14863.5820 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1564 1.5244 1.0671 1.2754 0.0000
+11        M:io_writes
+35        1564 18.0000 12.6000 15.0599 0.0000
+6         M:cpu3
+32        1564 0.1866 0.1306 0.1561 0.0000
+6         M:cpu2
+32        1564 0.3199 0.2240 0.2677 0.0000
+6         M:cpu1
+32        1564 0.5596 0.3917 0.4682 0.0000
+6         M:cpu0
+32        1564 0.4530 0.3171 0.3790 0.0000
+5         M:cpu
+32        1564 0.3781 0.2647 0.3164 0.0000
+10        M:messages
+38        1564 3812.0000 2668.4000 0.0000 0.0000
+8         M:ssh_in
+32        1564 2.0000 1.4000 1.6733 0.0000
+13        M:cfengine_in
+32        1564 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1564 0.0200 0.0140 0.0167 0.0000
+10        M:diskfree
+35        1564 72.0000 50.4000 60.2395 0.0000
+12        M:otherprocs
+32        1564 4.0000 2.8000 3.3466 0.0000
+11        M:rootprocs
+36        1564 116.0000 81.2000 97.0526 0.0000
+7         M:users
+32        1564 5.0000 3.5000 4.1833 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+500       1679739681,6efa5dd990369c8293b768b1e88c3234ddc466536ad9196ad77a378cb27e743e,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Failed to create group 'coreworlds': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'coreworlds' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+387       1679739691,c1a3779b76d76e5edde2668bac31f237efb11ce8a83bf017195e39d8744a22b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Removed user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+363       1679739716,369729ef797e65207cc29c1cf07f54d4a76677334810dd2800afa496927bb5e0,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Removed user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+546       1679739717,5d4c4c7454aa3232aee48b315effd73ec0decc409f7c873ef673442d246ddfce,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'westernreaches' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+1178      1679739717,364c2a658e318e11c98c370fedf3d9c0e72fb5e431a21525b76514b098b32c16,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679739123,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679739123'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679739123/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679739123/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679739123/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679739123/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679739123/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679739123/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679739123/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+797       1679739721,e2f4bae6a1ce7de741cda3e9a426652b787f700e53fc5126e8edb950eb8327a2,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers,files,/var/cfengine/state/_users_with_sudo.module.cache.d/ec2-user,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'/nickanderson/_inventory_sudoers/files/'/var/cfengine/state/_users_with_sudo.module.cache.d/ec2-user'[24],nickanderson__inventory_sudoers_inventory_user_with_sudo_access_ec2-user,[],"[""Created file '/var/cfengine/state/_users_with_sudo.module.cache.d/ec2-user', mode 0600"",""Touched (updated time stamps) for path '/var/cfengine/state/_users_with_sudo.module.cache.d/ec2-user'""]",77,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+
+# send QUERY complete successful

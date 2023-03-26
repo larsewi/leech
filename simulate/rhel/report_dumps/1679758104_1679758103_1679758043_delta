@@ -1,0 +1,107 @@
+# delta from 1679758043 to 1679758104 at 1679758104
+22        CFR: 0 1679758103 8209
+3         PRD
+60        Packing reports: delta,0.022032,0.048539,0.048638,1679758044
+3         EXS
+16        f,148,1679757713
+3         CNG
+66        1679758086,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1679758086,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1679758086,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+261       1679758086,/etc/group,change_management_files_watch_files_report_diffs,"-,44,midrim:x:1018:-,45,jarjarbinks:x:1024:-,46,jabbathehut:x:1026:-,48,obiwankenobi:x:1023:-,49,deepcore:x:1028:-,50,thecolonies:x:1029:+,46,lukeskywaker:x:1004:+,47,c3po:x:1005:"
+
+355       1679758086,/etc/passwd,change_management_files_watch_files_report_diffs,"-,26,jarjarbinks:x:1021:1024::/home/jarjarbinks:/bin/bash-,27,jabbathehut:x:1022:1026::/home/jabbathehut:/bin/bash-,28,obiwankenobi:x:1023:1023::/home/obiwankenobi:/bin/bash+,26,lukeskywaker:x:1004:1004::/home/lukeskywaker:/bin/bash+,27,c3po:x:1005:1005::/home/c3po:/bin/bash"
+
+3         MOM
+15        M:entropy_avail
+38        1625 3780.0000 2646.0000 0.0000 0.0000
+12        M:mem_cached
+41        1625 2278.9688 1595.2781 1906.7221 0.0000
+10        M:mem_free
+39        1625 12150.6172 8505.4320 0.0000 0.0000
+11        M:mem_total
+40        1625 14863.5820 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1625 0.0244 0.0171 0.0204 0.0000
+11        M:io_writes
+32        1625 2.0000 1.4000 1.6733 0.0000
+6         M:cpu3
+32        1625 0.1466 0.1026 0.1227 0.0000
+6         M:cpu2
+32        1625 0.1333 0.0933 0.1115 0.0000
+6         M:cpu1
+32        1625 0.1665 0.1165 0.1393 0.0000
+6         M:cpu0
+32        1625 0.1531 0.1072 0.1281 0.0000
+5         M:cpu
+32        1625 0.1499 0.1049 0.1254 0.0000
+10        M:messages
+41        1625 2546.0000 1782.2000 2130.1364 0.0000
+8         M:ssh_in
+34        1625 13.0000 9.1000 10.8766 0.0000
+13        M:cfengine_in
+32        1625 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1625 0.0200 0.0140 0.0167 0.0000
+10        M:diskfree
+35        1625 72.0000 50.4000 60.2395 0.0000
+12        M:otherprocs
+32        1625 4.0000 2.8000 3.3466 0.0000
+11        M:rootprocs
+36        1625 111.0000 77.7000 92.8693 0.0000
+7         M:users
+32        1625 5.0000 3.5000 4.1833 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+1572      1679758080,c85393e0c5c5b089cbb7252e2e5aa37fe0e583a52ede1c007aaacf6ed3d57517,/var/cfengine/inputs/services/inventory-lastlog/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,inventory_lastlog,commands,"/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ 	]+Port[ 	]+From[ 	]+[ 	]+Latest/       &&       !/\*\*Never logged in\*\*/       {
+        print ""^context=inventory_lastlog
+^meta=inventory,attribute_name=Last logged in ""$1""
+=lastlog[""$1""]=""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF
+      }' > ""/var/cfengine/state/lastlog.module.cache""","/default/inventory_lastlog/commands/'/usr/bin/lastlog | ...stlog.module.cache""'[1]",,[],"[""Executing 'no timeout' ... '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'"",""Completed execution of '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'""]",50,SHA=9eccbb87b98fc832d3f0924a4f4d00d465dba2aae1b83c884f575d753710c241
+
+1092      1679758080,74b62291a06042c23486f83a4a3a880400c21171afc6b11b4e466b9814d0ff8c,/var/cfengine/inputs/services/inventory-systemd/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,inventory_systemd_service_units_running,commands,/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat,/default/inventory_systemd_service_units_running/commands/'/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .:/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'[1],,[],"[""Executing 'no timeout' ... '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'"",""Completed execution of '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'""]",21,SHA=5e9611e04ce99bfd1a0a13eccb912e3b6826714387d632c3f2241535931336cc
+
+645       1679758084,b627a695b1bca4ff71abe7b74bda4af347f3e1dd581ef67f96685421a0410305,/var/cfengine/inputs/services/autorun/inventory_yum_update_info.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,update_yum_update_info_cache,commands,/usr/bin/yum updateinfo summary > /var/cfengine/state/yum_updateinfo_summary.txt,/default/autorun/methods/'autorun'/default/inventory_yum_update_info/methods/'Refresh updateinfo cache'/default/update_yum_update_info_cache/commands/'/usr/bin/yum updateinfo summary > /var/cfengine/state/yum_updateinfo_summary.txt'[1],,"[""CFE-3795""]",[],97,SHA=9e3f16bf069b1a7296cc2840735eb3e15b69086151023e87e529d6841be8b3cd
+
+851       1679758086,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1679758086,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1679758086,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=3f16ae9e793c0913ae81ff1a2188305c672b7658f6e402d1b316593f1e42f225)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+# send QUERY complete successful

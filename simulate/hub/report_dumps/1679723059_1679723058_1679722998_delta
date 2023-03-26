@@ -1,0 +1,519 @@
+# delta from 1679722998 to 1679723059 at 1679723059
+23        CFR: 0 1679723058 48426
+3         CLD
+44        1679723023,1,cpu3_high_ldt,source=persistent
+43        1679723023,1,cpu_high_ldt,source=persistent
+48        1679723023,1,cpu3_high_anomaly,source=persistent
+45        1679723023,1,cpu3_high_dev2,source=persistent
+76        1679723023,1,io_writes_high_normal,"monitoring,source=environment,hardclass"
+47        1679723023,1,syslog_high_dev2,source=persistent
+46        1679723023,1,syslog_high_ldt,source=persistent
+87        1679723023,3,nickanderson:nickanderson__inventory_sudoers_sudoers_cache_purged_reached,
+88        1679723023,3,nickanderson:nickanderson__inventory_sudoers_sudoers_cache_purged_repaired,
+66        1679723023,1,cpu2_normal,"monitoring,source=environment,hardclass"
+73        1679723023,2,entropy_www_in_low,"monitoring,source=environment,hardclass"
+69        1679723023,2,io_writes_high,"monitoring,source=environment,hardclass"
+64        1679723023,2,cpu0_high,"monitoring,source=environment,hardclass"
+64        1679723023,2,cpu2_high,"monitoring,source=environment,hardclass"
+61        1679723023,2,jarjarbinks_password_invalid_hash,source=promise
+47        1679723023,2,ssh_out_high_ldt,source=persistent
+66        1679723023,1,cpu0_normal,"monitoring,source=environment,hardclass"
+54        1679723023,2,r2d2_password_invalid_hash,source=promise
+53        1679723023,2,rey_password_invalid_hash,source=promise
+3         VAD
+80        1679723023,3,default,churn_local_groups,group[wildspace],0,absent,source=promise
+89        1679723023,3,default,cfe_autorun_inventory_memory,free,0,11146.01,"source=promise,report"
+207       1679723023,3,default,inventory_local_user_pw_hashing_algo,hash_users[UNKNOWN],3," {""anakinskywalker"",""script_monkey""}","source=promise,inventory,attribute_name=Local users using UNKNOWN password hashing"
+832       1679723023,3,nickanderson_parsed,_etc_group,groups,3," {""root"",""daemon"",""bin"",""sys"",""adm"",""tty"",""disk"",""lp"",""mail"",""news"",""uucp"",""man"",""proxy"",""kmem"",""dialout"",""fax"",""voice"",""cdrom"",""floppy"",""tape"",""sudo"",""audio"",""dip"",""www-data"",""backup"",""operator"",""list"",""irc"",""src"",""gnats"",""shadow"",""utmp"",""video"",""sasl"",""plugdev"",""staff"",""games"",""users"",""nogroup"",""systemd-journal"",""systemd-network"",""systemd-resolve"",""crontab"",""messagebus"",""systemd-timesync"",""input"",""sgx"",""kvm"",""render"",""syslog"",""tss"",""uuidd"",""tcpdump"",""_ssh"",""landscape"",""admin"",""netdev"",""lxd"",""_chrony"",""ubuntu"",""cfapache"",""cfpostgres"",""script_monkey"",""fwupd-refresh"",""anakinskywalker"",""thecolonies"",""wildspace""}","source=promise,noreport"
+86        1679723023,3,default,mon,env_time,0,Sat Mar 25 05:40:38 2023,"time_based,source=agent"
+74        1679723023,3,default,mon,dev_ssh_in,0,2.30,"monitoring,source=environment"
+79        1679723023,3,default,mon,dev_rootprocs,0,122.71,"monitoring,source=environment"
+77        1679723023,3,default,mon,dev_syslog,0,1489.69,"monitoring,source=environment"
+75        1679723023,3,default,mon,dev_ssh_out,0,1.08,"monitoring,source=environment"
+1239      1679723023,3,default,sys,interfaces_data,15,"{
+  ""ens5"": {
+    ""device"": ""ens5"",
+    ""receive_bytes"": ""664715433"",
+    ""receive_compressed"": ""0"",
+    ""receive_drop"": ""0"",
+    ""receive_errors"": ""0"",
+    ""receive_fifo"": ""0"",
+    ""receive_frame"": ""0"",
+    ""receive_multicast"": ""0"",
+    ""receive_packets"": ""705436"",
+    ""transmit_bytes"": ""167969763"",
+    ""transmit_compressed"": ""0"",
+    ""transmit_drop"": ""0"",
+    ""transmit_errors"": ""0"",
+    ""transmit_fifo"": ""0"",
+    ""transmit_frame"": ""0"",
+    ""transmit_multicast"": ""0"",
+    ""transmit_packets"": ""377719""
+  },
+  ""lo"": {
+    ""device"": ""lo"",
+    ""receive_bytes"": ""370218469"",
+    ""receive_compressed"": ""0"",
+    ""receive_drop"": ""0"",
+    ""receive_errors"": ""0"",
+    ""receive_fifo"": ""0"",
+    ""receive_frame"": ""0"",
+    ""receive_multicast"": ""0"",
+    ""receive_packets"": ""577028"",
+    ""transmit_bytes"": ""370218469"",
+    ""transmit_compressed"": ""0"",
+    ""transmit_drop"": ""0"",
+    ""transmit_errors"": ""0"",
+    ""transmit_fifo"": ""0"",
+    ""transmit_frame"": ""0"",
+    ""transmit_multicast"": ""0"",
+    ""transmit_packets"": ""577028""
+  }
+}","networking,/proc,source=agent,procfs"
+175       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.ns_last_pid],0,337769,"source=promise,inventory,attribute_name=Sysctl kernel.ns_last_pid"
+181       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.inode-state],0,125039	425	0	0	0	0	0,"source=promise,inventory,attribute_name=Sysctl fs.inode-state"
+205       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.random.uuid],0,d60dac06-2139-44e1-a3fa-a4d86f60de3c,"source=promise,inventory,attribute_name=Sysctl kernel.random.uuid"
+189       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[kernel.random.entropy_avail],0,38,"source=promise,inventory,attribute_name=Sysctl kernel.random.entropy_avail"
+165       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.inode-nr],0,125037	425,"source=promise,inventory,attribute_name=Sysctl fs.inode-nr"
+135       1679723023,1,nickanderson_inventory,_etc_groups,inventory[wildspace],0,wildspace,"source=promise,inventory,attribute_name=Local Groups"
+139       1679723023,1,nickanderson_inventory,_etc_groups,inventory[thecolonies],0,thecolonies,"source=promise,inventory,attribute_name=Local Groups"
+179       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.file-nr],0,1312	0	9223372036854775807,"source=promise,inventory,attribute_name=Sysctl fs.file-nr"
+189       1679723023,3,default,inventory_kernel_settings_sysctl_current,inventory_sysctl[fs.dentry-state],0,224058	206379	45	0	98446	0,"source=promise,inventory,attribute_name=Sysctl fs.dentry-state"
+82        1679723023,3,default,sys,date,0,Sat Mar 25 05:42:12 2023,"time_based,source=agent"
+1191      1679723023,3,default,cfe_internal_enterprise_mission_portal_apache,data,15,"{
+  ""classes"": {
+    ""127_0_0_1"": true,
+    ""172_31_6_65"": true,
+    ""4_cpus"": true,
+    ""64_bit"": true,
+    ""Day25"": true,
+    ""GMT_Day25"": true,
+    ""GMT_Hr05"": true,
+    ""GMT_Hr05_Q3"": true,
+    ""GMT_Hr5"": true,
+    ""GMT_Lcycle_1"": true,
+    ""GMT_March"": true,
+    ""GMT_Min40_45"": true,
+    ""GMT_Min42"": true,
+    ""GMT_Night"": true,
+    ""GMT_Q3"": true,
+    ""GMT_Saturday"": true,
+    ""GMT_Yr2023"": true,
+    ""Hr05"": true,
+    ""Hr05_Q3"": true,
+    ""Hr5"": true,
+    ""Lcycle_1"": true,
+    ""March"": true,
+    ""Min40_45"": true,
+    ""Min42"": true,
+    ""NO_non_root_local_user_using_uid_zero"": true,
+    ""Night"": true,
+    ""PK_SHA_f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3"": true,
+    ""Q3"": true,
+    ""Saturday"": true,
+    ""Yr2023"": true,
+    ""_apt_password_invalid_hash"": true,
+    ""_chrony_password_invalid_hash"": true,
+    ""_control_agent_environment_vars_validated"": true,
+    ""_have_bin_env"": true,
+    ""_have_bin_journalctl"": true,
+    ""_have_bin_systemctl"": true,
+    ""_have_bin_timedatectl"": true,",source=promise
+71        1679723023,3,default,mon,dev_cpu,0,6.06,"monitoring,source=environment"
+80        1679723023,3,default,mon,dev_cfengine_out,0,5.38,"monitoring,source=environment"
+83        1679723023,3,default,sys,cdate,0,Sat_Mar_25_05_42_12_2023,"time_based,source=agent"
+78        1679723023,3,default,mon,av_mem_free,0,7802.21,"monitoring,source=environment"
+80        1679723023,3,default,mon,av_mem_cached,0,2624.69,"monitoring,source=environment"
+75        1679723023,3,default,mon,av_syslog,0,740.60,"monitoring,source=environment"
+77        1679723023,3,default,mon,av_rootprocs,0,79.80,"monitoring,source=environment"
+72        1679723023,3,default,mon,dev_cpu0,0,7.87,"monitoring,source=environment"
+82        1679723023,3,default,mon,dev_io_writtendata,0,0.42,"monitoring,source=environment"
+78        1679723023,3,default,mon,dev_io_writes,0,21.98,"monitoring,source=environment"
+80        1679723023,3,default,mon,dev_mem_cached,0,603.31,"monitoring,source=environment"
+75        1679723023,3,default,mon,dev_loadavg,0,0.36,"monitoring,source=environment"
+76        1679723023,3,default,mon,dev_io_reads,0,0.04,"monitoring,source=environment"
+72        1679723023,3,default,mon,dev_cpu2,0,7.23,"monitoring,source=environment"
+73        1679723023,3,default,mon,dev_cpu1,0,15.42,"monitoring,source=environment"
+83        1679723023,3,default,mon,dev_entropy_avail,0,200.73,"monitoring,source=environment"
+72        1679723023,3,default,mon,dev_cpu3,0,4.70,"monitoring,source=environment"
+102       1679723023,3,default,host_info_report_cfengine,last_agent_run,0,2023-03-25 05:38:10 UTC,source=promise
+73        1679723023,3,default,mon,value_cpu,0,1.17,"monitoring,source=environment"
+91        1679723023,3,default,cfe_autorun_inventory_loadaverage,value,0,0.07,"source=promise,report"
+74        1679723023,3,default,mon,value_cpu1,0,0.88,"monitoring,source=environment"
+74        1679723023,3,default,mon,value_cpu0,0,1.35,"monitoring,source=environment"
+561       1679723023,3,default,inventory_passwd_users_locked,users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-network"",""systemd-resolve"",""messagebus"",""systemd-timesync"",""syslog"",""_apt"",""tss"",""uuidd"",""tcpdump"",""sshd"",""pollinate"",""landscape"",""ec2-instance-connect"",""_chrony"",""ubuntu"",""lxd"",""cfapache"",""cfpostgres"",""script_monkey"",""fwupd-refresh"",""anakinskywalker""}","source=promise,noreport"
+80        1679723023,3,default,churn_local_users,user[leiaorgana],0,present,source=promise
+81        1679723023,3,default,churn_local_users,user[jarjarbinks],0,present,source=promise
+83        1679723023,3,nickanderson,_inventory_sudoers,users,3," {""ubuntu""}",source=promise
+82        1679723023,3,default,churn_local_users,user[obiwankenobi],0,present,source=promise
+74        1679723023,3,default,mon,value_cpu2,0,1.36,"monitoring,source=environment"
+82        1679723023,3,default,mon,value_mem_free,0,11146.01,"monitoring,source=environment"
+83        1679723023,3,default,mon,value_mem_cached,0,3749.55,"monitoring,source=environment"
+79        1679723023,3,default,mon,value_syslog,0,1058.00,"monitoring,source=environment"
+81        1679723023,3,default,mon,value_rootprocs,0,114.00,"monitoring,source=environment"
+77        1679723023,3,default,mon,value_loadavg,0,0.07,"monitoring,source=environment"
+85        1679723023,3,default,mon,value_entropy_avail,0,191.00,"monitoring,source=environment"
+74        1679723023,3,default,mon,value_cpu3,0,1.11,"monitoring,source=environment"
+84        1679723023,3,default,mon,value_io_writtendata,0,0.42,"monitoring,source=environment"
+80        1679723023,3,default,mon,value_io_writes,0,22.00,"monitoring,source=environment"
+130       1679723023,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/diff/classes.diff],1,13747,source=promise
+1262      1679723023,3,default,postgresql_conf_recommendations,mem_info_data,15,"{
+  ""Active"": [
+    """",
+    ""1292824"",
+    ""kB""
+  ],
+  ""Active(anon)"": [
+    """",
+    ""260732"",
+    ""kB""
+  ],
+  ""Active(file)"": [
+    """",
+    ""1032092"",
+    ""kB""
+  ],
+  ""AnonHugePages"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""AnonPages"": [
+    """",
+    ""421924"",
+    ""kB""
+  ],
+  ""Bounce"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""Buffers"": [
+    """",
+    ""106936"",
+    ""kB""
+  ],
+  ""Cached"": [
+    """",
+    ""3839624"",
+    ""kB""
+  ],
+  ""CommitLimit"": [
+    """",
+    ""8098396"",
+    ""kB""
+  ],
+  ""Committed_AS"": [
+    """",
+    ""5713500"",
+    ""kB""
+  ],
+  ""DirectMap1G"": [
+    """",
+    ""7340032"",
+    ""kB""
+  ],
+  ""DirectMap2M"": [
+    """",
+    ""9048064"",
+    ""kB""
+  ],
+  ""DirectMap4k"": [
+    """",
+    ""196520"",
+    ""kB""
+  ],
+  ""Dirty"": [
+    """",
+    ""548"",
+    ""kB""
+  ],
+  ""FileHugePages"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""FilePmdMapped"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""HardwareCorrupted"": [
+    """",
+    ""0"",
+    ""kB""
+  ],
+  ""HugePages_Free"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Rsvd"": [
+    """",
+    ""0""
+  ],
+  ""HugePages_Surp"": [
+    """",
+   ",source=promise
+133       1679723023,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/diff/variables.diff],1,412353,source=promise
+137       1679723023,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/diff/execution_log.diff],1,161370,source=promise
+575       1679723023,3,default,inventory_passwd_users_password_empty,local_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-network"",""systemd-resolve"",""messagebus"",""systemd-timesync"",""syslog"",""_apt"",""tss"",""uuidd"",""tcpdump"",""sshd"",""pollinate"",""landscape"",""ec2-instance-connect"",""_chrony"",""ubuntu"",""lxd"",""cfapache"",""cfpostgres"",""script_monkey"",""fwupd-refresh"",""anakinskywalker""}","source=promise,noreport"
+113       1679723023,1,nickanderson_parsed,_etc_group,local_group[thecolonies][users],3," {""""}","source=promise,noreport"
+106       1679723023,1,nickanderson_parsed,_etc_group,local_group[thecolonies][gid],0,1030,"source=promise,noreport"
+111       1679723023,1,nickanderson_parsed,_etc_group,local_group[wildspace][users],3," {""""}","source=promise,noreport"
+104       1679723023,1,nickanderson_parsed,_etc_group,local_group[wildspace][gid],0,1031,"source=promise,noreport"
+141       1679723023,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/classes.cache],1,21910,source=promise
+104       1679723023,3,default,sys,uptime,1,1235,"inventory,time_based,source=agent,attribute_name=Uptime minutes"
+105       1679723023,3,default,cfe_internal_cleanup_agent_reports,total_report_size,2,2354486.000000,source=promise
+74        1679723023,3,default,churn_local_users,user[c3po],0,present,source=promise
+78        1679723023,3,default,churn_local_users,user[bobafett],0,present,source=promise
+220       1679723023,3,default,cfe_internal_cleanup_agent_reports,tmpmap,3," {""13747"",""20847"",""161370"",""1078"",""0"",""0"",""21910"",""187116"",""0"",""0"",""412353"",""0"",""14130"",""0"",""1521935"",""0""}",source=promise
+145       1679723023,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/variables.cache],1,1521935,source=promise
+148       1679723023,3,default,cfe_internal_cleanup_agent_reports,reports_size[/var/cfengine/state/previous_state/execution_log.cache],1,187116,source=promise
+90        1679723023,3,default,testing_generic_report,timestamp,0,2023-03-25T05:42:12,source=promise
+71        1679723023,3,default,sys,systime,1,1679722932,"time_based,source=agent"
+105       1679723023,2,default,parsed_etc_passwd_shadow,home_directory[r2d2],0,/home/r2d2,"source=promise,noreport"
+119       1679723023,2,default,parsed_etc_passwd_shadow,home_directory[jarjarbinks],0,/home/jarjarbinks,"source=promise,noreport"
+139       1679723023,2,nickanderson_inventory,_etc_groups,inventory[jarjarbinks],0,jarjarbinks,"source=promise,inventory,attribute_name=Local Groups"
+103       1679723023,2,default,parsed_etc_passwd_shadow,home_directory[rey],0,/home/rey,"source=promise,noreport"
+111       1679723023,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[rey],0,19441,"source=promise,noreport"
+99        1679723023,2,default,parsed_etc_passwd_shadow,encrypted_password[rey],0,x,"source=promise,noreport"
+100       1679723023,2,default,parsed_etc_passwd_shadow,encrypted_password[r2d2],0,x,"source=promise,noreport"
+112       1679723023,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[r2d2],0,19441,"source=promise,noreport"
+119       1679723023,2,default,parsed_etc_passwd_shadow,epoch_last_password_change[jarjarbinks],0,19441,"source=promise,noreport"
+138       1679723023,2,default,inventory_passwd_users_all,inventory[jarjarbinks],0,jarjarbinks,"source=promise,inventory,attribute_name=Local users"
+99        1679723023,2,nickanderson_parsed,_etc_group,local_group[r2d2][gid],0,1024,"source=promise,noreport"
+113       1679723023,2,nickanderson_parsed,_etc_group,local_group[jarjarbinks][users],3," {""""}","source=promise,noreport"
+98        1679723023,2,nickanderson_parsed,_etc_group,local_group[rey][gid],0,1023,"source=promise,noreport"
+106       1679723023,2,nickanderson_parsed,_etc_group,local_group[r2d2][users],3," {""""}","source=promise,noreport"
+106       1679723023,2,nickanderson_parsed,_etc_group,local_group[jarjarbinks][gid],0,1026,"source=promise,noreport"
+124       1679723023,2,default,inventory_passwd_users_all,inventory[r2d2],0,r2d2,"source=promise,inventory,attribute_name=Local users"
+125       1679723023,2,nickanderson_inventory,_etc_groups,inventory[r2d2],0,r2d2,"source=promise,inventory,attribute_name=Local Groups"
+122       1679723023,2,default,inventory_passwd_users_all,inventory[rey],0,rey,"source=promise,inventory,attribute_name=Local users"
+123       1679723023,2,nickanderson_inventory,_etc_groups,inventory[rey],0,rey,"source=promise,inventory,attribute_name=Local Groups"
+103       1679723023,2,default,parsed_etc_passwd_shadow,_passwd_passwd[jarjarbinks],0,x,"source=promise,noreport"
+101       1679723023,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[rey],0,UNKNOWN,source=promise
+95        1679723023,2,default,parsed_etc_passwd_shadow,_passwd_passwd[rey],0,x,"source=promise,noreport"
+96        1679723023,2,default,parsed_etc_passwd_shadow,_passwd_passwd[r2d2],0,x,"source=promise,noreport"
+102       1679723023,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[r2d2],0,UNKNOWN,source=promise
+113       1679723023,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][r2d2],0,UNKNOWN,source=promise
+120       1679723023,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][jarjarbinks],0,UNKNOWN,source=promise
+109       1679723023,2,default,inventory_local_user_pw_hashing_algo,_hashing_algo[jarjarbinks],0,UNKNOWN,source=promise
+112       1679723023,2,default,inventory_local_user_pw_hashing_algo,_hash_in_use_by[UNKNOWN][rey],0,UNKNOWN,source=promise
+111       1679723023,2,default,parsed_etc_passwd_shadow,account_expiration_date[jarjarbinks],0,,"source=promise,noreport"
+88        1679723023,2,default,parsed_etc_passwd_shadow,comment[r2d2],0,,"source=promise,noreport"
+95        1679723023,2,default,parsed_etc_passwd_shadow,comment[jarjarbinks],0,,"source=promise,noreport"
+107       1679723023,2,default,parsed_etc_passwd_shadow,encrypted_password[jarjarbinks],0,x,"source=promise,noreport"
+87        1679723023,2,default,parsed_etc_passwd_shadow,comment[rey],0,,"source=promise,noreport"
+113       1679723023,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[rey],0,rey,"source=promise,noreport"
+103       1679723023,2,default,parsed_etc_passwd_shadow,account_expiration_date[rey],0,,"source=promise,noreport"
+104       1679723023,2,default,parsed_etc_passwd_shadow,account_expiration_date[r2d2],0,,"source=promise,noreport"
+115       1679723023,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[r2d2],0,r2d2,"source=promise,noreport"
+129       1679723023,2,default,parsed_etc_passwd_shadow,all_local_users_canonified_map[jarjarbinks],0,jarjarbinks,"source=promise,noreport"
+105       1679723023,2,nickanderson_parsed,_etc_group,local_group[rey][users],3," {""""}","source=promise,noreport"
+111       1679723023,3,northerntech_security_hardening,tmp_file_age,_old_file_mtime_threshold,0,1679118132,source=promise
+84        1679723023,3,default,cfe_autorun_inventory_timezone,_now,1,1679722932,source=promise
+550       1679723023,3,nickanderson,_inventory_sudoers_main,_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-network"",""systemd-resolve"",""messagebus"",""systemd-timesync"",""syslog"",""_apt"",""tss"",""uuidd"",""tcpdump"",""sshd"",""pollinate"",""landscape"",""ec2-instance-connect"",""_chrony"",""ubuntu"",""lxd"",""cfapache"",""cfpostgres"",""script_monkey"",""fwupd-refresh"",""anakinskywalker""}",source=promise
+488       1679723023,3,default,inventory_passwd_users_locked,_unlocked_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-network"",""systemd-resolve"",""messagebus"",""systemd-timesync"",""syslog"",""_apt"",""tss"",""uuidd"",""tcpdump"",""sshd"",""pollinate"",""landscape"",""_chrony"",""script_monkey"",""fwupd-refresh"",""anakinskywalker""}",source=promise
+92        1679723023,2,default,parsed_etc_passwd_shadow,shell[rey],0,/bin/sh,"source=promise,noreport"
+104       1679723023,2,default,parsed_etc_passwd_shadow,password_warning_period[rey],0,7,"source=promise,noreport"
+105       1679723023,2,default,parsed_etc_passwd_shadow,password_warning_period[r2d2],0,7,"source=promise,noreport"
+93        1679723023,2,default,parsed_etc_passwd_shadow,shell[r2d2],0,/bin/sh,"source=promise,noreport"
+100       1679723023,2,default,parsed_etc_passwd_shadow,shell[jarjarbinks],0,/bin/sh,"source=promise,noreport"
+566       1679723023,3,default,parsed_etc_passwd_shadow,all_local_users,3," {""root"",""daemon"",""bin"",""sys"",""sync"",""games"",""man"",""lp"",""mail"",""news"",""uucp"",""proxy"",""www-data"",""backup"",""list"",""irc"",""gnats"",""nobody"",""systemd-network"",""systemd-resolve"",""messagebus"",""systemd-timesync"",""syslog"",""_apt"",""tss"",""uuidd"",""tcpdump"",""sshd"",""pollinate"",""landscape"",""ec2-instance-connect"",""_chrony"",""ubuntu"",""lxd"",""cfapache"",""cfpostgres"",""script_monkey"",""fwupd-refresh"",""anakinskywalker""}","source=promise,noreport"
+77        1679723023,3,default,mon,av_io_writes,0,15.40,"monitoring,source=environment"
+82        1679723023,3,default,mon,av_entropy_avail,0,133.70,"monitoring,source=environment"
+74        1679723023,3,default,mon,av_loadavg,0,0.05,"monitoring,source=environment"
+81        1679723023,3,default,mon,av_io_writtendata,0,0.29,"monitoring,source=environment"
+71        1679723023,3,default,mon,av_cpu3,0,0.78,"monitoring,source=environment"
+71        1679723023,3,default,mon,av_cpu0,0,0.94,"monitoring,source=environment"
+70        1679723023,3,default,mon,av_cpu,0,0.82,"monitoring,source=environment"
+71        1679723023,3,default,mon,av_cpu2,0,0.95,"monitoring,source=environment"
+71        1679723023,3,default,mon,av_cpu1,0,0.62,"monitoring,source=environment"
+157       1679723023,2,default,inventory_passwd_users_locked,notlocked[jarjarbinks],0,jarjarbinks,"source=promise,inventory,attribute_name=Local user account unlocked"
+97        1679723023,2,default,parsed_etc_passwd_shadow,min_password_age[rey],0,0,"source=promise,noreport"
+141       1679723023,2,default,inventory_passwd_users_locked,notlocked[rey],0,rey,"source=promise,inventory,attribute_name=Local user account unlocked"
+143       1679723023,2,default,inventory_passwd_users_locked,notlocked[r2d2],0,r2d2,"source=promise,inventory,attribute_name=Local user account unlocked"
+98        1679723023,2,default,parsed_etc_passwd_shadow,min_password_age[r2d2],0,0,"source=promise,noreport"
+102       1679723023,2,default,parsed_etc_passwd_shadow,max_password_age[r2d2],0,99999,"source=promise,noreport"
+109       1679723023,2,default,parsed_etc_passwd_shadow,max_password_age[jarjarbinks],0,99999,"source=promise,noreport"
+105       1679723023,2,default,parsed_etc_passwd_shadow,min_password_age[jarjarbinks],0,0,"source=promise,noreport"
+101       1679723023,2,default,parsed_etc_passwd_shadow,max_password_age[rey],0,99999,"source=promise,noreport"
+108       1679723023,2,default,parsed_etc_passwd_shadow,numeric_group_id[jarjarbinks],0,1026,"source=promise,noreport"
+107       1679723023,2,default,parsed_etc_passwd_shadow,password_inactivity_period[r2d2],0,,"source=promise,noreport"
+114       1679723023,2,default,parsed_etc_passwd_shadow,password_inactivity_period[jarjarbinks],0,,"source=promise,noreport"
+112       1679723023,2,default,parsed_etc_passwd_shadow,password_warning_period[jarjarbinks],0,7,"source=promise,noreport"
+106       1679723023,2,default,parsed_etc_passwd_shadow,password_inactivity_period[rey],0,,"source=promise,noreport"
+99        1679723023,2,default,parsed_etc_passwd_shadow,numeric_user_id[rey],0,1023,"source=promise,noreport"
+100       1679723023,2,default,parsed_etc_passwd_shadow,numeric_group_id[rey],0,1023,"source=promise,noreport"
+101       1679723023,2,default,parsed_etc_passwd_shadow,numeric_group_id[r2d2],0,1024,"source=promise,noreport"
+100       1679723023,2,default,parsed_etc_passwd_shadow,numeric_user_id[r2d2],0,1024,"source=promise,noreport"
+107       1679723023,2,default,parsed_etc_passwd_shadow,numeric_user_id[jarjarbinks],0,1022,"source=promise,noreport"
+3         LSD
+119       1679723023,3,43,SHA=8b6026383587874304eb95eed145b002c8bf591cbb3acb1598b97e9a9484a8fa,172.31.45.136,59.991954,1679722999
+119       1679723023,3,45,SHA=7119ca477f28b65baee37d8de62629d4c2c98a7a5cbe1455ada86f1f7ecb0608,172.31.3.181,319.552928,1679722975
+120       1679723023,3,45,SHA=8b6026383587874304eb95eed145b002c8bf591cbb3acb1598b97e9a9484a8fa,172.31.45.136,298.495979,1679723009
+117       1679723023,3,45,SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3,172.31.6.65,45.751291,1679722999
+117       1679723023,3,43,SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3,172.31.6.65,45.751291,1679722999
+120       1679723023,3,45,SHA=25378825585c9d7b6ccdd73db2ffd6cce72601b72d0e5efe55b1bdb6bc7e8b07,172.31.45.177,288.283583,1679722885
+119       1679723023,3,43,SHA=25378825585c9d7b6ccdd73db2ffd6cce72601b72d0e5efe55b1bdb6bc7e8b07,172.31.45.177,59.991954,1679722999
+119       1679723023,3,43,SHA=5602656702d53c57d14701cf8e0e269623edabc89a0dac4bba604d833900b4ea,172.31.33.242,60.391954,1679723000
+118       1679723023,3,43,SHA=7119ca477f28b65baee37d8de62629d4c2c98a7a5cbe1455ada86f1f7ecb0608,172.31.3.181,59.991955,1679722999
+120       1679723023,3,45,SHA=5602656702d53c57d14701cf8e0e269623edabc89a0dac4bba604d833900b4ea,172.31.33.242,297.527513,1679722923
+3         ELD
+389       1679723023,3,9a8973b08ed4754fb0adc4bcd46f7bb66be874f7bbf10a96fa3c108c32cfaaa0,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers_main,methods,Inventory Sudoers,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'[1],,[],[],25,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+1190      1679723023,1,a9995034cffea1c33c4ae12dafe4adf18dd21e99e01c137e64074ca21176e348,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722932,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722932'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722932/lastseen.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722932/lastseen.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722932/lastseen.cache' from 'localhost:/var/cfengine/state/previous_state/./lastseen.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+383       1679723023,1,8f889933d10bb688c85e85dce773c282b796ebe7ebe2528f99dba8fe2cc4d5bb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Created user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+531       1679723023,1,78043cd7ce2be984dcf12d348c428461845ecd4fc702dc7a30f7a7b85727de00,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,wildspace,/default/churn_local_groups/groups/'wildspace'[7],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'wildspace' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+374       1679723023,1,7ccdf5e8cb0651ffd66f8521ac3add259f2c2cf1ac0e47af83ff782d612ba250,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Created user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+335       1679723023,3,b52cdb7c7447c8cf6201a3bd28ed50d37e9d7b6e5d7cc4192a723e0194d57b50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+692       1679723023,3,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=87ba1538f3a6b1694ad5cdbbe05e55cf19e6c04b7a2e5f242918b02e0176a496)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+380       1679723023,1,e887e0088ce4bdd3d8816948862add187791335771b43d31dd2ff625229bc5b5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Created user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+438       1679723023,3,d063f04e139c08041cb1854b488b71591fdfcb54b11b2d93408679f9b530d494,/var/cfengine/inputs/services/autorun/disable_prelinking.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,disable_prelinking,files,/etc/default/prelink,/default/autorun/methods/'autorun'/default/disable_prelinking/files/'/etc/default/prelink'[1],,"[""CFE-3795"",""CCE-27078-5""]",[],33,SHA=07f04e3cb8c488ec4dca8ae0b09b111c1b1eb9e61f2178180044c06137348de5
+320       1679723023,3,be4dad8170ea4b9bfb1cab357543fb8525598c090645cfb8a96fe2a0fa23ebc1,/var/cfengine/inputs/lib/autorun.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,autorun,methods,autorun,/default/autorun/methods/'autorun'[2],,"[""CFE-3795""]",[],19,SHA=95ec929fa45cf0c50badb41d016201d464beaf57344c80f95dbc055e647dc071
+363       1679723023,1,cac5f7ab2dec7f87bfe1753d37690ac52aa07a2805e7a074f6822b9e701e47ed,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Created user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+355       1679723023,3,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],[],10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+1190      1679723023,2,a05b495e24505405ee280adeed599e901ca3963ff15c2f58f9070304df4a6d7d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722598,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722598'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722598/lastseen.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722598/lastseen.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722598/lastseen.cache' from 'localhost:/var/cfengine/state/previous_state/./lastseen.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722598/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722598/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722598/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722598/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+531       1679723023,2,a482cc3792e95022febda13f4f85899b88caf20ee8ac450e954c091b7ee758d6,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,wildspace,/default/churn_local_groups/groups/'wildspace'[7],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'wildspace' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+337       1679723023,2,369729ef797e65207cc29c1cf07f54d4a76677334810dd2800afa496927bb5e0,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+383       1679723023,2,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Removed user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+1452      1679723023,2,2f71922b4823593cede1993f3ecb41e14d78d54a61cf9ddf8b259fcd9808ac5d,/var/cfengine/inputs/services/autorun/disable_prelinking.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,disable_prelinking,commands,/usr/sbin/prelink -ua,/default/autorun/methods/'autorun'/default/disable_prelinking/commands/'/usr/sbin/prelink -ua'[1],,"[""CFE-3795""]","[""Executing 'no timeout' ... '/usr/sbin/prelink -ua'"",""Q: \""...in/prelink -ua\"": prelink: /usr/lib/snapd/snap-seccomp: Could not parse `lookup 0x00007ffc8c1f9000 0xfffffffffff9a830 -> 0x00007ffc8c1f9000 0x0000000000000c10 /0 __vdso_clock_gettime'\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/cat: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin..."",""Q: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/run-init: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/nfsmount: Using /lib/klibc-K8e6DOmVI9JpyGMLR7qNe5iZeBk.so, not /lib64/ld-linux-x86-64.so.2 as dynamic linker\nQ: \""...in/prelink -ua\"": prelink: /usr/lib/klibc/bin/false: Using /lib/klibc..."",""Last 35 quoted lines were generated by promiser '/usr/sbin/prelink -ua'"",""Completed execution of '/usr/sbin/prelink -ua'""]",43,SHA=07f04e3cb8c488ec4dca8ae0b09b111c1b1eb9e61f2178180044c06137348de5
+344       1679723023,2,ad252c73d4c3ae487396792116aed12668e52a7ba42d02ddf6b64cf49dcd29cb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+386       1679723023,1,4e266614f38ae754839a35e7fc574b6b752029e43ed511fc912b5e826bb3b01b,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Created user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+337       1679723023,3,6a6bb64a675dbcee70e69fdfe4beeffe9409e4ef2b1e1262f0912e1575f87d49,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,r2d2,/default/churn_local_users/users/'r2d2'[14],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+652       1679723023,1,3b037a17d0c53360bbee7d7b81b0c83ad7c1ab9915205754bd0afdedf8cb648c,/var/cfengine/inputs/services/inventory-sudoers/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,nickanderson,_inventory_sudoers,files,/var/cfengine/state/_users_with_sudo.module.cache.d/.*,/nickanderson/_inventory_sudoers_main/methods/'Inventory Sudoers'/nickanderson/_inventory_sudoers/files/'/var/cfengine/state/_users_with_sudo.module.cache.d/.:'[1],nickanderson__inventory_sudoers_purge_inventory_sudoers_cache,[],"[""Deleted file '/var/cfengine/state/_users_with_sudo.module.cache.d/root'""]",66,SHA=3b6dd9f63ef828a410301b49f1fcf3c0e30355222a9d524e215638a0404c7021
+352       1679723023,2,b1cb3a2db6ecbc8395b7ee2ef55bc2bd65f99db85212672546380f8e3969cfce,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+348       1679723023,2,fd1dfb412e86652816cf68575603d66a416220ac43a7a7b1fc3bce38010012fd,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,99,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],[],10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+3         PRD
+56        DBReportCollectAll,0.069284,0.350268,0.352335,1679722999
+60        Packing reports: delta,0.038988,0.152010,0.143780,1679722999
+3         EXS
+16        f,316,1679723023
+3         CNG
+66        1679723014,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1679723014,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1679723014,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+182       1679723014,/etc/group,change_management_files_watch_files_report_diffs,"-,65,jarjarbinks:x:1026:-,66,rey:x:1023:-,67,r2d2:x:1024:+,66,thecolonies:x:1030:+,67,wildspace:x:1031:"
+
+213       1679723014,/etc/passwd,change_management_files_watch_files_report_diffs,"-,39,jarjarbinks:x:1022:1026::/home/jarjarbinks:/bin/sh-,40,rey:x:1023:1023::/home/rey:/bin/sh-,41,r2d2:x:1024:1024::/home/r2d2:/bin/sh"
+
+3         MOM
+15        M:entropy_avail
+35        1508 71.0000 89.8100 62.7000 0.0000
+12        M:mem_cached
+40        1508 3749.7227 3412.2115 941.2736 0.0000
+10        M:mem_free
+40        1508 11060.1562 10082.7718 0.0000 0.0000
+11        M:mem_total
+40        1508 15817.1836 14393.6371 0.0000 0.0000
+16        M:io_writtendata
+32        1508 0.1338 0.1810 0.1574 0.0000
+11        M:io_writes
+33        1508 8.0000 10.2200 7.4000 0.0000
+13        M:postgres_in
+32        1508 1.0000 0.9100 0.3000 0.0000
+6         M:cpu3
+32        1508 1.2679 1.1206 0.4911 0.0000
+6         M:cpu2
+32        1508 8.7583 6.4161 6.5619 0.0000
+6         M:cpu1
+32        1508 5.4036 3.9676 4.0252 0.0000
+6         M:cpu0
+35        1508 24.1384 17.1803 19.4152 0.0000
+5         M:cpu
+32        1508 9.8926 7.1715 7.6079 0.0000
+8         M:syslog
+38        1508 167.0000 339.0800 573.6000 0.0000
+9         M:ssh_out
+32        1508 5.0000 3.5000 4.1833 0.0000
+8         M:ssh_in
+32        1508 2.0000 1.8200 0.6000 0.0000
+8         M:www_in
+32        1508 1.0000 0.9100 0.3000 0.0000
+14        M:cfengine_out
+32        1508 6.0000 5.2500 2.5000 0.0000
+13        M:cfengine_in
+32        1508 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1508 0.6074 0.4401 0.4679 0.0000
+10        M:diskfree
+35        1508 50.0000 45.5000 15.0000 0.0000
+12        M:otherprocs
+34        1508 26.0000 23.6600 7.8000 0.0000
+11        M:rootprocs
+37        1508 117.0000 105.8400 37.2000 0.0000
+7         M:users
+32        1508 8.0000 7.2800 2.4000 0.0000
+3         MOY
+15        M:entropy_avail
+36        155 323.0000 297.6050 79.9482 0.0000
+12        M:mem_cached
+39        155 2526.1133 2298.4965 696.2697 0.0000
+16        M:io_writtendata
+31        155 0.2939 0.2241 0.2132 0.0000
+11        M:io_writes
+34        155 16.0000 12.2500 11.5973 0.0000
+13        M:postgres_in
+31        155 1.0000 0.9100 0.3000 0.0000
+6         M:cpu3
+31        155 9.2585 6.6064 9.9586 0.0000
+6         M:cpu2
+31        155 1.2023 0.9735 0.7040 0.0000
+6         M:cpu1
+33        155 11.0003 7.8207 12.0038 0.0000
+6         M:cpu0
+31        155 5.6586 4.0823 5.7035 0.0000
+5         M:cpu
+31        155 8.5900 6.1378 9.1662 0.0000
+8         M:syslog
+38        155 1068.5000 778.2950 812.0638 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+8         M:www_in
+31        155 1.0000 0.9100 0.3000 0.0000
+14        M:cfengine_out
+31        155 5.0000 4.5500 1.5000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.2126 0.1705 0.1909 0.0000
+10        M:diskfree
+34        155 60.5000 55.0550 18.2248 0.0000
+12        M:otherprocs
+33        155 26.0000 23.6600 7.8000 0.0000
+11        M:rootprocs
+36        155 113.5000 103.3900 33.7037 0.0000
+7         M:users
+31        155 8.0000 7.2800 2.4000 0.0000
+3         PLG
+851       1679723014,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1679723014,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1679723014,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=87ba1538f3a6b1694ad5cdbbe05e55cf19e6c04b7a2e5f242918b02e0176a496)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+669       1679723017,1eb9cc521bf98bbc3894d8b3bdae9742a872bb858aa2f260a224a6a4efb99570,/var/cfengine/inputs/cfe_internal/enterprise/CFE_hub_specific.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,cfe_internal_refresh_events_table,commands,/var/cfengine/httpd/php/bin/php,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'Enterprise Maintenance'/default/cfe_internal_enterprise_maintenance/methods/'Enterprise Maintenance'/default/cfe_internal_refresh_events_table/commands/'/var/cfengine/httpd/php/bin/php'[1],mpf_fresh_events_table,[],[],685,SHA=9a0000a41d340a8b74e3a8da98d2f821fdebbb384b8c2848150c1a1b8a94ed39
+
+675       1679723017,5406fc43452ea02ffb0eb1619ea91c39ad8efbdd0e1974948bb007f5e74cc766,/var/cfengine/inputs/cfe_internal/enterprise/CFE_hub_specific.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,cfe_internal_refresh_inventory_view,commands,/var/cfengine/httpd/php/bin/php,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'Enterprise Maintenance'/default/cfe_internal_enterprise_maintenance/methods/'Enterprise Maintenance'/default/cfe_internal_refresh_inventory_view/commands/'/var/cfengine/httpd/php/bin/php'[1],mpf_fresh_inventory_view,[],[],607,SHA=9a0000a41d340a8b74e3a8da98d2f821fdebbb384b8c2848150c1a1b8a94ed39
+
+691       1679723017,81a040733abe3dee0293e79025fb6c686d4696601ce624b6615a37ad199089b9,/var/cfengine/inputs/cfe_internal/enterprise/CFE_hub_specific.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,cfe_internal_update_health_failures,commands,/var/cfengine/httpd/php/bin/php,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'Enterprise Maintenance'/default/cfe_internal_enterprise_maintenance/methods/'Enterprise Maintenance'/default/cfe_internal_update_health_failures/commands/'/var/cfengine/httpd/php/bin/php'[1],mpf_update_health_failures,"[""ENT-6228""]",[],709,SHA=9a0000a41d340a8b74e3a8da98d2f821fdebbb384b8c2848150c1a1b8a94ed39
+
+383       1679723021,8f889933d10bb688c85e85dce773c282b796ebe7ebe2528f99dba8fe2cc4d5bb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Created user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+374       1679723021,7ccdf5e8cb0651ffd66f8521ac3add259f2c2cf1ac0e47af83ff782d612ba250,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,bobafett,/default/churn_local_users/users/'bobafett'[4],,[],"[""Created user 'bobafett'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+386       1679723021,4e266614f38ae754839a35e7fc574b6b752029e43ed511fc912b5e826bb3b01b,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Created user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+380       1679723021,e887e0088ce4bdd3d8816948862add187791335771b43d31dd2ff625229bc5b5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Created user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+363       1679723021,cac5f7ab2dec7f87bfe1753d37690ac52aa07a2805e7a074f6822b9e701e47ed,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Created user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+531       1679723021,78043cd7ce2be984dcf12d348c428461845ecd4fc702dc7a30f7a7b85727de00,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,wildspace,/default/churn_local_groups/groups/'wildspace'[7],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'wildspace' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+1190      1679723022,a9995034cffea1c33c4ae12dafe4adf18dd21e99e01c137e64074ca21176e348,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679722932,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679722932'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679722932/lastseen.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722932/lastseen.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722932/lastseen.cache' from 'localhost:/var/cfengine/state/previous_state/./lastseen.cache'"",""Copied file '/var/cfengine/state/previous_state/./classes.cache' to '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679722932/classes.cache' from 'localhost:/var/cfengine/state/previous_state/./classes.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+615       1679723022,75728f727d15825be8c78b3a3203493eb28bac377b66af5220caf70ca16d738d,/var/cfengine/inputs/services/cfbs/modules/etc-issue-access/etc-issue-access.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,etc_issue_access,files,/etc/issue,/default/etc_issue_access/files/'/etc/issue'[1],,"[""CCE-83717-9"",""CCE-83707-0"",""CCE-83347-5""]","[""File '/etc/issue' is not owned by any group in group database  (gid = 644)"",""Group of '/etc/issue' was 644, set to 0"",""Regular file '/etc/issue' had permissions 1640, changed it to 0644""]",11,SHA=8d066f55630fc3661161224af28ffcb10b68858eb9d799ac7171525ab76f8ad5
+
+472       1679723022,9b65e06252489e0bdb3c85552f759ff9ab6eb34e3ef670c66c8882b87c81310e,/var/cfengine/inputs/services/cfbs/modules/etc-issue-content/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,etc_issue_content,main,files,/etc/issue,/etc_issue_content/main/files/'/etc/issue'[1],,[],"[""Group of '/etc/issue' was 0, set to 644"",""Regular file '/etc/issue' had permissions 0644, changed it to 1640""]",36,SHA=c8af5b75411a7f4ab7f0b21b9c6b8c520f00750cae2867072fc370b2c4466214
+
+# send QUERY complete successful

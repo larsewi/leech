@@ -1,0 +1,93 @@
+# delta from 1679723538 to 1679723599 at 1679723599
+22        CFR: 0 1679723598 3407
+3         PRD
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.036569,0.382188,0.378670,1679723595
+60        Packing reports: delta,0.035194,0.123865,0.123358,1679723539
+3         EXS
+16        f,294,1679723311
+3         MOM
+15        M:entropy_avail
+41        1510 3042.0000 2129.4000 2545.1198 0.0000
+12        M:mem_cached
+41        1510 1833.5898 1283.5129 1534.0913 0.0000
+10        M:mem_free
+39        1510 12636.8438 8845.7906 0.0000 0.0000
+11        M:mem_total
+40        1510 14875.9336 10413.1535 0.0000 0.0000
+16        M:io_writtendata
+32        1510 0.0527 0.0369 0.0441 0.0000
+11        M:io_writes
+32        1510 2.0000 1.4000 1.6733 0.0000
+6         M:cpu3
+32        1510 0.1265 0.0885 0.1058 0.0000
+6         M:cpu2
+32        1510 0.2330 0.1631 0.1949 0.0000
+6         M:cpu1
+32        1510 0.0599 0.0419 0.0501 0.0000
+6         M:cpu0
+32        1510 0.2463 0.1724 0.2061 0.0000
+5         M:cpu
+32        1510 0.1681 0.1177 0.1406 0.0000
+10        M:messages
+38        1510 228.0000 159.6000 190.7585 0.0000
+8         M:ssh_in
+32        1510 2.0000 1.4000 1.6733 0.0000
+9         M:smtp_in
+32        1510 2.0000 1.4000 1.6733 0.0000
+13        M:cfengine_in
+32        1510 1.0000 0.7000 0.8367 0.0000
+9         M:loadavg
+32        1510 0.0100 0.0070 0.0084 0.0000
+10        M:diskfree
+35        1510 85.0000 59.5000 71.1161 0.0000
+12        M:otherprocs
+32        1510 6.0000 4.2000 5.0200 0.0000
+11        M:rootprocs
+35        1510 96.0000 67.2000 80.3194 0.0000
+7         M:users
+32        1510 6.0000 4.2000 5.0200 0.0000
+3         MOY
+15        M:entropy_avail
+40        155 3071.5000 2467.2550 4839.3563 0.0000
+12        M:mem_cached
+38        155 1098.6758 945.6121 469.4713 0.0000
+16        M:io_writtendata
+31        155 0.0303 0.0327 0.0303 0.0000
+11        M:io_writes
+31        155 1.0000 1.3300 1.5556 0.0000
+6         M:cpu3
+31        155 0.0965 0.2074 0.6379 0.0000
+6         M:cpu2
+31        155 0.0899 0.2572 0.9414 0.0000
+6         M:cpu1
+31        155 0.0999 0.2573 0.8754 0.0000
+6         M:cpu0
+31        155 0.1764 0.2613 0.5270 0.0000
+5         M:cpu
+31        155 0.1157 0.2456 0.7663 0.0000
+10        M:messages
+37        155 113.5000 275.9050 209.2837 0.0000
+8         M:ssh_in
+31        155 2.0000 1.6100 1.2570 0.0000
+9         M:smtp_in
+31        155 2.0000 1.6100 1.2570 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.6557 0.0000
+9         M:loadavg
+31        155 0.0100 0.0112 0.0241 0.0000
+10        M:diskfree
+34        155 88.0000 70.6300 56.2834 0.0000
+12        M:otherprocs
+31        155 6.0000 5.5650 4.1719 0.0000
+11        M:rootprocs
+34        155 96.5000 77.6300 60.8923 0.0000
+7         M:users
+31        155 6.0000 4.8300 3.7709 0.0000
+3         PLG
+1572      1679723599,c85393e0c5c5b089cbb7252e2e5aa37fe0e583a52ede1c007aaacf6ed3d57517,/var/cfengine/inputs/services/inventory-lastlog/main.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,inventory_lastlog,commands,"/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ 	]+Port[ 	]+From[ 	]+[ 	]+Latest/       &&       !/\*\*Never logged in\*\*/       {
+        print ""^context=inventory_lastlog
+^meta=inventory,attribute_name=Last logged in ""$1""
+=lastlog[""$1""]=""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF
+      }' > ""/var/cfengine/state/lastlog.module.cache""","/default/inventory_lastlog/commands/'/usr/bin/lastlog | ...stlog.module.cache""'[1]",,[],"[""Executing 'no timeout' ... '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'"",""Completed execution of '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'""]",50,SHA=9eccbb87b98fc832d3f0924a4f4d00d465dba2aae1b83c884f575d753710c241
+
+# send QUERY complete successful

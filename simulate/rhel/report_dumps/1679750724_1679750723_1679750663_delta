@@ -1,0 +1,88 @@
+# delta from 1679750663 to 1679750724 at 1679750724
+22        CFR: 0 1679750723 2547
+3         PRD
+60        Packing reports: delta,0.016503,0.027235,0.027913,1679750664
+3         EXS
+16        f,298,1679750658
+3         MOM
+15        M:entropy_avail
+41        1600 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1600 2286.0312 2078.6987 691.1086 0.0000
+10        M:mem_free
+38        1600 8456.7820 8456.7820 0.0000 0.0000
+11        M:mem_total
+40        1600 10404.5074 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1600 1.3818 1.1154 0.8104 0.0000
+11        M:io_writes
+34        1600 18.0000 15.1200 9.7341 0.0000
+6         M:cpu3
+32        1600 1.6526 1.3192 0.9950 0.0000
+6         M:cpu2
+32        1600 0.4596 0.7319 0.9078 0.0000
+6         M:cpu1
+32        1600 1.4068 1.1819 0.7605 0.0000
+6         M:cpu0
+32        1600 0.4932 0.6545 0.5376 0.0000
+5         M:cpu
+32        1600 1.0046 0.9733 0.1044 0.0000
+10        M:messages
+40        1600 1502.0000 1754.2700 703.5474 0.0000
+8         M:ssh_in
+34        1600 26.0000 24.7100 4.3000 0.0000
+14        M:cfengine_out
+32        1600 0.0000 0.2100 0.7436 0.0000
+13        M:cfengine_in
+32        1600 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1600 0.0900 0.0819 0.0270 0.0000
+10        M:diskfree
+35        1600 72.0000 65.5200 21.6000 0.0000
+12        M:otherprocs
+32        1600 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1600 113.0000 109.7600 10.8000 0.0000
+7         M:users
+32        1600 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+484       1679750697,2a00738949efc4f5534d541bf62de1fed4c93753c07cb1123e9ef7bd6c7980e3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Failed to delete group 'midrim': configuration error - unknown item 'HOME_MODE' (notify administrator)"",""Promise 'midrim' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+363       1679750716,694b8484bbac8080a9932829d3a07c4ccd93fc41056d40a7dfd51f1628205745,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,maul,/default/churn_local_users/users/'maul'[11],,[],"[""Created user 'maul'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+# send QUERY complete successful

@@ -1,0 +1,104 @@
+# delta from 1679690838 to 1679690899 at 1679690899
+22        CFR: 0 1679690898 6745
+3         PRD
+60        Packing reports: delta,0.028469,0.081046,0.079164,1679690839
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.005736,0.003290,0.002359,1679690853
+3         EXS
+16        f,564,1679690720
+3         CNG
+66        1679690842,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1679690842,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1679690842,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+276       1679690842,/etc/group,change_management_files_watch_files_report_diffs,"-,44,outerrim:x:1121:-,45,c3po:x:1119:-,46,leiaorgana:x:1127:-,49,lukeskywaker:x:1124:-,50,deepcore:x:1128:-,53,jabbathehut:x:1126:+,48,obiwankenobi:x:1130:+,49,rey:x:1128:+,50,deepcore:x:1131:"
+
+395       1679690842,/etc/passwd,change_management_files_watch_files_report_diffs,"-,26,c3po:x:1119:1119::/home/c3po:/bin/bash-,27,leiaorgana:x:1121:1127::/home/leiaorgana:/bin/bash-,30,lukeskywaker:x:1124:1124::/home/lukeskywaker:/bin/bash-,32,jabbathehut:x:1126:1126::/home/jabbathehut:/bin/bash+,29,obiwankenobi:x:1127:1130::/home/obiwankenobi:/bin/bash+,30,rey:x:1128:1128::/home/rey:/bin/bash"
+
+3         MOM
+15        M:entropy_avail
+40        1401 3780.0000 3439.8000 948.7725 0.0000
+12        M:mem_cached
+40        1401 2063.6016 1881.3646 607.4566 0.0000
+10        M:mem_free
+38        1401 8619.9477 8619.9477 0.0000 0.0000
+11        M:mem_total
+40        1401 10404.5074 10404.5074 0.0000 0.0000
+16        M:io_writtendata
+32        1401 1.1025 0.8477 0.7299 0.0000
+11        M:io_writes
+34        1401 16.0000 13.3000 8.8148 0.0000
+6         M:cpu3
+32        1401 1.2540 1.4125 0.5284 0.0000
+6         M:cpu2
+32        1401 5.5070 3.9375 4.3809 0.0000
+6         M:cpu1
+32        1401 3.9123 2.9891 2.6321 0.0000
+6         M:cpu0
+32        1401 4.3777 3.1889 3.3265 0.0000
+5         M:cpu
+32        1401 3.7661 2.8836 2.5195 0.0000
+10        M:messages
+40        1401 1738.0000 2002.0000 736.2608 0.0000
+8         M:ssh_in
+32        1401 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1401 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1401 0.1300 0.0931 0.1030 0.0000
+10        M:diskfree
+35        1401 74.0000 67.3400 22.2000 0.0000
+12        M:otherprocs
+32        1401 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1401 117.0000 107.1000 33.0000 0.0000
+7         M:users
+32        1401 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+645       1679690841,b627a695b1bca4ff71abe7b74bda4af347f3e1dd581ef67f96685421a0410305,/var/cfengine/inputs/services/autorun/inventory_yum_update_info.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,update_yum_update_info_cache,commands,/usr/bin/yum updateinfo summary > /var/cfengine/state/yum_updateinfo_summary.txt,/default/autorun/methods/'autorun'/default/inventory_yum_update_info/methods/'Refresh updateinfo cache'/default/update_yum_update_info_cache/commands/'/usr/bin/yum updateinfo summary > /var/cfengine/state/yum_updateinfo_summary.txt'[1],,"[""CFE-3795""]",[],97,SHA=9e3f16bf069b1a7296cc2840735eb3e15b69086151023e87e529d6841be8b3cd
+
+851       1679690842,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1679690842,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1679690842,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=eeac2e81f1a041879b4bb0c591ab31b43d0a69c1d2c4724c42873dfbcc3b29fc)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+528       1679690845,e73379c60180edea5fa97d878bc131ada907979ac41bf504519eeffca6f9aa7d,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'outerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+534       1679690871,1ba386e9093e4e1678a64e7f8ea7ac89b54730e68a5038c2c64261ada3ca3970,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,coreworlds,/default/churn_local_groups/groups/'coreworlds'[5],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'coreworlds' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+# send QUERY complete successful

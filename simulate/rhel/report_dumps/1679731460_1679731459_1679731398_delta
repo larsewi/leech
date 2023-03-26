@@ -1,0 +1,95 @@
+# delta from 1679731398 to 1679731459 at 1679731460
+22        CFR: 1 1679731459 5116
+3         PRD
+60        Packing reports: delta,0.020188,0.040756,0.041304,1679731399
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.004786,0.002290,0.002255,1679731424
+3         EXS
+16        f,342,1679731446
+3         MOM
+15        M:entropy_avail
+41        1536 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1536 2219.2227 2016.2163 676.6879 0.0000
+10        M:mem_free
+40        1536 12175.2500 11087.2155 0.0000 0.0000
+11        M:mem_total
+40        1536 14863.5820 13525.8596 0.0000 0.0000
+16        M:io_writtendata
+32        1536 0.9258 0.7592 0.5241 0.0000
+11        M:io_writes
+34        1536 14.0000 11.4800 7.9267 0.0000
+6         M:cpu3
+32        1536 0.7803 0.5840 0.5537 0.0000
+6         M:cpu2
+32        1536 1.4391 1.0564 1.0728 0.0000
+6         M:cpu1
+32        1536 2.0582 1.4939 1.5781 0.0000
+6         M:cpu0
+32        1536 0.8063 0.5896 0.6068 0.0000
+5         M:cpu
+32        1536 1.2728 0.9322 0.9541 0.0000
+10        M:messages
+39        1536 382.0000 802.0600 1400.2000 0.0000
+8         M:ssh_in
+32        1536 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+32        1536 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1536 0.0400 0.0301 0.0280 0.0000
+10        M:diskfree
+35        1536 73.0000 66.4300 21.9000 0.0000
+12        M:otherprocs
+32        1536 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1536 116.0000 104.7200 37.6000 0.0000
+7         M:users
+32        1536 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+424       1679731401,cac5f7ab2dec7f87bfe1753d37690ac52aa07a2805e7a074f6822b9e701e47ed,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""'/sbin/chpasswd -e' returned non-zero status: 1"",""Failed to create user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+383       1679731412,56723c45f5504109a2fc211242b200ead91addfe7d156ca9482e66e0538a9d50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,jabbathehut,/default/churn_local_users/users/'jabbathehut'[5],,[],"[""Removed user 'jabbathehut'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+493       1679731427,fd1dfb412e86652816cf68575603d66a416220ac43a7a7b1fc3bce38010012fd,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Command returned error while removing user 'leiaorgana'. (Command line: '/sbin/userdel leiaorgana')"",""Failed to remove user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+396       1679731437,7b5a2f747dc067c2d9f4f900aa40ed28ec2371a0fdb3fdd4c018efc694991ed0,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,anakinskywalker,/default/churn_local_users/users/'anakinskywalker'[15],,[],"[""Removed user 'anakinskywalker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+506       1679731445,4e266614f38ae754839a35e7fc574b6b752029e43ed511fc912b5e826bb3b01b,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,110,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Command returned error while creating user 'obiwankenobi'. (Command line: '/sbin/useradd -M obiwankenobi')"",""Failed to create user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+1178      1679731445,a5059a1d364434c8c513102bf9e9d2ef4aa55120a07e6d70b9315c1168ee2d4e,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1679729799,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1679729799'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1679729799/software.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729799/software.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729799/software.cache' from 'localhost:/var/cfengine/state/previous_state/./software.cache'"",""Copied file '/var/cfengine/state/previous_state/./patch.cache' to '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1679729799/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+# send QUERY complete successful

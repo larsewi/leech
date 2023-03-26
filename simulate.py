@@ -7,11 +7,11 @@ import pandas as pd
 import re
 
 HOSTS = {
-    "hub":    "SHA=0cb07f5bff5865ca5268dc1a5cc8599a7a4e6894d4ee954913016cc699b84e3f",
-    "centos": "SHA=7254f21cc164054e92c513abf4079d0671fd43341cfaf40fedad6bbe00dbdd46",
-    "debian": "SHA=f373628225ce71586ae38a844c63a6da1fbe124bb4770b805c1bc4a133a3482e",
-    "rhel":   "SHA=15580be79bd3b71c1b7e0cddf38ad84c0228cefdfc8282ab7f3207fa6dbaf228",
-    "ubuntu": "SHA=6c1baabfc29d73409938f0be462bfecd8492b5a47f475c78c8f1817f959053ba",
+    "hub":    "SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3",
+    "centos": "SHA=8b6026383587874304eb95eed145b002c8bf591cbb3acb1598b97e9a9484a8fa",
+    "debian": "SHA=5602656702d53c57d14701cf8e0e269623edabc89a0dac4bba604d833900b4ea",
+    "rhel":   "SHA=25378825585c9d7b6ccdd73db2ffd6cce72601b72d0e5efe55b1bdb6bc7e8b07",
+    "ubuntu": "SHA=7119ca477f28b65baee37d8de62629d4c2c98a7a5cbe1455ada86f1f7ecb0608",
 }
 
 report_df = pd.DataFrame(columns=["Timestamp", "Hostname", "Classes size", "Execution log size", "Last seen size", "Patch size", "Software size", "Variables size", "Full state size", "CFEngine report size", "Leech report size"])

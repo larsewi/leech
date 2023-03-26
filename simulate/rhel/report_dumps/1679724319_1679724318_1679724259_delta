@@ -1,0 +1,90 @@
+# delta from 1679724259 to 1679724319 at 1679724319
+22        CFR: 0 1679724318 3484
+3         PRD
+60        Packing reports: delta,0.015833,0.025069,0.025452,1679724260
+3         EXS
+16        f,172,1679724111
+3         MOM
+15        M:entropy_avail
+41        1512 4036.0000 3619.0000 1162.9574 0.0000
+12        M:mem_cached
+40        1512 2187.3945 1992.1623 650.7742 0.0000
+10        M:mem_free
+40        1512 12232.6953 11129.7413 0.0000 0.0000
+11        M:mem_total
+40        1512 14863.5820 13525.8596 0.0000 0.0000
+16        M:io_writtendata
+32        1512 1.1094 1.1102 0.0028 0.0000
+11        M:io_writes
+34        1512 16.0000 15.4000 2.0000 0.0000
+6         M:cpu3
+32        1512 1.1467 0.8895 0.7418 0.0000
+6         M:cpu2
+32        1512 1.6056 2.2909 2.2843 0.0000
+6         M:cpu1
+32        1512 2.3050 1.7673 1.5365 0.0000
+6         M:cpu0
+32        1512 1.4930 1.4176 0.2514 0.0000
+5         M:cpu
+32        1512 1.6344 1.5899 0.1485 0.0000
+10        M:messages
+39        1512 169.0000 990.4300 2290.8588 0.0000
+8         M:ssh_in
+32        1512 2.0000 2.0300 0.1000 0.0000
+13        M:cfengine_in
+32        1512 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+32        1512 0.0200 0.0329 0.0430 0.0000
+10        M:diskfree
+35        1512 73.0000 66.4300 21.9000 0.0000
+12        M:otherprocs
+32        1512 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+37        1512 110.0000 100.3100 32.3000 0.0000
+7         M:users
+32        1512 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+39        155 3652.0000 3350.2000 848.4657 0.0000
+12        M:mem_cached
+39        155 1334.7988 1211.0830 461.7662 0.0000
+16        M:io_writtendata
+31        155 0.3193 0.3388 0.1251 0.0000
+11        M:io_writes
+31        155 7.0000 6.7900 1.8724 0.0000
+6         M:cpu3
+31        155 0.5030 0.6454 0.9539 0.0000
+6         M:cpu2
+31        155 0.3231 0.4795 0.7447 0.0000
+6         M:cpu1
+31        155 0.5199 0.5004 0.4890 0.0000
+6         M:cpu0
+31        155 1.3187 1.3763 1.9682 0.0000
+5         M:cpu
+31        155 0.6679 0.7515 1.0018 0.0000
+10        M:messages
+37        155 330.0000 957.9150 581.6704 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0350 0.0350 0.0597 0.0000
+10        M:diskfree
+34        155 80.5000 73.2550 24.2063 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 113.0000 102.8300 33.9013 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+537       1679724282,6b09fb8369d70a4a7dd563b8e7882e37f5711b53cf8467b6e5b17d07595d246a,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,thecolonies,/default/churn_local_groups/groups/'thecolonies'[2],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'thecolonies' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+386       1679724282,4e266614f38ae754839a35e7fc574b6b752029e43ed511fc912b5e826bb3b01b,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Created user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+380       1679724308,fd1dfb412e86652816cf68575603d66a416220ac43a7a7b1fc3bce38010012fd,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_users,users,leiaorgana,/default/churn_local_users/users/'leiaorgana'[7],,[],"[""Removed user 'leiaorgana'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+528       1679724308,ac6e279c090ec4ad6433274d86fcf779a9eed8e60b94823df89a2fa2928516de,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,35918a18f3f028e3a16776f9d73c3e66ccce4a02,114,default,churn_local_groups,groups,outerrim,/default/churn_local_groups/groups/'outerrim'[4],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'outerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+# send QUERY complete successful
