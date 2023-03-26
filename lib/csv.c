@@ -9,7 +9,7 @@
 #include "list.h"
 #include "utils.h"
 
-#define TEXTDATA(ch)                                           \
+#define TEXTDATA(ch)                                                           \
   ((ch == '\t') || (ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \
    (ch >= 0x2D && ch <= 0x7E))
 

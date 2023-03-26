@@ -53,8 +53,7 @@ LCH_Delta *LCH_DeltaCreate(const LCH_Table *const table,
 
   delta->delete = (create_empty)
                       ? LCH_DictCreate()
-                      : LCH_DictSetMinus(old_state, new_state,
-                                         NULL, NULL);
+                      : LCH_DictSetMinus(old_state, new_state, NULL, NULL);
   if (delta->delete == NULL) {
     LCH_LOG_ERROR("Failed to compute deletions for delta.");
     LCH_DictDestroy(delta->insert);
@@ -135,6 +134,14 @@ bool LCH_DeltaMarshal(LCH_Buffer *const buffer, const LCH_Delta *const delta) {
   assert(delta->insert != NULL);
   assert(delta->delete != NULL);
   assert(delta->update != NULL);
+
+  if (LCH_DictLength(delta->insert) == 0 &&
+      LCH_DictLength(delta->delete) == 0 &&
+      LCH_DictLength(delta->update) == 0) {
+    LCH_LOG_DEBUG("Skipping delta marshaling of table '%s' due to no changes.",
+                  LCH_TableGetIdentifier(delta->table));
+    return true;
+  }
 
   if (!LCH_MarshalString(buffer, LCH_TableGetIdentifier(delta->table))) {
     LCH_LOG_ERROR("Failed to marshal delta table identifier.");
