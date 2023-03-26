@@ -54,7 +54,7 @@ LCH_Delta *LCH_DeltaCreate(const LCH_Table *const table,
   delta->delete = (create_empty)
                       ? LCH_DictCreate()
                       : LCH_DictSetMinus(old_state, new_state,
-                                         (void *(*)(const void *))strdup, free);
+                                         NULL, NULL);
   if (delta->delete == NULL) {
     LCH_LOG_ERROR("Failed to compute deletions for delta.");
     LCH_DictDestroy(delta->insert);
@@ -326,8 +326,7 @@ static bool CompressInsertionOperations(const LCH_List *const keys,
       LCH_LOG_DEBUG(
           "Compressing 'insert -> delete => noop' for key '%s' in table '%s'.",
           key, LCH_TableGetIdentifier(child->table));
-      char *value = LCH_DictRemove(child->delete, key);
-      assert(value == NULL);
+      LCH_DictRemove(child->delete, key);
       child->num_canceled += 1;
       continue;
     }
@@ -477,8 +476,8 @@ bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
   assert(strcmp(LCH_TableGetIdentifier(child->table),
                 LCH_TableGetIdentifier(parent->table)) == 0);
 
-  child->num_merged = parent->num_merged;
-  child->num_canceled = parent->num_canceled;
+  // child->num_merged = parent->num_merged;
+  // child->num_canceled = parent->num_canceled;
 
   LCH_List *const insert = LCH_DictGetKeys(parent->insert);
   if (insert == NULL) {

@@ -253,7 +253,7 @@ LCH_Dict *LCH_DictSetMinus(const LCH_Dict *const self,
     }
 
     void *value = NULL;
-    if (item->value != NULL) {
+    if (item->value != NULL && duplicate != NULL) {
       value = duplicate(item->value);
       if (value == NULL) {
         LCH_DictDestroy(result);

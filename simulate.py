@@ -22,6 +22,7 @@ HEADER_FIELDS = {
     "software.cache": ["name", "version", "architecture"],
     "patch.cache": ["name", "version", "architecture", "status"],
     "execution_log.cache": [
+        "promise_hash",
         "policy_filename",
         "release_id",
         "promise_outcome",
@@ -54,6 +55,8 @@ report_df = pd.DataFrame(
     ]
 )
 
+LOGFILE = "simulate/leech.log"
+
 
 class Event(ABC):
     def __init__(self, hostname, hostkey, timestamp):
@@ -84,7 +87,7 @@ class Commit(Event):
             with open(table, "r", newline="") as r:
                 reader = csv.reader(r)
                 with open(
-                    os.path.join("simulate", self.hostname, ".leech", basename)
+                    os.path.join("simulate", self.hostname, ".leech", basename), "w", newline=""
                 ) as w:
                     writer = csv.writer(w)
                     writer.writerow(HEADER_FIELDS[basename])
@@ -94,8 +97,10 @@ class Commit(Event):
         cwd = os.getcwd()
         os.chdir(os.path.join("simulate", self.hostname))
         command = ["../../bin/leech", "--info", "commit"]
-        p = subprocess.run(command)
+        p = subprocess.run(command, capture_output=True)
         os.chdir(cwd)
+        print(p.stdout.decode(errors="ignore"), end="")
+        print(p.stderr.decode(errors="ignore"), end="")
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
@@ -151,8 +156,10 @@ class Patch(Event):
             "--file",
             patch_file,
         ]
-        p = subprocess.run(command)
+        p = subprocess.run(command, capture_output=True)
         os.chdir(cwd)
+        print(p.stdout.decode(), end="")
+        print(p.stderr.decode(), end="")
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
@@ -170,30 +177,34 @@ class Patch(Event):
             "--file",
             patch_file,
         ]
-        p = subprocess.run(command)
+        p = subprocess.run(command, capture_output=True)
         os.chdir(cwd)
+        print(p.stdout.decode(errors="ignore"), end="")
+        print(p.stderr.decode(errors="ignore"), end="")
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
 
-        classes_size = os.path.getsize(
-            os.path.join("simulate", self.hostname, ".leech/classes.cache")
-        )
-        execlog_size = os.path.getsize(
-            os.path.join("simulate", self.hostname, ".leech/execution_log.cache")
-        )
-        lastseen_size = os.path.getsize(
-            os.path.join("simulate", self.hostname, ".leech/lastseen.cache")
-        )
-        patch_size = os.path.getsize(
-            os.path.join("simulate", self.hostname, ".leech/patch.cache")
-        )
-        software_size = os.path.getsize(
-            os.path.join("simulate", self.hostname, ".leech/software.cache")
-        )
-        variables_size = os.path.getsize(
-            os.path.join("simulate", self.hostname, ".leech/variables.cache")
-        )
+        work_dir = os.path.join("simulate", self.hostname, ".leech")
+
+        classes_path = os.path.join(work_dir, "classes.cache")
+        classes_size = os.path.getsize(classes_path) if os.path.exists(classes_path) else 0
+
+        execlog_path = os.path.join(work_dir, "execution_log.cache")
+        execlog_size = os.path.getsize(execlog_path) if os.path.exists(execlog_path) else 0
+
+        lastseen_path = os.path.join(work_dir, "lastseen.cache")
+        lastseen_size = os.path.getsize(lastseen_path) if os.path.exists(lastseen_path) else 0
+
+        patch_path = os.path.join(work_dir, "patch.cache")
+        patch_size = os.path.getsize(patch_path) if os.path.exists(patch_path) else 0
+
+        software_path = os.path.join(work_dir, "software.cache")
+        software_size = os.path.getsize(software_path) if os.path.exists(software_path) else 0
+
+        variables_path = os.path.join(work_dir, "variables.cache")
+        variables_size = os.path.getsize(variables_path) if os.path.exists(variables_path) else 0
+
         fullstate_size = (
             classes_size
             + execlog_size
@@ -226,27 +237,29 @@ class Patch(Event):
             cfengine_size,
             leech_size,
         ]
+        print(report_df.tail(10))
 
 
 def main():
     events = []
 
-    subprocess.run("rm -rf simulate/**/.leech simulate/report.csv", shell=True)
+    subprocess.run("rm -rf simulate/leech.log simulate/**/.leech simulate/report.csv", shell=True)
 
     for hostname, hostkey in HOSTS.items():
         for dirpath, _, filenames in os.walk(os.path.join("simulate", hostname)):
             if len(filenames) == 0:
                 continue
 
-            if "table_dumps" in dirpath:
+            if "cache_dumps" in dirpath:
                 timestamp = datetime.fromtimestamp(int(dirpath.split("/")[-1]))
                 tables = [os.path.join(dirpath, f) for f in filenames]
                 event = Commit(hostname, hostkey, timestamp, tables)
                 events.append(event)
             elif "report_dumps" in dirpath:
                 for filename in filenames:
+                    dump_file = os.path.join(dirpath, filename)
                     timestamp = datetime.fromtimestamp(int(filename.split("_")[0]))
-                    event = Patch(hostname, hostkey, timestamp, filename)
+                    event = Patch(hostname, hostkey, timestamp, dump_file)
                     events.append(event)
 
     events = sorted(events)

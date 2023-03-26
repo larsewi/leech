@@ -10,7 +10,7 @@
 #include "utils.h"
 
 #define TEXTDATA(ch)                                           \
-  ((ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \
+  ((ch == '\t') || (ch >= 0x20 && ch <= 0x21) || (ch >= 0x23 && ch <= 0x2B) || \
    (ch >= 0x2D && ch <= 0x7E))
 
 typedef struct Parser {
@@ -80,18 +80,10 @@ static char *ParseNonEscaped(Parser *const parser) {
 
   while (parser->cursor[0] != '\0' && parser->cursor[0] != ',' &&
          !LCH_StringStartsWith(parser->cursor, "\r\n")) {
-    if (TEXTDATA(parser->cursor[0])) {
-      if (!LCH_BufferPrintFormat(buffer, "%c", parser->cursor[0])) {
-        LCH_LOG_ERROR(
-            "Failed to append character '%c' to buffer for non-escaped field "
-            "(Row %zu, Col %zu)",
-            parser->cursor[0], parser->row, parser->column);
-        LCH_BufferDestroy(buffer);
-        return NULL;
-      }
-    } else {
+    if (!LCH_BufferPrintFormat(buffer, "%c", parser->cursor[0])) {
       LCH_LOG_ERROR(
-          "Expected 0x20-21 / 0x23-2B / 0x2D-7E; found '%c' (Row %zu, Col %zu)",
+          "Failed to append character '%c' to buffer for non-escaped field "
+          "(Row %zu, Col %zu)",
           parser->cursor[0], parser->row, parser->column);
       LCH_BufferDestroy(buffer);
       return NULL;
@@ -99,16 +91,8 @@ static char *ParseNonEscaped(Parser *const parser) {
     parser->cursor += 1;
   }
 
-  char *const field = LCH_BufferStringDup(buffer);
-  LCH_BufferDestroy(buffer);
-  if (field == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to create string from buffer for non-escaped field (Row %zu, "
-        "Col %zu)",
-        parser->row, parser->column);
-    return NULL;
-  }
-
+  char *const field = LCH_BufferToString(buffer);
+  assert(field != NULL);
   return field;
 }
 

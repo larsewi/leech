@@ -383,11 +383,12 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
 
   const size_t indices_len = LCH_ListLength(indices);
   const size_t record_len = LCH_ListLength(record);
-  assert(record_len >= indices_len);
 
   for (size_t i = 0; i < indices_len; i++) {
     const size_t index = (size_t)LCH_ListGet(indices, i);
-    assert(index < record_len);
+    if (index >= record_len) {
+      continue;
+    }
 
     char *field = LCH_ListGet(record, index);
     assert(field != NULL);
@@ -401,31 +402,23 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
   return fields;
 }
 
-static char *ComposeFieldsAtIndices(const LCH_List *const record,
-                                    const LCH_List *const indices) {
-  LCH_List *const extracted = ExtractFieldsAtIndices(record, indices);
-  if (extracted == NULL) {
-    LCH_Buffer *ind = NULL;
-    LCH_CSVComposeRecord(&ind, indices);
-    LCH_Buffer *rec = NULL;
-    LCH_CSVComposeRecord(&rec, record);
-    LCH_LOG_ERROR("Failed to extract fields at indices '%s' from record '%s'.",
-                  LCH_BufferGet(ind, 0), LCH_BufferGet(rec, 0));
-    LCH_BufferDestroy(ind);
-    LCH_BufferDestroy(rec);
-    return NULL;
-  }
+// static char *ComposeFieldsAtIndices(const LCH_List *const record,
+//                                     const LCH_List *const indices) {
+//   LCH_List *const extracted = ExtractFieldsAtIndices(record, indices);
+//   if (extracted == NULL) {
+//     return NULL;
+//   }
 
-  LCH_Buffer *buffer = NULL;
-  if (!LCH_CSVComposeRecord(&buffer, extracted)) {
-    LCH_ListDestroy(extracted);
-    return NULL;
-  }
-  LCH_ListDestroy(extracted);
+//   LCH_Buffer *buffer = NULL;
+//   if (!LCH_CSVComposeRecord(&buffer, extracted)) {
+//     LCH_ListDestroy(extracted);
+//     return NULL;
+//   }
+//   LCH_ListDestroy(extracted);
 
-  char *composed = LCH_BufferToString(buffer);
-  return composed;
-}
+//   char *composed = LCH_BufferToString(buffer);
+//   return composed;
+// }
 
 /******************************************************************************/
 
@@ -556,23 +549,23 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
     const LCH_List *const record = LCH_ListGet(table, i);
     assert(record != NULL);
 
-    const size_t record_len = LCH_ListLength(record);
-    if (record_len != header_len) {
-      LCH_LOG_ERROR(
-          "Number of record fields does not align with number of header fields "
-          "for record %zu (%zu != %zu).",
-          i, record_len, header_len);
-      LCH_ListDestroy(subsidiary_indices);
-      LCH_ListDestroy(primary_indices);
-      LCH_ListDestroy(subsidiary_fields);
-      LCH_ListDestroy(primary_fields);
-      LCH_DictDestroy(dict);
-      return NULL;
-    }
+    // const size_t record_len = LCH_ListLength(record);
+    // if (record_len != header_len) {
+    //   LCH_LOG_ERROR(
+    //       "Number of record fields does not align with number of header fields "
+    //       "for record %zu (%zu != %zu).",
+    //       i, record_len, header_len);
+    //   LCH_ListDestroy(subsidiary_indices);
+    //   LCH_ListDestroy(primary_indices);
+    //   LCH_ListDestroy(subsidiary_fields);
+    //   LCH_ListDestroy(primary_fields);
+    //   LCH_DictDestroy(dict);
+    //   return NULL;
+    // }
 
-    char *const key = ComposeFieldsAtIndices(record, primary_indices);
-    if (key == NULL) {
-      LCH_LOG_ERROR("Failed to compose primary fields for record %zu.", i);
+    LCH_List *const extracted_key = ExtractFieldsAtIndices(record, primary_indices);
+    if (extracted_key == NULL) {
+      LCH_LOG_ERROR("Failed to extract primary fields at indices.");
       LCH_ListDestroy(subsidiary_indices);
       LCH_ListDestroy(primary_indices);
       LCH_ListDestroy(subsidiary_fields);
@@ -580,12 +573,38 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
       LCH_DictDestroy(dict);
       return NULL;
     }
+    assert(LCH_ListLength(extracted_key) > 0);
+    LCH_Buffer *key_buffer = NULL;
+    if (!LCH_CSVComposeRecord(&key_buffer, extracted_key)) {
+      LCH_LOG_ERROR("Failed to compose primary fields.");
+      LCH_ListDestroy(extracted_key);
+      LCH_ListDestroy(subsidiary_indices);
+      LCH_ListDestroy(primary_indices);
+      LCH_ListDestroy(subsidiary_fields);
+      LCH_ListDestroy(primary_fields);
+      LCH_DictDestroy(dict);
+      return NULL;
+    }
+    LCH_ListDestroy(extracted_key);
+    char *const key = LCH_BufferToString(key_buffer);
+    assert(key != NULL);
+
+    // char *const key = ComposeFieldsAtIndices(record, primary_indices);
+    // if (key == NULL) {
+    //   LCH_LOG_ERROR("Failed to compose primary fields for record %zu.", i);
+    //   LCH_ListDestroy(subsidiary_indices);
+    //   LCH_ListDestroy(primary_indices);
+    //   LCH_ListDestroy(subsidiary_fields);
+    //   LCH_ListDestroy(primary_fields);
+    //   LCH_DictDestroy(dict);
+    //   return NULL;
+    // }
 
     char *value = NULL;
     if (LCH_ListLength(subsidiary_indices) > 0) {
-      value = ComposeFieldsAtIndices(record, subsidiary_indices);
-      if (value == NULL) {
-        LCH_LOG_ERROR("Failed to compose subsidiary fields for record %zu.", i);
+      LCH_List *const extracted_val = ExtractFieldsAtIndices(record, subsidiary_indices);
+      if (extracted_val == NULL) {
+        LCH_LOG_ERROR("Failed to extract subsidiary fields at indices.");
         free(key);
         LCH_ListDestroy(subsidiary_indices);
         LCH_ListDestroy(primary_indices);
@@ -594,6 +613,46 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
         LCH_DictDestroy(dict);
         return NULL;
       }
+      if (LCH_ListLength(extracted_val) > 0) {
+        LCH_Buffer *val_buffer = NULL;
+        if (!LCH_CSVComposeRecord(&val_buffer, extracted_val)) {
+          LCH_LOG_ERROR("Failed to compose subsidiary fields.");
+          free(key);
+          LCH_ListDestroy(extracted_val);
+          LCH_ListDestroy(subsidiary_indices);
+          LCH_ListDestroy(primary_indices);
+          LCH_ListDestroy(subsidiary_fields);
+          LCH_ListDestroy(primary_fields);
+          LCH_DictDestroy(dict);
+          return NULL;
+        }
+        LCH_ListDestroy(extracted_val);
+        value = LCH_BufferToString(val_buffer);
+        assert(value != NULL);
+      }
+
+
+      // value = ComposeFieldsAtIndices(record, subsidiary_indices);
+      // LCH_List *const extracted_val = ExtractFieldsAtIndices(record, subsidiary_indices);
+      // if (extracted_key == NULL) {
+      //   LCH_LOG_ERROR("Failed to extract primary fields at indices.");
+      //   LCH_ListDestroy(subsidiary_indices);
+      //   LCH_ListDestroy(primary_indices);
+      //   LCH_ListDestroy(subsidiary_fields);
+      //   LCH_ListDestroy(primary_fields);
+      //   LCH_DictDestroy(dict);
+      //   return NULL;
+      // }
+      // if (value == NULL) {
+      //   LCH_LOG_ERROR("Failed to compose subsidiary fields for record %zu.", i);
+      //   free(key);
+      //   LCH_ListDestroy(subsidiary_indices);
+      //   LCH_ListDestroy(primary_indices);
+      //   LCH_ListDestroy(subsidiary_fields);
+      //   LCH_ListDestroy(primary_fields);
+      //   LCH_DictDestroy(dict);
+      //   return NULL;
+      // }
     }
 
     if (!LCH_DictSet(dict, key, value, free)) {
