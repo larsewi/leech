@@ -1,6 +1,5 @@
 import os
 from datetime import datetime
-import shutil
 import subprocess
 from abc import ABC, abstractmethod
 import pandas as pd
@@ -39,21 +38,6 @@ HEADER_FIELDS = {
     ],
 }
 
-report_df = pd.DataFrame(
-    columns=[
-        "Timestamp",
-        "Hostname",
-        "Classes size",
-        "Execution log size",
-        "Last seen size",
-        "Patch size",
-        "Software size",
-        "Variables size",
-        "Full state size",
-        "CFEngine report size",
-        "Leech report size",
-    ]
-)
 
 LOGFILE = "simulate/leech.log"
 
@@ -87,7 +71,9 @@ class Commit(Event):
             with open(table, "r", newline="") as r:
                 reader = csv.reader(r)
                 with open(
-                    os.path.join("simulate", self.hostname, ".leech", basename), "w", newline=""
+                    os.path.join("simulate", self.hostname, ".leech", basename),
+                    "w",
+                    newline="",
                 ) as w:
                     writer = csv.writer(w)
                     writer.writerow(HEADER_FIELDS[basename])
@@ -104,25 +90,6 @@ class Commit(Event):
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
-
-
-def strip_surrounding_comments(buf):
-    left = ""
-    right = ""
-
-    for ch in buf:
-        if re.match(r"^#(?!\r\n).*\r\n$", left):
-            break
-        else:
-            left = left + ch
-
-    for ch in reversed(buf):
-        if re.match(r"^#(?!\r\n).*\r\n$", right):
-            break
-        else:
-            right = ch + right
-
-    return buf[len(left) : -len(right)]
 
 
 class Patch(Event):
@@ -187,63 +154,91 @@ class Patch(Event):
 
         work_dir = os.path.join("simulate", self.hostname, ".leech")
 
-        classes_path = os.path.join(work_dir, "classes.cache")
-        classes_size = os.path.getsize(classes_path) if os.path.exists(classes_path) else 0
+        CLD_path = os.path.join(work_dir, "classes.cache")
+        CLD_size = os.path.getsize(CLD_path) if os.path.exists(CLD_path) else 0
 
-        execlog_path = os.path.join(work_dir, "execution_log.cache")
-        execlog_size = os.path.getsize(execlog_path) if os.path.exists(execlog_path) else 0
+        VAD_path = os.path.join(work_dir, "variables.cache")
+        VAD_size = os.path.getsize(VAD_path) if os.path.exists(VAD_path) else 0
 
-        lastseen_path = os.path.join(work_dir, "lastseen.cache")
-        lastseen_size = os.path.getsize(lastseen_path) if os.path.exists(lastseen_path) else 0
+        LSD_path = os.path.join(work_dir, "lastseen.cache")
+        LSD_size = os.path.getsize(LSD_path) if os.path.exists(LSD_path) else 0
 
-        patch_path = os.path.join(work_dir, "patch.cache")
-        patch_size = os.path.getsize(patch_path) if os.path.exists(patch_path) else 0
+        SDI_path = os.path.join(work_dir, "software.cache")
+        SDI_size = os.path.getsize(SDI_path) if os.path.exists(SDI_path) else 0
 
-        software_path = os.path.join(work_dir, "software.cache")
-        software_size = os.path.getsize(software_path) if os.path.exists(software_path) else 0
+        SPD_path = os.path.join(work_dir, "patch.cache")
+        SPD_size = os.path.getsize(SPD_path) if os.path.exists(SPD_path) else 0
 
-        variables_path = os.path.join(work_dir, "variables.cache")
-        variables_size = os.path.getsize(variables_path) if os.path.exists(variables_path) else 0
+        ELD_path = os.path.join(work_dir, "execution_log.cache")
+        ELD_size = os.path.getsize(ELD_path) if os.path.exists(ELD_path) else 0
 
-        fullstate_size = (
-            classes_size
-            + execlog_size
-            + lastseen_size
-            + patch_size
-            + software_size
-            + variables_size
-        )
-        leech_size = os.path.getsize(patch_file)
+        LCH_size = os.path.getsize(patch_file)
 
-        cfengine_size = 0
-        tables_include = ["CLD", "VAD", "LSD", "SDI", "SPD", "ELD"]
+        CFE_size = 0
+        tables_include = ["CFR", "CLD", "VAD", "LSD", "SDI", "SPD", "ELD"]
         tables_exclude = ["EXS", "PRD", "CNG", "CND", "MOM", "MOY", "MOH", "PLG"]
 
-        with open(self.dump_file, "r") as f:
-            buf = f.read()
+        with open(self.dump_file, "rb") as f:
+            buf = f.readline()  # Remove first line containing comment
+            assert re.match(r"^#(?!\r\n).*\n$", buf.decode())
 
-        buf = strip_surrounding_comments(buf)
+            buf = f.read(10)  # Read size
+            count_bytes = True
+            while not buf.decode().startswith("#"):
+                assert re.match(r"^[0-9]+ +$", buf.decode())
+                size = int(buf.decode())
+                buf = f.read(size + 1)  # Read size bytes plus newline
 
-        report_df.loc[len(report_df)] = [
+                if size == 3:
+                    if buf.decode().strip() in tables_include:
+                        count_bytes = True
+                    elif buf.decode().strip() in tables_exclude:
+                        count_bytes = False
+
+                if count_bytes:
+                    CFE_size += size
+
+                buf = f.read(10)  # Read next size
+
+        df = (
+            pd.read_csv("simulate/report.csv")
+            if os.path.exists("simulate/report.csv")
+            else pd.DataFrame(
+                columns=[
+                    "Timestamp",
+                    "Hostname",
+                    "CLD Bytes",
+                    "VAD Bytes",
+                    "LSD Bytes",
+                    "SDI Bytes",
+                    "SPD Bytes",
+                    "ELD Bytes",
+                    "CFE Bytes",
+                    "LCH Bytes",
+                ]
+            )
+        )
+        df.loc[len(df)] = [
             self.timestamp,
             self.hostname,
-            classes_size,
-            execlog_size,
-            lastseen_size,
-            patch_size,
-            software_size,
-            variables_size,
-            fullstate_size,
-            cfengine_size,
-            leech_size,
+            CLD_size,
+            VAD_size,
+            LSD_size,
+            SDI_size,
+            SPD_size,
+            ELD_size,
+            CFE_size,
+            LCH_size,
         ]
-        print(report_df.tail(10))
+        df.to_csv("simulate/report.csv", index=False)
 
 
 def main():
     events = []
 
-    subprocess.run("rm -rf simulate/leech.log simulate/**/.leech simulate/report.csv", shell=True)
+    subprocess.run(
+        "rm -rf simulate/leech.log simulate/**/.leech simulate/report.csv", shell=True
+    )
 
     for hostname, hostkey in HOSTS.items():
         for dirpath, _, filenames in os.walk(os.path.join("simulate", hostname)):

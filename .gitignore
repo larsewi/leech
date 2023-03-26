@@ -116,3 +116,4 @@ Makefile
 config.h
 *.valgrind
 .vscode
+simulate/report.csv
