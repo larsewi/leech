@@ -5,6 +5,11 @@ from abc import ABC, abstractmethod
 import pandas as pd
 import re
 import csv
+import io
+
+CF_BUFSIZE = 4096
+CF_INBAND_OFFSET = 8
+CF_MAXTRANSSIZE = CF_BUFSIZE - CF_INBAND_OFFSET - 64
 
 HOSTS = {
     "hub": "SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3",
@@ -77,8 +82,16 @@ class Commit(Event):
                 ) as w:
                     writer = csv.writer(w)
                     writer.writerow(HEADER_FIELDS[basename])
-                    writer.writerows(reader)
-            # shutil.copy(table, os.path.join("simulate", self.hostname, ".leech"))
+                    for record in reader:
+                        out = io.StringIO()
+                        tmp = csv.writer(out)
+                        tmp.writerow(record)
+                        bytes = len(out.getvalue())
+                        if bytes > CF_MAXTRANSSIZE:
+                            print(f"Skipping row: {bytes} > {CF_MAXTRANSSIZE}")
+                            assert False
+                            continue
+                        writer.writerow(record)
 
         cwd = os.getcwd()
         os.chdir(os.path.join("simulate", self.hostname))
@@ -207,19 +220,19 @@ class Patch(Event):
                 columns=[
                     "Timestamp",
                     "Hostname",
-                    "CLD Bytes",
-                    "VAD Bytes",
-                    "LSD Bytes",
-                    "SDI Bytes",
-                    "SPD Bytes",
-                    "ELD Bytes",
-                    "CFE Bytes",
-                    "LCH Bytes",
+                    "CLD",
+                    "VAD",
+                    "LSD",
+                    "SDI",
+                    "SPD",
+                    "ELD",
+                    "LCH",
+                    "CFE",
                 ]
             )
         )
         df.loc[len(df)] = [
-            self.timestamp,
+            self.timestamp.strftime("%s"),
             self.hostname,
             CLD_size,
             VAD_size,
@@ -227,8 +240,8 @@ class Patch(Event):
             SDI_size,
             SPD_size,
             ELD_size,
-            CFE_size,
             LCH_size,
+            CFE_size,
         ]
         df.to_csv("simulate/report.csv", index=False)
 
