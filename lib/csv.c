@@ -38,7 +38,7 @@ static char *ParseEscaped(Parser *const parser) {
 
   while (parser->cursor[0] != '"' ||
          LCH_StringStartsWith(parser->cursor, "\"\"")) {
-    if (!LCH_BufferPrintFormat(buffer, "%c", parser->cursor[0])) {
+    if (!LCH_BufferAppend(buffer, parser->cursor[0])) {
       LCH_LOG_ERROR(
           "Failed to append character '%c' to buffer for escaped field (Row "
           "%zu, Col %zu)",
@@ -80,7 +80,7 @@ static char *ParseNonEscaped(Parser *const parser) {
 
   while (parser->cursor[0] != '\0' && parser->cursor[0] != ',' &&
          !LCH_StringStartsWith(parser->cursor, "\r\n")) {
-    if (!LCH_BufferPrintFormat(buffer, "%c", parser->cursor[0])) {
+    if (!LCH_BufferAppend(buffer, parser->cursor[0])) {
       LCH_LOG_ERROR(
           "Failed to append character '%c' to buffer for non-escaped field "
           "(Row %zu, Col %zu)",
@@ -329,17 +329,14 @@ static bool ComposeField(LCH_Buffer *const buffer, const char *const field) {
       }
     }
 
-    if (!LCH_BufferPrintFormat(temp, "%c", field[i])) {
+    if (!LCH_BufferAppend(temp, field[i])) {
       LCH_BufferDestroy(temp);
       return false;
     }
   }
 
-  char *str = LCH_BufferStringDup(temp);
-  LCH_BufferDestroy(temp);
-  if (str == NULL) {
-    return false;
-  }
+  char *str = LCH_BufferToString(temp);
+  assert(str != NULL);
 
   if (escape) {
     if (!LCH_BufferPrintFormat(buffer, "\"%s\"", str)) {
@@ -380,7 +377,7 @@ static bool ComposeRecord(LCH_Buffer *const buffer,
   const size_t length = LCH_ListLength(record);
   for (size_t i = 0; i < length; i++) {
     if (i > 0) {
-      if (!LCH_BufferPrintFormat(buffer, ",")) {
+      if (!LCH_BufferAppend(buffer, ',')) {
         return false;
       }
     }

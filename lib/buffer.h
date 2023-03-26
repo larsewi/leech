@@ -16,6 +16,14 @@ typedef struct LCH_Buffer LCH_Buffer;
 LCH_Buffer *LCH_BufferCreate(void);
 
 /**
+ * @brief append a byte to the buffer.
+ * @param[in] self buffer.
+ * @param[in] byte byte to append.
+ * @return false in case of error.
+ */
+bool LCH_BufferAppend(LCH_Buffer *self, char byte);
+
+/**
  * @brief format- and print string to byte buffer.
  * @note buffer capacity is expanded if need be.
  * @param[in] self buffer.

@@ -60,6 +60,16 @@ LCH_Buffer *LCH_BufferCreate(void) {
   return LCH_BufferCreateWithCapacity(INITIAL_CAPACITY);
 }
 
+bool LCH_BufferAppend(LCH_Buffer *const self, const char byte) {
+  if (!EnsureCapacity(self, 1)) {
+    return false;
+  }
+
+  self->buffer[self->length++] = byte;
+  self->buffer[self->length] = '\0';
+  return true;
+}
+
 bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
                            ...) {
   assert(self != NULL);
