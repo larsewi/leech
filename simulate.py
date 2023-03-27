@@ -43,6 +43,8 @@ HEADER_FIELDS = {
     ],
 }
 
+COLLECTIONS = {}
+
 
 LOGFILE = "simulate/leech.log"
 
@@ -165,6 +167,14 @@ class Patch(Event):
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
 
+        if self.hostname not in COLLECTIONS:
+            COLLECTIONS[self.hostname] = 0
+            # Skip the first collection from a host in the end report
+            return
+
+        collect_num = COLLECTIONS[self.hostname]
+        COLLECTIONS[self.hostname] += 1
+
         work_dir = os.path.join("simulate", self.hostname, ".leech")
 
         CLD_path = os.path.join(work_dir, "classes.cache")
@@ -218,6 +228,7 @@ class Patch(Event):
             if os.path.exists("simulate/report.csv")
             else pd.DataFrame(
                 columns=[
+                    "#",
                     "Timestamp",
                     "Hostname",
                     "CLD",
@@ -232,6 +243,7 @@ class Patch(Event):
             )
         )
         df.loc[len(df)] = [
+            collect_num,
             self.timestamp.strftime("%s"),
             self.hostname,
             CLD_size,
