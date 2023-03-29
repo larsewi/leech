@@ -1,0 +1,244 @@
+# delta from 1680054331 to 1680055232 at 1680055232
+23        CFR: 0 1680055231 34411
+3         PRD
+116       CFEngine Execution (policy filename: '/var/cfengine/inputs/promises.cf'),510.219136,650.864075,530.484864,1680054538
+108       CFEngine Execution (policy filename: '/var/cfengine/inputs/update.cf'),0.057264,0.327918,0.329690,1680055132
+60        Packing reports: delta,0.038318,0.040690,0.027844,1680054332
+83        Sample(/proc/sys/kernel/random/entropy_avail),0.005606,0.003143,0.002252,1680055106
+3         EXS
+16        f,391,1680055068
+3         CNG
+66        1680055188,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1680055188,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1680055188,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+66        1680054921,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1680054921,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1680054921,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+66        1680054594,promise_file_change_cf_44,/etc/shadow,C,Content changed
+88        1680054594,change_management_files_watch_files_report_diffs,/etc/group,C,Content changed
+89        1680054594,change_management_files_watch_files_report_diffs,/etc/passwd,C,Content changed
+3         CND
+209       1680055188,/etc/group,change_management_files_watch_files_report_diffs,"-,47,obiwankenobi:x:1044:-,48,lukeskywaker:x:1045:+,47,rey:x:1046:+,48,jarjarbinks:x:1047:+,49,midrim:x:1048:+,50,hansolo:x:1049:"
+
+345       1680055188,/etc/passwd,change_management_files_watch_files_report_diffs,"-,28,obiwankenobi:x:1042:1044::/home/obiwankenobi:/bin/bash-,29,lukeskywaker:x:1043:1045::/home/lukeskywaker:/bin/bash+,28,rey:x:1044:1046::/home/rey:/bin/bash+,29,jarjarbinks:x:1045:1047::/home/jarjarbinks:/bin/bash+,30,hansolo:x:1046:1049::/home/hansolo:/bin/bash"
+
+265       1680054921,/etc/group,change_management_files_watch_files_report_diffs,"-,44,midrim:x:1037:-,45,innerrim:x:1040:-,46,jarjarbinks:x:1036:-,48,chewbacca:x:1039:-,49,darthsidious:x:1041:+,46,wildspace:x:1043:+,47,obiwankenobi:x:1044:+,48,lukeskywaker:x:1045:"
+
+367       1680054921,/etc/passwd,change_management_files_watch_files_report_diffs,"-,26,jarjarbinks:x:1036:1036::/home/jarjarbinks:/bin/bash-,28,chewbacca:x:1039:1039::/home/chewbacca:/bin/bash-,29,darthsidious:x:1040:1041::/home/darthsidious:/bin/bash+,28,obiwankenobi:x:1042:1044::/home/obiwankenobi:/bin/bash+,29,lukeskywaker:x:1043:1045::/home/lukeskywaker:/bin/bash"
+
+162       1680054594,/etc/group,change_management_files_watch_files_report_diffs,"-,47,hansolo:x:1041:+,48,chewbacca:x:1039:+,49,darthsidious:x:1041:+,50,maul:x:1042:"
+
+283       1680054594,/etc/passwd,change_management_files_watch_files_report_diffs,"-,27,hansolo:x:1037:1041::/home/hansolo:/bin/bash+,28,chewbacca:x:1039:1039::/home/chewbacca:/bin/bash+,29,darthsidious:x:1040:1041::/home/darthsidious:/bin/bash+,30,maul:x:1041:1042::/home/maul:/bin/bash"
+
+3         MOM
+15        M:entropy_avail
+39        597 3780.0000 3439.8000 948.7725 0.0000
+39        598 3780.0000 3439.8000 948.7725 0.0000
+39        599 3780.0000 3439.8000 948.7725 0.0000
+12        M:mem_cached
+39        597 2391.7461 2172.7811 729.8832 0.0000
+39        598 2392.8047 2177.2587 718.4867 0.0000
+39        599 2384.9688 2170.1386 716.1004 0.0000
+10        M:mem_free
+37        597 8428.7355 8428.7355 0.0000 0.0000
+37        598 8396.8363 8396.8363 0.0000 0.0000
+39        599 12029.9531 10942.7325 0.0000 0.0000
+11        M:mem_total
+39        597 10404.4910 10404.4910 0.0000 0.0000
+39        598 10404.4910 10404.4910 0.0000 0.0000
+39        599 14863.5586 13525.8383 0.0000 0.0000
+16        M:io_writtendata
+31        597 0.5264 0.3847 0.3968 0.0000
+31        598 1.1250 0.9315 0.6245 0.0000
+31        599 1.1436 0.9492 0.6318 0.0000
+11        M:io_writes
+31        597 8.0000 6.4400 4.7210 0.0000
+33        598 12.0000 10.5000 5.0000 0.0000
+33        599 14.0000 11.9000 7.4364 0.0000
+6         M:cpu3
+31        597 0.2598 0.4323 0.5749 0.0000
+31        598 6.4091 4.7886 4.5670 0.0000
+31        599 0.4264 0.6524 0.7534 0.0000
+6         M:cpu2
+31        597 0.2264 0.4131 0.6223 0.0000
+31        598 0.4598 0.6801 0.7343 0.0000
+31        599 0.8525 0.8123 0.1342 0.0000
+6         M:cpu1
+31        597 0.3531 0.4403 0.2905 0.0000
+31        598 0.7263 0.8135 0.2905 0.0000
+31        599 0.2998 0.4925 0.6425 0.0000
+6         M:cpu0
+31        597 0.1732 0.3928 0.7318 0.0000
+31        598 0.3735 0.4729 0.3313 0.0000
+31        599 0.2533 0.3818 0.4281 0.0000
+5         M:cpu
+31        597 0.2498 0.4176 0.5593 0.0000
+31        598 1.9912 1.6884 1.0612 0.0000
+31        599 0.4564 0.5843 0.4264 0.0000
+10        M:messages
+40        597 4357.0000 3613.1200 2411.3165 0.0000
+39        598 1341.0000 1602.3000 871.0000 0.0000
+39        599 1236.0000 1428.4200 641.4000 0.0000
+8         M:ssh_in
+31        597 2.0000 2.0300 0.1000 0.0000
+31        598 2.0000 1.8200 0.6000 0.0000
+31        599 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        597 1.0000 0.9100 0.3000 0.0000
+31        598 1.0000 0.9100 0.3000 0.0000
+31        599 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        597 0.0000 0.0021 0.0074 0.0000
+31        598 0.0400 0.0406 0.0020 0.0000
+31        599 0.0000 0.0105 0.0372 0.0000
+10        M:diskfree
+34        597 71.0000 64.6100 21.3000 0.0000
+34        598 71.0000 64.6100 21.3000 0.0000
+34        599 71.0000 64.6100 21.3000 0.0000
+12        M:otherprocs
+31        597 4.0000 3.6400 1.2000 0.0000
+31        598 4.0000 3.6400 1.2000 0.0000
+31        599 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        597 116.0000 105.3500 35.5000 0.0000
+36        598 112.0000 102.7600 30.8000 0.0000
+36        599 112.0000 102.7600 30.8000 0.0000
+7         M:users
+31        597 5.0000 4.5500 1.5000 0.0000
+31        598 5.0000 4.5500 1.5000 0.0000
+31        599 5.0000 4.5500 1.5000 0.0000
+3         MOY
+15        M:entropy_avail
+40        155 4036.0000 3619.0000 4036.0000 0.0000
+12        M:mem_cached
+39        155 1965.4453 1790.4034 583.4730 0.0000
+16        M:io_writtendata
+31        155 0.7061 0.6737 0.1079 0.0000
+11        M:io_writes
+31        155 8.0000 8.1200 0.4000 0.0000
+6         M:cpu3
+31        155 5.7040 4.1761 4.2800 0.0000
+6         M:cpu2
+31        155 0.3464 0.5629 0.7216 0.0000
+6         M:cpu1
+31        155 1.4795 1.1700 0.9116 0.0000
+6         M:cpu0
+31        155 0.3934 0.4840 0.3021 0.0000
+5         M:cpu
+31        155 1.9793 1.5968 1.1621 0.0000
+10        M:messages
+39        155 1316.0000 1495.3400 597.8000 0.0000
+8         M:ssh_in
+31        155 2.0000 1.8200 0.6000 0.0000
+13        M:cfengine_in
+31        155 1.0000 0.9100 0.3000 0.0000
+9         M:loadavg
+31        155 0.0500 0.0434 0.0220 0.0000
+10        M:diskfree
+34        155 75.0000 68.2500 22.5000 0.0000
+12        M:otherprocs
+31        155 4.0000 3.6400 1.2000 0.0000
+11        M:rootprocs
+36        155 110.0000 101.7800 27.4000 0.0000
+7         M:users
+31        155 5.0000 4.5500 1.5000 0.0000
+3         PLG
+377       1680054367,45515e325a9f698dee71cac8560404b967e6137a743cd402b784217f28fc6729,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,chewbacca,/default/churn_local_users/users/'chewbacca'[3],,[],"[""Created user 'chewbacca'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+371       1680054393,fcb0be413f509f4ab47fc99d1d719ce50ce13137d95fe4356a62ce080f44c3d3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,hansolo,/default/churn_local_users/users/'hansolo'[8],,[],"[""Removed user 'hansolo'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+387       1680054493,e2e6d4f32f029df22474ec21672b5b657148508abbd7acf549626f197a4966c3,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Created user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+1572      1680054592,c85393e0c5c5b089cbb7252e2e5aa37fe0e583a52ede1c007aaacf6ed3d57517,/var/cfengine/inputs/services/inventory-lastlog/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,inventory_lastlog,commands,"/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ 	]+Port[ 	]+From[ 	]+[ 	]+Latest/       &&       !/\*\*Never logged in\*\*/       {
+        print ""^context=inventory_lastlog
+^meta=inventory,attribute_name=Last logged in ""$1""
+=lastlog[""$1""]=""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF
+      }' > ""/var/cfengine/state/lastlog.module.cache""","/default/inventory_lastlog/commands/'/usr/bin/lastlog | ...stlog.module.cache""'[1]",,[],"[""Executing 'no timeout' ... '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'"",""Completed execution of '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'""]",50,SHA=9eccbb87b98fc832d3f0924a4f4d00d465dba2aae1b83c884f575d753710c241
+
+1092      1680054592,74b62291a06042c23486f83a4a3a880400c21171afc6b11b4e466b9814d0ff8c,/var/cfengine/inputs/services/inventory-systemd/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,inventory_systemd_service_units_running,commands,/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat,/default/inventory_systemd_service_units_running/commands/'/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .:/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'[1],,[],"[""Executing 'no timeout' ... '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'"",""Completed execution of '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'""]",21,SHA=5e9611e04ce99bfd1a0a13eccb912e3b6826714387d632c3f2241535931336cc
+
+851       1680054594,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1680054594,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1680054594,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=abbedec1b64347fc04a295c8a64daae0c4a8a2c48d3bf6a3eb03b0077f64df2f)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+363       1680054594,694b8484bbac8080a9932829d3a07c4ccd93fc41056d40a7dfd51f1628205745,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,maul,/default/churn_local_users/users/'maul'[11],,[],"[""Created user 'maul'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+383       1680054619,030af61435314cad426651482c8a49015b483aa4ab0b32a0f6f4f6829dbfe915,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Removed user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+528       1680054620,88315cda2fd4090725c25ab2fe528f8955508a84d85685c75da8c39db5b15708,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'innerrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+377       1680054645,bb30e433c50518e12b4a89114cfa9aae6e780cc296fcc0eb07ebada8781cb2ea,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,chewbacca,/default/churn_local_users/users/'chewbacca'[3],,[],"[""Removed user 'chewbacca'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+522       1680054645,2a00738949efc4f5534d541bf62de1fed4c93753c07cb1123e9ef7bd6c7980e3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+531       1680054670,a482cc3792e95022febda13f4f85899b88caf20ee8ac450e954c091b7ee758d6,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_groups,groups,wildspace,/default/churn_local_groups/groups/'wildspace'[7],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'wildspace' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+497       1680054710,56ae32b65ba0455314ec31577642977fcf27f2270bcc7b26afac5625afced872,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,110,default,churn_local_groups,groups,westernreaches,/default/churn_local_groups/groups/'westernreaches'[8],,[],"[""Failed to create group 'westernreaches': groupadd: cannot lock /etc/group; try again later."",""Promise 'westernreaches' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+386       1680054720,099f94c2cd3947debf142bcb5ede995d3b84227825ecb1073f7ed0815f12d696,/var/cfengine/inputs/services/cfbs/install_packages.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,110,default,install_packages,packages,python3,/default/install_packages/packages/'python3'[1],,[],"[""Error installing package 'python3'""]",40,SHA=40f0424eb16e4fde2a15d5675138b64ba66acbe8dba134dd72f887d45c359f9f
+
+1214      1680054720,ec4a35ec08d800032f8c37d6efce67a77a34300565e3dca7065475a8fa461f4d,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1680054211,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1680054211'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1680054211/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1680054211/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1680054211/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'"",""Copied file '/var/cfengine/state/previous_state/./execution_log.cache' to '/var/cfengine/diagnostics/cache_dumps/1680054211/execution_log.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1680054211/execution_log.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1680054211/execution_log.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1680054211/execution_log.cache' from 'localhost:/var/cfengine/state/previous_state/./execution_log.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+615       1680054720,75728f727d15825be8c78b3a3203493eb28bac377b66af5220caf70ca16d738d,/var/cfengine/inputs/services/cfbs/modules/etc-issue-access/etc-issue-access.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,etc_issue_access,files,/etc/issue,/default/etc_issue_access/files/'/etc/issue'[1],,"[""CCE-83717-9"",""CCE-83707-0"",""CCE-83347-5""]","[""File '/etc/issue' is not owned by any group in group database  (gid = 644)"",""Group of '/etc/issue' was 644, set to 0"",""Regular file '/etc/issue' had permissions 1640, changed it to 0644""]",11,SHA=8d066f55630fc3661161224af28ffcb10b68858eb9d799ac7171525ab76f8ad5
+
+472       1680054720,9b65e06252489e0bdb3c85552f759ff9ab6eb34e3ef670c66c8882b87c81310e,/var/cfengine/inputs/services/cfbs/modules/etc-issue-content/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,etc_issue_content,main,files,/etc/issue,/etc_issue_content/main/files/'/etc/issue'[1],,[],"[""Group of '/etc/issue' was 0, set to 644"",""Regular file '/etc/issue' had permissions 0644, changed it to 1640""]",36,SHA=c8af5b75411a7f4ab7f0b21b9c6b8c520f00750cae2867072fc370b2c4466214
+
+386       1680054745,4e266614f38ae754839a35e7fc574b6b752029e43ed511fc912b5e826bb3b01b,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Created user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+386       1680054846,2ea1aeb72b8fa9b635038692e4b7f7f3b82d3317e496aa0abcac9d3dac664df5,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],"[""Created user 'lukeskywaker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+387       1680054871,c1a3779b76d76e5edde2668bac31f237efb11ce8a83bf017195e39d8744a22b1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,darthsidious,/default/churn_local_users/users/'darthsidious'[10],,[],"[""Removed user 'darthsidious'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+1572      1680054919,c85393e0c5c5b089cbb7252e2e5aa37fe0e583a52ede1c007aaacf6ed3d57517,/var/cfengine/inputs/services/inventory-lastlog/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,inventory_lastlog,commands,"/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ 	]+Port[ 	]+From[ 	]+[ 	]+Latest/       &&       !/\*\*Never logged in\*\*/       {
+        print ""^context=inventory_lastlog
+^meta=inventory,attribute_name=Last logged in ""$1""
+=lastlog[""$1""]=""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF
+      }' > ""/var/cfengine/state/lastlog.module.cache""","/default/inventory_lastlog/commands/'/usr/bin/lastlog | ...stlog.module.cache""'[1]",,[],"[""Executing 'no timeout' ... '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'"",""Completed execution of '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'""]",50,SHA=9eccbb87b98fc832d3f0924a4f4d00d465dba2aae1b83c884f575d753710c241
+
+1092      1680054919,74b62291a06042c23486f83a4a3a880400c21171afc6b11b4e466b9814d0ff8c,/var/cfengine/inputs/services/inventory-systemd/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,inventory_systemd_service_units_running,commands,/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat,/default/inventory_systemd_service_units_running/commands/'/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .:/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'[1],,[],"[""Executing 'no timeout' ... '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'"",""Completed execution of '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'""]",21,SHA=5e9611e04ce99bfd1a0a13eccb912e3b6826714387d632c3f2241535931336cc
+
+851       1680054921,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1680054921,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1680054921,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=8ed9ba3775d4cee4182294d8cc8001fd5092ebd6d7f0f8ca6f4e2dcf3e2ff1fd)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+421       1680054987,5820946305f58f0ceb4dd427ba58a6bdff713a12bc3cbc4169caacb3cf1110f1,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,110,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],"[""'/sbin/chpasswd -e' returned non-zero status: 1"",""Failed to create user 'rey'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+464       1680055002,369729ef797e65207cc29c1cf07f54d4a76677334810dd2800afa496927bb5e0,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,110,default,churn_local_users,users,c3po,/default/churn_local_users/users/'c3po'[13],,[],"[""Command returned error while removing user 'c3po'. (Command line: '/sbin/userdel c3po')"",""Failed to remove user 'c3po'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+383       1680055022,8f889933d10bb688c85e85dce773c282b796ebe7ebe2528f99dba8fe2cc4d5bb,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,jarjarbinks,/default/churn_local_users/users/'jarjarbinks'[2],,[],"[""Created user 'jarjarbinks'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+473       1680055042,8e8d71823c02009eb37a8dac953a4692ca10c47136b3d930ca239a889afe44ce,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,110,default,churn_local_groups,groups,innerrim,/default/churn_local_groups/groups/'innerrim'[3],,[],"[""Failed to create group 'innerrim': groupadd: cannot lock /etc/group; try again later."",""Promise 'innerrim' not kept""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+386       1680055047,b1cb3a2db6ecbc8395b7ee2ef55bc2bd65f99db85212672546380f8e3969cfce,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,obiwankenobi,/default/churn_local_users/users/'obiwankenobi'[6],,[],"[""Removed user 'obiwankenobi'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+522       1680055067,53b982118c5f1ffb49aed44fb4d9ebd461bfae32e4eb2b93d6ddff9f0a434e36,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+1214      1680055067,8a78cf243a7cc29fd4e608b24283fca254250d8565ec803e8ea32bd100053203,/var/cfengine/inputs/services/cfbs/enable_report_dumps.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,enable_report_dumps,files,/var/cfengine/diagnostics/cache_dumps/1680054538,/default/enable_report_dumps/files/'/var/cfengine/diagnostics/cache_dumps/1680054538'[1],,[],"[""Moved '/var/cfengine/diagnostics/cache_dumps/1680054538/patch.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1680054538/patch.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1680054538/patch.cache' from 'localhost:/var/cfengine/state/previous_state/./patch.cache'"",""Copied file '/var/cfengine/state/previous_state/./execution_log.cache' to '/var/cfengine/diagnostics/cache_dumps/1680054538/execution_log.cache.cfnew' (mode '600')"",""Moved '/var/cfengine/diagnostics/cache_dumps/1680054538/execution_log.cache.cfnew' to '/var/cfengine/diagnostics/cache_dumps/1680054538/execution_log.cache'"",""Updated file '/var/cfengine/diagnostics/cache_dumps/1680054538/execution_log.cache' from 'localhost:/var/cfengine/state/previous_state/./execution_log.cache'""]",16,SHA=d6e1c514cc8e5c25a124fdca885533be765101ccefa6789d3b07e377b122adb6
+
+371       1680055148,b5d8f6dc22944432198c454988deeb7524398d1c0ef44b50e3120608932c61f9,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,hansolo,/default/churn_local_users/users/'hansolo'[8],,[],"[""Created user 'hansolo'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+386       1680055173,bcda38d1967717db7626c980f5a68decdffe2dd5c55862f9b4a5abd4184f0199,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,lukeskywaker,/default/churn_local_users/users/'lukeskywaker'[9],,[],"[""Removed user 'lukeskywaker'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+1572      1680055186,c85393e0c5c5b089cbb7252e2e5aa37fe0e583a52ede1c007aaacf6ed3d57517,/var/cfengine/inputs/services/inventory-lastlog/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,inventory_lastlog,commands,"/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ 	]+Port[ 	]+From[ 	]+[ 	]+Latest/       &&       !/\*\*Never logged in\*\*/       {
+        print ""^context=inventory_lastlog
+^meta=inventory,attribute_name=Last logged in ""$1""
+=lastlog[""$1""]=""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF
+      }' > ""/var/cfengine/state/lastlog.module.cache""","/default/inventory_lastlog/commands/'/usr/bin/lastlog | ...stlog.module.cache""'[1]",,[],"[""Executing 'no timeout' ... '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'"",""Completed execution of '/usr/bin/lastlog | awk 'NF > 0       &&       !/^Username[ \t]+Port[ \t]+From[ \t]+[ \t]+Latest/       &&       !/\\*\\*Never logged in\\*\\*/       {\n        print \""^context=inventory_lastlog\n^meta=inventory,attribute_name=Last logged in \""$1\""\n=lastlog[\""$1\""]=\""$(NF-5), $(NF-4), $(NF-3), $(NF-2), $(NF-1), $NF\n      }' > \""/var/cfengine/state/lastlog.module.cache\""'""]",50,SHA=9eccbb87b98fc832d3f0924a4f4d00d465dba2aae1b83c884f575d753710c241
+
+1092      1680055187,74b62291a06042c23486f83a4a3a880400c21171afc6b11b4e466b9814d0ff8c,/var/cfengine/inputs/services/inventory-systemd/main.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,inventory_systemd_service_units_running,commands,/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat,/default/inventory_systemd_service_units_running/commands/'/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .:/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'[1],,[],"[""Executing 'no timeout' ... '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'"",""Completed execution of '/bin/systemctl list-units --type=service --state=running | awk '/^UNIT .*/{flag=1;next}/^$/{flag=0}flag{print $1}' > /var/cfengine/state/systemd-units-running.dat'""]",21,SHA=5e9611e04ce99bfd1a0a13eccb912e3b6826714387d632c3f2241535931336cc
+
+851       1680055188,127ed2868bfa2990ba204d7dd7378fe801b2ea5ae8b6092e3b9560c894602bb0,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/passwd,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/passwd'[1],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/passwd'"",""Copied file '/etc/passwd' to '/etc/passwd_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/passwd_cfchanges.cfsaved'"",""Backed up '/etc/passwd_cfchanges' as '/etc/passwd_cfchanges.cfsaved'"",""Moved '/etc/passwd_cfchanges.cfnew' to '/etc/passwd_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+841       1680055188,0a661f91842bfb79604631c4a5c2f66a628eb97a93c100307627f28fcaf1ddb8,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/group,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/group'[2],change_management_files_watch_files_report_diffs,"[""InfoSec""]","[""Reported on file changes to '/etc/group'"",""Copied file '/etc/group' to '/etc/group_cfchanges.cfnew' (mode '600')"",""Removed old backup '/etc/group_cfchanges.cfsaved'"",""Backed up '/etc/group_cfchanges' as '/etc/group_cfchanges.cfsaved'"",""Moved '/etc/group_cfchanges.cfnew' to '/etc/group_cfchanges'""]",37,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+692       1680055188,d2254da8cedadbdbb4fa6ecf8a20c25371e958b931e74c440cd52c4c0fb1dbb2,/var/cfengine/inputs/cfe_internal/enterprise/file_change.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,change_management,files,/etc/shadow,/default/cfe_internal_management/methods/'CFEngine_Internals'/default/cfe_internal_enterprise_main/methods/'security'/default/change_management/files/'/etc/shadow'[1],,"[""InfoSec""]","[""Hash 'sha256' for '/etc/shadow' changed!"",""Updated sha256 hash for '/etc/shadow' (SHA=356cad47d100aacf84142b2c4b7cd9126e4572a7187d34d7262f7ae4557b8ea1)"",""Recorded integrity changes in '/etc/shadow'""]",44,SHA=b3fcd1a1b634d1cac26a23774a325f35128b53d29ac2281caffeb909757c2a70
+
+360       1680055199,b52cdb7c7447c8cf6201a3bd28ed50d37e9d7b6e5d7cc4192a723e0194d57b50,/var/cfengine/inputs/services/cfbs/churn_local_users.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_users,users,rey,/default/churn_local_users/users/'rey'[12],,[],"[""Removed user 'rey'""]",10,SHA=66aec41141537e4570d6a74066d87b0a9129cc05975edb37015fa542e617fbd4
+
+522       1680055224,2a00738949efc4f5534d541bf62de1fed4c93753c07cb1123e9ef7bd6c7980e3,/var/cfengine/inputs/services/cfbs/churn_local_groups.cf,6456f1695dc9cc8becf0a21d19e6fc531a63aaf6,114,default,churn_local_groups,groups,midrim,/default/churn_local_groups/groups/'midrim'[6],,[],"[""Bug in promise module - Failed to log about changes made by a repaired groups promise with promiser 'midrim' (/var/cfengine/inputs/services/cfbs/churn_local_groups.cf:10)""]",10,SHA=26c2e74b1058db2a7671d789367cc6034561ceb5f7061f2f3a70eaf01749f9ca
+
+# send QUERY complete successful

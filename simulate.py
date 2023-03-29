@@ -6,17 +6,22 @@ import pandas as pd
 import re
 import csv
 import io
+import zlib
+import lzma
+import bz2
+import gzip
+from timeit import default_timer as timer
 
 CF_BUFSIZE = 4096
 CF_INBAND_OFFSET = 8
 CF_MAXTRANSSIZE = CF_BUFSIZE - CF_INBAND_OFFSET - 64
 
 HOSTS = {
-    "hub": "SHA=f8b83ee3ff6d6aec0c772c7dbb4d78ea604d4ce53e7f875c6a88e249ed7fd6e3",
-    "centos": "SHA=8b6026383587874304eb95eed145b002c8bf591cbb3acb1598b97e9a9484a8fa",
-    "debian": "SHA=5602656702d53c57d14701cf8e0e269623edabc89a0dac4bba604d833900b4ea",
-    "rhel": "SHA=25378825585c9d7b6ccdd73db2ffd6cce72601b72d0e5efe55b1bdb6bc7e8b07",
-    "ubuntu": "SHA=7119ca477f28b65baee37d8de62629d4c2c98a7a5cbe1455ada86f1f7ecb0608",
+    "hub": "SHA=b9353fd9e5ac7a74327610e38eaa6f7636c655707cbb2c4f772e633b72703217",
+    "centos": "SHA=f092c2783c2be5dd671be584b9d63904be50887f5bfa4a4e7609829b1994496f",
+    "debian": "SHA=108dbe4b97c3ed4e62e6c4a30720e590ae3c3d7301c62f09943bc11f928f3054",
+    "rhel": "SHA=c48ba0b489cd6f0f973e6c4c9bdea6e6a5a7a16bfdc90c6fe2d15da235c7ecfe",
+    "ubuntu": "SHA=5c976b26f2e96ca8b2f9b6e583af5fe2d1b53d17d84d00fffa8eae7aa1ecab59",
 }
 
 HEADER_FIELDS = {
@@ -195,7 +200,26 @@ class Patch(Event):
         ELD_path = os.path.join(work_dir, "execution_log.cache")
         ELD_size = os.path.getsize(ELD_path) if os.path.exists(ELD_path) else 0
 
-        LCH_size = os.path.getsize(patch_file)
+        with open(patch_file, "rb") as f:
+            buf = f.read()
+
+        LCH_size = len(buf)
+
+        begin = timer()
+        zlib_size = len(zlib.compress(buf, 9, -15))
+        zlib_time = timer() - begin
+
+        begin = timer()
+        lzma_size = len(lzma.compress(buf, check=lzma.CHECK_NONE, preset=9))
+        lzma_time = timer() - begin
+
+        begin = timer()
+        bz2_size = len(bz2.compress(buf, 9))
+        bz2_time = timer() - begin
+
+        begin = timer()
+        gzip_size = len(gzip.compress(buf, compresslevel=9))
+        gzip_time = timer() - begin
 
         CFE_size = 0
         tables_include = ["CFR", "CLD", "VAD", "LSD", "SDI", "SPD", "ELD"]
@@ -237,8 +261,16 @@ class Patch(Event):
                     "SDI",
                     "SPD",
                     "ELD",
-                    "LCH",
-                    "CFE",
+                    "lch_size",
+                    "zlib_size",
+                    "zlib_time",
+                    "lzma_size",
+                    "lzma_time"
+                    "bz2_size",
+                    "bz2_time",
+                    "gzip_size",
+                    "gzip_time",
+                    "cfe_size",
                 ]
             )
         )
@@ -253,6 +285,14 @@ class Patch(Event):
             SPD_size,
             ELD_size,
             LCH_size,
+            zlib_size,
+            zlib_time,
+            lzma_size,
+            lzma_time,
+            bz2_size,
+            bz2_time,
+            gzip_size,
+            gzip_time,
             CFE_size,
         ]
         df.to_csv("simulate/report.csv", index=False)
