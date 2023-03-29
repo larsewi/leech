@@ -265,7 +265,7 @@ class Patch(Event):
                     "zlib_size",
                     "zlib_time",
                     "lzma_size",
-                    "lzma_time"
+                    "lzma_time",
                     "bz2_size",
                     "bz2_time",
                     "gzip_size",
