@@ -24,6 +24,14 @@ HOSTS = {
     "ubuntu": "SHA=5c976b26f2e96ca8b2f9b6e583af5fe2d1b53d17d84d00fffa8eae7aa1ecab59",
 }
 
+COMMITS = {
+    "hub": 0,
+    "centos": 0,
+    "debian": 0,
+    "rhel": 0,
+    "ubuntu": 0,
+}
+
 HEADER_FIELDS = {
     "classes.cache": ["name", "meta"],
     "variables.cache": ["namespace", "bundle", "name", "type", "value", "meta"],
@@ -110,6 +118,8 @@ class Commit(Event):
         if p.returncode != 0:
             print("Command '%s' returned %d" % (" ".join(command), p.returncode))
             exit(1)
+
+        COMMITS[self.hostname] += 1
 
 
 class Patch(Event):
@@ -225,6 +235,9 @@ class Patch(Event):
         tables_include = ["CFR", "CLD", "VAD", "LSD", "SDI", "SPD", "ELD"]
         tables_exclude = ["EXS", "PRD", "CNG", "CND", "MOM", "MOY", "MOH", "PLG"]
 
+        num_commits = COMMITS[self.hostname]
+        COMMITS[self.hostname] = 0
+
         with open(self.dump_file, "rb") as f:
             buf = f.readline()  # Remove first line containing comment
             assert re.match(r"^#(?!\r\n).*\n$", buf.decode())
@@ -271,6 +284,7 @@ class Patch(Event):
                     "gzip_size",
                     "gzip_time",
                     "cfe_size",
+                    "commits",
                 ]
             )
         )
@@ -294,6 +308,7 @@ class Patch(Event):
             gzip_size,
             gzip_time,
             CFE_size,
+            num_commits,
         ]
         df.to_csv("simulate/report.csv", index=False)
 

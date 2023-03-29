@@ -181,8 +181,7 @@ typedef struct LCH_InstanceCreateInfo {
   const char *work_dir;
 } LCH_InstanceCreateInfo;
 
-LCH_Instance *LCH_InstanceCreate(
-    const LCH_InstanceCreateInfo *const createInfo);
+LCH_Instance *LCH_InstanceCreate(LCH_InstanceCreateInfo *const createInfo);
 
 bool LCH_InstanceAddTable(LCH_Instance *instance, LCH_Table *table);
 
