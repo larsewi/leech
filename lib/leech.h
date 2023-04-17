@@ -190,7 +190,7 @@ bool LCH_InstanceCommit(const LCH_Instance *instance);
 char *LCH_InstanceDelta(const LCH_Instance *instance, const char *block_id,
                         size_t *buf_len);
 
-bool LCH_InstancePatch(const LCH_Instance *self, const char *patch,
+bool LCH_InstancePatch(const LCH_Instance *instance, const char *patch,
                        const char *uid_field, const char *uid_value,
                        size_t size);
 
