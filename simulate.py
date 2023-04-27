@@ -338,8 +338,21 @@ def main():
                     events.append(event)
 
     events = sorted(events)
-    for event in events:
-        event.work()
+    print(events[0].timestamp)
+    print(events[-1].timestamp)
+    num_agent_runs = 0
+    num_reports = 0
+    for e in events:
+        if isinstance(e, Commit):
+            num_agent_runs += 1
+        else:
+            num_reports += 1
+    print(num_agent_runs)
+    print(num_reports)
+
+    print(len(events))
+    # for event in events:
+    #     event.work()
 
 
 if __name__ == "__main__":
