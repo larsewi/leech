@@ -6,6 +6,32 @@
 #include "../lib/leech.h"
 #include "../lib/utils.c"
 
+START_TEST(test_ExtractFieldsAtIndices) {
+  LCH_List *header = LCH_CSVParseRecord("one,two,three,four,five");
+  ck_assert_ptr_nonnull(header);
+  ck_assert_int_eq(LCH_ListLength(header), 5);
+
+  LCH_List *fields = LCH_CSVParseRecord("two,four");
+  ck_assert_ptr_nonnull(fields);
+  ck_assert_int_eq(LCH_ListLength(fields), 2);
+
+  LCH_List *indices = GetIndexOfFields(header, fields);
+  ck_assert_ptr_nonnull(indices);
+  ck_assert_int_eq(LCH_ListLength(indices), 2);
+
+  LCH_ListDestroy(fields);
+  fields = ExtractFieldsAtIndices(header, indices);
+  ck_assert_ptr_nonnull(fields);
+  ck_assert_int_eq(LCH_ListLength(fields), 2);
+  ck_assert_str_eq(LCH_ListGet(fields, 0), "two");
+  ck_assert_str_eq(LCH_ListGet(fields, 1), "four");
+
+  LCH_ListDestroy(header);
+  LCH_ListDestroy(fields);
+  LCH_ListDestroy(indices);
+}
+END_TEST
+
 START_TEST(test_ParseConcat) {
   LCH_List *list = ParseConcatFields("", "one,two,three,four", false);
   ck_assert_ptr_nonnull(list);
@@ -237,6 +263,11 @@ END_TEST
 
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
+  {
+    TCase *tc = tcase_create("ExtractFieldsAtIndices");
+    tcase_add_test(tc, test_ExtractFieldsAtIndices);
+    suite_add_tcase(s, tc);
+  }
   {
     TCase *tc = tcase_create("ParseConcat");
     tcase_add_test(tc, test_ParseConcat);
