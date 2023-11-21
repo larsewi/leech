@@ -111,10 +111,10 @@ static bool MarshalDeltaOperations(LCH_Buffer *buffer,
   }
 
   if (!LCH_CSVComposeTable(&buffer, records)) {
-    free(records);
+    LCH_ListDestroy(records);
     return false;
   }
-  free(records);
+  LCH_ListDestroy(records);
 
   const size_t after = LCH_BufferLength(buffer);
   if (after - before > UINT32_MAX) {
