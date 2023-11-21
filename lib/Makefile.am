@@ -11,7 +11,7 @@ lib_LTLIBRARIES = \
         libleech_csv.la \
         libleech_psql.la
 
-libleech_la_SOURCES = \
+libleech_la_SOURCES = leech.c \
         block.h block.c \
         buffer.h buffer.c \
         csv.h csv.c \

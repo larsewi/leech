@@ -95,7 +95,7 @@ int Patch(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  if (!LCH_InstancePatch(instance, uid_field, uid_value, buffer, size)) {
+  if (!LCH_Patch(instance, uid_field, uid_value, buffer, size)) {
     LCH_LOG_ERROR("Failed to apply patch from file '%s'.", patch_file);
     LCH_InstanceDestroy(instance);
     free(buffer);

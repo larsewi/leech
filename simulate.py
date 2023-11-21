@@ -128,7 +128,7 @@ class Patch(Event):
         super().__init__(hostname, hostkey, timestamp)
 
     def work(self):
-        print(f"*** Delta {self.timestamp} {self.hostname} ***")
+        print(f"*** Diff {self.timestamp} {self.hostname} ***")
         lastseen_block = "0000000000000000000000000000000000000000"
         lastseen_block_path = os.path.join("simulate/hub/.leech", self.hostkey)
 
@@ -147,7 +147,7 @@ class Patch(Event):
         command = [
             "../../bin/leech",
             "--info",
-            "delta",
+            "diff",
             "--block",
             lastseen_block,
             "--file",

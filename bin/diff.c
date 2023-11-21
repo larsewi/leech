@@ -1,4 +1,4 @@
-#include "delta.h"
+#include "diff.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -41,7 +41,7 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-int Delta(const char *const work_dir, int argc, char *argv[]) {
+int Diff(const char *const work_dir, int argc, char *argv[]) {
   assert(work_dir != NULL);
   const char *patch_file = NULL;
   const char *block_id = "0000000000000000000000000000000000000000";
@@ -70,7 +70,7 @@ int Delta(const char *const work_dir, int argc, char *argv[]) {
   }
 
   size_t size;
-  char *diff = LCH_InstanceDelta(instance, block_id, &size);
+  char *diff = LCH_Diff(instance, block_id, &size);
   if (diff == NULL) {
     LCH_LOG_ERROR("Failed to enumerate blocks.");
     LCH_InstanceDestroy(instance);

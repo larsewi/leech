@@ -185,14 +185,13 @@ LCH_Instance *LCH_InstanceCreate(const LCH_InstanceCreateInfo *createInfo);
 
 bool LCH_InstanceAddTable(LCH_Instance *instance, LCH_Table *table);
 
-bool LCH_InstanceCommit(const LCH_Instance *instance);
+bool LCH_Commit(const LCH_Instance *instance);
 
-char *LCH_InstanceDelta(const LCH_Instance *instance, const char *block_id,
-                        size_t *buf_len);
+char *LCH_Diff(const LCH_Instance *instance, const char *block_id,
+               size_t *buf_len);
 
-bool LCH_InstancePatch(const LCH_Instance *instance, const char *patch,
-                       const char *uid_field, const char *uid_value,
-                       size_t size);
+bool LCH_Patch(const LCH_Instance *instance, const char *patch,
+               const char *uid_field, const char *uid_value, size_t size);
 
 void LCH_InstanceDestroy(LCH_Instance *instance);
 

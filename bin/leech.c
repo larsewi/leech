@@ -12,7 +12,7 @@
 #include "../lib/leech_psql.h"
 #include "commit.h"
 #include "common.h"
-#include "delta.h"
+#include "diff.h"
 #include "patch.h"
 #include "rebase.h"
 
@@ -48,7 +48,7 @@ static const char *const DESCRIPTIONS[] = {
 
 static const struct command COMMANDS[] = {
     {"commit", "compute and commit changes in tables", Commit},
-    {"delta", "compress changes in tables", Delta},
+    {"diff", "merge changes in tables", Diff},
     {"rebase", "rebase to current table state", Rebase},
     {"patch", "apply changes to tables", Patch},
     {NULL, NULL, NULL},

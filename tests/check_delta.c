@@ -12,16 +12,16 @@ START_TEST(test_LCH_Delta) {
   ck_assert_ptr_nonnull(out_buf);
 
   LCH_TableCreateInfo table_create_info = {
-    .identifier = "beatles",
-    .primary_fields = "firstname,lastname",
-    .subsidiary_fields = "year",
-    .read_locator = "test",
-    .write_locator = "test",
-    .read_callback = LCH_TableReadCallbackCSV,
-    .write_callback = LCH_TableWriteCallbackCSV,
-    .insert_callback = LCH_TableInsertCallbackCSV,
-    .delete_callback = LCH_TableDeleteCallbackCSV,
-    .update_callback = LCH_TableUpdateCallbackCSV,
+      .identifier = "beatles",
+      .primary_fields = "firstname,lastname",
+      .subsidiary_fields = "year",
+      .read_locator = "test",
+      .write_locator = "test",
+      .read_callback = LCH_TableReadCallbackCSV,
+      .write_callback = LCH_TableWriteCallbackCSV,
+      .insert_callback = LCH_TableInsertCallbackCSV,
+      .delete_callback = LCH_TableDeleteCallbackCSV,
+      .update_callback = LCH_TableUpdateCallbackCSV,
   };
   LCH_Table *beatles = LCH_TableCreate(&table_create_info);
   ck_assert_ptr_nonnull(beatles);
@@ -33,7 +33,7 @@ START_TEST(test_LCH_Delta) {
   ck_assert_ptr_nonnull(pinkfloyd);
 
   LCH_InstanceCreateInfo instance_create_info = {
-    .work_dir = ".leech",
+      .work_dir = ".leech",
   };
 
   LCH_Instance *instance = LCH_InstanceCreate(&instance_create_info);
@@ -65,7 +65,7 @@ START_TEST(test_LCH_Delta) {
 
   ck_assert(LCH_DeltaMarshal(out_buf, delta));
   LCH_DeltaDestroy(delta);
-  
+
   old_state = LCH_DictCreate();
   ck_assert_ptr_nonnull(old_state);
   ck_assert(LCH_DictSet(old_state, "0", "Syd,Barret", NULL));
@@ -104,7 +104,8 @@ START_TEST(test_LCH_Delta) {
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumDeletions(delta), 2);
   ck_assert_int_eq(LCH_DeltaGetNumUpdates(delta), 1);
-  ck_assert_str_eq(LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)), "pinkfloyd");
+  ck_assert_str_eq(LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)),
+                   "pinkfloyd");
   LCH_DeltaDestroy(delta);
 
   LCH_InstanceDestroy(instance);

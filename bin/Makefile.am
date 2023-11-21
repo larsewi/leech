@@ -6,7 +6,7 @@ noinst_PROGRAMS = leech
 leech_SOURCES = leech.c \
     common.c common.h \
     commit.c commit.h \
-    delta.c delta.h \
+    diff.c diff.h \
     rebase.c rebase.h \
     patch.c patch.h
 

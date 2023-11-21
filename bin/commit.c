@@ -48,7 +48,7 @@ int Commit(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  if (!LCH_InstanceCommit(instance)) {
+  if (!LCH_Commit(instance)) {
     LCH_LOG_ERROR("LCH_InstanceCommit");
     LCH_InstanceDestroy(instance);
     return EXIT_FAILURE;
