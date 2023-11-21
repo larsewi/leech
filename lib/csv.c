@@ -140,6 +140,13 @@ static LCH_List *ParseRecord(Parser *const parser) {
     return NULL;
   }
 
+  if (strcmp(field, "") == 0) {
+    /* Does it mean that record is empty, or does it mean that the record
+     * contains one empty field? */
+    free(field);
+    return record;
+  }
+
   if (!LCH_ListAppend(record, (void *)field, free)) {
     LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
                   field, parser->row, parser->column);

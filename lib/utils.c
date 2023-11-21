@@ -637,6 +637,9 @@ LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
       LCH_ListDestroy(table);
       return NULL;
     }
+  } else {
+    // Make sure we did not allocate memory for it if we won't use it
+    assert(header == NULL);
   }
 
   LCH_List *const keys = LCH_DictGetKeys(dict);

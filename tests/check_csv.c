@@ -6,6 +6,14 @@
 #include "../lib/definitions.h"
 #include "../lib/leech.h"
 
+START_TEST(test_LCH_CSVParseRecord) {
+  LCH_List *record = LCH_CSVParseRecord("");
+  ck_assert_ptr_nonnull(record);
+  ck_assert_int_eq(LCH_ListLength(record), 0);
+  LCH_ListDestroy(record);
+}
+END_TEST
+
 START_TEST(test_LCH_ComposeCSV) {
   char *data[][LCH_BUFFER_SIZE] = {
       {(char *)"first name", (char *)"lastname", (char *)"born"},
@@ -31,7 +39,8 @@ START_TEST(test_LCH_ComposeCSV) {
     ck_assert(LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy));
   }
 
-  LCH_Buffer *buffer = LCH_CSVComposeTable(table);
+  LCH_Buffer *buffer = NULL;
+  ck_assert(LCH_CSVComposeTable(&buffer, table));
   ck_assert_ptr_nonnull(buffer);
 
   char *actual = LCH_BufferStringDup(buffer);
@@ -115,6 +124,11 @@ END_TEST
 
 Suite *CSVSuite(void) {
   Suite *s = suite_create("csv.c");
+  {
+    TCase *tc = tcase_create("LCH_CSVParseRecord");
+    tcase_add_test(tc, test_LCH_CSVParseRecord);
+    suite_add_tcase(s, tc);
+  }
   {
     TCase *tc = tcase_create("Compose");
     tcase_add_test(tc, test_LCH_ComposeCSV);

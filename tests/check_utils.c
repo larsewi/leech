@@ -6,6 +6,59 @@
 #include "../lib/leech.h"
 #include "../lib/utils.c"
 
+START_TEST(test_ParseConcat) {
+  LCH_List *list = ParseConcatFields("", "one,two,three,four", false);
+  ck_assert_ptr_nonnull(list);
+  ck_assert_int_eq(LCH_ListLength(list), 4);
+  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  LCH_ListDestroy(list);
+  list = NULL;
+
+  list = ParseConcatFields("one,two", "three,four", false);
+  ck_assert_ptr_nonnull(list);
+  ck_assert_int_eq(LCH_ListLength(list), 4);
+  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  LCH_ListDestroy(list);
+  list = NULL;
+
+  list = ParseConcatFields("one", "two,three,four", false);
+  ck_assert_ptr_nonnull(list);
+  ck_assert_int_eq(LCH_ListLength(list), 4);
+  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  LCH_ListDestroy(list);
+  list = NULL;
+
+  list = ParseConcatFields("one,two,three", "four", false);
+  ck_assert_ptr_nonnull(list);
+  ck_assert_int_eq(LCH_ListLength(list), 4);
+  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  LCH_ListDestroy(list);
+  list = NULL;
+
+  list = ParseConcatFields("one,two,three,four", "", false);
+  ck_assert_ptr_nonnull(list);
+  ck_assert_int_eq(LCH_ListLength(list), 4);
+  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  LCH_ListDestroy(list);
+  list = NULL;
+}
+END_TEST
+
 START_TEST(test_LCH_StartsWith) {
   ck_assert(LCH_StringStartsWith("Hello World", "Hello"));
   ck_assert(!LCH_StringStartsWith("World", "Hello"));
@@ -111,7 +164,7 @@ START_TEST(test_LCH_TableToDict) {
       "John,      Lennon,    1940\r\n"
       "George,    Harrison,  1943\r\n";
   LCH_List *table = LCH_CSVParseTable(csv);
-  LCH_Dict *dict = LCH_TableToDict(table, "lastname,firstname", "born");
+  LCH_Dict *dict = LCH_TableToDict(table, "lastname,firstname", "born", true);
 
   LCH_ListDestroy(table);
 
@@ -133,10 +186,10 @@ START_TEST(test_LCH_DictToTable) {
       "John,      Lennon,    1940\r\n"
       "George,    Harrison,  1943\r\n";
   LCH_List *table = LCH_CSVParseTable(csv);
-  LCH_Dict *dict = LCH_TableToDict(table, "firstname", "born,lastname");
+  LCH_Dict *dict = LCH_TableToDict(table, "firstname", "born,lastname", true);
   LCH_ListDestroy(table);
 
-  table = LCH_DictToTable(dict, "firstname", "lastname,born");
+  table = LCH_DictToTable(dict, "firstname", "lastname,born", true);
   ck_assert_ptr_nonnull(table);
   LCH_DictDestroy(dict);
 
@@ -184,6 +237,11 @@ END_TEST
 
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
+  {
+    TCase *tc = tcase_create("ParseConcat");
+    tcase_add_test(tc, test_ParseConcat);
+    suite_add_tcase(s, tc);
+  }
   {
     TCase *tc = tcase_create("LCH_SplitString");
     tcase_add_test(tc, test_LCH_SplitString);
