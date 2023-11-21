@@ -3,6 +3,14 @@ import os
 import csv
 
 
+"""
+When generating CSV files for testing Leech, dealing with the rigorous
+requirements of the Leech CSV parser can be a bit challenging. This script is
+designed to address minor issues, such as using newline characters instead of
+CRLF.
+"""
+
+
 def sanitize(filenames):
     for filename in filenames:
         print(f"Creating sanatized copy: '{filename}' -> '{filename}.new'")
