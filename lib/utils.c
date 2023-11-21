@@ -585,10 +585,10 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
           LCH_DictDestroy(dict);
           return NULL;
         }
-        LCH_ListDestroy(extracted_val);
         value = LCH_BufferToString(val_buffer);
         assert(value != NULL);
       }
+      LCH_ListDestroy(extracted_val);
     }
 
     if (!LCH_DictSet(dict, key, value, free)) {
