@@ -9,7 +9,7 @@
 START_TEST(test_LCH_CSVParseRecord) {
   LCH_List *record = LCH_CSVParseRecord("");
   ck_assert_ptr_nonnull(record);
-  ck_assert_int_eq(LCH_ListLength(record), 0);
+  ck_assert_int_eq(LCH_ListLength(record), 1);
   LCH_ListDestroy(record);
 }
 END_TEST

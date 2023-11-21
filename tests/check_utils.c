@@ -33,17 +33,7 @@ START_TEST(test_ExtractFieldsAtIndices) {
 END_TEST
 
 START_TEST(test_ParseConcat) {
-  LCH_List *list = ParseConcatFields("", "one,two,three,four", false);
-  ck_assert_ptr_nonnull(list);
-  ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
-  LCH_ListDestroy(list);
-  list = NULL;
-
-  list = ParseConcatFields("one,two", "three,four", false);
+  LCH_List *list = ParseConcatFields("one,two", "three,four", false);
   ck_assert_ptr_nonnull(list);
   ck_assert_int_eq(LCH_ListLength(list), 4);
   ck_assert_str_eq(LCH_ListGet(list, 0), "one");
@@ -73,7 +63,7 @@ START_TEST(test_ParseConcat) {
   LCH_ListDestroy(list);
   list = NULL;
 
-  list = ParseConcatFields("one,two,three,four", "", false);
+  list = ParseConcatFields("one,two,three,four", NULL, false);
   ck_assert_ptr_nonnull(list);
   ck_assert_int_eq(LCH_ListLength(list), 4);
   ck_assert_str_eq(LCH_ListGet(list, 0), "one");
