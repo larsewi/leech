@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+rm -f acceptance_test.log
+python3 acceptance.py > acceptance_test.log

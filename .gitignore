@@ -116,4 +116,5 @@ Makefile
 config.h
 *.valgrind
 .vscode
-simulate/report.csv
+tests/tmp/*
+.DS_Store
