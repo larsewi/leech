@@ -40,14 +40,6 @@ bool LCH_BufferPrintFormat(LCH_Buffer *self, const char *format, ...);
 size_t LCH_BufferLength(const LCH_Buffer *self);
 
 /**
- * @brief string duplicate buffer.
- * @note returned string must be freed with free(3).
- * @param[in] buffer.
- * @return heap allocated duplicate.
- */
-char *LCH_BufferStringDup(LCH_Buffer *self);
-
-/**
  * @brief destroy buffer.
  * @note noop if self is NULL.
  * @param[in] self buffer.

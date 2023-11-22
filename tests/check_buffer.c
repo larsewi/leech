@@ -12,10 +12,8 @@ START_TEST(test_LCH_Buffer) {
     ck_assert(LCH_BufferPrintFormat(buffer, "Hello %s!\n", "buffer"));
   }
 
-  char *actual = LCH_BufferStringDup(buffer);
+  char *actual = LCH_BufferToString(buffer);
   ck_assert_ptr_nonnull(buffer);
-
-  LCH_BufferDestroy(buffer);
 
   char exptected[] = {
       "Hello buffer!\n"

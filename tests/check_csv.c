@@ -43,8 +43,7 @@ START_TEST(test_LCH_ComposeCSV) {
   ck_assert(LCH_CSVComposeTable(&buffer, table));
   ck_assert_ptr_nonnull(buffer);
 
-  char *actual = LCH_BufferStringDup(buffer);
-  LCH_BufferDestroy(buffer);
+  char *actual = LCH_BufferToString(buffer);
   ck_assert_ptr_nonnull(actual);
 
   char expected[] =

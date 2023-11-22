@@ -53,8 +53,7 @@ static char *ParseEscaped(Parser *const parser) {
   assert(parser->cursor[0] == '"');
   parser->cursor += 1;
 
-  char *const field = LCH_BufferStringDup(buffer);
-  LCH_BufferDestroy(buffer);
+  char *const field = LCH_BufferToString(buffer);
   if (field == NULL) {
     LCH_LOG_ERROR(
         "Failed to create string from buffer for escaped field (Row %zu, Col "
@@ -364,8 +363,7 @@ char *LCH_CSVComposeField(const char *const str) {
     return NULL;
   }
 
-  char *field = LCH_BufferStringDup(temp);
-  LCH_BufferDestroy(temp);
+  char *field = LCH_BufferToString(temp);
   return field;
 }
 
