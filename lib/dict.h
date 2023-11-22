@@ -35,33 +35,4 @@ LCH_Dict *LCH_DictSetChangedIntersection(
     void *(*duplicate)(const void *), void (*destroy)(void *),
     int (*compare)(const void *, const void *));
 
-/**
- * Create a dict iterator.
- * @param [in] dict dict to create iterator from.
- * @return pointer to iterator.
- * @note iterator must be freed with free.
- */
-LCH_DictIter *LCH_DictIterCreate(const LCH_Dict *const dict);
-
-/**
- * Find next element in iterator.
- * @param [in] iter pointer to iterator.
- * @return true if new element was found.
- */
-bool LCH_DictIterHasNext(LCH_DictIter *iter);
-
-/**
- * Get key from found element.
- * @param [in] pointer to iterator.
- * @return key from element.
- */
-char *LCH_DictIterGetKey(const LCH_DictIter *iter);
-
-/**
- * Get value from found element.
- * @param [in] pointer to iterator.
- * @return value from element.
- */
-void *LCH_DictIterGetValue(const LCH_DictIter *iter);
-
 #endif  // _LEECH_DICT

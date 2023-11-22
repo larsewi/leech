@@ -347,59 +347,6 @@ void LCH_DictDestroy(LCH_Dict *self) {
   free(self);
 }
 
-LCH_DictIter *LCH_DictIterCreate(const LCH_Dict *const dict) {
-  assert(dict != NULL);
-
-  LCH_DictIter *iter = malloc(sizeof(LCH_DictIter));
-  if (iter == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for iterator: %s",
-                  strerror(errno));
-    return NULL;
-  }
-  iter->cur_pos = 0;
-  iter->dict = dict;
-
-  return iter;
-}
-
-bool LCH_DictIterHasNext(LCH_DictIter *const iter) {
-  assert(iter != NULL);
-  assert(iter->dict != NULL);
-  assert(iter->dict->buffer != NULL);
-
-  DictElement **buffer = iter->dict->buffer;
-  while (iter->cur_pos < iter->dict->capacity) {
-    if (buffer[iter->cur_pos] == NULL || buffer[iter->cur_pos]->invalidated) {
-      iter->cur_pos += 1;
-      continue;
-    }
-    iter->cur_pos += 1;
-    return true;
-  }
-  return false;
-}
-
-char *LCH_DictIterGetKey(const LCH_DictIter *const iter) {
-  assert(iter != NULL);
-  assert(iter->dict != NULL);
-  assert(iter->dict->buffer != NULL);
-
-  DictElement *item = iter->dict->buffer[iter->cur_pos - 1];
-  assert(item != NULL);
-  assert(item->key != NULL);
-  return item->key;
-}
-
-void *LCH_DictIterGetValue(const LCH_DictIter *const iter) {
-  assert(iter != NULL);
-  assert(iter->dict != NULL);
-  assert(iter->dict->buffer != NULL);
-
-  DictElement *item = iter->dict->buffer[iter->cur_pos - 1];
-  assert(item != NULL);
-  return item->value;
-}
-
 LCH_List *LCH_DictGetKeys(const LCH_Dict *const self) {
   assert(self != NULL);
   assert(self->buffer != NULL);

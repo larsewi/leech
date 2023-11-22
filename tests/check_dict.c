@@ -91,32 +91,6 @@ START_TEST(test_LCH_DictSetChangedIntersection) {
 }
 END_TEST
 
-START_TEST(test_LCH_DictIter) {
-  char *stuff[] = {(char *)"one", (char *)"two", (char *)"three",
-                   (char *)"four", (char *)"five"};
-
-  LCH_Dict *dict = LCH_DictCreate();
-
-  for (size_t i = 0; i < 5; i++) {
-    LCH_DictSet(dict, stuff[i], strdup(stuff[i]), free);
-  }
-
-  LCH_DictIter *iter = LCH_DictIterCreate(dict);
-  ck_assert_ptr_nonnull(iter);
-
-  size_t i = 0;
-  while (LCH_DictIterHasNext(iter)) {
-    char *key = LCH_DictIterGetKey(iter);
-    char *val = (char *)LCH_DictIterGetValue(iter);
-    ck_assert_str_eq(key, val);
-    i += 1;
-  }
-
-  free(iter);
-  LCH_DictDestroy(dict);
-}
-END_TEST
-
 START_TEST(test_LCH_DictRemove) {
   LCH_Dict *dict = LCH_DictCreate();
 
@@ -188,11 +162,6 @@ Suite *DictSuite(void) {
   {
     TCase *tc = tcase_create("LCH_DictSetChangedIntersection");
     tcase_add_test(tc, test_LCH_DictSetChangedIntersection);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_DictIter*");
-    tcase_add_test(tc, test_LCH_DictIter);
     suite_add_tcase(s, tc);
   }
   {
