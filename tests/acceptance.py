@@ -1,15 +1,12 @@
-import os
 import glob
-from datetime import datetime
 import random
 import shutil
-from pathlib import Path
 import subprocess
-import csv
-import io
+from pathlib import Path
+from datetime import datetime
 
-SEED = 1
-CHANCE = 20
+SEED = 1 # Seed used by random generator
+CHANCE = 20 # Percent chance of report collection
 
 
 def execute(cmd):
