@@ -30,8 +30,8 @@ static bool EnsureCapacity(LCH_List *const self, const size_t n_items) {
     return true;
   }
 
-  ListElement **new_buffer =
-      realloc(self->buffer, sizeof(ListElement *) * new_capacity);
+  ListElement **new_buffer = (ListElement **)realloc(
+      self->buffer, sizeof(ListElement *) * new_capacity);
   if (new_buffer == NULL) {
     LCH_LOG_ERROR("Failed to expand list buffer from %zu to %zu elements: %s",
                   self->capacity, new_capacity, strerror(errno));

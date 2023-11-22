@@ -23,8 +23,8 @@ START_TEST(test_ExtractFieldsAtIndices) {
   fields = ExtractFieldsAtIndices(header, indices);
   ck_assert_ptr_nonnull(fields);
   ck_assert_int_eq(LCH_ListLength(fields), 2);
-  ck_assert_str_eq(LCH_ListGet(fields, 0), "two");
-  ck_assert_str_eq(LCH_ListGet(fields, 1), "four");
+  ck_assert_str_eq((char *)LCH_ListGet(fields, 0), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(fields, 1), "four");
 
   LCH_ListDestroy(header);
   LCH_ListDestroy(fields);
@@ -36,40 +36,40 @@ START_TEST(test_ParseConcat) {
   LCH_List *list = ParseConcatFields("one,two", "three,four", false);
   ck_assert_ptr_nonnull(list);
   ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
   LCH_ListDestroy(list);
   list = NULL;
 
   list = ParseConcatFields("one", "two,three,four", false);
   ck_assert_ptr_nonnull(list);
   ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
   LCH_ListDestroy(list);
   list = NULL;
 
   list = ParseConcatFields("one,two,three", "four", false);
   ck_assert_ptr_nonnull(list);
   ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
   LCH_ListDestroy(list);
   list = NULL;
 
   list = ParseConcatFields("one,two,three,four", NULL, false);
   ck_assert_ptr_nonnull(list);
   ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq(LCH_ListGet(list, 3), "four");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
   LCH_ListDestroy(list);
   list = NULL;
 }
@@ -99,37 +99,37 @@ START_TEST(test_LCH_StringStrip) {
 END_TEST
 
 START_TEST(test_LCH_SplitString) {
-  char *expected[] = {"+,a,b,c", "-,e,d,f"};
+  const char *expected[] = {"+,a,b,c", "-,e,d,f"};
   LCH_List *lst = LCH_SplitString("+,a,b,c\r\n-,e,d,f\r\n", "\r\n");
-  ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
-  ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+  ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
+  ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
   LCH_ListDestroy(lst);
 }
 END_TEST
 
 START_TEST(test_LCH_SplitStringSubstring) {
   {
-    char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
+    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
     LCH_List *lst = LCH_SplitStringSubstring(
         "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
-    ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
+    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
     LCH_ListDestroy(lst);
   }
   {
-    char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
+    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
     LCH_List *lst = LCH_SplitStringSubstring(
         "\r\n\r\n+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
-    ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
+    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
     LCH_ListDestroy(lst);
   }
   {
-    char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
+    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
     LCH_List *lst = LCH_SplitStringSubstring(
         "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i\r\n\r\n", "\r\n\r\n");
-    ck_assert_str_eq(LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq(LCH_ListGet(lst, 1), expected[1]);
+    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
+    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
     LCH_ListDestroy(lst);
   }
 }
@@ -185,10 +185,10 @@ START_TEST(test_LCH_TableToDict) {
   LCH_ListDestroy(table);
 
   ck_assert_ptr_nonnull(dict);
-  ck_assert_str_eq(LCH_DictGet(dict, "Paul,McCartney"), "1942");
-  ck_assert_str_eq(LCH_DictGet(dict, "Ringo,Starr"), "1940");
-  ck_assert_str_eq(LCH_DictGet(dict, "John,Lennon"), "1940");
-  ck_assert_str_eq(LCH_DictGet(dict, "George,Harrison"), "1943");
+  ck_assert_str_eq((char *)LCH_DictGet(dict, "Paul,McCartney"), "1942");
+  ck_assert_str_eq((char *)LCH_DictGet(dict, "Ringo,Starr"), "1940");
+  ck_assert_str_eq((char *)LCH_DictGet(dict, "John,Lennon"), "1940");
+  ck_assert_str_eq((char *)LCH_DictGet(dict, "George,Harrison"), "1943");
 
   LCH_DictDestroy(dict);
 }
@@ -213,17 +213,17 @@ START_TEST(test_LCH_DictToTable) {
   ck_assert_int_eq(num_records, 5);
 
   for (size_t i = 0; i < num_records; i++) {
-    LCH_List *record = LCH_ListGet(table, i);
+    LCH_List *record = (LCH_List *)LCH_ListGet(table, i);
     ck_assert_ptr_nonnull(record);
     ck_assert_int_eq(LCH_ListLength(record), 3);
 
-    char *first = LCH_ListGet(record, 0);
+    char *first = (char *)LCH_ListGet(record, 0);
     ck_assert_ptr_nonnull(first);
 
-    char *second = LCH_ListGet(record, 1);
+    char *second = (char *)LCH_ListGet(record, 1);
     ck_assert_ptr_nonnull(second);
 
-    char *third = LCH_ListGet(record, 2);
+    char *third = (char *)LCH_ListGet(record, 2);
     ck_assert_ptr_nonnull(third);
 
     if (i == 0) {

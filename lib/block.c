@@ -25,7 +25,7 @@ static char *DigestToString(const unsigned char digest[SHA_DIGEST_LENGTH]) {
   // Two characters per byte, plus terminating null byte
   const int len = (SHA_DIGEST_LENGTH * 2) + 1;
 
-  char *const str = malloc(len);
+  char *const str = (char *)malloc(len);
   if (str == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
@@ -80,7 +80,7 @@ char *LCH_BlockGetBlockID(const LCH_Block *const block) {
 
 LCH_Block *LCH_BlockCreate(const char *const parent_id, const void *const data,
                            const size_t data_len) {
-  LCH_Block *block = malloc(sizeof(LCH_Block) + data_len);
+  LCH_Block *block = (LCH_Block *)malloc(sizeof(LCH_Block) + data_len);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for block: %s");
     return NULL;
@@ -162,7 +162,7 @@ LCH_Block *LCH_BlockLoad(const char *const work_dir,
     return NULL;
   }
 
-  LCH_Block *block = malloc(sizeof(LCH_Block));
+  LCH_Block *block = (LCH_Block *)malloc(sizeof(LCH_Block));
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     fclose(file);
@@ -186,7 +186,7 @@ LCH_Block *LCH_BlockLoad(const char *const work_dir,
       fclose(file);
       return NULL;
     }
-    block = ptr;
+    block = (LCH_Block *)ptr;
   }
 
   if (fread(block->data, 1, data_len, file) != data_len) {

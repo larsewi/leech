@@ -18,7 +18,7 @@ START_TEST(test_LCH_Block) {
   }
 
   // Store one
-  char *str = "one";
+  const char *str = "one";
   size_t len = strlen(str) + 1;
   LCH_Block *block =
       LCH_BlockCreate("0000000000000000000000000000000000000000", str, len);
@@ -53,7 +53,7 @@ START_TEST(test_LCH_Block) {
   ck_assert(LCH_BlockRemove(work_dir, id));
   free(id);
   len = LCH_BlockGetDataLength(block);
-  str = LCH_BlockGetData(block);
+  str = (char *)LCH_BlockGetData(block);
   ck_assert_int_eq(len, strlen("three") + 1);
   ck_assert_str_eq(str, "three");
   id = LCH_BlockGetParentID(block);
@@ -66,7 +66,7 @@ START_TEST(test_LCH_Block) {
   ck_assert(LCH_BlockRemove(work_dir, id));
   free(id);
   len = LCH_BlockGetDataLength(block);
-  str = LCH_BlockGetData(block);
+  str = (char *)LCH_BlockGetData(block);
   ck_assert_int_eq(len, strlen("two") + 1);
   ck_assert_str_eq(str, "two");
   id = LCH_BlockGetParentID(block);
@@ -79,7 +79,7 @@ START_TEST(test_LCH_Block) {
   ck_assert(LCH_BlockRemove(work_dir, id));
   free(id);
   len = LCH_BlockGetDataLength(block);
-  str = LCH_BlockGetData(block);
+  str = (char *)LCH_BlockGetData(block);
   ck_assert_int_eq(len, strlen("one") + 1);
   ck_assert_str_eq(str, "one");
   id = LCH_BlockGetParentID(block);

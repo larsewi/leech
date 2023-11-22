@@ -44,15 +44,15 @@ START_TEST(test_LCH_Delta) {
 
   LCH_Dict *old_state = LCH_DictCreate();
   ck_assert_ptr_nonnull(old_state);
-  ck_assert(LCH_DictSet(old_state, "Paul,McCartney", "1942", NULL));
-  ck_assert(LCH_DictSet(old_state, "Ringo,Starr", "1940", NULL));
-  ck_assert(LCH_DictSet(old_state, "John,Lennon", "1940", NULL));
+  ck_assert(LCH_DictSet(old_state, "Paul,McCartney", (char *)"1942", NULL));
+  ck_assert(LCH_DictSet(old_state, "Ringo,Starr", (char *)"1940", NULL));
+  ck_assert(LCH_DictSet(old_state, "John,Lennon", (char *)"1940", NULL));
 
   LCH_Dict *new_state = LCH_DictCreate();
   ck_assert_ptr_nonnull(new_state);
-  ck_assert(LCH_DictSet(new_state, "Paul,McCartney", "1942", NULL));
-  ck_assert(LCH_DictSet(new_state, "Ringo,Starr", "1941", NULL));
-  ck_assert(LCH_DictSet(new_state, "George,Harrison", "1943", NULL));
+  ck_assert(LCH_DictSet(new_state, "Paul,McCartney", (char *)"1942", NULL));
+  ck_assert(LCH_DictSet(new_state, "Ringo,Starr", (char *)"1941", NULL));
+  ck_assert(LCH_DictSet(new_state, "George,Harrison", (char *)"1943", NULL));
 
   LCH_Delta *delta = LCH_DeltaCreate(beatles, new_state, old_state);
   ck_assert_ptr_nonnull(delta);
@@ -68,16 +68,16 @@ START_TEST(test_LCH_Delta) {
 
   old_state = LCH_DictCreate();
   ck_assert_ptr_nonnull(old_state);
-  ck_assert(LCH_DictSet(old_state, "0", "Syd,Barret", NULL));
-  ck_assert(LCH_DictSet(old_state, "1", "Nick,Mason", NULL));
-  ck_assert(LCH_DictSet(old_state, "3", "Richard,Wright", NULL));
-  ck_assert(LCH_DictSet(old_state, "4", "David,Gilmour", NULL));
+  ck_assert(LCH_DictSet(old_state, "0", (char *)"Syd,Barret", NULL));
+  ck_assert(LCH_DictSet(old_state, "1", (char *)"Nick,Mason", NULL));
+  ck_assert(LCH_DictSet(old_state, "3", (char *)"Richard,Wright", NULL));
+  ck_assert(LCH_DictSet(old_state, "4", (char *)"David,Gilmour", NULL));
 
   new_state = LCH_DictCreate();
   ck_assert_ptr_nonnull(new_state);
-  ck_assert(LCH_DictSet(new_state, "0", "Sid,Barretino", NULL));
-  ck_assert(LCH_DictSet(new_state, "2", "Roger,Waters", NULL));
-  ck_assert(LCH_DictSet(new_state, "3", "Richard,Wright", NULL));
+  ck_assert(LCH_DictSet(new_state, "0", (char *)"Sid,Barretino", NULL));
+  ck_assert(LCH_DictSet(new_state, "2", (char *)"Roger,Waters", NULL));
+  ck_assert(LCH_DictSet(new_state, "3", (char *)"Richard,Wright", NULL));
 
   delta = LCH_DeltaCreate(pinkfloyd, new_state, old_state);
   ck_assert_ptr_nonnull(delta);
@@ -91,7 +91,7 @@ START_TEST(test_LCH_Delta) {
   ck_assert(LCH_DeltaMarshal(out_buf, delta));
   LCH_DeltaDestroy(delta);
 
-  const char *in_buf = LCH_BufferGet(out_buf, 0);
+  const char *in_buf = (const char *)LCH_BufferGet(out_buf, 0);
 
   in_buf = LCH_DeltaUnmarshal(&delta, instance, in_buf);
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);

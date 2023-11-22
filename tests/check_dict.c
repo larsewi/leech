@@ -49,10 +49,10 @@ START_TEST(test_LCH_DictSetMinus) {
       LCH_DictSetMinus(left, right, (void *(*)(const void *))strdup, free);
   ck_assert(!LCH_DictHasKey(result, "one"));
   ck_assert(LCH_DictHasKey(result, "two"));
-  ck_assert_str_eq(LCH_DictGet(result, "two"), "2");
+  ck_assert_str_eq((char *)LCH_DictGet(result, "two"), "2");
   ck_assert(!LCH_DictHasKey(result, "three"));
   ck_assert(LCH_DictHasKey(result, "four"));
-  ck_assert_str_eq(LCH_DictGet(result, "four"), "4");
+  ck_assert_str_eq((char *)LCH_DictGet(result, "four"), "4");
   ck_assert(!LCH_DictHasKey(result, "five"));
 
   LCH_DictDestroy(left);
@@ -78,12 +78,12 @@ START_TEST(test_LCH_DictSetChangedIntersection) {
       left, right, (void *(*)(const void *))strdup, free,
       (int (*)(const void *, const void *))strcmp);
   ck_assert(LCH_DictHasKey(result, "one"));
-  ck_assert_str_eq(LCH_DictGet(result, "one"), "foo");
+  ck_assert_str_eq((char *)LCH_DictGet(result, "one"), "foo");
   ck_assert(!LCH_DictHasKey(result, "two"));
   ck_assert(!LCH_DictHasKey(result, "three"));
   ck_assert(!LCH_DictHasKey(result, "four"));
   ck_assert(LCH_DictHasKey(result, "five"));
-  ck_assert_str_eq(LCH_DictGet(result, "five"), "bar");
+  ck_assert_str_eq((char *)LCH_DictGet(result, "five"), "bar");
 
   LCH_DictDestroy(left);
   LCH_DictDestroy(right);
@@ -102,14 +102,14 @@ START_TEST(test_LCH_DictRemove) {
 
   for (size_t i = 0; i < 30; i++) {
     ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
-    char *value = LCH_DictRemove(dict, buf);
+    char *value = (char *)LCH_DictRemove(dict, buf);
     ck_assert_str_eq(buf, value);
     free(value);
   }
 
   for (size_t i = 31; i < 100; i += 5) {
     ck_assert_int_lt(snprintf(buf, sizeof(buf), "%zu", i), sizeof(buf));
-    char *value = LCH_DictRemove(dict, buf);
+    char *value = (char *)LCH_DictRemove(dict, buf);
     ck_assert_str_eq(buf, value);
     free(value);
   }

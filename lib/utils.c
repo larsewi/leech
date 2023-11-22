@@ -184,21 +184,24 @@ bool LCH_FileSize(FILE *file, size_t *size) {
 /******************************************************************************/
 
 bool LCH_FileExists(const char *const path) {
-  struct stat sb = {0};
+  struct stat sb;
+  memset(&sb, 0, sizeof(struct stat));
   return stat(path, &sb) == 0;
 }
 
 /******************************************************************************/
 
 bool LCH_IsRegularFile(const char *const path) {
-  struct stat sb = {0};
+  struct stat sb;
+  memset(&sb, 0, sizeof(struct stat));
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
 }
 
 /******************************************************************************/
 
 bool LCH_IsDirectory(const char *const path) {
-  struct stat sb = {0};
+  struct stat sb;
+  memset(&sb, 0, sizeof(struct stat));
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
 }
 
@@ -258,7 +261,7 @@ char *LCH_FileRead(const char *const path, size_t *const length) {
   size_t total_read = 0, bytes_read = 0;
 
   do {
-    char *ptr = realloc(buffer, buffer_size);
+    char *ptr = (char *)realloc(buffer, buffer_size);
     if (ptr == NULL) {
       LCH_LOG_ERROR(
           "Failed to reallocate (%zu bytes) memory for read buffer: %s",
@@ -350,7 +353,7 @@ static LCH_List *GetIndexOfFields(const LCH_List *const header,
   }
 
   for (size_t i = 0; i < fields_len; i++) {
-    const char *const field = LCH_ListGet(fields, i);
+    const char *const field = (char *)LCH_ListGet(fields, i);
 
     size_t index = LCH_ListIndex(header, field,
                                  (int (*)(const void *, const void *))strcmp);
@@ -390,7 +393,7 @@ static LCH_List *ExtractFieldsAtIndices(const LCH_List *const record,
       continue;
     }
 
-    char *field = LCH_ListGet(record, index);
+    char *field = (char *)LCH_ListGet(record, index);
     assert(field != NULL);
 
     if (!LCH_ListAppend(fields, field, NULL)) {
@@ -483,7 +486,7 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   LCH_List *const fake_header =
       (has_header) ? NULL : ParseConcatFields(primary, subsidiary, true);
   const LCH_List *const header =
-      (has_header) ? LCH_ListGet(table, 0) : fake_header;
+      (has_header) ? (LCH_List *)LCH_ListGet(table, 0) : fake_header;
   assert(header != NULL);
 
   const size_t header_len = LCH_ListLength(header);
@@ -528,7 +531,7 @@ LCH_Dict *LCH_TableToDict(const LCH_List *const table,
   }
 
   for (size_t i = (has_header) ? 1 : 0; i < num_records; i++) {
-    const LCH_List *const record = LCH_ListGet(table, i);
+    const LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
     assert(record != NULL);
 
     LCH_List *const extracted_key =
@@ -650,8 +653,8 @@ LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = LCH_ListGet(keys, i);
-    char *const value = LCH_DictGet(dict, key);
+    const char *const key = (char *)LCH_ListGet(keys, i);
+    char *const value = (char *)LCH_DictGet(dict, key);
 
     LCH_List *const record = ParseConcatFields(key, value, false);
     if (record == NULL) {
@@ -701,7 +704,7 @@ const char *LCH_UnmarshalBinary(const char *buffer, char **const bin) {
   buffer += sizeof(uint32_t);
   const uint32_t size = ntohl(*network_size);
 
-  *bin = malloc(size + 1);
+  *bin = (char *)malloc(size + 1);
   if (*bin == NULL) {
     return NULL;
   }

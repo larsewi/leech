@@ -18,7 +18,8 @@ struct LCH_DebugMessenger {
   void (*messageCallback)(unsigned char, const char *);
 };
 
-static struct LCH_DebugMessenger DEBUG_MESSENGER = {0};
+static struct LCH_DebugMessenger DEBUG_MESSENGER = {.severity = 0,
+                                                    .messageCallback = NULL};
 
 void LCH_DebugMessengerInit(const LCH_DebugMessengerInitInfo *const initInfo) {
   DEBUG_MESSENGER.severity = initInfo->severity;

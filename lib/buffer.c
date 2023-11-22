@@ -22,7 +22,7 @@ static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
 
   while ((self->capacity - self->length) <= needed) {
     size_t new_capacity = self->capacity * 2;
-    char *new_buffer = realloc(self->buffer, new_capacity);
+    char *new_buffer = (char *)realloc(self->buffer, new_capacity);
     if (new_buffer == NULL) {
       LCH_LOG_ERROR("Failed to reallocate memory for buffer: %s",
                     strerror(errno));
@@ -204,7 +204,7 @@ bool LCH_BufferBinDump(LCH_Buffer *const bin, const LCH_Buffer *const hex) {
   }
 
   for (size_t i = 0; i < num_bytes; i++) {
-    if (sscanf(LCH_BufferGet(hex, i * 2), "%2hhx",
+    if (sscanf((const char *)LCH_BufferGet(hex, i * 2), "%2hhx",
                bin->buffer + (bin->length + i)) != 1) {
       bin->buffer[bin->length] = '\0';
       return false;

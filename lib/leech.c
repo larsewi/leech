@@ -26,7 +26,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
   for (size_t i = 0; i < n_tables; i++) {
-    const LCH_Table *const table = LCH_ListGet(tables, i);
+    const LCH_Table *const table = (LCH_Table *)LCH_ListGet(tables, i);
     const char *const table_id = LCH_TableGetIdentifier(table);
 
     /************************************************************************/
@@ -158,7 +158,7 @@ static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
   const LCH_List *const tables = LCH_InstanceGetTables(instance);
   const size_t num_tables = LCH_ListLength(tables);
   for (size_t i = 0; i < num_tables; i++) {
-    const LCH_Table *const table = LCH_ListGet(tables, i);
+    const LCH_Table *const table = (LCH_Table *)LCH_ListGet(tables, i);
     assert(table != NULL);
 
     LCH_Delta *const delta = LCH_DeltaCreate(table, NULL, NULL);
@@ -206,7 +206,7 @@ static bool CompressDeltas(LCH_Dict *const deltas,
       return false;
     }
 
-    LCH_Delta *const child = LCH_DictGet(deltas, table_id);
+    LCH_Delta *const child = (LCH_Delta *)LCH_DictGet(deltas, table_id);
     if (child == NULL) {
       LCH_DeltaDestroy(parent);
       return false;
@@ -333,10 +333,10 @@ char *LCH_Diff(const LCH_Instance *const instance, const char *const block_id,
   }
 
   for (size_t i = 0; i < LCH_ListLength(keys); i++) {
-    const char *const key = LCH_ListGet(keys, i);
+    const char *const key = (char *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    LCH_Delta *delta = LCH_DictGet(deltas, key);
+    LCH_Delta *delta = (LCH_Delta *)LCH_DictGet(deltas, key);
     assert(delta != NULL);
 
     if (!LCH_DeltaMarshal(buffer, delta)) {
@@ -351,7 +351,7 @@ char *LCH_Diff(const LCH_Instance *const instance, const char *const block_id,
   LCH_ListDestroy(keys);
   LCH_DictDestroy(deltas);
 
-  char *result = malloc(LCH_BufferLength(buffer));
+  char *result = (char *)malloc(LCH_BufferLength(buffer));
   if (result == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     LCH_BufferDestroy(buffer);

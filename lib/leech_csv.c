@@ -11,7 +11,7 @@
 LCH_List *LCH_TableReadCallbackCSV(const void *const locator) {
   assert(locator != NULL);
 
-  const char *const filename = locator;
+  const char *const filename = (char *)locator;
   return LCH_CSVParseFile(filename);
 }
 
@@ -20,7 +20,7 @@ bool LCH_TableWriteCallbackCSV(const void *const locator,
   assert(locator != NULL);
   assert(table != NULL);
 
-  const char *const filename = locator;
+  const char *const filename = (char *)locator;
   return LCH_CSVComposeFile(table, filename);
 }
 
@@ -64,11 +64,11 @@ static bool StoreTableAsDict(const LCH_Dict *const dict,
 bool LCH_TableInsertCallbackCSV(const void *const locator,
                                 const char *const primary,
                                 const char *const subsidiary,
-                                const LCH_Dict *const insert) {
+                                const LCH_Dict *const ins) {
   assert(locator != NULL);
-  assert(insert != NULL);
+  assert(ins != NULL);
 
-  const char *const filename = locator;
+  const char *const filename = (char *)locator;
   LCH_Dict *dict = LoadTableAsDict(filename, primary, subsidiary);
   if (dict == NULL) {
     LCH_LOG_ERROR("Failed to load table '%s'.", filename);
@@ -77,7 +77,7 @@ bool LCH_TableInsertCallbackCSV(const void *const locator,
   LCH_LOG_DEBUG("Loaded table '%s' containing %zu records.", filename,
                 LCH_DictLength(dict));
 
-  LCH_List *const keys = LCH_DictGetKeys(insert);
+  LCH_List *const keys = LCH_DictGetKeys(ins);
   if (keys == NULL) {
     LCH_DictDestroy(dict);
     return false;
@@ -85,7 +85,7 @@ bool LCH_TableInsertCallbackCSV(const void *const locator,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = LCH_ListGet(keys, i);
+    const char *const key = (char *)LCH_ListGet(keys, i);
     if (LCH_DictHasKey(dict, key)) {
       LCH_LOG_ERROR(
           "Attempted to insert already existing record with primary field(s) "
@@ -96,7 +96,7 @@ bool LCH_TableInsertCallbackCSV(const void *const locator,
       return false;
     }
 
-    char *const value = LCH_DictGet(insert, key);
+    char *const value = (char *)LCH_DictGet(ins, key);
     if (!LCH_DictSet(dict, key, value, NULL)) {
       LCH_ListDestroy(keys);
       LCH_DictDestroy(dict);
@@ -120,11 +120,11 @@ bool LCH_TableInsertCallbackCSV(const void *const locator,
 bool LCH_TableDeleteCallbackCSV(const void *const locator,
                                 const char *const primary,
                                 const char *const subsidiary,
-                                const LCH_Dict *const delete) {
+                                const LCH_Dict *const del) {
   assert(locator != NULL);
-  assert(delete != NULL);
+  assert(del != NULL);
 
-  const char *const filename = locator;
+  const char *const filename = (char *)locator;
   LCH_Dict *dict = LoadTableAsDict(filename, primary, subsidiary);
   if (dict == NULL) {
     LCH_LOG_ERROR("Failed to load table '%s'.", filename);
@@ -133,7 +133,7 @@ bool LCH_TableDeleteCallbackCSV(const void *const locator,
   LCH_LOG_DEBUG("Loaded table '%s' containing %zu records.", filename,
                 LCH_DictLength(dict));
 
-  LCH_List *const keys = LCH_DictGetKeys(delete);
+  LCH_List *const keys = LCH_DictGetKeys(del);
   if (keys == NULL) {
     LCH_DictDestroy(dict);
     return false;
@@ -141,7 +141,7 @@ bool LCH_TableDeleteCallbackCSV(const void *const locator,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = LCH_ListGet(keys, i);
+    const char *const key = (char *)LCH_ListGet(keys, i);
     if (!LCH_DictHasKey(dict, key)) {
       LCH_LOG_ERROR(
           "Attempted to delete a non-existent record with primary field(s) "
@@ -152,7 +152,7 @@ bool LCH_TableDeleteCallbackCSV(const void *const locator,
       return false;
     }
 
-    char *const value = LCH_DictRemove(dict, key);
+    char *const value = (char *)LCH_DictRemove(dict, key);
     LCH_LOG_DEBUG(
         "Deleted record with primary field(s) '%s' and subsidiary field(s) "
         "'%s' from table.",
@@ -177,11 +177,11 @@ bool LCH_TableDeleteCallbackCSV(const void *const locator,
 bool LCH_TableUpdateCallbackCSV(const void *const locator,
                                 const char *const primary,
                                 const char *const subsidiary,
-                                const LCH_Dict *const update) {
+                                const LCH_Dict *const upd) {
   assert(locator != NULL);
-  assert(update != NULL);
+  assert(upd != NULL);
 
-  const char *const filename = locator;
+  const char *const filename = (char *)locator;
   LCH_Dict *dict = LoadTableAsDict(filename, primary, subsidiary);
   if (dict == NULL) {
     LCH_LOG_ERROR("Failed to load table '%s'.", filename);
@@ -190,7 +190,7 @@ bool LCH_TableUpdateCallbackCSV(const void *const locator,
   LCH_LOG_DEBUG("Loaded table '%s' containing %zu records.", filename,
                 LCH_DictLength(dict));
 
-  LCH_List *const keys = LCH_DictGetKeys(update);
+  LCH_List *const keys = LCH_DictGetKeys(upd);
   if (keys == NULL) {
     LCH_DictDestroy(dict);
     return false;
@@ -198,7 +198,7 @@ bool LCH_TableUpdateCallbackCSV(const void *const locator,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = LCH_ListGet(keys, i);
+    const char *const key = (char *)LCH_ListGet(keys, i);
     if (!LCH_DictHasKey(dict, key)) {
       LCH_LOG_ERROR(
           "Attempted to update a non-existent record with primary field(s) "
@@ -209,7 +209,7 @@ bool LCH_TableUpdateCallbackCSV(const void *const locator,
       return false;
     }
 
-    char *const value = LCH_DictGet(update, key);
+    char *const value = (char *)LCH_DictGet(upd, key);
     if (!LCH_DictSet(dict, key, value, NULL)) {
       LCH_ListDestroy(keys);
       LCH_DictDestroy(dict);

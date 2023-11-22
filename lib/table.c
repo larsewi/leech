@@ -165,7 +165,7 @@ static char *AddUniqueIdToRecord(const char *const record, const char *const id,
   }
 
   if (*pos == NULL) { /* find position */
-    *pos = malloc(sizeof(size_t));
+    *pos = (size_t *)malloc(sizeof(size_t));
     if (*pos == NULL) {
       LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
       LCH_ListDestroy(list);
@@ -209,10 +209,10 @@ static LCH_Dict *AddUniqueIdToDict(const LCH_Dict *const dict,
   }
 
   for (size_t i = 0; i < LCH_ListLength(keys); i++) {
-    const char *const old_key = LCH_ListGet(keys, i);
+    const char *const old_key = (char *)LCH_ListGet(keys, i);
     assert(old_key != NULL);
 
-    char *const value = LCH_DictGet(dict, old_key);
+    char *const value = (char *)LCH_DictGet(dict, old_key);
 
     char *const new_key = AddUniqueIdToRecord(old_key, unqiue_id, pos);
     if (new_key == NULL) {
@@ -242,7 +242,7 @@ bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
   assert(uid_field != NULL);
   assert(uid_value != NULL);
 
-  const char *const path = table->write_locator;
+  const char *const path = (char *)table->write_locator;
 
   size_t *pos = NULL;
   char *const primary_fields =
