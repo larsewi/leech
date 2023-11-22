@@ -16,7 +16,7 @@ jobs:
     - name: update apt repositories
       run: sudo apt -y update
     - name: install dependencies
-      run: sudo apt -y install check
+      run: sudo apt -y install python3 check
     - name: bootstrap
       run: ./bootstrap.sh
       
