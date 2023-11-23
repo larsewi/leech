@@ -18,7 +18,7 @@ START_TEST(test_CreateDestroyTable) {
   ck_assert_int_eq(fwrite(csv, 1, sizeof(csv), file), sizeof(csv));
   fclose(file);
 
-  LCH_TableCreateInfo createInfo = {
+  LCH_TableDefinitionCreateInfo createInfo = {
       .identifier = "Sample",
       .primary_fields = "id,age",
       .subsidiary_fields = "lastname,firstname",
@@ -31,14 +31,14 @@ START_TEST(test_CreateDestroyTable) {
       .update_callback = LCH_TableUpdateCallbackCSV,
   };
 
-  LCH_Table *table = LCH_TableCreate(&createInfo);
-  ck_assert_ptr_nonnull(table);
+  LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+  ck_assert_ptr_nonnull(definition);
 
-  LCH_Dict *newData = LCH_TableLoadNewState(table);
+  LCH_Dict *newData = LCH_TableDefinitionLoadNewState(definition);
   ck_assert_ptr_nonnull(newData);
   LCH_DictDestroy(newData);
 
-  LCH_TableDestroy(table);
+  LCH_TableDefinitionDestroy(definition);
   ck_assert_int_eq(remove("sample.csv"), 0);
 }
 END_TEST

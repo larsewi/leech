@@ -23,7 +23,7 @@
 
 struct LCH_Instance {
   const char *work_dir;
-  LCH_List *tables;
+  LCH_List *table_defs;
 };
 
 LCH_Instance *LCH_InstanceCreate(
@@ -39,8 +39,8 @@ LCH_Instance *LCH_InstanceCreate(
   }
 
   instance->work_dir = createInfo->work_dir;
-  instance->tables = LCH_ListCreate();
-  if (instance->tables == NULL) {
+  instance->table_defs = LCH_ListCreate();
+  if (instance->table_defs == NULL) {
     free(instance);
     return NULL;
   }
@@ -94,29 +94,30 @@ LCH_Instance *LCH_InstanceCreate(
   return instance;
 }
 
-bool LCH_InstanceAddTable(LCH_Instance *const instance,
-                          LCH_Table *const table) {
+bool LCH_InstanceAddTableDefinition(LCH_Instance *const instance,
+                                    LCH_TableDefinition *const table_def) {
   assert(instance != NULL);
-  assert(instance->tables != NULL);
-  assert(table != NULL);
+  assert(instance->table_defs != NULL);
+  assert(table_def != NULL);
 
-  return LCH_ListAppend(instance->tables, table,
-                        (void (*)(void *))LCH_TableDestroy);
+  return LCH_ListAppend(instance->table_defs, table_def,
+                        (void (*)(void *))LCH_TableDefinitionDestroy);
 }
 
-const LCH_Table *LCH_InstanceGetTable(const LCH_Instance *const self,
-                                      const char *const table_id) {
+const LCH_TableDefinition *LCH_InstanceGetTable(const LCH_Instance *const self,
+                                                const char *const table_id) {
   assert(self != NULL);
-  assert(self->tables != NULL);
+  assert(self->table_defs != NULL);
   assert(table_id != NULL);
 
-  const size_t num_tables = LCH_ListLength(self->tables);
+  const size_t num_tables = LCH_ListLength(self->table_defs);
   for (size_t i = 0; i < num_tables; i++) {
-    const LCH_Table *const table = (LCH_Table *)LCH_ListGet(self->tables, i);
-    assert(table != NULL);
+    const LCH_TableDefinition *const table_def =
+        (LCH_TableDefinition *)LCH_ListGet(self->table_defs, i);
+    assert(table_def != NULL);
 
-    if (strcmp(LCH_TableGetIdentifier(table), table_id) == 0) {
-      return table;
+    if (strcmp(LCH_TableDefinitionGetIdentifier(table_def), table_id) == 0) {
+      return table_def;
     }
   }
   return NULL;
@@ -124,7 +125,7 @@ const LCH_Table *LCH_InstanceGetTable(const LCH_Instance *const self,
 
 const LCH_List *LCH_InstanceGetTables(const LCH_Instance *const self) {
   assert(self != NULL);
-  return self->tables;
+  return self->table_defs;
 }
 
 const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
@@ -136,6 +137,6 @@ void LCH_InstanceDestroy(LCH_Instance *instance) {
   if (instance == NULL) {
     return;
   }
-  LCH_ListDestroy(instance->tables);
+  LCH_ListDestroy(instance->table_defs);
   free(instance);
 }

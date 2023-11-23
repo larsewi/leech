@@ -11,7 +11,7 @@ START_TEST(test_LCH_Delta) {
   LCH_Buffer *out_buf = LCH_BufferCreate();
   ck_assert_ptr_nonnull(out_buf);
 
-  LCH_TableCreateInfo table_create_info = {
+  LCH_TableDefinitionCreateInfo table_create_info = {
       .identifier = "beatles",
       .primary_fields = "firstname,lastname",
       .subsidiary_fields = "year",
@@ -23,13 +23,14 @@ START_TEST(test_LCH_Delta) {
       .delete_callback = LCH_TableDeleteCallbackCSV,
       .update_callback = LCH_TableUpdateCallbackCSV,
   };
-  LCH_Table *beatles = LCH_TableCreate(&table_create_info);
+  LCH_TableDefinition *beatles = LCH_TableDefinitionCreate(&table_create_info);
   ck_assert_ptr_nonnull(beatles);
 
   table_create_info.identifier = "pinkfloyd";
   table_create_info.primary_fields = "id";
   table_create_info.subsidiary_fields = "firstname,lastname";
-  LCH_Table *pinkfloyd = LCH_TableCreate(&table_create_info);
+  LCH_TableDefinition *pinkfloyd =
+      LCH_TableDefinitionCreate(&table_create_info);
   ck_assert_ptr_nonnull(pinkfloyd);
 
   LCH_InstanceCreateInfo instance_create_info = {
@@ -39,8 +40,8 @@ START_TEST(test_LCH_Delta) {
   LCH_Instance *instance = LCH_InstanceCreate(&instance_create_info);
   ck_assert_ptr_nonnull(instance);
 
-  ck_assert(LCH_InstanceAddTable(instance, beatles));
-  ck_assert(LCH_InstanceAddTable(instance, pinkfloyd));
+  ck_assert(LCH_InstanceAddTableDefinition(instance, beatles));
+  ck_assert(LCH_InstanceAddTableDefinition(instance, pinkfloyd));
 
   LCH_Dict *old_state = LCH_DictCreate();
   ck_assert_ptr_nonnull(old_state);
@@ -97,14 +98,15 @@ START_TEST(test_LCH_Delta) {
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumDeletions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumUpdates(delta), 1);
-  ck_assert_str_eq(LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)), "beatles");
+  ck_assert_str_eq(LCH_TableDefinitionGetIdentifier(LCH_DeltaGetTable(delta)),
+                   "beatles");
   LCH_DeltaDestroy(delta);
 
   in_buf = LCH_DeltaUnmarshal(&delta, instance, in_buf);
   ck_assert_int_eq(LCH_DeltaGetNumInsertions(delta), 1);
   ck_assert_int_eq(LCH_DeltaGetNumDeletions(delta), 2);
   ck_assert_int_eq(LCH_DeltaGetNumUpdates(delta), 1);
-  ck_assert_str_eq(LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)),
+  ck_assert_str_eq(LCH_TableDefinitionGetIdentifier(LCH_DeltaGetTable(delta)),
                    "pinkfloyd");
   LCH_DeltaDestroy(delta);
 

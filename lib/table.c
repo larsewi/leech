@@ -11,7 +11,7 @@
 #include "list.h"
 #include "utils.h"
 
-typedef struct LCH_Table {
+typedef struct LCH_TableDefinition {
   const char *identifier;
   const char *primary_fields;
   const char *subsidiary_fields;
@@ -25,111 +25,117 @@ typedef struct LCH_Table {
                           const LCH_Dict *);
   bool (*update_callback)(const void *, const char *, const char *,
                           const LCH_Dict *);
-} LCH_Table;
+} LCH_TableDefinition;
 
-const char *LCH_TableGetIdentifier(const LCH_Table *const self) {
+const char *LCH_TableDefinitionGetIdentifier(
+    const LCH_TableDefinition *const self) {
   assert(self != NULL);
   return self->identifier;
 }
 
-const char *LCH_TableGetPrimaryFields(const LCH_Table *const self) {
+const char *LCH_TableDefinitionGetPrimaryFields(
+    const LCH_TableDefinition *const self) {
   assert(self != NULL);
   return self->primary_fields;
 }
 
-const char *LCH_TableGetSubsidiaryFields(const LCH_Table *const self) {
+const char *LCH_TableDefinitionGetSubsidiaryFields(
+    const LCH_TableDefinition *const self) {
   assert(self != NULL);
   return self->subsidiary_fields;
 }
 
-LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *const createInfo) {
-  assert(createInfo != NULL);
-  assert(createInfo->identifier != NULL);
-  assert(createInfo->primary_fields != NULL);
-  assert(createInfo->read_locator != NULL);
-  assert(createInfo->write_locator != NULL);
-  assert(createInfo->read_callback != NULL);
-  assert(createInfo->write_callback != NULL);
-  assert(createInfo->insert_callback != NULL);
-  assert(createInfo->delete_callback != NULL);
-  assert(createInfo->update_callback != NULL);
+LCH_TableDefinition *LCH_TableDefinitionCreate(
+    const LCH_TableDefinitionCreateInfo *const create_info) {
+  assert(create_info != NULL);
+  assert(create_info->identifier != NULL);
+  assert(create_info->primary_fields != NULL);
+  assert(create_info->read_locator != NULL);
+  assert(create_info->write_locator != NULL);
+  assert(create_info->read_callback != NULL);
+  assert(create_info->write_callback != NULL);
+  assert(create_info->insert_callback != NULL);
+  assert(create_info->delete_callback != NULL);
+  assert(create_info->update_callback != NULL);
 
-  LCH_Table *table = (LCH_Table *)calloc(1, sizeof(LCH_Table));
-  if (table == NULL) {
+  LCH_TableDefinition *definition =
+      (LCH_TableDefinition *)calloc(1, sizeof(LCH_TableDefinition));
+  if (definition == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
-  table->identifier = createInfo->identifier;
-  table->primary_fields = createInfo->primary_fields;
-  table->subsidiary_fields = createInfo->subsidiary_fields;
-  table->read_locator = createInfo->read_locator;
-  table->write_locator = createInfo->write_locator;
-  table->read_callback = createInfo->read_callback;
-  table->write_callback = createInfo->write_callback;
-  table->insert_callback = createInfo->insert_callback;
-  table->delete_callback = createInfo->delete_callback;
-  table->update_callback = createInfo->update_callback;
+  definition->identifier = create_info->identifier;
+  definition->primary_fields = create_info->primary_fields;
+  definition->subsidiary_fields = create_info->subsidiary_fields;
+  definition->read_locator = create_info->read_locator;
+  definition->write_locator = create_info->write_locator;
+  definition->read_callback = create_info->read_callback;
+  definition->write_callback = create_info->write_callback;
+  definition->insert_callback = create_info->insert_callback;
+  definition->delete_callback = create_info->delete_callback;
+  definition->update_callback = create_info->update_callback;
 
-  return table;
+  return definition;
 }
 
-LCH_Dict *LCH_TableLoadNewState(const LCH_Table *const table) {
-  LCH_List *const records = table->read_callback(table->read_locator);
-  if (records == NULL) {
+LCH_Dict *LCH_TableDefinitionLoadNewState(
+    const LCH_TableDefinition *const self) {
+  LCH_List *const table = self->read_callback(self->read_locator);
+  if (table == NULL) {
     return NULL;
   }
 
-  LCH_Dict *const data = LCH_TableToDict(records, table->primary_fields,
-                                         table->subsidiary_fields, true);
-  if (data == NULL) {
-    LCH_ListDestroy(records);
+  LCH_Dict *const state = LCH_TableToDict(table, self->primary_fields,
+                                          self->subsidiary_fields, true);
+  if (state == NULL) {
+    LCH_ListDestroy(table);
     return NULL;
   }
 
-  LCH_ListDestroy(records);
+  LCH_ListDestroy(table);
 
-  return data;
+  return state;
 }
 
-LCH_Dict *LCH_TableLoadOldState(const LCH_Table *const table,
-                                const char *const work_dir) {
-  assert(table != NULL);
+LCH_Dict *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *const self,
+                                          const char *const work_dir) {
+  assert(self != NULL);
   assert(work_dir != NULL);
-  assert(table->identifier != NULL);
+  assert(self->identifier != NULL);
 
   char path[PATH_MAX];
   if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
-                    table->identifier)) {
+                    self->identifier)) {
     return NULL;
   }
 
   if (LCH_IsRegularFile(path)) {
-    LCH_List *const records = LCH_CSVParseFile(path);
-    if (records == NULL) {
+    LCH_List *const table = LCH_CSVParseFile(path);
+    if (table == NULL) {
       return NULL;
     }
 
-    LCH_Dict *const snapshot = LCH_TableToDict(records, table->primary_fields,
-                                               table->subsidiary_fields, true);
-    if (snapshot == NULL) {
-      LCH_ListDestroy(records);
+    LCH_Dict *const state = LCH_TableToDict(table, self->primary_fields,
+                                            self->subsidiary_fields, true);
+    if (state == NULL) {
+      LCH_ListDestroy(table);
       return NULL;
     }
 
-    return snapshot;
+    return state;
   }
 
   LCH_Dict *const snapshot = LCH_DictCreate();
   return snapshot;
 }
 
-bool LCH_TableStoreNewState(const LCH_Table *const self,
+bool LCH_TableStoreNewState(const LCH_TableDefinition *const self,
                             const char *const work_dir,
-                            const LCH_Dict *const new_state) {
-  LCH_List *const records = LCH_DictToTable(new_state, self->primary_fields,
-                                            self->subsidiary_fields, true);
-  if (records == NULL) {
+                            const LCH_Dict *const state) {
+  LCH_List *const table = LCH_DictToTable(state, self->primary_fields,
+                                          self->subsidiary_fields, true);
+  if (table == NULL) {
     return NULL;
   }
 
@@ -139,8 +145,8 @@ bool LCH_TableStoreNewState(const LCH_Table *const self,
     return false;
   }
 
-  const bool success = LCH_CSVComposeFile(records, path);
-  LCH_ListDestroy(records);
+  const bool success = LCH_CSVComposeFile(table, path);
+  LCH_ListDestroy(table);
   return success;
 }
 
@@ -235,23 +241,25 @@ static LCH_Dict *AddUniqueIdToDict(const LCH_Dict *const dict,
   return new_dict;
 }
 
-bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
-                    const char *const uid_field, const char *const uid_value) {
-  assert(table != NULL);
+bool LCH_TableDefinitionPatch(const LCH_TableDefinition *const self,
+                              const LCH_Delta *const patch,
+                              const char *const uid_field,
+                              const char *const uid_value) {
+  assert(self != NULL);
   assert(patch != NULL);
   assert(uid_field != NULL);
   assert(uid_value != NULL);
 
-  const char *const path = (char *)table->write_locator;
+  const char *const path = (char *)self->write_locator;
 
   size_t *pos = NULL;
   char *const primary_fields =
-      AddUniqueIdToRecord(table->primary_fields, uid_field, &pos);
+      AddUniqueIdToRecord(self->primary_fields, uid_field, &pos);
   if (primary_fields == NULL) {
     LCH_LOG_ERROR(
         "Failed to add unique identifier '%s' to primary field header for "
         "table '%s'.",
-        uid_field, table->identifier);
+        uid_field, self->identifier);
     return false;
   }
 
@@ -261,15 +269,15 @@ bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
   if (new_inserts == NULL) {
     LCH_LOG_ERROR(
         "Failed to add unique identifier '%s' to inserts for table '%s'.",
-        uid_value, table->identifier);
+        uid_value, self->identifier);
     free(pos);
     free(primary_fields);
     return false;
   }
-  if (!table->insert_callback(path, primary_fields, table->subsidiary_fields,
-                              new_inserts)) {
+  if (!self->insert_callback(path, primary_fields, self->subsidiary_fields,
+                             new_inserts)) {
     LCH_LOG_ERROR("Failed to patch insertions for table '%s'.",
-                  table->identifier);
+                  self->identifier);
     LCH_DictDestroy(new_inserts);
     free(pos);
     free(primary_fields);
@@ -283,15 +291,15 @@ bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
   if (new_deletions == NULL) {
     LCH_LOG_ERROR(
         "Failed to add unique identifier '%s' to deletions for table '%s'.",
-        uid_value, table->identifier);
+        uid_value, self->identifier);
     free(pos);
     free(primary_fields);
     return false;
   }
-  if (!table->delete_callback(path, primary_fields, table->subsidiary_fields,
-                              new_deletions)) {
+  if (!self->delete_callback(path, primary_fields, self->subsidiary_fields,
+                             new_deletions)) {
     LCH_LOG_ERROR("Failed to patch deletions for table '%s'.",
-                  table->identifier);
+                  self->identifier);
     free(primary_fields);
     free(pos);
     LCH_DictDestroy(new_deletions);
@@ -306,15 +314,15 @@ bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
   if (new_modifications == NULL) {
     LCH_LOG_ERROR(
         "Failed to add unique identifier '%s' to modifications for table '%s'.",
-        uid_value, table->identifier);
+        uid_value, self->identifier);
     free(primary_fields);
     free(pos);
     return false;
   }
-  if (!table->update_callback(path, primary_fields, table->subsidiary_fields,
-                              new_modifications)) {
+  if (!self->update_callback(path, primary_fields, self->subsidiary_fields,
+                             new_modifications)) {
     LCH_LOG_ERROR("Failed to patch modifications for table '%s'.",
-                  table->identifier);
+                  self->identifier);
     free(primary_fields);
     free(pos);
     LCH_DictDestroy(new_modifications);
@@ -327,4 +335,4 @@ bool LCH_TablePatch(const LCH_Table *const table, const LCH_Delta *const patch,
   return true;
 }
 
-void LCH_TableDestroy(LCH_Table *table) { free(table); }
+void LCH_TableDefinitionDestroy(LCH_TableDefinition *self) { free(self); }

@@ -50,7 +50,7 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
 
   {  // Add classes table
 
-    LCH_TableCreateInfo createInfo = {
+    LCH_TableDefinitionCreateInfo createInfo = {
         .identifier = "CLD",
         .primary_fields = "name",
         .subsidiary_fields = "meta",
@@ -63,20 +63,20 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
         .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
+    LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+    if (definition == NULL) {
       LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
+    if (!LCH_InstanceAddTableDefinition(instance, definition)) {
       LCH_LOG_ERROR("LCH_InstanceAddTable");
       return NULL;
     }
   }
 
   {  // Add variables table
-    LCH_TableCreateInfo createInfo = {
+    LCH_TableDefinitionCreateInfo createInfo = {
         .identifier = "VAD",
         .primary_fields = "namespace,bundle,name",
         .subsidiary_fields = "type,value,meta",
@@ -89,20 +89,20 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
         .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
+    LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+    if (definition == NULL) {
       LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
+    if (!LCH_InstanceAddTableDefinition(instance, definition)) {
       LCH_LOG_ERROR("LCH_InstanceAddTable");
       return NULL;
     }
   }
 
   {  // Add last seen hosts table
-    LCH_TableCreateInfo createInfo = {
+    LCH_TableDefinitionCreateInfo createInfo = {
         .identifier = "LSD",
         .primary_fields = "direction,hostkey",
         .subsidiary_fields = "address,interval,lastseen",
@@ -115,20 +115,20 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
         .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
+    LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+    if (definition == NULL) {
       LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
+    if (!LCH_InstanceAddTableDefinition(instance, definition)) {
       LCH_LOG_ERROR("LCH_InstanceAddTable");
       return NULL;
     }
   }
 
   {  // Add installed packages table
-    LCH_TableCreateInfo createInfo = {
+    LCH_TableDefinitionCreateInfo createInfo = {
         .identifier = "SDI",
         .primary_fields = "name,version,architecture",
         .subsidiary_fields = NULL,
@@ -141,20 +141,20 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
         .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
+    LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+    if (definition == NULL) {
       LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
+    if (!LCH_InstanceAddTableDefinition(instance, definition)) {
       LCH_LOG_ERROR("LCH_InstanceAddTable");
       return NULL;
     }
   }
 
   {  // Add available package upgrade table
-    LCH_TableCreateInfo createInfo = {
+    LCH_TableDefinitionCreateInfo createInfo = {
         .identifier = "SPD",
         .primary_fields = "name,version,architecture",
         .subsidiary_fields = "status",
@@ -167,20 +167,20 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
         .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
+    LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+    if (definition == NULL) {
       LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
+    if (!LCH_InstanceAddTableDefinition(instance, definition)) {
       LCH_LOG_ERROR("LCH_InstanceAddTable");
       return NULL;
     }
   }
 
   {  // Add available package upgrade table
-    LCH_TableCreateInfo createInfo = {
+    LCH_TableDefinitionCreateInfo createInfo = {
         .identifier = "ELD",
         .primary_fields = "promise_hash",
         .subsidiary_fields =
@@ -196,13 +196,13 @@ LCH_Instance *SetupInstance(const char *const work_dir) {
         .update_callback = LCH_TableUpdateCallbackCSV,
     };
 
-    LCH_Table *table = LCH_TableCreate(&createInfo);
-    if (table == NULL) {
+    LCH_TableDefinition *definition = LCH_TableDefinitionCreate(&createInfo);
+    if (definition == NULL) {
       LCH_LOG_ERROR("LCH_TableCreate");
       return NULL;
     }
 
-    if (!LCH_InstanceAddTable(instance, table)) {
+    if (!LCH_InstanceAddTableDefinition(instance, definition)) {
       LCH_LOG_ERROR("LCH_InstanceAddTable");
       return NULL;
     }

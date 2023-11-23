@@ -149,9 +149,9 @@ void LCH_DictDestroy(LCH_Dict *self);
 /*  Table                                                                   */
 /****************************************************************************/
 
-typedef struct LCH_Table LCH_Table;
+typedef struct LCH_TableDefinition LCH_TableDefinition;
 
-typedef struct LCH_TableCreateInfo {
+typedef struct LCH_TableDefinitionCreateInfo {
   const char *identifier;
   const char *primary_fields;
   const char *subsidiary_fields;
@@ -165,11 +165,12 @@ typedef struct LCH_TableCreateInfo {
                           const LCH_Dict *);
   bool (*update_callback)(const void *, const char *, const char *,
                           const LCH_Dict *);
-} LCH_TableCreateInfo;
+} LCH_TableDefinitionCreateInfo;
 
-LCH_Table *LCH_TableCreate(const LCH_TableCreateInfo *createInfo);
+LCH_TableDefinition *LCH_TableDefinitionCreate(
+    const LCH_TableDefinitionCreateInfo *createInfo);
 
-void LCH_TableDestroy(LCH_Table *table);
+void LCH_TableDefinitionDestroy(LCH_TableDefinition *table_def);
 
 /****************************************************************************/
 /*  Instance                                                                */
@@ -183,7 +184,8 @@ typedef struct LCH_InstanceCreateInfo {
 
 LCH_Instance *LCH_InstanceCreate(const LCH_InstanceCreateInfo *createInfo);
 
-bool LCH_InstanceAddTable(LCH_Instance *instance, LCH_Table *table);
+bool LCH_InstanceAddTableDefinition(LCH_Instance *instance,
+                                    LCH_TableDefinition *table_Def);
 
 bool LCH_Commit(const LCH_Instance *instance);
 
