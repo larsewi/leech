@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: C++ CI
 
 on:
   push:
@@ -16,20 +16,12 @@ jobs:
     - name: update apt repositories
       run: sudo apt -y update
     - name: install dependencies
-      run: sudo apt -y install check
+      run: sudo apt -y install check libtool-bin valgrind
     - name: bootstrap
       run: ./bootstrap.sh
-      
-    - name: configure C
+    - name: configure
       run: ./configure CC=gcc --enable-debug
-    - name: make C
+    - name: make
       run: make
-    - name: make check C
-      run: make check
-      
-    - name: configure C++
-      run: ./configure CC=g++ --enable-debug
-    - name: make C++
-      run: make
-    - name: make check C++
+    - name: make check
       run: make check
