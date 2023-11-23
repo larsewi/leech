@@ -12,6 +12,14 @@
 #include "leech.h"
 #include "list.h"
 
+bool LCH_StringEqual(const char *const str1, const char *const str2) {
+  assert(str1 != NULL);
+  assert(str2 != NULL);
+  return strcmp(str1, str2) == 0;
+}
+
+/******************************************************************************/
+
 LCH_List *LCH_SplitString(const char *str, const char *del) {
   LCH_List *list = LCH_ListCreate();
   size_t to, from = 0, len = strlen(str);

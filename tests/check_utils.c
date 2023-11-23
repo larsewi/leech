@@ -6,6 +6,14 @@
 #include "../lib/leech.h"
 #include "../lib/utils.c"
 
+START_TEST(test_LCH_StringEqual) {
+  ck_assert(LCH_StringEqual("one", "one"));
+  ck_assert(!LCH_StringEqual("one", "two"));
+  ck_assert(!LCH_StringEqual("two", "one"));
+  ck_assert(LCH_StringEqual("two", "two"));
+}
+END_TEST
+
 START_TEST(test_ExtractFieldsAtIndices) {
   LCH_List *header = LCH_CSVParseRecord("one,two,three,four,five");
   ck_assert_ptr_nonnull(header);
@@ -253,6 +261,11 @@ END_TEST
 
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
+  {
+    TCase *tc = tcase_create("LCH_StringEqual");
+    tcase_add_test(tc, test_LCH_StringEqual);
+    suite_add_tcase(s, tc);
+  }
   {
     TCase *tc = tcase_create("ExtractFieldsAtIndices");
     tcase_add_test(tc, test_ExtractFieldsAtIndices);
