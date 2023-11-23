@@ -14,8 +14,8 @@
 bool LCH_Commit(const LCH_Instance *const instance) {
   assert(instance != NULL);
 
-  const LCH_List *const tables = LCH_InstanceGetTables(instance);
-  size_t n_tables = LCH_ListLength(tables);
+  const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
+  size_t n_tables = LCH_ListLength(table_defs);
 
   LCH_Buffer *delta_buffer = LCH_BufferCreate();
   if (delta_buffer == NULL) {
@@ -26,12 +26,13 @@ bool LCH_Commit(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
   for (size_t i = 0; i < n_tables; i++) {
-    const LCH_Table *const table = (LCH_Table *)LCH_ListGet(tables, i);
-    const char *const table_id = LCH_TableGetIdentifier(table);
+    const LCH_TableDefinition *const table_def =
+        (LCH_TableDefinition *)LCH_ListGet(table_defs, i);
+    const char *const table_id = LCH_TableDefinitionGetIdentifier(table_def);
 
     /************************************************************************/
 
-    LCH_Dict *new_state = LCH_TableLoadNewState(table);
+    LCH_Dict *new_state = LCH_TableDefinitionLoadNewState(table_def);
     if (new_state == NULL) {
       LCH_LOG_ERROR("Failed to load new state for table '%s'.", table_id);
       LCH_BufferDestroy(delta_buffer);
@@ -40,7 +41,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
     LCH_LOG_VERBOSE("Loaded new state for table '%s' containing %zu rows.",
                     table_id, LCH_DictLength(new_state));
 
-    LCH_Dict *old_state = LCH_TableLoadOldState(table, work_dir);
+    LCH_Dict *old_state = LCH_TableDefinitionLoadOldState(table_def, work_dir);
     if (old_state == NULL) {
       LCH_LOG_ERROR("Failed to load old state for table '%s'.", table_id);
       LCH_BufferDestroy(delta_buffer);
@@ -52,7 +53,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
 
     /************************************************************************/
 
-    LCH_Delta *const delta = LCH_DeltaCreate(table, new_state, old_state);
+    LCH_Delta *const delta = LCH_DeltaCreate(table_def, new_state, old_state);
     if (delta == NULL) {
       LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
       LCH_BufferDestroy(delta_buffer);
@@ -95,7 +96,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
       continue;
     }
 
-    if (!LCH_TableStoreNewState(table, work_dir, new_state)) {
+    if (!LCH_TableStoreNewState(table_def, work_dir, new_state)) {
       LCH_LOG_ERROR("Failed to store new state for table '%s'.", table_id);
       LCH_BufferDestroy(delta_buffer);
       LCH_DictDestroy(new_state);
@@ -132,7 +133,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
   LCH_LOG_INFO(
       "Created block '%.5s' containing %zu insertions, %zu deletions, and %zu "
       "updates, over %zu table(s).",
-      block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(tables));
+      block_id, tot_ins, tot_del, tot_mod, LCH_ListLength(table_defs));
 
   if (!LCH_HeadSet("HEAD", work_dir, block_id)) {
     LCH_LOG_ERROR("Failed to move head to '%.5s'.", block_id);
@@ -155,19 +156,20 @@ static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
     return NULL;
   }
 
-  const LCH_List *const tables = LCH_InstanceGetTables(instance);
-  const size_t num_tables = LCH_ListLength(tables);
+  const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
+  const size_t num_tables = LCH_ListLength(table_defs);
   for (size_t i = 0; i < num_tables; i++) {
-    const LCH_Table *const table = (LCH_Table *)LCH_ListGet(tables, i);
-    assert(table != NULL);
+    const LCH_TableDefinition *const table_def =
+        (LCH_TableDefinition *)LCH_ListGet(table_defs, i);
+    assert(table_def != NULL);
 
-    LCH_Delta *const delta = LCH_DeltaCreate(table, NULL, NULL);
+    LCH_Delta *const delta = LCH_DeltaCreate(table_def, NULL, NULL);
     if (delta == NULL) {
       LCH_DictDestroy(deltas);
       return NULL;
     }
 
-    if (!LCH_DictSet(deltas, LCH_TableGetIdentifier(table), delta,
+    if (!LCH_DictSet(deltas, LCH_TableDefinitionGetIdentifier(table_def), delta,
                      (void (*)(void *))LCH_DeltaDestroy)) {
       LCH_DeltaDestroy(delta);
       LCH_DictDestroy(deltas);
@@ -195,7 +197,7 @@ static bool CompressDeltas(LCH_Dict *const deltas,
     assert(parent != NULL);
 
     const char *const table_id =
-        LCH_TableGetIdentifier(LCH_DeltaGetTable(parent));
+        LCH_TableDefinitionGetIdentifier(LCH_DeltaGetTable(parent));
     assert(table_id != NULL);
 
     if (!LCH_DictHasKey(deltas, table_id)) {
@@ -372,15 +374,15 @@ static bool PatchTable(const LCH_Instance *const self,
   assert(self != NULL);
   assert(delta != NULL);
 
-  const LCH_Table *const table = LCH_DeltaGetTable(delta);
-  if (table == NULL) {
+  const LCH_TableDefinition *const table_def = LCH_DeltaGetTable(delta);
+  if (table_def == NULL) {
     LCH_LOG_ERROR(
         "Table from patch with table id '%s' was not found in instance.",
-        LCH_TableGetIdentifier(table));
+        LCH_TableDefinitionGetIdentifier(table_def));
     return false;
   }
 
-  return LCH_TablePatch(table, delta, uid_field, uid_value);
+  return LCH_TableDefinitionPatch(table_def, delta, uid_field, uid_value);
 }
 
 bool LCH_Patch(const LCH_Instance *const instance, const char *const uid_field,
@@ -406,7 +408,7 @@ bool LCH_Patch(const LCH_Instance *const instance, const char *const uid_field,
 
     if (!PatchTable(instance, delta, uid_field, uid_value)) {
       LCH_LOG_ERROR("Failed to patch table '%s'.",
-                    LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)));
+                    LCH_TableDefinitionGetIdentifier(LCH_DeltaGetTable(delta)));
       LCH_DeltaDestroy(delta);
       return false;
     }
@@ -422,7 +424,7 @@ bool LCH_Patch(const LCH_Instance *const instance, const char *const uid_field,
     LCH_LOG_VERBOSE(
         "Patched table '%s' with %zu insertions, %zu deletions, and %zu "
         "updates.",
-        LCH_TableGetIdentifier(LCH_DeltaGetTable(delta)), num_insert,
+        LCH_TableDefinitionGetIdentifier(LCH_DeltaGetTable(delta)), num_insert,
         num_delete, num_update);
     LCH_DeltaDestroy(delta);
   }

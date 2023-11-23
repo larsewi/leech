@@ -9,8 +9,8 @@
  * @param table_id unique table identifier
  * @return table definition
  */
-const LCH_Table *LCH_InstanceGetTable(const LCH_Instance *instance,
-                                      const char *table_id);
+const LCH_TableDefinition *LCH_InstanceGetTable(const LCH_Instance *instance,
+                                                const char *table_id);
 
 /**
  * @brief Get a list of table definitions

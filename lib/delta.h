@@ -6,7 +6,8 @@
 
 typedef struct LCH_Delta LCH_Delta;
 
-LCH_Delta *LCH_DeltaCreate(const LCH_Table *table, const LCH_Dict *new_state,
+LCH_Delta *LCH_DeltaCreate(const LCH_TableDefinition *table_def,
+                           const LCH_Dict *new_state,
                            const LCH_Dict *old_state);
 
 void LCH_DeltaDestroy(LCH_Delta *delta);
@@ -23,7 +24,7 @@ const LCH_Dict *LCH_DeltaGetDeletions(const LCH_Delta *delta);
 
 const LCH_Dict *LCH_DeltaGetUpdates(const LCH_Delta *delta);
 
-const LCH_Table *LCH_DeltaGetTable(const LCH_Delta *delta);
+const LCH_TableDefinition *LCH_DeltaGetTable(const LCH_Delta *delta);
 
 size_t LCH_DeltaGetNumMergedOperations(const LCH_Delta *delta);
 
