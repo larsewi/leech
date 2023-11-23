@@ -147,7 +147,7 @@ START_TEST(test_LCH_ReadWriteTextFile) {
   char path[] = "testfile";
 
   char expected[] = "Hello World!";
-  ck_assert(LCH_FileWriteString(path, expected));
+  ck_assert(LCH_FileWrite(path, expected));
 
   size_t size;
   char *actual = LCH_FileRead("testfile", &size);

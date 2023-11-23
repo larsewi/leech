@@ -39,7 +39,7 @@ bool LCH_HeadSet(const char *const name, const char *const workdir,
     return false;
   }
 
-  if (!LCH_FileWriteString(path, block_id)) {
+  if (!LCH_FileWrite(path, block_id)) {
     return false;
   }
 

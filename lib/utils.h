@@ -47,9 +47,7 @@ char *LCH_FileRead(const char *path, size_t *length);
  * @param[in] str string to write to file.
  * @return false in case of error.
  */
-bool LCH_FileWriteString(const char *path, const char *str);
-
-bool LCH_FileWriteBinary(const char *path, const void *buffer, size_t size);
+bool LCH_FileWrite(const char *path, const char *str);
 
 LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
                           const char *subsidiary, bool has_header);

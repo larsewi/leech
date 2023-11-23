@@ -296,7 +296,7 @@ char *LCH_FileRead(const char *const path, size_t *const length) {
 
 /******************************************************************************/
 
-bool LCH_FileWriteString(const char *const path, const char *const str) {
+bool LCH_FileWrite(const char *const path, const char *const str) {
   FILE *file = fopen(path, "w");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
@@ -305,25 +305,6 @@ bool LCH_FileWriteString(const char *const path, const char *const str) {
   }
 
   if (fputs(str, file) == EOF) {
-    LCH_LOG_ERROR("Failed to write to file '%s'.", path);
-    fclose(file);
-    return false;
-  }
-
-  fclose(file);
-  return true;
-}
-
-bool LCH_FileWriteBinary(const char *const path, const void *const buffer,
-                         const size_t size) {
-  FILE *file = fopen(path, "w");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
-                  strerror(errno));
-    return false;
-  }
-
-  if (fwrite(buffer, 1, size, file) != size) {
     LCH_LOG_ERROR("Failed to write to file '%s'.", path);
     fclose(file);
     return false;
