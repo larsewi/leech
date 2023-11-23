@@ -464,13 +464,12 @@ bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
     return false;
   }
 
-  const size_t length = LCH_BufferLength(buffer);
   char *const csv = LCH_BufferToString(buffer);
   if (csv == NULL) {
     return false;
   }
 
-  const bool success = LCH_FileWriteBinary(path, csv, length);
+  const bool success = LCH_FileWrite(path, csv);
   free(csv);
   return success;
 }
