@@ -78,7 +78,7 @@ class Event:
 
 
 def main():
-    shutil.rmtree("tmp")
+    shutil.rmtree("tmp", ignore_errors=True)
     random.seed()
     events = sorted([Event(path) for path in glob.glob("dumps/SHA=*/*")])
     for ev in events:
