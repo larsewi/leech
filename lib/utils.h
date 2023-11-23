@@ -6,6 +6,14 @@
 #include "leech.h"
 
 /**
+ * Check if two strings are equivalent.
+ * @param first first string to check.
+ * @param second second string to check.
+ * @return true if strings are equivalent, else false.
+ */
+bool LCH_StringEqual(const char *str1, const char *str2);
+
+/**
  * Split a string with delimitor.
  * @param[in] str string to split.
  * @param[in] del delimitor.
