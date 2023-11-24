@@ -9,7 +9,7 @@
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 255
+#define INITIAL_CAPACITY 256
 
 struct LCH_Buffer {
   size_t length;
@@ -175,43 +175,40 @@ void LCH_BufferSet(LCH_Buffer *const self, const size_t offset,
   memcpy(self->buffer + offset, value, size);
 }
 
-bool LCH_BufferHexDump(LCH_Buffer *const hex, const LCH_Buffer *const bin) {
+bool LCH_BufferBytesToHex(LCH_Buffer *const hex,
+                          const LCH_Buffer *const bytes) {
   assert(hex != NULL);
-  assert(bin != NULL);
-  assert(bin->buffer != NULL);
+  assert(bytes != NULL);
+  assert(bytes->buffer != NULL);
 
-  for (size_t i = 0; i < bin->length; i++) {
-    if (!LCH_BufferPrintFormat(hex, "%02x", bin->buffer[i])) {
+  for (size_t i = 0; i < bytes->length; i++) {
+    if (!LCH_BufferPrintFormat(hex, "%02x", (unsigned char)bytes->buffer[i])) {
       return false;
     }
   }
   return true;
 }
 
-bool LCH_BufferBinDump(LCH_Buffer *const bin, const LCH_Buffer *const hex) {
-  assert(bin != NULL);
+bool LCH_BufferHexToBytes(LCH_Buffer *const bytes,
+                          const LCH_Buffer *const hex) {
+  assert(bytes != NULL);
   assert(hex != NULL);
-
-  if (hex->length % 2 != 0) {
-    LCH_LOG_WARNING(
-        "Performing binary dump with an odd number of hexadecimal characters: "
-        "Last byte will be stripped.");
-  }
+  assert(hex->length % 2 == 0);  // Illegal: Odd number of hexadecimals
 
   size_t num_bytes = hex->length / 2;
-  if (!EnsureCapacity(bin, num_bytes)) {
+  if (!EnsureCapacity(bytes, num_bytes)) {
     return false;
   }
 
   for (size_t i = 0; i < num_bytes; i++) {
     if (sscanf((const char *)LCH_BufferGet(hex, i * 2), "%2hhx",
-               bin->buffer + (bin->length + i)) != 1) {
-      bin->buffer[bin->length] = '\0';
+               bytes->buffer + (bytes->length + i)) != 1) {
+      bytes->buffer[bytes->length] = '\0';
       return false;
     }
   }
-  bin->length += num_bytes;
-  bin->buffer[bin->length] = '\0';
+  bytes->length += num_bytes;
+  bytes->buffer[bytes->length] = '\0';
 
   return true;
 }

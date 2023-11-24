@@ -121,24 +121,45 @@ START_TEST(test_LCH_BufferAllocate2) {
 }
 END_TEST
 
-START_TEST(test_LCH_BufferHexBinDump) {
+START_TEST(test_LCH_BufferBytesToHex) {
+  const char data[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+
+  LCH_Buffer *bytes = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(bytes);
+
+  for (size_t i = 0; i < sizeof(data); i++) {
+    ck_assert(LCH_BufferAppend(bytes, data[i]));
+  }
+
   LCH_Buffer *hex = LCH_BufferCreate();
-  LCH_Buffer *bin = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(hex);
 
-  const char *const hash = "b779abbc51c538027f9e8237db312e022891e9b7";
+  ck_assert(LCH_BufferBytesToHex(hex, bytes));
+  LCH_BufferDestroy(bytes);
 
-  ck_assert(LCH_BufferPrintFormat(hex, "%s", hash));
-  ck_assert_str_eq((const char *)LCH_BufferGet(hex, 0), hash);
+  const char *str = LCH_BufferToString(hex);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "0123456789abcdef");
+  free(str);
+}
+END_TEST
 
-  ck_assert(LCH_BufferBinDump(bin, hex));
-  LCH_BufferChop(hex, 0);
-  ck_assert_str_eq((const char *)LCH_BufferGet(hex, 0), "");
+START_TEST(test_LCH_BufferHexToBytes) {
+  LCH_Buffer *hex = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(hex);
+  ck_assert(LCH_BufferPrintFormat(hex, "0123456789abcdef"));
 
-  ck_assert(LCH_BufferHexDump(hex, bin));
-  ck_assert_str_eq((const char *)LCH_BufferGet(hex, 0), hash);
+  LCH_Buffer *bytes = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(bytes);
+  ck_assert(LCH_BufferHexToBytes(bytes, hex));
+
+  const unsigned char data[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+  for (size_t i = 0; i < sizeof(data); i++) {
+    ck_assert_int_eq(*((unsigned char *)LCH_BufferGet(bytes, i)), data[i]);
+  }
 
   LCH_BufferDestroy(hex);
-  LCH_BufferDestroy(bin);
+  LCH_BufferDestroy(bytes);
 }
 END_TEST
 
@@ -159,10 +180,15 @@ Suite *BufferSuite(void) {
     tcase_add_test(tc, test_LCH_BufferAllocate2);
     suite_add_tcase(s, tc);
   }
-  // {
-  //   TCase *tc = tcase_create("LCH_BufferHexBinDump");
-  //   tcase_add_test(tc, test_LCH_BufferHexBinDump);
-  //   suite_add_tcase(s, tc);
-  // }
+  {
+    TCase *tc = tcase_create("LCH_BufferBytesToHex");
+    tcase_add_test(tc, test_LCH_BufferBytesToHex);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_BufferHexToBytes");
+    tcase_add_test(tc, test_LCH_BufferHexToBytes);
+    suite_add_tcase(s, tc);
+  }
   return s;
 }

@@ -73,9 +73,21 @@ bool LCH_BufferAllocate(LCH_Buffer *buffer, size_t size, size_t *offset);
 void LCH_BufferSet(LCH_Buffer *buffer, size_t offset, const void *value,
                    size_t size);
 
-bool LCH_BufferHexDump(LCH_Buffer *buffer, const LCH_Buffer *bin);
+/**
+ * @brief Converts bytes into its hexadecimal string representation
+ * @param bytes Byte buffer
+ * @param hex Hexadecimal buffer
+ * @return True on success, false on error
+ */
+bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
 
-bool LCH_BufferBinDump(LCH_Buffer *buffer, const LCH_Buffer *hex);
+/**
+ * @brief Converts hexadecimal string representation into bytes
+ * @param bytes Byte buffer
+ * @param hex Hexadecimal buffer
+ * @return True on success, false on error
+ */
+bool LCH_BufferHexToBytes(LCH_Buffer *bytes, const LCH_Buffer *hex);
 
 void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
 
