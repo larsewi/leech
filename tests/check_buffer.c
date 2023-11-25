@@ -137,7 +137,7 @@ START_TEST(test_LCH_BufferBytesToHex) {
   ck_assert(LCH_BufferBytesToHex(hex, bytes));
   LCH_BufferDestroy(bytes);
 
-  const char *str = LCH_BufferToString(hex);
+  char *str = LCH_BufferToString(hex);
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "0123456789abcdef");
   free(str);
