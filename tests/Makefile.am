@@ -8,6 +8,7 @@ unit_test_SOURCES = \
     check_block.c \
     check_buffer.c \
     check_csv.c \
+    check_json.c \
     check_delta.c \
     check_dict.c \
     check_head.c \

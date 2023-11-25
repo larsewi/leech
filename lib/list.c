@@ -183,6 +183,7 @@ void LCH_ListDestroy(LCH_List *self) {
 
   for (size_t i = 0; i < self->length; i++) {
     ListElement *item = self->buffer[i];
+    assert(item != NULL);
     if (item->destroy != NULL) {
       item->destroy(item->value);
     }
