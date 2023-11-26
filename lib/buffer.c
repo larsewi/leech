@@ -1,6 +1,7 @@
 #include "buffer.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -210,6 +211,48 @@ bool LCH_BufferHexToBytes(LCH_Buffer *const bytes,
   bytes->length += num_bytes;
   bytes->buffer[bytes->length] = '\0';
 
+  return true;
+}
+
+bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *const in) {
+  LCH_Buffer *hex = LCH_BufferCreate();
+  for (size_t i = 0; i < 4; i++) {
+    if (!isxdigit(in[i])) {
+      LCH_BufferDestroy(hex);
+      return false;
+    }
+    if (!LCH_BufferAppend(hex, in[i])) {
+      LCH_BufferDestroy(hex);
+      return false;
+    }
+  }
+
+  LCH_Buffer *bytes = LCH_BufferCreateWithCapacity(4);
+  if (!LCH_BufferHexToBytes(bytes, hex)) {
+    LCH_BufferDestroy(hex);
+    return false;
+  }
+  LCH_BufferDestroy(hex);
+
+  uint16_t *host = (uint16_t *)LCH_BufferGet(bytes, 0);
+  assert(host != NULL);
+  uint16_t code_point = htons(*host);
+  LCH_BufferDestroy(bytes);
+
+  if (code_point < 0x80) {
+    if (!LCH_BufferAppend(buffer, (unsigned char)code_point)) {
+      return false;
+    }
+  } else if (code_point < 0x800) {
+    if (!LCH_BufferAppend(buffer, 192 + code_point / 64)) {
+      return false;
+    }
+    if (!LCH_BufferAppend(buffer, 128 + code_point % 64)) {
+      return false;
+    }
+  } else {
+    return false;
+  }
   return true;
 }
 
