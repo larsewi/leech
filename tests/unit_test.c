@@ -9,6 +9,7 @@ static void SetupDebugMessenger(void);
 Suite *BlockSuite(void);
 Suite *BufferSuite(void);
 Suite *CSVSuite(void);
+Suite *JSONSuite(void);
 Suite *DeltaSuite(void);
 Suite *DictSuite(void);
 Suite *HeadSuite(void);
@@ -27,6 +28,7 @@ int main(int argc, char *argv[]) {
   srunner_add_suite(sr, DeltaSuite());
   srunner_add_suite(sr, BlockSuite());
   srunner_add_suite(sr, CSVSuite());
+  srunner_add_suite(sr, JSONSuite());
   srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, TableSuite());
 

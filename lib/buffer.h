@@ -89,6 +89,8 @@ bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
  */
 bool LCH_BufferHexToBytes(LCH_Buffer *bytes, const LCH_Buffer *hex);
 
+bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *in);
+
 void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
 
 void LCH_BufferDestroyShallow(LCH_Buffer *buffer);
