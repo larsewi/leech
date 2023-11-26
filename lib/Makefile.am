@@ -23,7 +23,8 @@ libleech_la_SOURCES = leech.c \
         instance.h instance.c \
         list.h list.c \
         table.h table.c \
-        utils.h utils.c
+        utils.h utils.c \
+        sha1.h sha1.c
 
 libleech_la_LIBADD = @OPENSSL_LIBS@
 
