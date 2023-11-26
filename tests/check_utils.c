@@ -259,6 +259,31 @@ START_TEST(test_LCH_DictToTable) {
 }
 END_TEST
 
+START_TEST(test_LCH_MessageDigest) {
+  const char tests[][128] = {
+      "",
+      "Hello World!",
+      "Leech v1.2.3",
+  };
+  const char expect[][41] = {
+      "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+      "2ef7bde608ce5404e97d5f042f95f89f1c232871",
+      "71f3ebe985005bf9e00d035b7dcc245bb5c48490",
+  };
+
+  LCH_Buffer *digest;
+  for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
+    digest = LCH_BufferCreate();
+    ck_assert_ptr_nonnull(digest);
+    ck_assert(LCH_MessageDigest(tests[i], strlen(tests[i]), digest));
+    char *const actual = LCH_BufferToString(digest);
+    ck_assert_ptr_nonnull(actual);
+    ck_assert_str_eq(actual, expect[i]);
+    free(actual);
+  }
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -319,6 +344,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_DictToTable");
     tcase_add_test(tc, test_LCH_DictToTable);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_MessageDigest");
+    tcase_add_test(tc, test_LCH_MessageDigest);
     suite_add_tcase(s, tc);
   }
   return s;

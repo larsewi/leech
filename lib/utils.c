@@ -11,6 +11,7 @@
 #include "definitions.h"
 #include "leech.h"
 #include "list.h"
+#include "sha1.h"
 
 bool LCH_StringEqual(const char *const str1, const char *const str2) {
   assert(str1 != NULL);
@@ -718,4 +719,44 @@ const char *LCH_UnmarshalString(const char *buffer, char **const str) {
 
   buffer += size;
   return buffer;
+}
+
+bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
+                       LCH_Buffer *const digest_hex) {
+  SHA1Context ctx;
+  int ret = SHA1Reset(&ctx);
+  if (ret != shaSuccess) {
+    return false;
+  }
+
+  ret = SHA1Input(&ctx, message, length);
+  if (ret != shaSuccess) {
+    return false;
+  }
+
+  uint8_t tmp[SHA1HashSize];
+  ret = SHA1Result(&ctx, tmp);
+  if (ret != shaSuccess) {
+    return false;
+  }
+
+  LCH_Buffer *const digest_bytes = LCH_BufferCreate();
+  if (digest_bytes == NULL) {
+    return false;
+  }
+
+  size_t offset;
+  if (!LCH_BufferAllocate(digest_bytes, SHA1HashSize, &offset)) {
+    LCH_BufferDestroy(digest_bytes);
+    return false;
+  }
+  LCH_BufferSet(digest_bytes, offset, tmp, SHA1HashSize);
+
+  if (!LCH_BufferBytesToHex(digest_hex, digest_bytes)) {
+    LCH_BufferDestroy(digest_bytes);
+    return false;
+  }
+
+  LCH_BufferDestroy(digest_bytes);
+  return true;
 }
