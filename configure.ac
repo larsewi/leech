@@ -23,12 +23,14 @@ AC_CHECK_HEADERS([arpa/inet.h unistd.h stdint.h])
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
+AC_TYPE_UINT8_T
+AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memmove memset strchr strdup strerror strndup mkdir rmdir])
+AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strndup mkdir rmdir])
 
 # Configure arguments.
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
