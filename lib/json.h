@@ -63,6 +63,8 @@ float LCH_JsonNumberGet(const LCH_Json *json);
 
 LCH_Json *LCH_JsonParse(const char *str);
 
+char *LCH_JsonCompose(const LCH_Json *json);
+
 void LCH_JsonDestroy(LCH_Json *json);
 
 #endif  // _LEECH_JSON_H

@@ -18,6 +18,7 @@ struct LCH_Json {
 };
 
 static const char *JsonParse(const char *str, LCH_Json **json);
+static bool JsonCompose(const LCH_Json *const json, LCH_Buffer *const buffer);
 
 LCH_JsonType LCH_JsonGetType(const LCH_Json *const json) { return json->type; }
 
@@ -48,6 +49,14 @@ static const char *JsonParseNull(const char *const str, LCH_Json **json) {
   return str + strlen("null");
 }
 
+static bool JsonComposeNull(const LCH_Json *const json,
+                            LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NULL);
+  return LCH_BufferPrintFormat(buffer, "null");
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateTrue() {
@@ -75,6 +84,14 @@ static const char *JsonParseTrue(const char *const str, LCH_Json **json) {
   return str + strlen("true");
 }
 
+static bool JsonComposeTrue(const LCH_Json *const json,
+                            LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_TRUE);
+  return LCH_BufferPrintFormat(buffer, "true");
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateFalse() {
@@ -100,6 +117,14 @@ static const char *JsonParseFalse(const char *const str, LCH_Json **json) {
   *json = tmp;
 
   return str + strlen("false");
+}
+
+static bool JsonComposeFalse(const LCH_Json *const json,
+                             LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_FALSE);
+  return LCH_BufferPrintFormat(buffer, "false");
 }
 
 /****************************************************************************/
@@ -254,6 +279,15 @@ static const char *JsonParseString(const char *str, LCH_Json **json) {
   return str;
 }
 
+static bool JsonComposeString(const LCH_Json *const json,
+                              LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_STRING);
+  assert(json->str != NULL);
+  return LCH_BufferPrintFormat(buffer, "\"%s\"", json->str);
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateObject(LCH_Dict *const dict) {
@@ -378,6 +412,52 @@ static const char *JsonParseObject(const char *str, LCH_Json **json) {
   return str + 1;
 }
 
+static bool JsonComposeObject(const LCH_Json *const json,
+                              LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+
+  if (!LCH_BufferAppend(buffer, '{')) {
+    return false;
+  }
+
+  LCH_List *const keys = LCH_DictGetKeys(json->object);
+  if (keys == NULL) {
+    return false;
+  }
+
+  const size_t length = LCH_ListLength(keys);
+  for (size_t i = 0; i < length; i++) {
+    if (i > 0) {
+      if (!LCH_BufferAppend(buffer, ',')) {
+        LCH_ListDestroy(keys);
+        return false;
+      }
+    }
+
+    const char *const key = LCH_ListGet(keys, i);
+    if (!LCH_BufferPrintFormat(buffer, "\"%s\":", key)) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    const LCH_Json *const element = LCH_JsonObjectGet(json, key);
+    if (!JsonCompose(element, buffer)) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+  }
+  LCH_ListDestroy(keys);
+
+  if (!LCH_BufferAppend(buffer, '}')) {
+    return false;
+  }
+
+  return true;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateList(LCH_List *const list) {
@@ -478,6 +558,38 @@ static const char *JsonParseList(const char *str, LCH_Json **json) {
   return str + 1;
 }
 
+static bool JsonComposeList(const LCH_Json *const json,
+                            LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_LIST);
+  assert(json->list != NULL);
+
+  if (!LCH_BufferAppend(buffer, '[')) {
+    return false;
+  }
+
+  const size_t length = LCH_ListLength(json->list);
+  for (size_t i = 0; i < length; i++) {
+    if (i > 0) {
+      if (!LCH_BufferAppend(buffer, ',')) {
+        return false;
+      }
+    }
+
+    const LCH_Json *const element = LCH_JsonListGet(json, i);
+    if (!JsonCompose(element, buffer)) {
+      return false;
+    }
+  }
+
+  if (!LCH_BufferAppend(buffer, ']')) {
+    return false;
+  }
+
+  return true;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateNumber(const float number) {
@@ -518,6 +630,14 @@ static const char *JsonParseNumber(const char *const str, LCH_Json **json) {
   return str + n_chars;
 }
 
+static bool JsonComposeNumber(const LCH_Json *const json,
+                              LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NUMBER);
+  return LCH_BufferPrintFormat(buffer, "%g", json->number);
+}
+
 /****************************************************************************/
 
 static const char *JsonParse(const char *str, LCH_Json **json) {
@@ -546,6 +666,7 @@ static const char *JsonParse(const char *str, LCH_Json **json) {
   if (isdigit(*str) != 0 || *str == '-') {
     return JsonParseNumber(str, json);
   } else {
+    assert(false);
     LCH_LOG_ERROR(
         "Failed to parse JSON: Expected 'null', 'true', 'false', NUMBER, "
         "STRING, OBJECT, LIST; found '%c'",
@@ -560,6 +681,57 @@ LCH_Json *LCH_JsonParse(const char *const str) {
   LCH_Json *json;
   const char *const ret = JsonParse(str, &json);
   return (ret == NULL) ? NULL : json;
+}
+
+static bool JsonCompose(const LCH_Json *const json, LCH_Buffer *const buffer) {
+  assert(json != NULL);
+  assert(buffer != NULL);
+
+  LCH_JsonType type = LCH_JsonGetType(json);
+  switch (type) {
+    case LCH_JSON_TYPE_NULL:
+      return JsonComposeNull(json, buffer);
+
+    case LCH_JSON_TYPE_TRUE:
+      return JsonComposeTrue(json, buffer);
+
+    case LCH_JSON_TYPE_FALSE:
+      return JsonComposeFalse(json, buffer);
+
+    case LCH_JSON_TYPE_STRING:
+      return JsonComposeString(json, buffer);
+
+    case LCH_JSON_TYPE_NUMBER:
+      return JsonComposeNumber(json, buffer);
+
+    case LCH_JSON_TYPE_LIST:
+      return JsonComposeList(json, buffer);
+
+    case LCH_JSON_TYPE_OBJECT:
+      return JsonComposeObject(json, buffer);
+
+    default:
+      assert(false);
+      LCH_LOG_ERROR("Failed to compose JSON: Illegal type %d", type);
+      return false;
+  }
+}
+
+char *LCH_JsonCompose(const LCH_Json *const json) {
+  assert(json != NULL);
+
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    return false;
+  }
+
+  if (!JsonCompose(json, buffer)) {
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  char *const str = LCH_BufferToString(buffer);
+  return str;
 }
 
 void LCH_JsonDestroy(LCH_Json *const json) {
