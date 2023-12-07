@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#include "leech.h"
+
 typedef struct LCH_Json LCH_Json;
 
 typedef enum {
@@ -19,13 +21,25 @@ LCH_JsonType LCH_JsonGetType(const LCH_Json *json);
 
 /****************************************************************************/
 
+LCH_Json *LCH_JsonCreateNull();
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateTrue();
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateFalse();
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateString(char *str);
+
 const char *LCH_JsonStringGet(const LCH_Json *json);
 
 /****************************************************************************/
 
-float LCH_JsonNumberGet(const LCH_Json *json);
-
-/****************************************************************************/
+LCH_Json *LCH_JsonCreateObject(LCH_Dict *dict);
 
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *key);
 
@@ -33,9 +47,17 @@ size_t LCH_JsonObjectLength(const LCH_Json *json);
 
 /****************************************************************************/
 
+LCH_Json *LCH_JsonCreateList(LCH_List *list);
+
 const LCH_Json *LCH_JsonListGet(const LCH_Json *json, size_t index);
 
 size_t LCH_JsonObjectLength(const LCH_Json *json);
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateNumber(float number);
+
+float LCH_JsonNumberGet(const LCH_Json *json);
 
 /****************************************************************************/
 

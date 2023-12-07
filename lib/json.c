@@ -17,101 +17,112 @@ struct LCH_Json {
   LCH_Dict *object;
 };
 
+static const char *JsonParse(const char *str, LCH_Json **json);
+
 LCH_JsonType LCH_JsonGetType(const LCH_Json *const json) { return json->type; }
 
 /****************************************************************************/
 
-const char *LCH_JsonStringGet(const LCH_Json *const json) {
-  assert(json->type == LCH_JSON_TYPE_STRING);
-  assert(json->str != NULL);
-  return json->str;
+LCH_Json *LCH_JsonCreateNull() {
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
+                  strerror(errno));
+    return NULL;
+  }
+  (json)->type = LCH_JSON_TYPE_NULL;
+
+  return json;
 }
-
-/****************************************************************************/
-
-const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
-  assert(json->object != NULL);
-  const LCH_Json *const value = LCH_DictGet(json->object, key);
-  return value;
-}
-
-size_t LCH_JsonObjectLength(const LCH_Json *json) {
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
-  assert(json->object != NULL);
-  return LCH_DictLength(json->object);
-}
-
-/****************************************************************************/
-
-const LCH_Json *LCH_JsonListGet(const LCH_Json *const json,
-                                const size_t index) {
-  assert(json->type == LCH_JSON_TYPE_LIST);
-  assert(json->list != NULL);
-  const LCH_Json *const value = LCH_ListGet(json->list, index);
-  return value;
-}
-
-size_t LCH_JsonListLength(const LCH_Json *const json) {
-  assert(json->type == LCH_JSON_TYPE_LIST);
-  assert(json->list != NULL);
-  return LCH_ListLength(json->list);
-}
-
-/****************************************************************************/
-
-float LCH_JsonNumberGet(const LCH_Json *const json) {
-  assert(json->type == LCH_JSON_TYPE_NUMBER);
-  return json->number;
-}
-
-/****************************************************************************/
-
-static const char *JsonParse(const char *str, LCH_Json **json);
 
 static const char *JsonParseNull(const char *const str, LCH_Json **json) {
   assert(str != NULL);
   assert(strncmp(str, "null", strlen("null")) == 0);
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
+  LCH_Json *const tmp = LCH_JsonCreateNull();
+  if (tmp == NULL) {
+    return NULL;
+  }
+  *json = tmp;
+
+  return str + strlen("null");
+}
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateTrue() {
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_NULL;
+  (json)->type = LCH_JSON_TYPE_TRUE;
 
-  return str + strlen("null");
+  return json;
 }
 
 static const char *JsonParseTrue(const char *const str, LCH_Json **json) {
   assert(str != NULL);
   assert(strncmp(str, "true", strlen("true")) == 0);
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
+  LCH_Json *const tmp = LCH_JsonCreateTrue();
+  if (tmp == NULL) {
+    return NULL;
+  }
+  *json = tmp;
+
+  return str + strlen("true");
+}
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateFalse() {
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_TRUE;
+  (json)->type = LCH_JSON_TYPE_FALSE;
 
-  return str + strlen("true");
+  return json;
 }
 
 static const char *JsonParseFalse(const char *const str, LCH_Json **json) {
   assert(str != NULL);
   assert(strncmp(str, "false", strlen("false")) == 0);
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
+  LCH_Json *const tmp = LCH_JsonCreateFalse();
+  if (tmp == NULL) {
+    return NULL;
+  }
+  *json = tmp;
+
+  return str + strlen("false");
+}
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateString(char *const str) {
+  assert(str != NULL);
+
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_FALSE;
+  json->type = LCH_JSON_TYPE_STRING;
+  json->str = str;
 
-  return str + strlen("false");
+  return json;
+}
+
+const char *LCH_JsonStringGet(const LCH_Json *const json) {
+  assert(json->type == LCH_JSON_TYPE_STRING);
+  assert(json->str != NULL);
+  return json->str;
 }
 
 static const char *BufferParseString(const char *str, LCH_Buffer **buffer) {
@@ -231,18 +242,46 @@ static const char *JsonParseString(const char *str, LCH_Json **json) {
   if (str == NULL) {
     return NULL;
   }
+  char *value = LCH_BufferToString(buffer);
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
-    LCH_BufferDestroy(buffer);
+  LCH_Json *const tmp = LCH_JsonCreateString(value);
+  if (tmp == NULL) {
+    free(value);
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_STRING;
-  (*json)->str = LCH_BufferToString(buffer);
+  *json = tmp;
 
   return str;
+}
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateObject(LCH_Dict *const dict) {
+  assert(dict != NULL);
+
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
+                  strerror(errno));
+    return NULL;
+  }
+  json->type = LCH_JSON_TYPE_OBJECT;
+  json->object = dict;
+
+  return json;
+}
+
+const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+  const LCH_Json *const value = LCH_DictGet(json->object, key);
+  return value;
+}
+
+size_t LCH_JsonObjectLength(const LCH_Json *json) {
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+  return LCH_DictLength(json->object);
 }
 
 static const char *JsonParseObject(const char *str, LCH_Json **json) {
@@ -329,17 +368,45 @@ static const char *JsonParseObject(const char *str, LCH_Json **json) {
     return NULL;
   }
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+  LCH_Json *const tmp = LCH_JsonCreateObject(dict);
+  if (tmp == NULL) {
     LCH_DictDestroy(dict);
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_OBJECT;
-  (*json)->object = dict;
+  *json = tmp;
 
   return str + 1;
+}
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateList(LCH_List *const list) {
+  assert(list != NULL);
+
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
+                  strerror(errno));
+    return NULL;
+  }
+  json->type = LCH_JSON_TYPE_LIST;
+  json->list = list;
+
+  return json;
+}
+
+const LCH_Json *LCH_JsonListGet(const LCH_Json *const json,
+                                const size_t index) {
+  assert(json->type == LCH_JSON_TYPE_LIST);
+  assert(json->list != NULL);
+  const LCH_Json *const value = LCH_ListGet(json->list, index);
+  return value;
+}
+
+size_t LCH_JsonListLength(const LCH_Json *const json) {
+  assert(json->type == LCH_JSON_TYPE_LIST);
+  assert(json->list != NULL);
+  return LCH_ListLength(json->list);
 }
 
 static const char *JsonParseList(const char *str, LCH_Json **json) {
@@ -401,17 +468,34 @@ static const char *JsonParseList(const char *str, LCH_Json **json) {
     return NULL;
   }
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+  LCH_Json *const tmp = LCH_JsonCreateList(list);
+  if (tmp == NULL) {
     LCH_ListDestroy(list);
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_LIST;
-  (*json)->list = list;
+  *json = tmp;
 
   return str + 1;
+}
+
+/****************************************************************************/
+
+LCH_Json *LCH_JsonCreateNumber(const float number) {
+  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  if (json == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
+                  strerror(errno));
+    return NULL;
+  }
+  json->type = LCH_JSON_TYPE_NUMBER;
+  json->number = number;
+
+  return json;
+}
+
+float LCH_JsonNumberGet(const LCH_Json *const json) {
+  assert(json->type == LCH_JSON_TYPE_NUMBER);
+  return json->number;
 }
 
 static const char *JsonParseNumber(const char *const str, LCH_Json **json) {
@@ -425,17 +509,16 @@ static const char *JsonParseNumber(const char *const str, LCH_Json **json) {
     return NULL;
   }
 
-  *json = calloc(1, sizeof(LCH_Json));
-  if (*json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+  LCH_Json *const tmp = LCH_JsonCreateNumber(number);
+  if (tmp == NULL) {
     return NULL;
   }
-  (*json)->type = LCH_JSON_TYPE_NUMBER;
-  (*json)->number = number;
+  *json = tmp;
 
   return str + n_chars;
 }
+
+/****************************************************************************/
 
 static const char *JsonParse(const char *str, LCH_Json **json) {
   assert(str != NULL);
@@ -478,8 +561,6 @@ LCH_Json *LCH_JsonParse(const char *const str) {
   const char *const ret = JsonParse(str, &json);
   return (ret == NULL) ? NULL : json;
 }
-
-/****************************************************************************/
 
 void LCH_JsonDestroy(LCH_Json *const json) {
   if (json != NULL) {
