@@ -282,6 +282,113 @@ START_TEST(test_LCH_JsonParse) {
 }
 END_TEST
 
+START_TEST(test_JsonComposeNull) {
+  LCH_Json *json = LCH_JsonCreateNull();
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NULL);
+  char *const str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "null");
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
+START_TEST(test_JsonComposeTrue) {
+  LCH_Json *json = LCH_JsonCreateTrue();
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_TRUE);
+  char *const str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "true");
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
+START_TEST(test_JsonComposeFalse) {
+  LCH_Json *json = LCH_JsonCreateFalse();
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_FALSE);
+  char *const str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "false");
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
+START_TEST(test_JsonComposeString) {
+  char *str = strdup("Leech");
+  ck_assert_ptr_nonnull(str);
+  LCH_Json *json = LCH_JsonCreateString(str);
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_STRING);
+  str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "\"Leech\"");
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
+START_TEST(test_JsonComposeNumber) {
+  LCH_Json *json = LCH_JsonCreateNumber(1.012300f);
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
+  char *const str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "1.0123");
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
+START_TEST(test_JsonComposeList) {
+  const char values[][8] = {"one", "two", "three"};
+  LCH_List *const list = LCH_ListCreate();
+  ck_assert_ptr_nonnull(list);
+  for (size_t i = 0; i < 3; i++) {
+    char *value = strdup(values[i]);
+    ck_assert_ptr_nonnull(value);
+    LCH_Json *json = LCH_JsonCreateString(value);
+    ck_assert_ptr_nonnull(json);
+    ck_assert(LCH_ListAppend(list, json, (void (*)(void *))LCH_JsonDestroy));
+  }
+
+  LCH_Json *json = LCH_JsonCreateList(list);
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_LIST);
+  char *const str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  ck_assert_str_eq(str, "[\"one\",\"two\",\"three\"]");
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
+START_TEST(test_JsonComposeObject) {
+  LCH_Dict *const dict = LCH_DictCreate();
+  ck_assert_ptr_nonnull(dict);
+  char *const lars = strdup("lars");
+  ck_assert_ptr_nonnull(lars);
+  LCH_Json *const name = LCH_JsonCreateString(lars);
+  ck_assert(LCH_DictSet(dict, "name", name, (void (*)(void *))LCH_JsonDestroy));
+  LCH_Json *const age = LCH_JsonCreateNumber(29.0f);
+  ck_assert_ptr_nonnull(age);
+  ck_assert(LCH_DictSet(dict, "age", age, (void (*)(void *))LCH_JsonDestroy));
+
+  LCH_Json *const json = LCH_JsonCreateObject(dict);
+  ck_assert_ptr_nonnull(json);
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+  char *const str = LCH_JsonCompose(json);
+  ck_assert(strcmp(str, "{\"name\":\"lars\",\"age\":29}") == 0 ||
+            strcmp(str, "{\"age\":29},\"name\":\"lars\"") == 0);
+  LCH_JsonDestroy(json);
+  free(str);
+}
+END_TEST
+
 Suite *JSONSuite(void) {
   Suite *s = suite_create("json.c");
   {
@@ -322,6 +429,41 @@ Suite *JSONSuite(void) {
   {
     TCase *tc = tcase_create("LCH_JsonParse");
     tcase_add_test(tc, test_LCH_JsonParse);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeNull");
+    tcase_add_test(tc, test_JsonComposeNull);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeTrue");
+    tcase_add_test(tc, test_JsonComposeTrue);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeFalse");
+    tcase_add_test(tc, test_JsonComposeFalse);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeString");
+    tcase_add_test(tc, test_JsonComposeString);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeNumber");
+    tcase_add_test(tc, test_JsonComposeNumber);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeList");
+    tcase_add_test(tc, test_JsonComposeList);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("JsonComposeObject");
+    tcase_add_test(tc, test_JsonComposeObject);
     suite_add_tcase(s, tc);
   }
   return s;

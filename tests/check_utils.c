@@ -275,7 +275,8 @@ START_TEST(test_LCH_MessageDigest) {
   for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
     digest = LCH_BufferCreate();
     ck_assert_ptr_nonnull(digest);
-    ck_assert(LCH_MessageDigest(tests[i], strlen(tests[i]), digest));
+    ck_assert(LCH_MessageDigest((const unsigned char *)tests[i],
+                                strlen(tests[i]), digest));
     char *const actual = LCH_BufferToString(digest);
     ck_assert_ptr_nonnull(actual);
     ck_assert_str_eq(actual, expect[i]);
