@@ -760,3 +760,18 @@ bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
   LCH_BufferDestroy(digest_bytes);
   return true;
 }
+
+char *LCH_VersionToString(const size_t major, const size_t minor,
+                          const size_t patch) {
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  if (!LCH_BufferPrintFormat(buffer, "%lu.%lu.%lu", major, minor, patch)) {
+    return NULL;
+  }
+
+  char *const version = LCH_BufferToString(buffer);
+  return version;
+}

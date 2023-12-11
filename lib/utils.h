@@ -86,4 +86,6 @@ const char *LCH_UnmarshalBinary(const char *buffer, char **str);
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
 
+char *LCH_VersionToString(size_t major, size_t minor, size_t patch);
+
 #endif  // _LEECH_UTILS
