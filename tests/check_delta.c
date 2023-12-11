@@ -1,6 +1,7 @@
 #include <check.h>
 #include <limits.h>
 
+#include "../lib/csv.h"
 #include "../lib/definitions.h"
 #include "../lib/delta.h"
 #include "../lib/leech.h"
@@ -115,11 +116,43 @@ START_TEST(test_LCH_Delta) {
 }
 END_TEST
 
+START_TEST(test_LCH_DeltaV2) {
+  LCH_Dict *old_state = LCH_DictCreate();
+  ck_assert_ptr_nonnull(old_state);
+  ck_assert(LCH_DictSet(old_state, "Paul,McCartney", (char *)"1942", NULL));
+  ck_assert(LCH_DictSet(old_state, "Ringo,Starr", (char *)"1940", NULL));
+  ck_assert(LCH_DictSet(old_state, "John,Lennon", (char *)"1940", NULL));
+
+  LCH_Dict *new_state = LCH_DictCreate();
+  ck_assert_ptr_nonnull(new_state);
+  ck_assert(LCH_DictSet(new_state, "Paul,McCartney", (char *)"1942", NULL));
+  ck_assert(LCH_DictSet(new_state, "Ringo,Starr", (char *)"1941", NULL));
+  ck_assert(LCH_DictSet(new_state, "George,Harrison", (char *)"1943", NULL));
+
+  LCH_Json *delta = LCH_DeltaCreateV2("beatles", new_state, old_state);
+  LCH_DictDestroy(old_state);
+  LCH_DictDestroy(new_state);
+  ck_assert_ptr_nonnull(delta);
+
+  ck_assert_str_eq(LCH_DeltaGetTableIDV2(delta), "beatles");
+  ck_assert_int_eq(LCH_DeltaGetNumInsertsV2(delta), 1);
+  ck_assert_int_eq(LCH_DeltaGetNumDeletesV2(delta), 1);
+  ck_assert_int_eq(LCH_DeltaGetNumUpdatesV2(delta), 1);
+
+  LCH_JsonDestroy(delta);
+}
+END_TEST
+
 Suite *DeltaSuite(void) {
   Suite *s = suite_create("delta.c");
   {
     TCase *tc = tcase_create("LCH_Delta");
     tcase_add_test(tc, test_LCH_Delta);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_DeltaV2");
+    tcase_add_test(tc, test_LCH_DeltaV2);
     suite_add_tcase(s, tc);
   }
   return s;

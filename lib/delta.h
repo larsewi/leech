@@ -3,6 +3,17 @@
 
 #include "buffer.h"
 #include "dict.h"
+#include "json.h"
+
+LCH_Json *LCH_DeltaCreateV2(const char *const table_id,
+                            const LCH_Dict *const new_state,
+                            const LCH_Dict *const old_state);
+size_t LCH_DeltaGetNumInsertsV2(const LCH_Json *delta);
+size_t LCH_DeltaGetNumDeletesV2(const LCH_Json *delta);
+size_t LCH_DeltaGetNumUpdatesV2(const LCH_Json *delta);
+const char *LCH_DeltaGetTableIDV2(const LCH_Json *const delta);
+
+/*****************/
 
 typedef struct LCH_Delta LCH_Delta;
 
