@@ -42,3 +42,49 @@ export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig"
 
 ## TODO: [doxygen](https://www.gnu.org/software/autoconf-archive/ax_prog_doxygen.html)
 
+## Block
+
+```json
+{
+    "version": "<VERSION_NUMBER>",
+    "parent": "<PARENT_IDENTIFIER>",
+    "timestamp": "<TIMESTAMP>",
+    "payload" : [ ... ]
+}
+```
+
+## Delta
+
+```json
+{
+    "type": "<PAYLOAD_TYPE>",
+    "version": "<VERSION_NUMBER>",
+    "table": "<TABLE_IDENTIFIER>",
+    "insert": {
+        "<PRIMARY_KEY>": "<SUBSIDIARY_KEY>",
+        ...
+    },
+    "update": {
+        "<PRIMARY_KEY>": "<SUBSIDIARY_KEY>",
+        ...
+    },
+    "delete": {
+        "<PRIMARY_KEY>": "<SUBSIDIARY_KEY>",
+        ...
+    }
+}
+```
+
+## Rebase
+
+```json
+{
+    "type": "<PAYLOAD_TYPE>",
+    "version": "<VERSION_NUMBER>",
+    "id": "<TABLE_IDENTIFIER>",
+    "records": [
+        "<TABLE_RECORD>",
+        ...
+    ]
+}
+```
