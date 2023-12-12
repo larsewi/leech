@@ -3,6 +3,7 @@
 
 #include "../lib/definitions.h"
 #include "../lib/dict.h"
+#include "../lib/json.h"
 #include "../lib/leech.h"
 #include "../lib/utils.c"
 
@@ -285,6 +286,76 @@ START_TEST(test_LCH_MessageDigest) {
 }
 END_TEST
 
+START_TEST(test_LCH_TableToJsonObject) {
+  LCH_List *const table = LCH_CSVParseTable(
+      "firstname, lastname,  born\r\n"
+      "Paul,      McCartney, 1942\r\n"
+      "Ringo,     Starr,     1940\r\n"
+      "John,      Lennon,    1940\r\n"
+      "George,    Harrison,  1943\r\n");
+  LCH_List *const primary = LCH_CSVParseRecord("lastname,firstname");
+  LCH_List *const subsidiary = LCH_CSVParseRecord("born");
+
+  LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
+  ck_assert_ptr_nonnull(json);
+
+  LCH_ListDestroy(table);
+  LCH_ListDestroy(primary);
+  LCH_ListDestroy(subsidiary);
+
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+
+  const LCH_Json *str = LCH_JsonObjectGet(json, "McCartney,Paul");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "1942");
+
+  str = LCH_JsonObjectGet(json, "Starr,Ringo");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "1940");
+
+  str = LCH_JsonObjectGet(json, "Lennon,John");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "1940");
+
+  str = LCH_JsonObjectGet(json, "Harrison,George");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "1943");
+
+  LCH_JsonDestroy(json);
+}
+END_TEST
+
+START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
+  LCH_List *const table = LCH_CSVParseTable(
+      "firstname, lastname,  born\r\n"
+      "Paul,      McCartney, 1942\r\n"
+      "Ringo,     Starr,     1940\r\n"
+      "John,      Lennon,    1940\r\n"
+      "George,    Harrison,  1943\r\n");
+  LCH_List *const primary = LCH_CSVParseRecord("born,lastname,firstname");
+  LCH_List *const subsidiary = LCH_ListCreate();
+
+  LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
+  ck_assert_ptr_nonnull(json);
+
+  LCH_ListDestroy(table);
+  LCH_ListDestroy(primary);
+  LCH_ListDestroy(subsidiary);
+
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+
+  const LCH_Json *str = LCH_JsonObjectGet(json, "1942,McCartney,Paul");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+
+  str = LCH_JsonObjectGet(json, "1940,Starr,Ringo");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+
+  str = LCH_JsonObjectGet(json, "1940,Lennon,John");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+
+  str = LCH_JsonObjectGet(json, "1943,Harrison,George");
+  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+
+  LCH_JsonDestroy(json);
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -350,6 +421,16 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_MessageDigest");
     tcase_add_test(tc, test_LCH_MessageDigest);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_TableToJsonObject");
+    tcase_add_test(tc, test_LCH_TableToJsonObject);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_TableToJsonObject no subsidiary key");
+    tcase_add_test(tc, test_LCH_TableToJsonObjectNoSubsidiary);
     suite_add_tcase(s, tc);
   }
   return s;

@@ -435,6 +435,143 @@ static LCH_List *ParseConcatFields(const char *const primary,
   return record;
 }
 
+static bool IndicesOfFieldsInHeader(size_t *const indices,
+                                    const LCH_List *const fields,
+                                    const LCH_List *const header) {
+  assert(indices != NULL);
+  assert(fields != NULL);
+  assert(header != NULL);
+
+  const size_t num_fields = LCH_ListLength(fields);
+  const size_t header_len = LCH_ListLength(header);
+  assert(num_fields <= header_len);
+
+  for (size_t i = 0; i < num_fields; i++) {
+    const char *const field = (char *)LCH_ListGet(fields, i);
+    const size_t index = LCH_ListIndex(
+        header, field, (int (*)(const void *, const void *))strcmp);
+    if (index >= header_len) {
+      LCH_LOG_ERROR("Field '%s' not found in table header");
+      return false;
+    }
+    indices[i] = index;
+  }
+  return true;
+}
+
+static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
+                                         const size_t num_indices,
+                                         const LCH_List *const record) {
+  LCH_List *fields = LCH_ListCreate();
+  if (fields == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < num_indices; i++) {
+    const size_t index = indices[i];
+    char *const field = (char *)LCH_ListGet(record, index);
+    assert(field != NULL);
+
+    if (!LCH_ListAppend(fields, field, NULL)) {
+      LCH_ListDestroy(fields);
+      return NULL;
+    }
+  }
+
+  return fields;
+}
+
+LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
+                                const LCH_List *const primary_fields,
+                                const LCH_List *const subsidiary_fields) {
+  assert(primary_fields != NULL);
+  assert(subsidiary_fields != NULL);
+  assert(table != NULL);
+
+  const size_t num_records = LCH_ListLength(table);
+  assert(num_records >= 1);  // Require at least a table header
+  const LCH_List *const header = (LCH_List *)LCH_ListGet(table, 0);
+  const size_t num_primary = LCH_ListLength(primary_fields);
+  const size_t num_subsidiary = LCH_ListLength(subsidiary_fields);
+  assert(num_primary > 0);  // Require at least one primary field
+  assert(LCH_ListLength(header) == num_primary + num_subsidiary);
+
+  size_t primary_indices[num_primary];
+  if (!IndicesOfFieldsInHeader(primary_indices, primary_fields, header)) {
+    return NULL;
+  }
+
+  size_t subsidiary_indices[num_subsidiary];
+  if (!IndicesOfFieldsInHeader(subsidiary_indices, subsidiary_fields, header)) {
+    return NULL;
+  }
+
+  LCH_Json *const object = LCH_JsonObjectCreate();
+  if (object == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 1; i < num_records; i++) {
+    const LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
+    assert(record != NULL);
+    assert(LCH_ListLength(header) == LCH_ListLength(record));
+
+    // Create key from primary fields
+    char *key = NULL;
+    {
+      LCH_List *list =
+          FieldsInRecordAtIndices(primary_indices, num_primary, record);
+      if (list == NULL) {
+        LCH_JsonDestroy(object);
+        return NULL;
+      }
+
+      LCH_Buffer *buffer = NULL;
+      if (!LCH_CSVComposeRecord(&buffer, list)) {
+        LCH_ListDestroy(list);
+        LCH_JsonDestroy(object);
+      }
+
+      LCH_ListDestroy(list);
+      key = LCH_BufferToString(buffer);
+    }
+
+    // Create value from subsidiary fields
+    LCH_Json *value = NULL;
+    {
+      LCH_List *const list =
+          FieldsInRecordAtIndices(subsidiary_indices, num_subsidiary, record);
+      if (list == NULL) {
+        free(key);
+        LCH_JsonDestroy(object);
+        return NULL;
+      }
+
+      LCH_Buffer *buffer = NULL;
+      if (!LCH_CSVComposeRecord(&buffer, list)) {
+        LCH_ListDestroy(list);
+        free(key);
+        LCH_JsonDestroy(object);
+      }
+
+      LCH_ListDestroy(list);
+      char *const str = LCH_BufferToString(buffer);
+      value = LCH_JsonCreateString(str);
+    }
+
+    assert(key != NULL);
+    assert(value != NULL);
+    if (!LCH_JsonObjectSet(object, key, value)) {
+      free(value);
+      free(key);
+      LCH_JsonDestroy(object);
+    }
+    free(key);
+  }
+
+  return object;
+}
+
 LCH_Dict *LCH_TableToDict(const LCH_List *const table,
                           const char *const primary,
                           const char *const subsidiary, const bool has_header) {

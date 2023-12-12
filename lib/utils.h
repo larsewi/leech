@@ -3,6 +3,7 @@
 
 #include "buffer.h"
 #include "dict.h"
+#include "json.h"
 #include "leech.h"
 
 /**
@@ -59,6 +60,10 @@ bool LCH_FileWrite(const char *path, const char *str);
 
 LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
                           const char *subsidiary, bool has_header);
+
+LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
+                                const LCH_List *primary_fields,
+                                const LCH_List *subsidiary_fields);
 
 LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
                           const char *subsidiary, bool keep_header);
