@@ -290,6 +290,16 @@ static bool JsonComposeString(const LCH_Json *const json,
 
 /****************************************************************************/
 
+LCH_Json *LCH_JsonObjectCreate() {
+  LCH_Dict *const dict = LCH_DictCreate();
+  if (dict == NULL) {
+    return NULL;
+  }
+
+  LCH_Json *object = LCH_JsonObjectCreateFromDict(dict);
+  return object;
+}
+
 LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *const dict) {
   assert(dict != NULL);
 

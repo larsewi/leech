@@ -39,6 +39,8 @@ const char *LCH_JsonStringGet(const LCH_Json *json);
 
 /****************************************************************************/
 
+LCH_Json *LCH_JsonObjectCreate();
+
 LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *dict);
 
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *key);
