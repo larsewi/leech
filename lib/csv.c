@@ -139,7 +139,7 @@ static LCH_List *ParseRecord(Parser *const parser) {
     return NULL;
   }
 
-  if (!LCH_ListAppend(record, (void *)field, free)) {
+  if (!LCH_ListAppend(record, field, free)) {
     LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
                   field, parser->row, parser->column);
     free(field);
@@ -159,7 +159,7 @@ static LCH_List *ParseRecord(Parser *const parser) {
       return NULL;
     }
 
-    if (!LCH_ListAppend(record, (void *)field, free)) {
+    if (!LCH_ListAppend(record, field, free)) {
       LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
                     field, parser->row, parser->column);
       free(field);
@@ -188,8 +188,7 @@ static LCH_List *ParseTable(Parser *const parser) {
     return NULL;
   }
 
-  if (!LCH_ListAppend(table, (void *)record,
-                      (void (*)(void *))LCH_ListDestroy)) {
+  if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
     LCH_LOG_ERROR("Failed to append record to table (Row %zu)", parser->row);
     LCH_ListDestroy(record);
     LCH_ListDestroy(table);

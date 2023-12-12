@@ -40,7 +40,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
         LCH_ListDestroy(list);
         return NULL;
       }
-      if (!LCH_ListAppend(list, (void *)s, free)) {
+      if (!LCH_ListAppend(list, s, free)) {
         free(s);
         LCH_ListDestroy(list);
         return NULL;
@@ -59,7 +59,7 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
       LCH_ListDestroy(list);
       return NULL;
     }
-    if (!LCH_ListAppend(list, (void *)s, free)) {
+    if (!LCH_ListAppend(list, s, free)) {
       LCH_ListDestroy(list);
       return NULL;
     }
@@ -161,7 +161,7 @@ char *LCH_StringStrip(char *str, const char *charset) {
     ++cursor;
   }
 
-  str = (char *)memmove((void *)str, (void *)(str + start), end - start);
+  str = (char *)memmove(str, (str + start), end - start);
   str[end - start] = '\0';
   return str;
 }

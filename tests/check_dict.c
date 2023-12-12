@@ -16,7 +16,7 @@ START_TEST(test_LCH_Dict) {
     int *data = (int *)malloc(sizeof(int));
     ck_assert_ptr_nonnull(data);
     *data = i;
-    ck_assert(LCH_DictSet(dict, keys[i], (void *)data, free));
+    ck_assert(LCH_DictSet(dict, keys[i], data, free));
   }
   ck_assert_int_eq(LCH_DictLength(dict), LCH_LENGTH(keys));
 
@@ -35,15 +35,15 @@ END_TEST
 START_TEST(test_LCH_DictSetMinus) {
   LCH_Dict *left = LCH_DictCreate();
   LCH_DictSet(left, "one", strdup("1"), free);
-  LCH_DictSet(left, "two", (void *)strdup("2"), free);
-  LCH_DictSet(left, "three", (void *)strdup("3"), free);
-  LCH_DictSet(left, "four", (void *)strdup("4"), free);
-  LCH_DictSet(left, "five", (void *)strdup("5"), free);
+  LCH_DictSet(left, "two", strdup("2"), free);
+  LCH_DictSet(left, "three", strdup("3"), free);
+  LCH_DictSet(left, "four", strdup("4"), free);
+  LCH_DictSet(left, "five", strdup("5"), free);
 
   LCH_Dict *right = LCH_DictCreate();
-  LCH_DictSet(right, "one", (void *)strdup("1"), free);
-  LCH_DictSet(right, "three", (void *)strdup("3"), free);
-  LCH_DictSet(right, "five", (void *)strdup("5"), free);
+  LCH_DictSet(right, "one", strdup("1"), free);
+  LCH_DictSet(right, "three", strdup("3"), free);
+  LCH_DictSet(right, "five", strdup("5"), free);
 
   LCH_Dict *result =
       LCH_DictSetMinus(left, right, (void *(*)(const void *))strdup, free);
@@ -63,16 +63,16 @@ END_TEST
 
 START_TEST(test_LCH_DictSetChangedIntersection) {
   LCH_Dict *left = LCH_DictCreate();
-  LCH_DictSet(left, "one", (void *)strdup("foo"), free);
-  LCH_DictSet(left, "two", (void *)strdup("2"), free);
-  LCH_DictSet(left, "three", (void *)strdup("3"), free);
-  LCH_DictSet(left, "four", (void *)strdup("4"), free);
-  LCH_DictSet(left, "five", (void *)strdup("bar"), free);
+  LCH_DictSet(left, "one", strdup("foo"), free);
+  LCH_DictSet(left, "two", strdup("2"), free);
+  LCH_DictSet(left, "three", strdup("3"), free);
+  LCH_DictSet(left, "four", strdup("4"), free);
+  LCH_DictSet(left, "five", strdup("bar"), free);
 
   LCH_Dict *right = LCH_DictCreate();
-  LCH_DictSet(right, "one", (void *)strdup("1"), free);
-  LCH_DictSet(right, "three", (void *)strdup("3"), free);
-  LCH_DictSet(right, "five", (void *)strdup("5"), free);
+  LCH_DictSet(right, "one", strdup("1"), free);
+  LCH_DictSet(right, "three", strdup("3"), free);
+  LCH_DictSet(right, "five", strdup("5"), free);
 
   LCH_Dict *result = LCH_DictSetChangedIntersection(
       left, right, (void *(*)(const void *))strdup, free,
