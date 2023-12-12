@@ -101,7 +101,7 @@ static bool DeltaCreateInsertOperations(LCH_Dict *const delta,
     return false;
   }
 
-  LCH_Json *const json = LCH_JsonCreateObject(inserts);
+  LCH_Json *const json = LCH_JsonObjectCreateFromDict(inserts);
   if (json == NULL) {
     LCH_DictDestroy(inserts);
     return false;
@@ -124,7 +124,7 @@ static bool DeltaCreateDeleteOperations(LCH_Dict *const delta,
     return false;
   }
 
-  LCH_Json *const json = LCH_JsonCreateObject(del);
+  LCH_Json *const json = LCH_JsonObjectCreateFromDict(del);
   if (json == NULL) {
     LCH_DictDestroy(del);
     return false;
@@ -149,7 +149,7 @@ static bool DeltaCreateUpdateOperations(LCH_Dict *const delta,
     return false;
   }
 
-  LCH_Json *const json = LCH_JsonCreateObject(upd);
+  LCH_Json *const json = LCH_JsonObjectCreateFromDict(upd);
   if (json == NULL) {
     LCH_DictDestroy(upd);
     return false;
@@ -204,7 +204,7 @@ LCH_Json *LCH_DeltaCreateV2(const char *const table_id,
     return NULL;
   }
 
-  LCH_Json *const json = LCH_JsonCreateObject(delta);
+  LCH_Json *const json = LCH_JsonObjectCreateFromDict(delta);
   if (json == NULL) {
     LCH_DictDestroy(delta);
     return NULL;

@@ -13,7 +13,7 @@ typedef enum {
   LCH_JSON_TYPE_FALSE,
   LCH_JSON_TYPE_STRING,
   LCH_JSON_TYPE_NUMBER,
-  LCH_JSON_TYPE_LIST,
+  LCH_JSON_TYPE_ARRAY,
   LCH_JSON_TYPE_OBJECT,
 } LCH_JsonType;
 
@@ -39,7 +39,7 @@ const char *LCH_JsonStringGet(const LCH_Json *json);
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateObject(LCH_Dict *dict);
+LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *dict);
 
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *key);
 
@@ -47,11 +47,11 @@ size_t LCH_JsonObjectLength(const LCH_Json *json);
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateList(LCH_List *list);
+LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *list);
 
-const LCH_Json *LCH_JsonListGet(const LCH_Json *json, size_t index);
+const LCH_Json *LCH_JsonArrayGet(const LCH_Json *json, size_t index);
 
-size_t LCH_JsonObjectLength(const LCH_Json *json);
+size_t LCH_JsonArrayLength(const LCH_Json *json);
 
 /****************************************************************************/
 

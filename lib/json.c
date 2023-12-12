@@ -13,7 +13,7 @@ struct LCH_Json {
   LCH_JsonType type;
   float number;
   char *str;
-  LCH_List *list;
+  LCH_List *array;
   LCH_Dict *object;
 };
 
@@ -290,7 +290,7 @@ static bool JsonComposeString(const LCH_Json *const json,
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateObject(LCH_Dict *const dict) {
+LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *const dict) {
   assert(dict != NULL);
 
   LCH_Json *const json = calloc(1, sizeof(LCH_Json));
@@ -402,12 +402,12 @@ static const char *JsonParseObject(const char *str, LCH_Json **json) {
     return NULL;
   }
 
-  LCH_Json *const tmp = LCH_JsonCreateObject(dict);
-  if (tmp == NULL) {
+  LCH_Json *const object = LCH_JsonObjectCreateFromDict(dict);
+  if (object == NULL) {
     LCH_DictDestroy(dict);
     return NULL;
   }
-  *json = tmp;
+  *json = object;
 
   return str + 1;
 }
@@ -460,7 +460,7 @@ static bool JsonComposeObject(const LCH_Json *const json,
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateList(LCH_List *const list) {
+LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *const list) {
   assert(list != NULL);
 
   LCH_Json *const json = calloc(1, sizeof(LCH_Json));
@@ -469,27 +469,27 @@ LCH_Json *LCH_JsonCreateList(LCH_List *const list) {
                   strerror(errno));
     return NULL;
   }
-  json->type = LCH_JSON_TYPE_LIST;
-  json->list = list;
+  json->type = LCH_JSON_TYPE_ARRAY;
+  json->array = list;
 
   return json;
 }
 
-const LCH_Json *LCH_JsonListGet(const LCH_Json *const json,
-                                const size_t index) {
-  assert(json->type == LCH_JSON_TYPE_LIST);
-  assert(json->list != NULL);
-  const LCH_Json *const value = LCH_ListGet(json->list, index);
+const LCH_Json *LCH_JsonArrayGet(const LCH_Json *const json,
+                                 const size_t index) {
+  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(json->array != NULL);
+  const LCH_Json *const value = LCH_ListGet(json->array, index);
   return value;
 }
 
 size_t LCH_JsonListLength(const LCH_Json *const json) {
-  assert(json->type == LCH_JSON_TYPE_LIST);
-  assert(json->list != NULL);
-  return LCH_ListLength(json->list);
+  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(json->array != NULL);
+  return LCH_ListLength(json->array);
 }
 
-static const char *JsonParseList(const char *str, LCH_Json **json) {
+static const char *JsonParseArray(const char *str, LCH_Json **json) {
   assert(str != NULL);
   assert(*str == '[');
 
@@ -548,28 +548,28 @@ static const char *JsonParseList(const char *str, LCH_Json **json) {
     return NULL;
   }
 
-  LCH_Json *const tmp = LCH_JsonCreateList(list);
-  if (tmp == NULL) {
+  LCH_Json *const array = LCH_JsonArrayCreateFromList(list);
+  if (array == NULL) {
     LCH_ListDestroy(list);
     return NULL;
   }
-  *json = tmp;
+  *json = array;
 
   return str + 1;
 }
 
-static bool JsonComposeList(const LCH_Json *const json,
-                            LCH_Buffer *const buffer) {
+static bool JsonComposeArray(const LCH_Json *const json,
+                             LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
-  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_LIST);
-  assert(json->list != NULL);
+  assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_ARRAY);
+  assert(json->array != NULL);
 
   if (!LCH_BufferAppend(buffer, '[')) {
     return false;
   }
 
-  const size_t length = LCH_ListLength(json->list);
+  const size_t length = LCH_ListLength(json->array);
   for (size_t i = 0; i < length; i++) {
     if (i > 0) {
       if (!LCH_BufferAppend(buffer, ',')) {
@@ -577,7 +577,7 @@ static bool JsonComposeList(const LCH_Json *const json,
       }
     }
 
-    const LCH_Json *const element = LCH_JsonListGet(json, i);
+    const LCH_Json *const element = LCH_JsonArrayGet(json, i);
     if (!JsonCompose(element, buffer)) {
       return false;
     }
@@ -616,8 +616,7 @@ static const char *JsonParseNumber(const char *const str, LCH_Json **json) {
   int ret = sscanf(str, "%e%n", &number, &n_chars);
   if (ret != 1) {
     LCH_LOG_ERROR(
-        "Failed to parse JSON string: Syntax error; expected a number in the "
-        "format [-]d.ddde±dd");
+        "Failed to parse JSON string: Syntax error; expected a number");
     return NULL;
   }
 
@@ -661,7 +660,7 @@ static const char *JsonParse(const char *str, LCH_Json **json) {
     return JsonParseObject(str, json);
   }
   if (*str == '[') {
-    return JsonParseList(str, json);
+    return JsonParseArray(str, json);
   }
   if (isdigit(*str) != 0 || *str == '-') {
     return JsonParseNumber(str, json);
@@ -669,7 +668,7 @@ static const char *JsonParse(const char *str, LCH_Json **json) {
     assert(false);
     LCH_LOG_ERROR(
         "Failed to parse JSON: Expected 'null', 'true', 'false', NUMBER, "
-        "STRING, OBJECT, LIST; found '%c'",
+        "STRING, OBJECT, ARRAY; found '%c'",
         *str);
     return NULL;
   }
@@ -704,8 +703,8 @@ static bool JsonCompose(const LCH_Json *const json, LCH_Buffer *const buffer) {
     case LCH_JSON_TYPE_NUMBER:
       return JsonComposeNumber(json, buffer);
 
-    case LCH_JSON_TYPE_LIST:
-      return JsonComposeList(json, buffer);
+    case LCH_JSON_TYPE_ARRAY:
+      return JsonComposeArray(json, buffer);
 
     case LCH_JSON_TYPE_OBJECT:
       return JsonComposeObject(json, buffer);
@@ -737,7 +736,7 @@ char *LCH_JsonCompose(const LCH_Json *const json) {
 void LCH_JsonDestroy(LCH_Json *const json) {
   if (json != NULL) {
     free(json->str);
-    LCH_ListDestroy(json->list);
+    LCH_ListDestroy(json->array);
     LCH_DictDestroy(json->object);
   }
   free(json);
