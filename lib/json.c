@@ -315,6 +315,14 @@ LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *const dict) {
   return json;
 }
 
+LCH_List *LCH_JsonObjectGetKeys(const LCH_Json *const json) {
+  assert(json != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+  LCH_List *const keys = LCH_DictGetKeys(json->object);
+  return keys;
+}
+
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
   assert(json->type == LCH_JSON_TYPE_OBJECT);
   assert(json->object != NULL);
