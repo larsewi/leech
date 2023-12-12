@@ -57,6 +57,8 @@ LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *list);
 
 const LCH_Json *LCH_JsonArrayGet(const LCH_Json *json, size_t index);
 
+bool LCH_JsonArrayAppend(const LCH_Json *json, LCH_Json *value);
+
 size_t LCH_JsonArrayLength(const LCH_Json *json);
 
 /****************************************************************************/

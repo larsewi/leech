@@ -514,6 +514,15 @@ const LCH_Json *LCH_JsonArrayGet(const LCH_Json *const json,
   return value;
 }
 
+bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const value) {
+  assert(json != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+  assert(value != NULL);
+  const bool success = LCH_ListAppend(json->array, value, LCH_JsonDestroy);
+  return success;
+}
+
 size_t LCH_JsonListLength(const LCH_Json *const json) {
   assert(json->type == LCH_JSON_TYPE_ARRAY);
   assert(json->array != NULL);
