@@ -323,6 +323,15 @@ LCH_List *LCH_JsonObjectGetKeys(const LCH_Json *const json) {
   return keys;
 }
 
+bool LCH_JsonObjectHasKey(const LCH_Json *const json, const char *const key) {
+  assert(json != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+  assert(key != NULL);
+  const bool present = LCH_DictHasKey(json->object, key);
+  return present;
+}
+
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
   assert(json->type == LCH_JSON_TYPE_OBJECT);
   assert(json->object != NULL);

@@ -45,6 +45,8 @@ LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *dict);
 
 LCH_List *LCH_JsonObjectGetKeys(const LCH_Json *json);
 
+bool LCH_JsonObjectHasKey(const LCH_Json *json, const char *key);
+
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *key);
 
 bool LCH_JsonObjectSet(const LCH_Json *json, const char *key, LCH_Json *value);
