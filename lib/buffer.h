@@ -44,7 +44,7 @@ size_t LCH_BufferLength(const LCH_Buffer *buffer);
  * @note noop if self is NULL.
  * @param[in] buffer buffer.
  */
-void LCH_BufferDestroy(LCH_Buffer *buffer);
+void LCH_BufferDestroy(void *buffer);
 
 /**
  * @brief get buffer.
@@ -93,7 +93,7 @@ bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *in);
 
 void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
 
-void LCH_BufferDestroyShallow(LCH_Buffer *buffer);
+void LCH_BufferDestroyShallow(void *buffer);
 
 /**
  * @brief get pointer to internal buffer and destroy surrounding data structure.

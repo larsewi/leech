@@ -25,7 +25,7 @@ LCH_JsonType LCH_JsonGetType(const LCH_Json *const json) { return json->type; }
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateNull() {
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -60,7 +60,7 @@ static bool JsonComposeNull(const LCH_Json *const json,
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateTrue() {
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -95,7 +95,7 @@ static bool JsonComposeTrue(const LCH_Json *const json,
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateFalse() {
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -132,7 +132,7 @@ static bool JsonComposeFalse(const LCH_Json *const json,
 LCH_Json *LCH_JsonCreateString(char *const str) {
   assert(str != NULL);
 
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -303,7 +303,7 @@ LCH_Json *LCH_JsonObjectCreate() {
 LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *const dict) {
   assert(dict != NULL);
 
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -318,7 +318,7 @@ LCH_Json *LCH_JsonObjectCreateFromDict(LCH_Dict *const dict) {
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
   assert(json->type == LCH_JSON_TYPE_OBJECT);
   assert(json->object != NULL);
-  const LCH_Json *const value = LCH_DictGet(json->object, key);
+  const LCH_Json *const value = (LCH_Json *)LCH_DictGet(json->object, key);
   return value;
 }
 
@@ -391,7 +391,7 @@ static const char *JsonParseObject(const char *str, LCH_Json **json) {
       LCH_DictDestroy(dict);
     }
 
-    if (!LCH_DictSet(dict, key, value, (void (*)(void *))LCH_JsonDestroy)) {
+    if (!LCH_DictSet(dict, key, value, LCH_JsonDestroy)) {
       free(key);
       LCH_DictDestroy(dict);
       LCH_JsonDestroy(value);
@@ -447,7 +447,7 @@ static bool JsonComposeObject(const LCH_Json *const json,
       }
     }
 
-    const char *const key = LCH_ListGet(keys, i);
+    const char *const key = (char *)LCH_ListGet(keys, i);
     if (!LCH_BufferPrintFormat(buffer, "\"%s\":", key)) {
       LCH_ListDestroy(keys);
       return false;
@@ -483,7 +483,7 @@ LCH_Json *LCH_JsonArrayCreate() {
 LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *const list) {
   assert(list != NULL);
 
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -499,7 +499,7 @@ const LCH_Json *LCH_JsonArrayGet(const LCH_Json *const json,
                                  const size_t index) {
   assert(json->type == LCH_JSON_TYPE_ARRAY);
   assert(json->array != NULL);
-  const LCH_Json *const value = LCH_ListGet(json->array, index);
+  const LCH_Json *const value = (LCH_Json *)LCH_ListGet(json->array, index);
   return value;
 }
 
@@ -550,7 +550,7 @@ static const char *JsonParseArray(const char *str, LCH_Json **json) {
       return NULL;
     }
 
-    if (!LCH_ListAppend(list, value, (void (*)(void *))LCH_JsonDestroy)) {
+    if (!LCH_ListAppend(list, value, LCH_JsonDestroy)) {
       LCH_JsonDestroy(value);
       LCH_ListDestroy(list);
       return NULL;
@@ -613,7 +613,7 @@ static bool JsonComposeArray(const LCH_Json *const json,
 /****************************************************************************/
 
 LCH_Json *LCH_JsonCreateNumber(const float number) {
-  LCH_Json *const json = calloc(1, sizeof(LCH_Json));
+  LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
                   strerror(errno));
@@ -741,7 +741,7 @@ char *LCH_JsonCompose(const LCH_Json *const json) {
 
   LCH_Buffer *const buffer = LCH_BufferCreate();
   if (buffer == NULL) {
-    return false;
+    return NULL;
   }
 
   if (!JsonCompose(json, buffer)) {
@@ -753,7 +753,8 @@ char *LCH_JsonCompose(const LCH_Json *const json) {
   return str;
 }
 
-void LCH_JsonDestroy(LCH_Json *const json) {
+void LCH_JsonDestroy(void *const self) {
+  LCH_Json *const json = (LCH_Json *)self;
   if (json != NULL) {
     free(json->str);
     LCH_ListDestroy(json->array);

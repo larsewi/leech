@@ -175,37 +175,40 @@ void LCH_ListSort(LCH_List *const self,
   QuickSort(self, 0, self->length - 1, compare);
 }
 
-void LCH_ListDestroy(LCH_List *self) {
-  if (self == NULL) {
+void LCH_ListDestroy(void *const self) {
+  LCH_List *const list = (LCH_List *)self;
+  if (list == NULL) {
     return;
   }
-  assert(self->buffer != NULL);
 
-  for (size_t i = 0; i < self->length; i++) {
-    ListElement *item = self->buffer[i];
+  assert(list->buffer != NULL);
+
+  for (size_t i = 0; i < list->length; i++) {
+    ListElement *item = list->buffer[i];
     assert(item != NULL);
     if (item->destroy != NULL) {
       item->destroy(item->value);
     }
     free(item);
   }
-  free(self->buffer);
-  free(self);
+  free(list->buffer);
+  free(list);
 }
 
-void LCH_ListDestroyShallow(LCH_List *self) {
-  if (self == NULL) {
+void LCH_ListDestroyShallow(void *self) {
+  LCH_List *const list = (LCH_List *)self;
+  if (list == NULL) {
     return;
   }
-  assert(self->buffer != NULL);
+  assert(list->buffer != NULL);
 
-  for (size_t i = 0; i < self->length; i++) {
-    ListElement *item = self->buffer[i];
+  for (size_t i = 0; i < list->length; i++) {
+    ListElement *item = list->buffer[i];
     free(item);
   }
 
-  free(self->buffer);
-  free(self);
+  free(list->buffer);
+  free(list);
 }
 
 LCH_List *LCH_ListMoveElements(LCH_List *const destination,

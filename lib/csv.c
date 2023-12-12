@@ -214,8 +214,7 @@ static LCH_List *ParseTable(Parser *const parser) {
       return NULL;
     }
 
-    if (!LCH_ListAppend(table, (void *)record,
-                        (void (*)(void *))LCH_ListDestroy)) {
+    if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
       LCH_LOG_ERROR("Failed append record to table (Row %zu)", parser->row);
       LCH_ListDestroy(record);
       LCH_ListDestroy(table);

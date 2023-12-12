@@ -353,7 +353,7 @@ START_TEST(test_JsonComposeList) {
     ck_assert_ptr_nonnull(value);
     LCH_Json *json = LCH_JsonCreateString(value);
     ck_assert_ptr_nonnull(json);
-    ck_assert(LCH_ListAppend(list, json, (void (*)(void *))LCH_JsonDestroy));
+    ck_assert(LCH_ListAppend(list, json, LCH_JsonDestroy));
   }
 
   LCH_Json *json = LCH_JsonArrayCreateFromList(list);
@@ -373,10 +373,10 @@ START_TEST(test_JsonComposeObject) {
   char *const lars = strdup("lars");
   ck_assert_ptr_nonnull(lars);
   LCH_Json *const name = LCH_JsonCreateString(lars);
-  ck_assert(LCH_DictSet(dict, "name", name, (void (*)(void *))LCH_JsonDestroy));
+  ck_assert(LCH_DictSet(dict, "name", name, LCH_JsonDestroy));
   LCH_Json *const age = LCH_JsonCreateNumber(29.0f);
   ck_assert_ptr_nonnull(age);
-  ck_assert(LCH_DictSet(dict, "age", age, (void (*)(void *))LCH_JsonDestroy));
+  ck_assert(LCH_DictSet(dict, "age", age, LCH_JsonDestroy));
 
   LCH_Json *const json = LCH_JsonObjectCreateFromDict(dict);
   ck_assert_ptr_nonnull(json);

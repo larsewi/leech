@@ -159,12 +159,13 @@ bool LCH_BufferAllocate(LCH_Buffer *const self, const size_t size,
   return true;
 }
 
-void LCH_BufferDestroy(LCH_Buffer *const self) {
-  if (self != NULL) {
-    assert(self->buffer != NULL);
-    free(self->buffer);
+void LCH_BufferDestroy(void *const self) {
+  LCH_Buffer *const buffer = (LCH_Buffer *)self;
+  if (buffer != NULL) {
+    assert(buffer->buffer != NULL);
+    free(buffer->buffer);
 
-    free(self);
+    free(buffer);
   }
 }
 
@@ -264,7 +265,7 @@ void LCH_BufferChop(LCH_Buffer *const self, size_t offset) {
   self->length = offset;
 }
 
-void LCH_BufferDestroyShallow(LCH_Buffer *const self) { free(self); }
+void LCH_BufferDestroyShallow(void *const self) { free(self); }
 
 char *LCH_BufferToString(LCH_Buffer *const self) {
   char *str = self->buffer;

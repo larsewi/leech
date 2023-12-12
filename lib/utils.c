@@ -625,7 +625,7 @@ LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
   }
 
   if (keep_header) {
-    if (!LCH_ListAppend(table, header, (void (*)(void *))LCH_ListDestroy)) {
+    if (!LCH_ListAppend(table, header, LCH_ListDestroy)) {
       LCH_ListDestroy(header);
       LCH_ListDestroy(table);
       return NULL;
@@ -653,7 +653,7 @@ LCH_List *LCH_DictToTable(const LCH_Dict *const dict, const char *const primary,
       return NULL;
     }
 
-    if (!LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy)) {
+    if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
       LCH_ListDestroy(record);
       LCH_ListDestroy(keys);
       LCH_ListDestroy(table);

@@ -39,7 +39,7 @@ static bool DeltaCreateType(LCH_Dict *const delta) {
     return false;
   }
 
-  if (!LCH_DictSet(delta, "type", json, (void (*)(void *))LCH_JsonDestroy)) {
+  if (!LCH_DictSet(delta, "type", json, LCH_JsonDestroy)) {
     LCH_JsonDestroy(json);
     return false;
   }
@@ -61,7 +61,7 @@ static bool DeltaCreateVersion(LCH_Dict *const delta) {
     return false;
   }
 
-  if (!LCH_DictSet(delta, "version", json, (void (*)(void *))LCH_JsonDestroy)) {
+  if (!LCH_DictSet(delta, "version", json, LCH_JsonDestroy)) {
     LCH_JsonDestroy(json);
     return false;
   }
@@ -83,7 +83,7 @@ static bool DeltaCreateTableId(LCH_Dict *const delta,
     return false;
   }
 
-  if (!LCH_DictSet(delta, "table", json, (void (*)(void *))LCH_JsonDestroy)) {
+  if (!LCH_DictSet(delta, "table", json, LCH_JsonDestroy)) {
     LCH_JsonDestroy(json);
     return false;
   }
@@ -107,7 +107,7 @@ static bool DeltaCreateInsertOperations(LCH_Dict *const delta,
     return false;
   }
 
-  if (!LCH_DictSet(delta, "insert", json, (void (*)(void *))LCH_JsonDestroy)) {
+  if (!LCH_DictSet(delta, "insert", json, LCH_JsonDestroy)) {
     LCH_JsonDestroy(json);
     return false;
   }
@@ -130,7 +130,7 @@ static bool DeltaCreateDeleteOperations(LCH_Dict *const delta,
     return false;
   }
 
-  if (!LCH_DictSet(delta, "delete", json, (void (*)(void *))LCH_JsonDestroy)) {
+  if (!LCH_DictSet(delta, "delete", json, LCH_JsonDestroy)) {
     LCH_JsonDestroy(json);
     return false;
   }
@@ -155,7 +155,7 @@ static bool DeltaCreateUpdateOperations(LCH_Dict *const delta,
     return false;
   }
 
-  if (!LCH_DictSet(delta, "update", json, (void (*)(void *))LCH_JsonDestroy)) {
+  if (!LCH_DictSet(delta, "update", json, LCH_JsonDestroy)) {
     LCH_JsonDestroy(json);
     return false;
   }
@@ -296,7 +296,9 @@ LCH_Delta *LCH_DeltaCreate(const LCH_TableDefinition *const table_def,
   return delta;
 }
 
-void LCH_DeltaDestroy(LCH_Delta *const delta) {
+void LCH_DeltaDestroy(void *const self) {
+  LCH_Delta *const delta = (LCH_Delta *)self;
+
   if (delta != NULL) {
     assert(delta->ins != NULL);
     LCH_DictDestroy(delta->ins);

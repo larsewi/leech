@@ -36,7 +36,7 @@ START_TEST(test_LCH_ComposeCSV) {
       ck_assert(LCH_ListAppend(record, (void *)field, free));
     }
 
-    ck_assert(LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy));
+    ck_assert(LCH_ListAppend(table, record, LCH_ListDestroy));
   }
 
   LCH_Buffer *buffer = NULL;

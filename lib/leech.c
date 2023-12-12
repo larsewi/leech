@@ -170,7 +170,7 @@ static LCH_Dict *CreateEmptyDeltas(const LCH_Instance *const instance) {
     }
 
     if (!LCH_DictSet(deltas, LCH_TableDefinitionGetIdentifier(table_def), delta,
-                     (void (*)(void *))LCH_DeltaDestroy)) {
+                     LCH_DeltaDestroy)) {
       LCH_DeltaDestroy(delta);
       LCH_DictDestroy(deltas);
       return NULL;

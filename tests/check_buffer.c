@@ -122,7 +122,8 @@ START_TEST(test_LCH_BufferAllocate2) {
 END_TEST
 
 START_TEST(test_LCH_BufferBytesToHex) {
-  const char data[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+  const char data[] = {'\x01', '\x23', '\x45', '\x67',
+                       '\x89', '\xab', '\xcd', '\xef'};
 
   LCH_Buffer *bytes = LCH_BufferCreate();
   ck_assert_ptr_nonnull(bytes);

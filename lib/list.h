@@ -35,7 +35,7 @@ void LCH_ListSort(LCH_List *const self,
  * Destroy list except contents.
  * @param[in] self pointer to list.
  */
-void LCH_ListDestroyShallow(LCH_List *self);
+void LCH_ListDestroyShallow(void *self);
 
 LCH_List *LCH_ListMoveElements(LCH_List *destination, LCH_List *source);
 

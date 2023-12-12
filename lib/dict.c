@@ -324,14 +324,15 @@ LCH_Dict *LCH_DictSetChangedIntersection(
   return result;
 }
 
-void LCH_DictDestroy(LCH_Dict *self) {
-  if (self == NULL) {
+void LCH_DictDestroy(void *const self) {
+  LCH_Dict *const dict = (LCH_Dict *)self;
+  if (dict == NULL) {
     return;
   }
-  assert(self->buffer != NULL);
+  assert(dict->buffer != NULL);
 
-  for (size_t i = 0; i < self->capacity; i++) {
-    DictElement *item = self->buffer[i];
+  for (size_t i = 0; i < dict->capacity; i++) {
+    DictElement *item = dict->buffer[i];
     if (item == NULL) {
       continue;
     }
@@ -343,8 +344,8 @@ void LCH_DictDestroy(LCH_Dict *self) {
     }
     free(item);
   }
-  free(self->buffer);
-  free(self);
+  free(dict->buffer);
+  free(dict);
 }
 
 LCH_List *LCH_DictGetKeys(const LCH_Dict *const self) {

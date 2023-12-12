@@ -69,6 +69,6 @@ LCH_Json *LCH_JsonParse(const char *str);
 
 char *LCH_JsonCompose(const LCH_Json *json);
 
-void LCH_JsonDestroy(LCH_Json *json);
+void LCH_JsonDestroy(void *json);
 
 #endif  // _LEECH_JSON_H

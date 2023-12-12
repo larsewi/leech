@@ -335,4 +335,4 @@ bool LCH_TableDefinitionPatch(const LCH_TableDefinition *const self,
   return true;
 }
 
-void LCH_TableDefinitionDestroy(LCH_TableDefinition *self) { free(self); }
+void LCH_TableDefinitionDestroy(void *self) { free(self); }

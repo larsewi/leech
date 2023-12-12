@@ -76,7 +76,7 @@ START_TEST(test_LCH_TableWriteCallbackCSV) {
       ck_assert(LCH_ListAppend(record, field, free));
     }
 
-    ck_assert(LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy));
+    ck_assert(LCH_ListAppend(table, record, LCH_ListDestroy));
   }
 
   ck_assert(LCH_TableWriteCallbackCSV("sample.csv", table));

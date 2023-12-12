@@ -79,7 +79,7 @@ bool LCH_ListAppend(LCH_List *self, void *value, void (*destroy)(void *));
  * Destroy list and contents.
  * @param[in] self pointer to list.
  */
-void LCH_ListDestroy(LCH_List *self);
+void LCH_ListDestroy(void *list);
 
 /****************************************************************************/
 /*  Dict                                                                    */
@@ -141,9 +141,9 @@ void *LCH_DictGet(const LCH_Dict *self, const char *key);
 
 /**
  * Destroy dict and contents.
- * @param[in] self pointer to dict.
+ * @param[in] dict pointer to dict.
  */
-void LCH_DictDestroy(LCH_Dict *self);
+void LCH_DictDestroy(void *dict);
 
 /****************************************************************************/
 /*  Table                                                                   */
@@ -170,7 +170,7 @@ typedef struct LCH_TableDefinitionCreateInfo {
 LCH_TableDefinition *LCH_TableDefinitionCreate(
     const LCH_TableDefinitionCreateInfo *createInfo);
 
-void LCH_TableDefinitionDestroy(LCH_TableDefinition *table_def);
+void LCH_TableDefinitionDestroy(void *table_def);
 
 /****************************************************************************/
 /*  Instance                                                                */
@@ -195,6 +195,6 @@ char *LCH_Diff(const LCH_Instance *instance, const char *block_id,
 bool LCH_Patch(const LCH_Instance *instance, const char *patch,
                const char *uid_field, const char *uid_value, size_t size);
 
-void LCH_InstanceDestroy(LCH_Instance *instance);
+void LCH_InstanceDestroy(void *instance);
 
 #endif  // _LEECH_LEECH_H

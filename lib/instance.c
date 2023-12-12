@@ -101,7 +101,7 @@ bool LCH_InstanceAddTableDefinition(LCH_Instance *const instance,
   assert(table_def != NULL);
 
   return LCH_ListAppend(instance->table_defs, table_def,
-                        (void (*)(void *))LCH_TableDefinitionDestroy);
+                        LCH_TableDefinitionDestroy);
 }
 
 const LCH_TableDefinition *LCH_InstanceGetTable(const LCH_Instance *const self,
@@ -133,7 +133,8 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
   return self->work_dir;
 }
 
-void LCH_InstanceDestroy(LCH_Instance *instance) {
+void LCH_InstanceDestroy(void *const self) {
+  LCH_Instance *const instance = (LCH_Instance *)self;
   if (instance == NULL) {
     return;
   }
