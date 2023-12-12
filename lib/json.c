@@ -470,6 +470,16 @@ static bool JsonComposeObject(const LCH_Json *const json,
 
 /****************************************************************************/
 
+LCH_Json *LCH_JsonArrayCreate() {
+  LCH_List *const list = LCH_ListCreate();
+  if (list == NULL) {
+    return NULL;
+  }
+
+  LCH_Json *array = LCH_JsonArrayCreateFromList(list);
+  return array;
+}
+
 LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *const list) {
   assert(list != NULL);
 

@@ -49,6 +49,8 @@ size_t LCH_JsonObjectLength(const LCH_Json *json);
 
 /****************************************************************************/
 
+LCH_Json *LCH_JsonArrayCreate();
+
 LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *list);
 
 const LCH_Json *LCH_JsonArrayGet(const LCH_Json *json, size_t index);
