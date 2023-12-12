@@ -322,6 +322,17 @@ const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
   return value;
 }
 
+bool LCH_JsonObjectSet(const LCH_Json *const json, const char *const key,
+                       LCH_Json *const value) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(value != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+  const bool success = LCH_DictSet(json->object, key, value, LCH_JsonDestroy);
+  return success;
+}
+
 size_t LCH_JsonObjectLength(const LCH_Json *json) {
   assert(json->type == LCH_JSON_TYPE_OBJECT);
   assert(json->object != NULL);
