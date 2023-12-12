@@ -21,19 +21,19 @@ LCH_JsonType LCH_JsonGetType(const LCH_Json *json);
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateNull();
+LCH_Json *LCH_JsonNullCreate();
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateTrue();
+LCH_Json *LCH_JsonTrueCreate();
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateFalse();
+LCH_Json *LCH_JsonFalseCreate();
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateString(char *str);
+LCH_Json *LCH_JsonStringCreate(char *str);
 
 const char *LCH_JsonStringGet(const LCH_Json *json);
 
@@ -63,7 +63,7 @@ size_t LCH_JsonArrayLength(const LCH_Json *json);
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonCreateNumber(float number);
+LCH_Json *LCH_JsonNumberCreate(float number);
 
 float LCH_JsonNumberGet(const LCH_Json *json);
 

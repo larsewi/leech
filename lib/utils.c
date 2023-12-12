@@ -556,7 +556,7 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
 
       LCH_ListDestroy(list);
       char *const str = LCH_BufferToString(buffer);
-      value = LCH_JsonCreateString(str);
+      value = LCH_JsonStringCreate(str);
     }
 
     assert(key != NULL);

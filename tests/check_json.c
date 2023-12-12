@@ -283,7 +283,7 @@ START_TEST(test_LCH_JsonParse) {
 END_TEST
 
 START_TEST(test_JsonComposeNull) {
-  LCH_Json *json = LCH_JsonCreateNull();
+  LCH_Json *json = LCH_JsonNullCreate();
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NULL);
   char *const str = LCH_JsonCompose(json);
@@ -295,7 +295,7 @@ START_TEST(test_JsonComposeNull) {
 END_TEST
 
 START_TEST(test_JsonComposeTrue) {
-  LCH_Json *json = LCH_JsonCreateTrue();
+  LCH_Json *json = LCH_JsonTrueCreate();
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_TRUE);
   char *const str = LCH_JsonCompose(json);
@@ -307,7 +307,7 @@ START_TEST(test_JsonComposeTrue) {
 END_TEST
 
 START_TEST(test_JsonComposeFalse) {
-  LCH_Json *json = LCH_JsonCreateFalse();
+  LCH_Json *json = LCH_JsonFalseCreate();
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_FALSE);
   char *const str = LCH_JsonCompose(json);
@@ -321,7 +321,7 @@ END_TEST
 START_TEST(test_JsonComposeString) {
   char *str = strdup("Leech");
   ck_assert_ptr_nonnull(str);
-  LCH_Json *json = LCH_JsonCreateString(str);
+  LCH_Json *json = LCH_JsonStringCreate(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_STRING);
   str = LCH_JsonCompose(json);
@@ -333,7 +333,7 @@ START_TEST(test_JsonComposeString) {
 END_TEST
 
 START_TEST(test_JsonComposeNumber) {
-  LCH_Json *json = LCH_JsonCreateNumber(1.012300f);
+  LCH_Json *json = LCH_JsonNumberCreate(1.012300f);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   char *const str = LCH_JsonCompose(json);
@@ -351,7 +351,7 @@ START_TEST(test_JsonComposeList) {
   for (size_t i = 0; i < 3; i++) {
     char *value = strdup(values[i]);
     ck_assert_ptr_nonnull(value);
-    LCH_Json *json = LCH_JsonCreateString(value);
+    LCH_Json *json = LCH_JsonStringCreate(value);
     ck_assert_ptr_nonnull(json);
     ck_assert(LCH_ListAppend(list, json, LCH_JsonDestroy));
   }
@@ -372,9 +372,9 @@ START_TEST(test_JsonComposeObject) {
   ck_assert_ptr_nonnull(dict);
   char *const lars = strdup("lars");
   ck_assert_ptr_nonnull(lars);
-  LCH_Json *const name = LCH_JsonCreateString(lars);
+  LCH_Json *const name = LCH_JsonStringCreate(lars);
   ck_assert(LCH_DictSet(dict, "name", name, LCH_JsonDestroy));
-  LCH_Json *const age = LCH_JsonCreateNumber(29.0f);
+  LCH_Json *const age = LCH_JsonNumberCreate(29.0f);
   ck_assert_ptr_nonnull(age);
   ck_assert(LCH_DictSet(dict, "age", age, LCH_JsonDestroy));
 

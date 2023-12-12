@@ -33,7 +33,7 @@ static bool DeltaCreateType(LCH_Dict *const delta) {
     return false;
   }
 
-  LCH_Json *const json = LCH_JsonCreateString(type);
+  LCH_Json *const json = LCH_JsonStringCreate(type);
   if (json == NULL) {
     free(type);
     return false;
@@ -55,7 +55,7 @@ static bool DeltaCreateVersion(LCH_Dict *const delta) {
     return false;
   }
 
-  LCH_Json *const json = LCH_JsonCreateString(version);
+  LCH_Json *const json = LCH_JsonStringCreate(version);
   if (json == NULL) {
     free(version);
     return false;
@@ -77,7 +77,7 @@ static bool DeltaCreateTableId(LCH_Dict *const delta,
     return false;
   }
 
-  LCH_Json *const json = LCH_JsonCreateString(id);
+  LCH_Json *const json = LCH_JsonStringCreate(id);
   if (json == NULL) {
     free(id);
     return false;
