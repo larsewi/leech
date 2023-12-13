@@ -51,8 +51,10 @@ const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *key);
 
 bool LCH_JsonObjectSet(LCH_Json *json, const char *key, LCH_Json *value);
 
-bool LCH_JsonObjectSetString(LCH_Json *json, const char *key,
-                             const char *value);
+bool LCH_JsonObjectSetString(LCH_Json *json, const char *key, char *value);
+
+bool LCH_JsonObjectSetStringDuplicate(LCH_Json *json, const char *key,
+                                      const char *value);
 
 bool LCH_JsonObjectSetNumber(LCH_Json *json, const char *key, float number);
 

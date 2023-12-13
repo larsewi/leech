@@ -380,7 +380,29 @@ bool LCH_JsonObjectSet(LCH_Json *const json, const char *const key,
 }
 
 bool LCH_JsonObjectSetString(LCH_Json *const json, const char *const key,
-                             const char *const str) {
+                             char *const str) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(str != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+
+  LCH_Json *const value = LCH_JsonStringCreate(str);
+  if (value == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonObjectSet(json, key, value)) {
+    LCH_JsonDestroy(value);
+    return false;
+  }
+
+  return true;
+}
+
+bool LCH_JsonObjectSetStringDuplicate(LCH_Json *const json,
+                                      const char *const key,
+                                      const char *const str) {
   assert(json != NULL);
   assert(key != NULL);
   assert(str != NULL);
@@ -392,14 +414,8 @@ bool LCH_JsonObjectSetString(LCH_Json *const json, const char *const key,
     return false;
   }
 
-  LCH_Json *const value = LCH_JsonStringCreate(dup);
-  if (value == NULL) {
+  if (!LCH_JsonObjectSetString(json, key, dup)) {
     free(dup);
-    return false;
-  }
-
-  if (!LCH_JsonObjectSet(json, key, value)) {
-    LCH_JsonDestroy(value);
     return false;
   }
 

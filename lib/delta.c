@@ -45,19 +45,19 @@ LCH_Json *LCH_DeltaCreateV2(const char *const table_id,
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetString(delta, "version", version)) {
+  if (!LCH_JsonObjectSetStringDuplicate(delta, "version", version)) {
     free(version);
     LCH_JsonDestroy(delta);
     return NULL;
   }
   free(version);
 
-  if (!LCH_JsonObjectSetString(delta, "type", "delta")) {
+  if (!LCH_JsonObjectSetStringDuplicate(delta, "type", "delta")) {
     LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetString(delta, "id", table_id)) {
+  if (!LCH_JsonObjectSetStringDuplicate(delta, "id", table_id)) {
     LCH_JsonDestroy(delta);
     return NULL;
   }
