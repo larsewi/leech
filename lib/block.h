@@ -5,6 +5,9 @@
 #include <time.h>
 
 #include "buffer.h"
+#include "json.h"
+
+LCH_Json *LCH_BlockCreateV2(const char *const parent, LCH_Json *const payload);
 
 typedef struct LCH_Block LCH_Block;
 

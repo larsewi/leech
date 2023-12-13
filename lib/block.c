@@ -14,6 +14,31 @@
 #include "leech.h"
 #include "utils.h"
 
+LCH_Json *LCH_BlockCreateV2(const char *const parent, LCH_Json *const payload) {
+  LCH_Json *const block = LCH_JsonObjectCreate();
+  if (block == NULL) {
+    return NULL;
+  }
+
+  const double timestamp = (double)time(NULL);
+  if (!LCH_JsonObjectSetNumber(block, "timestamp", timestamp)) {
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", parent)) {
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSet(block, "payload", payload)) {
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+
+  return block;
+}
+
 struct __attribute__((__packed__)) LCH_Block {
   unsigned char parent_id[SHA_DIGEST_LENGTH];
   uint32_t timestamp;
