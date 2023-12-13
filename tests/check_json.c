@@ -210,8 +210,8 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
-  float number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, 123.0f);
+  double number = LCH_JsonNumberGet(json);
+  ck_assert_double_eq(number, 123.0);
   LCH_JsonDestroy(json);
 
   str = JsonParseNumber(str, &json);
@@ -219,7 +219,7 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, 123.45f);
+  ck_assert_double_eq(number, 123.45);
   LCH_JsonDestroy(json);
 
   str = JsonParseNumber(str, &json);
@@ -227,7 +227,7 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, -123.45f);
+  ck_assert_double_eq(number, -123.45);
   LCH_JsonDestroy(json);
 
   str = JsonParseNumber(str, &json);
@@ -235,7 +235,7 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, 123e4f);
+  ck_assert_double_eq(number, 123e4);
   LCH_JsonDestroy(json);
 
   str = JsonParseNumber(str, &json);
@@ -243,7 +243,7 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, 123e-4f);
+  ck_assert_double_eq(number, 123e-4);
   LCH_JsonDestroy(json);
 
   str = JsonParseNumber(str, &json);
@@ -251,7 +251,7 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, 123e4f);
+  ck_assert_double_eq(number, 123e4);
   LCH_JsonDestroy(json);
 
   str = JsonParseNumber(str, &json);
@@ -259,7 +259,7 @@ START_TEST(test_JsonParseNumber) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   number = LCH_JsonNumberGet(json);
-  ck_assert_float_eq(number, 123.4e-5f);
+  ck_assert_double_eq(number, 123.4e-5);
   LCH_JsonDestroy(json);
 }
 END_TEST
@@ -273,8 +273,8 @@ START_TEST(test_LCH_JsonParse) {
       "\"awesome\": true"
       " } ";
   LCH_Json *json = LCH_JsonParse(str);
-  float height = LCH_JsonNumberGet(LCH_JsonObjectGet(json, "height"));
-  ck_assert_float_eq(height, 185.3f);
+  double height = LCH_JsonNumberGet(LCH_JsonObjectGet(json, "height"));
+  ck_assert_double_eq(height, 185.3);
   const char *skill =
       LCH_JsonStringGet(LCH_JsonArrayGet(LCH_JsonObjectGet(json, "skills"), 1));
   ck_assert_str_eq(skill, "C++");

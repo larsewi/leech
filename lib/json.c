@@ -11,7 +11,7 @@
 
 struct LCH_Json {
   LCH_JsonType type;
-  float number;
+  double number;
   char *str;
   LCH_List *array;
   LCH_Dict *object;
@@ -423,7 +423,7 @@ bool LCH_JsonObjectSetStringDuplicate(LCH_Json *const json,
 }
 
 bool LCH_JsonObjectSetNumber(LCH_Json *const json, const char *const key,
-                             const float number) {
+                             const double number) {
   assert(json != NULL);
   assert(key != NULL);
   assert(json->type == LCH_JSON_TYPE_OBJECT);
@@ -986,7 +986,7 @@ static bool JsonArrayEqual(const LCH_Json *const a, const LCH_Json *const b) {
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonNumberCreate(const float number) {
+LCH_Json *LCH_JsonNumberCreate(const double number) {
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
     LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
@@ -999,15 +999,15 @@ LCH_Json *LCH_JsonNumberCreate(const float number) {
   return json;
 }
 
-float LCH_JsonNumberGet(const LCH_Json *const json) {
+double LCH_JsonNumberGet(const LCH_Json *const json) {
   assert(json->type == LCH_JSON_TYPE_NUMBER);
   return json->number;
 }
 
 static const char *JsonParseNumber(const char *const str, LCH_Json **json) {
   int n_chars;
-  float number;
-  int ret = sscanf(str, "%e%n", &number, &n_chars);
+  double number;
+  int ret = sscanf(str, "%le%n", &number, &n_chars);
   if (ret != 1) {
     LCH_LOG_ERROR(
         "Failed to parse JSON string: Syntax error; expected a number");

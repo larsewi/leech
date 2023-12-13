@@ -56,7 +56,7 @@ bool LCH_JsonObjectSetString(LCH_Json *json, const char *key, char *value);
 bool LCH_JsonObjectSetStringDuplicate(LCH_Json *json, const char *key,
                                       const char *value);
 
-bool LCH_JsonObjectSetNumber(LCH_Json *json, const char *key, float number);
+bool LCH_JsonObjectSetNumber(LCH_Json *json, const char *key, double number);
 
 size_t LCH_JsonObjectLength(const LCH_Json *json);
 
@@ -87,9 +87,9 @@ size_t LCH_JsonArrayLength(const LCH_Json *json);
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonNumberCreate(float number);
+LCH_Json *LCH_JsonNumberCreate(double number);
 
-float LCH_JsonNumberGet(const LCH_Json *json);
+double LCH_JsonNumberGet(const LCH_Json *json);
 
 /****************************************************************************/
 
