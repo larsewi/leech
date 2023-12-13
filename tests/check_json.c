@@ -389,6 +389,38 @@ START_TEST(test_JsonComposeObject) {
 }
 END_TEST
 
+START_TEST(test_LCH_JsonObjectSetMinus) {
+  LCH_Json *const a = LCH_JsonParse(
+      "{"
+      "  \"one\": 1,"
+      "  \"two\": 2,"
+      "  \"three\": 3,"
+      "  \"four\": 4"
+      "}");
+  LCH_Json *const b = LCH_JsonParse(
+      "{"
+      "  \"two\": 2,"
+      "  \"four\": 4,"
+      "  \"five\": 5"
+      "}");
+
+  LCH_Json *const actual = LCH_JsonObjectKeysSetMinus(a, b);
+  LCH_JsonDestroy(a);
+  LCH_JsonDestroy(b);
+  ck_assert_ptr_nonnull(actual);
+
+  LCH_Json *const expected = LCH_JsonParse(
+      "{"
+      "  \"one\": 1,"
+      "  \"three\": 3"
+      "}");
+
+  ck_assert(LCH_JsonEqual(actual, expected));
+  LCH_JsonDestroy(actual);
+  LCH_JsonDestroy(expected);
+}
+END_TEST
+
 Suite *JSONSuite(void) {
   Suite *s = suite_create("json.c");
   {
@@ -464,6 +496,11 @@ Suite *JSONSuite(void) {
   {
     TCase *tc = tcase_create("JsonComposeObject");
     tcase_add_test(tc, test_JsonComposeObject);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_JsonObjectSetMinus");
+    tcase_add_test(tc, test_LCH_JsonObjectSetMinus);
     suite_add_tcase(s, tc);
   }
   return s;

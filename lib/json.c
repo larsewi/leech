@@ -600,7 +600,7 @@ static bool JsonObjectEqual(const LCH_Json *const a, const LCH_Json *const b) {
     const LCH_Json *const value_b = LCH_JsonObjectGet(b, key);
     assert(value_b != NULL);
 
-    if (!LCH_JsonEqual(a, b)) {
+    if (!LCH_JsonEqual(value_a, value_b)) {
       LCH_ListDestroy(keys);
       return false;
     }
@@ -608,6 +608,54 @@ static bool JsonObjectEqual(const LCH_Json *const a, const LCH_Json *const b) {
 
   LCH_ListDestroy(keys);
   return true;
+}
+
+LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *const a,
+                                     const LCH_Json *const b) {
+  assert(a != NULL);
+  assert(LCH_JsonGetType(a) == LCH_JSON_TYPE_OBJECT);
+
+  assert(b != NULL);
+  assert(LCH_JsonGetType(b) == LCH_JSON_TYPE_OBJECT);
+
+  LCH_Json *const result = LCH_JsonObjectCreate();
+  if (result == NULL) {
+    return NULL;
+  }
+
+  LCH_List *const keys = LCH_JsonObjectGetKeys(a);
+  if (keys == NULL) {
+    LCH_JsonDestroy(result);
+    return NULL;
+  }
+
+  const size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = (char *)LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    if (!LCH_JsonObjectHasKey(b, key)) {
+      const LCH_Json *const value_a = LCH_JsonObjectGet(a, key);
+      assert(value_a != NULL);
+
+      LCH_Json *const copy = LCH_JsonCopy(value_a);
+      if (copy == NULL) {
+        LCH_ListDestroy(keys);
+        LCH_JsonDestroy(result);
+        return NULL;
+      }
+
+      if (!LCH_JsonObjectSet(result, key, copy)) {
+        LCH_JsonDestroy(copy);
+        LCH_ListDestroy(keys);
+        LCH_JsonDestroy(result);
+        return NULL;
+      }
+    }
+  }
+
+  LCH_ListDestroy(keys);
+  return result;
 }
 
 /****************************************************************************/
