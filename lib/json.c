@@ -380,26 +380,46 @@ bool LCH_JsonObjectSet(LCH_Json *const json, const char *const key,
 }
 
 bool LCH_JsonObjectSetString(LCH_Json *const json, const char *const key,
-                             const char *const value) {
+                             const char *const str) {
   assert(json != NULL);
   assert(key != NULL);
-  assert(value != NULL);
+  assert(str != NULL);
   assert(json->type == LCH_JSON_TYPE_OBJECT);
   assert(json->object != NULL);
 
-  char *const str = LCH_StringDuplicate(value);
-  if (str == NULL) {
+  char *const dup = LCH_StringDuplicate(str);
+  if (dup == NULL) {
     return false;
   }
 
-  LCH_Json *const json_str = LCH_JsonStringCreate(str);
-  if (json_str == NULL) {
-    free(str);
+  LCH_Json *const value = LCH_JsonStringCreate(dup);
+  if (value == NULL) {
+    free(dup);
     return false;
   }
 
-  if (!LCH_JsonObjectSet(json, key, json_str)) {
-    LCH_JsonDestroy(json_str);
+  if (!LCH_JsonObjectSet(json, key, value)) {
+    LCH_JsonDestroy(value);
+    return false;
+  }
+
+  return true;
+}
+
+bool LCH_JsonObjectSetNumber(LCH_Json *const json, const char *const key,
+                             const float number) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+
+  LCH_Json *const value = LCH_JsonNumberCreate(number);
+  if (value == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonObjectSet(json, key, value)) {
+    LCH_JsonDestroy(value);
     return false;
   }
 
