@@ -55,6 +55,17 @@ size_t LCH_JsonObjectLength(const LCH_Json *json);
 
 LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *a, const LCH_Json *b);
 
+/**
+ * @brief Get a copy of all key-value pairs in the left operand where the key is
+ *        not present in the right operand.
+ * @param a left operand
+ * @param b right operand
+ * @return new JSON object or NULL on error
+ * @note returned JSON must be free'd with LCH_JsonDestroy
+ */
+LCH_Json *LCH_JsonObjectKeysSetIntersectAndValuesSetMinus(const LCH_Json *a,
+                                                          const LCH_Json *b);
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonArrayCreate();
