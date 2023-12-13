@@ -304,6 +304,19 @@ static LCH_Json *JsonStringCopy(const LCH_Json *const json) {
   return copy;
 }
 
+static bool JsonStringEqual(const LCH_Json *const a, const LCH_Json *const b) {
+  assert(a != NULL);
+  assert(a->type == LCH_JSON_TYPE_STRING);
+  assert(a->str != NULL);
+
+  assert(b != NULL);
+  assert(b->type == LCH_JSON_TYPE_STRING);
+  assert(b->str != NULL);
+
+  const bool equal = LCH_StringEqual(a->str, b->str);
+  return equal;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonObjectCreate() {
@@ -554,6 +567,49 @@ static LCH_Json *JsonObjectCopy(const LCH_Json *const object) {
   return object_copy;
 }
 
+static bool JsonObjectEqual(const LCH_Json *const a, const LCH_Json *const b) {
+  assert(a != NULL);
+  assert(a->type == LCH_JSON_TYPE_OBJECT);
+  assert(a->object != NULL);
+
+  assert(b != NULL);
+  assert(b->type == LCH_JSON_TYPE_OBJECT);
+  assert(b->object != NULL);
+
+  const size_t length = LCH_JsonObjectLength(a);
+  if (length != LCH_JsonObjectLength(b)) {
+    return false;
+  }
+
+  LCH_List *const keys = LCH_JsonObjectGetKeys(a);
+  assert(length == LCH_ListLength(keys));
+
+  for (size_t i = 0; i < length; i++) {
+    const char *const key = (char *)LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    if (!LCH_JsonObjectHasKey(b, key)) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+    assert(LCH_JsonObjectHasKey(a, key));
+
+    const LCH_Json *const value_a = LCH_JsonObjectGet(a, key);
+    assert(value_a != NULL);
+
+    const LCH_Json *const value_b = LCH_JsonObjectGet(b, key);
+    assert(value_b != NULL);
+
+    if (!LCH_JsonEqual(a, b)) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+  }
+
+  LCH_ListDestroy(keys);
+  return true;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonArrayCreate() {
@@ -735,6 +791,35 @@ static LCH_Json *JsonArrayCopy(const LCH_Json *const array) {
   return array_copy;
 }
 
+static bool JsonArrayEqual(const LCH_Json *const a, const LCH_Json *const b) {
+  assert(a != NULL);
+  assert(a->type == LCH_JSON_TYPE_ARRAY);
+  assert(a->array != NULL);
+
+  assert(b != NULL);
+  assert(b->type == LCH_JSON_TYPE_ARRAY);
+  assert(b->array != NULL);
+
+  const size_t length = LCH_JsonArrayLength(a);
+  if (length != LCH_JsonArrayLength(b)) {
+    return false;
+  }
+
+  for (size_t i = 0; i < length; i++) {
+    const LCH_Json *const element_a = (LCH_Json *)LCH_JsonArrayGet(a, i);
+    assert(element_a != NULL);
+
+    const LCH_Json *const element_b = (LCH_Json *)LCH_JsonArrayGet(b, i);
+    assert(element_b != NULL);
+
+    if (!LCH_JsonEqual(element_a, element_b)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonNumberCreate(const float number) {
@@ -787,6 +872,17 @@ static LCH_Json *JsonNumberCopy(const LCH_Json *const json) {
   assert(json->type == LCH_JSON_TYPE_NUMBER);
   LCH_Json *copy = LCH_JsonNumberCreate(json->number);
   return copy;
+}
+
+static bool JsonNumberEqual(const LCH_Json *const a, const LCH_Json *const b) {
+  assert(a != NULL);
+  assert(a->type == LCH_JSON_TYPE_NUMBER);
+
+  assert(b != NULL);
+  assert(b->type == LCH_JSON_TYPE_NUMBER);
+
+  const bool equal = a->number == b->number;
+  return equal;
 }
 
 /****************************************************************************/
@@ -915,6 +1011,43 @@ LCH_Json *LCH_JsonCopy(const LCH_Json *const json) {
       assert(false);
       LCH_LOG_ERROR("Failed to copy JSON: Illegal type %d", type);
       return NULL;
+  }
+}
+
+bool LCH_JsonEqual(const LCH_Json *const a, const LCH_Json *b) {
+  assert(a != NULL);
+  assert(b != NULL);
+
+  if (a->type != b->type) {
+    return false;
+  }
+
+  switch (a->type) {
+    case LCH_JSON_TYPE_NULL:
+      // fallthrough
+
+    case LCH_JSON_TYPE_TRUE:
+      // fallthrough
+
+    case LCH_JSON_TYPE_FALSE:
+      return true;
+
+    case LCH_JSON_TYPE_STRING:
+      return JsonStringEqual(a, b);
+
+    case LCH_JSON_TYPE_NUMBER:
+      return JsonNumberEqual(a, b);
+
+    case LCH_JSON_TYPE_ARRAY:
+      return JsonArrayEqual(a, b);
+
+    case LCH_JSON_TYPE_OBJECT:
+      return JsonObjectEqual(a, b);
+
+    default:
+      assert(false);
+      LCH_LOG_ERROR("Failed to copy JSON: Illegal type %d", a->type);
+      return false;
   }
 }
 
