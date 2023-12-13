@@ -912,3 +912,11 @@ char *LCH_VersionToString(const size_t major, const size_t minor,
   char *const version = LCH_BufferToString(buffer);
   return version;
 }
+
+char *LCH_StringDuplicate(const char *const str) {
+  char *dup = strdup(str);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
+  }
+  return dup;
+}

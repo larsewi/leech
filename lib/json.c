@@ -368,7 +368,7 @@ const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
   return value;
 }
 
-bool LCH_JsonObjectSet(const LCH_Json *const json, const char *const key,
+bool LCH_JsonObjectSet(LCH_Json *const json, const char *const key,
                        LCH_Json *const value) {
   assert(json != NULL);
   assert(key != NULL);
@@ -377,6 +377,33 @@ bool LCH_JsonObjectSet(const LCH_Json *const json, const char *const key,
   assert(json->object != NULL);
   const bool success = LCH_DictSet(json->object, key, value, LCH_JsonDestroy);
   return success;
+}
+
+bool LCH_JsonObjectSetString(LCH_Json *const json, const char *const key,
+                             const char *const value) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(value != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(json->object != NULL);
+
+  char *const str = LCH_StringDuplicate(value);
+  if (str == NULL) {
+    return false;
+  }
+
+  LCH_Json *const json_str = LCH_JsonStringCreate(str);
+  if (json_str == NULL) {
+    free(str);
+    return false;
+  }
+
+  if (!LCH_JsonObjectSet(json, key, json_str)) {
+    LCH_JsonDestroy(json_str);
+    return false;
+  }
+
+  return true;
 }
 
 size_t LCH_JsonObjectLength(const LCH_Json *json) {

@@ -93,4 +93,6 @@ bool LCH_MessageDigest(const unsigned char *message, size_t length,
 
 char *LCH_VersionToString(size_t major, size_t minor, size_t patch);
 
+char *LCH_StringDuplicate(const char *str);
+
 #endif  // _LEECH_UTILS

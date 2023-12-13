@@ -3,10 +3,11 @@
 
 #include "../lib/csv.h"
 #include "../lib/definitions.h"
-#include "../lib/delta.h"
+#include "../lib/delta.c"
 #include "../lib/leech.h"
 #include "../lib/leech_csv.h"
 #include "../lib/table.h"
+#include "../lib/utils.h"
 
 START_TEST(test_LCH_Delta) {
   LCH_Buffer *out_buf = LCH_BufferCreate();
@@ -117,29 +118,69 @@ START_TEST(test_LCH_Delta) {
 END_TEST
 
 START_TEST(test_LCH_DeltaV2) {
-  LCH_Dict *old_state = LCH_DictCreate();
-  ck_assert_ptr_nonnull(old_state);
-  ck_assert(LCH_DictSet(old_state, "Paul,McCartney", (char *)"1942", NULL));
-  ck_assert(LCH_DictSet(old_state, "Ringo,Starr", (char *)"1940", NULL));
-  ck_assert(LCH_DictSet(old_state, "John,Lennon", (char *)"1940", NULL));
+  LCH_List *primary_fields = LCH_CSVParseRecord("lastname,firstname");
+  ck_assert_ptr_nonnull(primary_fields);
+  LCH_List *subsidiary_fields = LCH_CSVParseRecord("born");
+  ck_assert_ptr_nonnull(subsidiary_fields);
 
-  LCH_Dict *new_state = LCH_DictCreate();
-  ck_assert_ptr_nonnull(new_state);
-  ck_assert(LCH_DictSet(new_state, "Paul,McCartney", (char *)"1942", NULL));
-  ck_assert(LCH_DictSet(new_state, "Ringo,Starr", (char *)"1941", NULL));
-  ck_assert(LCH_DictSet(new_state, "George,Harrison", (char *)"1943", NULL));
+  LCH_Json *new_state = NULL;
+  {
+    LCH_List *table = LCH_CSVParseTable(
+        "firstname,lastname,born\r\n"
+        "Paul,McCartney,1942\r\n"
+        "Ringo,Starr,1941\r\n"
+        "John,Lennon,1940\r\n");
+    ck_assert_ptr_nonnull(table);
+    new_state = LCH_TableToJsonObject(table, primary_fields, subsidiary_fields);
+    LCH_ListDestroy(table);
+  }
 
-  LCH_Json *delta = LCH_DeltaCreateV2("beatles", new_state, old_state);
-  LCH_DictDestroy(old_state);
-  LCH_DictDestroy(new_state);
-  ck_assert_ptr_nonnull(delta);
+  LCH_Json *old_state = NULL;
+  {
+    LCH_List *table = LCH_CSVParseTable(
+        "firstname,lastname,born\r\n"
+        "Paul,McCartney,1942\r\n"
+        "Ringo,Starr,1940\r\n"
+        "George,Harrison,1943\r\n");
+    ck_assert_ptr_nonnull(table);
+    old_state = LCH_TableToJsonObject(table, primary_fields, subsidiary_fields);
+    LCH_ListDestroy(table);
+  }
 
-  ck_assert_str_eq(LCH_DeltaGetTableIDV2(delta), "beatles");
-  ck_assert_int_eq(LCH_DeltaGetNumInsertsV2(delta), 1);
-  ck_assert_int_eq(LCH_DeltaGetNumDeletesV2(delta), 1);
-  ck_assert_int_eq(LCH_DeltaGetNumUpdatesV2(delta), 1);
+  LCH_ListDestroy(primary_fields);
+  LCH_ListDestroy(subsidiary_fields);
 
-  LCH_JsonDestroy(delta);
+  LCH_Json *actual = LCH_DeltaCreateV2("beatles", new_state, old_state);
+  LCH_JsonDestroy(new_state);
+  LCH_JsonDestroy(old_state);
+  ck_assert_ptr_nonnull(actual);
+
+  LCH_Json *expected = LCH_JsonParse(
+      "{"
+      "  \"version\": \"1.0.0\","
+      "  \"type\": \"delta\","
+      "  \"id\": \"beatles\","
+      "  \"inserts\": {"
+      "    \"Lennon,John\": \"1940\""
+      "  },"
+      "  \"deletes\": {"
+      "    \"Harrison,George\": \"1943\""
+      "  },"
+      "  \"updates\": {"
+      "    \"Starr,Ringo\": \"1941\""
+      "  }"
+      "}");
+
+  char *json = LCH_JsonCompose(actual);
+  LCH_LOG_INFO("actual:   '%s'", json);
+  free(json);
+  json = LCH_JsonCompose(expected);
+  LCH_LOG_INFO("expected: '%s'", json);
+  free(json);
+  ck_assert(LCH_JsonEqual(actual, expected));
+
+  LCH_JsonDestroy(actual);
+  LCH_JsonDestroy(expected);
 }
 END_TEST
 

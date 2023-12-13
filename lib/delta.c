@@ -26,217 +26,106 @@ struct LCH_Delta {
   size_t num_canceled;
 };
 
-static bool DeltaCreateType(LCH_Dict *const delta) {
-  char *const type = strdup("delta");
-  if (type == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for delta type field");
-    return false;
-  }
-
-  LCH_Json *const json = LCH_JsonStringCreate(type);
-  if (json == NULL) {
-    free(type);
-    return false;
-  }
-
-  if (!LCH_DictSet(delta, "type", json, LCH_JsonDestroy)) {
-    LCH_JsonDestroy(json);
-    return false;
-  }
-
-  return true;
-}
-
-static bool DeltaCreateVersion(LCH_Dict *const delta) {
-  char *const version =
-      LCH_VersionToString(VERSION_MAJOR, VERSION_MAJOR, VERSION_PATCH);
-  if (version == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for delta version field");
-    return false;
-  }
-
-  LCH_Json *const json = LCH_JsonStringCreate(version);
-  if (json == NULL) {
-    free(version);
-    return false;
-  }
-
-  if (!LCH_DictSet(delta, "version", json, LCH_JsonDestroy)) {
-    LCH_JsonDestroy(json);
-    return false;
-  }
-
-  return true;
-}
-
-static bool DeltaCreateTableId(LCH_Dict *const delta,
-                               const char *const table_id) {
-  char *const id = strdup(table_id);
-  if (id == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for delta table identifier field");
-    return false;
-  }
-
-  LCH_Json *const json = LCH_JsonStringCreate(id);
-  if (json == NULL) {
-    free(id);
-    return false;
-  }
-
-  if (!LCH_DictSet(delta, "table", json, LCH_JsonDestroy)) {
-    LCH_JsonDestroy(json);
-    return false;
-  }
-
-  return true;
-}
-
-static bool DeltaCreateInsertOperations(LCH_Dict *const delta,
-                                        const LCH_Dict *const new_state,
-                                        const LCH_Dict *const old_state) {
-  LCH_Dict *const inserts = LCH_DictSetMinus(
-      new_state, old_state, (void *(*)(const void *))strdup, free);
-  if (inserts == NULL) {
-    LCH_LOG_ERROR("Failed to compute insert operations for delta.");
-    return false;
-  }
-
-  LCH_Json *const json = LCH_JsonObjectCreateFromDict(inserts);
-  if (json == NULL) {
-    LCH_DictDestroy(inserts);
-    return false;
-  }
-
-  if (!LCH_DictSet(delta, "insert", json, LCH_JsonDestroy)) {
-    LCH_JsonDestroy(json);
-    return false;
-  }
-
-  return true;
-}
-
-static bool DeltaCreateDeleteOperations(LCH_Dict *const delta,
-                                        const LCH_Dict *const new_state,
-                                        const LCH_Dict *const old_state) {
-  LCH_Dict *const del = LCH_DictSetMinus(old_state, new_state, NULL, NULL);
-  if (del == NULL) {
-    LCH_LOG_ERROR("Failed to compute delete operations for delta.");
-    return false;
-  }
-
-  LCH_Json *const json = LCH_JsonObjectCreateFromDict(del);
-  if (json == NULL) {
-    LCH_DictDestroy(del);
-    return false;
-  }
-
-  if (!LCH_DictSet(delta, "delete", json, LCH_JsonDestroy)) {
-    LCH_JsonDestroy(json);
-    return false;
-  }
-
-  return true;
-}
-
-static bool DeltaCreateUpdateOperations(LCH_Dict *const delta,
-                                        const LCH_Dict *const new_state,
-                                        const LCH_Dict *const old_state) {
-  LCH_Dict *const upd = LCH_DictSetChangedIntersection(
-      new_state, old_state, (void *(*)(const void *))strdup, free,
-      (int (*)(const void *, const void *))strcmp);
-  if (upd == NULL) {
-    LCH_LOG_ERROR("Failed to compute update operations for delta.");
-    return false;
-  }
-
-  LCH_Json *const json = LCH_JsonObjectCreateFromDict(upd);
-  if (json == NULL) {
-    LCH_DictDestroy(upd);
-    return false;
-  }
-
-  if (!LCH_DictSet(delta, "update", json, LCH_JsonDestroy)) {
-    LCH_JsonDestroy(json);
-    return false;
-  }
-
-  return true;
-}
 LCH_Json *LCH_DeltaCreateV2(const char *const table_id,
-                            const LCH_Dict *const new_state,
-                            const LCH_Dict *const old_state) {
+                            const LCH_Json *const new_state,
+                            const LCH_Json *const old_state) {
   assert(table_id != NULL);
   assert(new_state != NULL);
   assert(old_state != NULL);
 
-  LCH_Dict *const delta = LCH_DictCreate();
+  LCH_Json *const delta = LCH_JsonObjectCreate();
   if (delta == NULL) {
     return NULL;
   }
 
-  if (!DeltaCreateType(delta)) {
-    LCH_DictDestroy(delta);
+  char *const version =
+      LCH_VersionToString(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+  if (version == NULL) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  if (!DeltaCreateVersion(delta)) {
-    LCH_DictDestroy(delta);
+  if (!LCH_JsonObjectSetString(delta, "version", version)) {
+    free(version);
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+  free(version);
+
+  if (!LCH_JsonObjectSetString(delta, "type", "delta")) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  if (!DeltaCreateTableId(delta, table_id)) {
-    LCH_DictDestroy(delta);
+  if (!LCH_JsonObjectSetString(delta, "id", table_id)) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  if (!DeltaCreateInsertOperations(delta, new_state, old_state)) {
-    LCH_DictDestroy(delta);
+  LCH_Json *const inserts = LCH_JsonObjectKeysSetMinus(new_state, old_state);
+  if (inserts == NULL) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  if (!DeltaCreateDeleteOperations(delta, new_state, old_state)) {
-    LCH_DictDestroy(delta);
+  if (!LCH_JsonObjectSet(delta, "inserts", inserts)) {
+    LCH_JsonDestroy(inserts);
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  if (!DeltaCreateUpdateOperations(delta, new_state, old_state)) {
-    LCH_DictDestroy(delta);
+  LCH_Json *const deletes = LCH_JsonObjectKeysSetMinus(old_state, new_state);
+  if (deletes == NULL) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  LCH_Json *const json = LCH_JsonObjectCreateFromDict(delta);
-  if (json == NULL) {
-    LCH_DictDestroy(delta);
+  if (!LCH_JsonObjectSet(delta, "deletes", deletes)) {
+    LCH_JsonDestroy(deletes);
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  return json;
+  LCH_Json *const updates =
+      LCH_JsonObjectKeysSetIntersectAndValuesSetMinus(new_state, old_state);
+  if (updates == NULL) {
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSet(delta, "updates", updates)) {
+    LCH_JsonDestroy(updates);
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  return delta;
 }
 
 size_t LCH_DeltaGetNumInsertsV2(const LCH_Json *const delta) {
   assert(delta != NULL);
-  const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "insert");
+  const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
   const size_t num_inserts = LCH_JsonObjectLength(inserts);
   return num_inserts;
 }
 
 size_t LCH_DeltaGetNumDeletesV2(const LCH_Json *const delta) {
   assert(delta != NULL);
-  const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "delete");
+  const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
   const size_t num_deletes = LCH_JsonObjectLength(deletes);
   return num_deletes;
 }
 
 size_t LCH_DeltaGetNumUpdatesV2(const LCH_Json *const delta) {
   assert(delta != NULL);
-  const LCH_Json *const updates = LCH_JsonObjectGet(delta, "update");
+  const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
   const size_t num_updates = LCH_JsonObjectLength(updates);
   return num_updates;
 }
 
 const char *LCH_DeltaGetTableIDV2(const LCH_Json *const delta) {
   assert(delta != NULL);
-  const LCH_Json *const table_id = LCH_JsonObjectGet(delta, "table");
+  const LCH_Json *const table_id = LCH_JsonObjectGet(delta, "id");
   const char *const str = LCH_JsonStringGet(table_id);
   return str;
 }
