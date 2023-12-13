@@ -195,22 +195,6 @@ void LCH_ListDestroy(void *const self) {
   free(list);
 }
 
-void LCH_ListDestroyShallow(void *self) {
-  LCH_List *const list = (LCH_List *)self;
-  if (list == NULL) {
-    return;
-  }
-  assert(list->buffer != NULL);
-
-  for (size_t i = 0; i < list->length; i++) {
-    ListElement *item = list->buffer[i];
-    free(item);
-  }
-
-  free(list->buffer);
-  free(list);
-}
-
 LCH_List *LCH_ListMoveElements(LCH_List *const destination,
                                LCH_List *const source) {
   assert(destination != NULL);

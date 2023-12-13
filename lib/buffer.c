@@ -265,8 +265,6 @@ void LCH_BufferChop(LCH_Buffer *const self, size_t offset) {
   self->length = offset;
 }
 
-void LCH_BufferDestroyShallow(void *const self) { free(self); }
-
 char *LCH_BufferToString(LCH_Buffer *const self) {
   char *str = self->buffer;
   free(self);

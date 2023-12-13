@@ -31,12 +31,6 @@ size_t LCH_ListIndex(const LCH_List *self, const void *value,
 void LCH_ListSort(LCH_List *const self,
                   int (*compare)(const void *, const void *));
 
-/**
- * Destroy list except contents.
- * @param[in] self pointer to list.
- */
-void LCH_ListDestroyShallow(void *self);
-
 LCH_List *LCH_ListMoveElements(LCH_List *destination, LCH_List *source);
 
 void LCH_ListSwap(LCH_List *self, size_t i, size_t j);

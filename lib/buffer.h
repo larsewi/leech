@@ -93,8 +93,6 @@ bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *in);
 
 void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
 
-void LCH_BufferDestroyShallow(void *buffer);
-
 /**
  * @brief get pointer to internal buffer and destroy surrounding data structure.
  * @param self buffer.
