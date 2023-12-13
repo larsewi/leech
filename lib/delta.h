@@ -6,8 +6,8 @@
 #include "json.h"
 
 LCH_Json *LCH_DeltaCreateV2(const char *const table_id,
-                            const LCH_Dict *const new_state,
-                            const LCH_Dict *const old_state);
+                            const LCH_Json *const new_state,
+                            const LCH_Json *const old_state);
 size_t LCH_DeltaGetNumInsertsV2(const LCH_Json *delta);
 size_t LCH_DeltaGetNumDeletesV2(const LCH_Json *delta);
 size_t LCH_DeltaGetNumUpdatesV2(const LCH_Json *delta);
