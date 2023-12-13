@@ -18,7 +18,7 @@ char *LCH_HeadGet(const char *const name, const char *const work_dir) {
   }
 
   if (!LCH_IsRegularFile(path)) {
-    return strdup(LCH_GENISIS_BLOCK_PARENT);
+    return LCH_StringDuplicate(LCH_GENISIS_BLOCK_PARENT);
   }
 
   char *head = LCH_FileRead(path, NULL);
