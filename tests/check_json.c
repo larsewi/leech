@@ -160,21 +160,21 @@ START_TEST(test_JsonParseList) {
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_ARRAY);
-  ck_assert_int_eq(LCH_JsonListLength(json), 0);
+  ck_assert_int_eq(LCH_JsonArrayLength(json), 0);
   LCH_JsonDestroy(json);
 
   str = JsonParseArray(str, &json);
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_ARRAY);
-  ck_assert_int_eq(LCH_JsonListLength(json), 0);
+  ck_assert_int_eq(LCH_JsonArrayLength(json), 0);
   LCH_JsonDestroy(json);
 
   str = JsonParseArray(str, &json);
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_ARRAY);
-  ck_assert_int_eq(LCH_JsonListLength(json), 1);
+  ck_assert_int_eq(LCH_JsonArrayLength(json), 1);
   child = LCH_JsonArrayGet(json, 0);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
   ck_assert_str_eq(LCH_JsonStringGet(child), "leech");
@@ -184,7 +184,7 @@ START_TEST(test_JsonParseList) {
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_ARRAY);
-  ck_assert_int_eq(LCH_JsonListLength(json), 2);
+  ck_assert_int_eq(LCH_JsonArrayLength(json), 2);
   child = LCH_JsonArrayGet(json, 0);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
   ck_assert_str_eq(LCH_JsonStringGet(child), "leech");

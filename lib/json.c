@@ -288,6 +288,22 @@ static bool JsonComposeString(const LCH_Json *const json,
   return LCH_BufferPrintFormat(buffer, "\"%s\"", json->str);
 }
 
+static LCH_Json *JsonStringCopy(const LCH_Json *const json) {
+  assert(json != NULL);
+  assert(json->type == LCH_JSON_TYPE_STRING);
+  assert(json->str != NULL);
+
+  char *const dup = strdup(json->str);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memeory for JSON structure: %s",
+                  strerror(errno));
+    return NULL;
+  }
+
+  LCH_Json *copy = LCH_JsonStringCreate(dup);
+  return copy;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonObjectCreate() {
@@ -496,6 +512,48 @@ static bool JsonComposeObject(const LCH_Json *const json,
   return true;
 }
 
+static LCH_Json *JsonObjectCopy(const LCH_Json *const object) {
+  assert(object != NULL);
+  assert(object->type == LCH_JSON_TYPE_OBJECT);
+
+  LCH_Json *const object_copy = LCH_JsonObjectCreate();
+  if (object_copy != NULL) {
+    return NULL;
+  }
+
+  LCH_List *const keys = LCH_JsonObjectGetKeys(object);
+  if (keys == NULL) {
+    LCH_JsonDestroy(object_copy);
+    return NULL;
+  }
+
+  const size_t length = LCH_ListLength(keys);
+  for (size_t i = 0; i < length; i++) {
+    const char *const key = (char *)LCH_ListGet(keys, i);
+    assert(key != NULL);
+
+    const LCH_Json *const value = LCH_JsonObjectGet(object, key);
+    assert(value != NULL);
+
+    LCH_Json *const value_copy = LCH_JsonCopy(value);
+    if (value_copy == NULL) {
+      LCH_ListDestroy(keys);
+      LCH_JsonDestroy(object_copy);
+      return NULL;
+    }
+
+    if (!LCH_JsonObjectSet(object_copy, key, value_copy)) {
+      LCH_JsonDestroy(value_copy);
+      LCH_ListDestroy(keys);
+      LCH_JsonDestroy(object_copy);
+      return NULL;
+    }
+  }
+
+  LCH_JsonDestroy(keys);
+  return object_copy;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonArrayCreate() {
@@ -540,7 +598,7 @@ bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const value) {
   return success;
 }
 
-size_t LCH_JsonListLength(const LCH_Json *const json) {
+size_t LCH_JsonArrayLength(const LCH_Json *const json) {
   assert(json->type == LCH_JSON_TYPE_ARRAY);
   assert(json->array != NULL);
   return LCH_ListLength(json->array);
@@ -647,6 +705,36 @@ static bool JsonComposeArray(const LCH_Json *const json,
   return true;
 }
 
+static LCH_Json *JsonArrayCopy(const LCH_Json *const array) {
+  assert(array != NULL);
+  assert(array->type == LCH_JSON_TYPE_ARRAY);
+
+  LCH_Json *const array_copy = LCH_JsonArrayCreate();
+  if (array_copy == NULL) {
+    return NULL;
+  }
+
+  const size_t length = LCH_JsonArrayLength(array);
+  for (size_t i = 0; i < length; i++) {
+    const LCH_Json *const element = LCH_JsonArrayGet(array, i);
+    assert(element != NULL);
+
+    LCH_Json *const element_copy = LCH_JsonCopy(element);
+    if (element_copy == NULL) {
+      LCH_JsonDestroy(array_copy);
+      return NULL;
+    }
+
+    if (!LCH_JsonArrayAppend(array_copy, element_copy)) {
+      LCH_JsonDestroy(element_copy);
+      LCH_JsonDestroy(array_copy);
+      return NULL;
+    }
+  }
+
+  return array_copy;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonNumberCreate(const float number) {
@@ -692,6 +780,13 @@ static bool JsonComposeNumber(const LCH_Json *const json,
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NUMBER);
   return LCH_BufferPrintFormat(buffer, "%g", json->number);
+}
+
+static LCH_Json *JsonNumberCopy(const LCH_Json *const json) {
+  assert(json != NULL);
+  assert(json->type == LCH_JSON_TYPE_NUMBER);
+  LCH_Json *copy = LCH_JsonNumberCreate(json->number);
+  return copy;
 }
 
 /****************************************************************************/
@@ -788,6 +883,39 @@ char *LCH_JsonCompose(const LCH_Json *const json) {
 
   char *const str = LCH_BufferToString(buffer);
   return str;
+}
+
+LCH_Json *LCH_JsonCopy(const LCH_Json *const json) {
+  assert(json != NULL);
+
+  LCH_JsonType type = LCH_JsonGetType(json);
+  switch (type) {
+    case LCH_JSON_TYPE_NULL:
+      return LCH_JsonNullCreate();
+
+    case LCH_JSON_TYPE_TRUE:
+      return LCH_JsonTrueCreate();
+
+    case LCH_JSON_TYPE_FALSE:
+      return LCH_JsonFalseCreate();
+
+    case LCH_JSON_TYPE_STRING:
+      return JsonStringCopy(json);
+
+    case LCH_JSON_TYPE_NUMBER:
+      return JsonNumberCopy(json);
+
+    case LCH_JSON_TYPE_ARRAY:
+      return JsonArrayCopy(json);
+
+    case LCH_JSON_TYPE_OBJECT:
+      return JsonObjectCopy(json);
+
+    default:
+      assert(false);
+      LCH_LOG_ERROR("Failed to copy JSON: Illegal type %d", type);
+      return NULL;
+  }
 }
 
 void LCH_JsonDestroy(void *const self) {
