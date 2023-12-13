@@ -53,31 +53,31 @@ LCH_List *LCH_ListCreate(void);
 
 /**
  * Get number of items in a list.
- * @param[in] self pointer to list.
+ * @param[in] list pointer to list.
  * @return length of list.
  */
-size_t LCH_ListLength(const LCH_List *self);
+size_t LCH_ListLength(const LCH_List *list);
 
 /**
  * Get list item.
- * @param[in] self pointer to list.
+ * @param[in] list pointer to list.
  * @param[in] index index of item.
  * @return data pointer.
  */
-void *LCH_ListGet(const LCH_List *self, size_t index);
+void *LCH_ListGet(const LCH_List *list, size_t index);
 
 /**
  * Append value to a list.
- * @param[in] self pointer to dict.
+ * @param[in] list pointer to dict.
  * @param[in] value data pointer.
  * @param[in] destroy data destroy function.
  * @return true if success.
  */
-bool LCH_ListAppend(LCH_List *self, void *value, void (*destroy)(void *));
+bool LCH_ListAppend(LCH_List *list, void *value, void (*destroy)(void *));
 
 /**
  * Destroy list and contents.
- * @param[in] self pointer to list.
+ * @param[in] list pointer to list.
  */
 void LCH_ListDestroy(void *list);
 
@@ -96,18 +96,18 @@ LCH_Dict *LCH_DictCreate(void);
 
 /**
  * Get number of items in a dict.
- * @param[in] self pointer to dict.
+ * @param[in] dict pointer to dict.
  * @return length of dict.
  */
-size_t LCH_DictLength(const LCH_Dict *self);
+size_t LCH_DictLength(const LCH_Dict *dict);
 
 /**
  * Check if dict has key.
- * @param[in] self pointer to dict.
+ * @param[in] dict pointer to dict.
  * @param[in] key key to check.
  * @return true if key is present.
  */
-bool LCH_DictHasKey(const LCH_Dict *self, const char *key);
+bool LCH_DictHasKey(const LCH_Dict *dict, const char *key);
 
 /**
  * @brief Get list of keys from dict.
@@ -115,29 +115,29 @@ bool LCH_DictHasKey(const LCH_Dict *self, const char *key);
  * @return list of keys.
  * @note List of keys must be freed with LCH_ListDestroy
  */
-LCH_List *LCH_DictGetKeys(const LCH_Dict *self);
+LCH_List *LCH_DictGetKeys(const LCH_Dict *dict);
 
 /**
  * Set value if key is present or add key value pair.
- * @param[in] self pointer to dict.
+ * @param[in] dict pointer to dict.
  * @param[in] key key to set.
  * @param[in] value data pointer.
  * @param[in] destroy data destroy function.
  * @return true if success.
  */
-bool LCH_DictSet(LCH_Dict *self, const char *key, void *value,
+bool LCH_DictSet(LCH_Dict *dict, const char *key, void *value,
                  void (*destroy)(void *));
 
-void *LCH_DictRemove(LCH_Dict *self, const char *key);
+void *LCH_DictRemove(LCH_Dict *dict, const char *key);
 
 /**
  * Get dict value.
- * @param[in] self pointer to dict.
+ * @param[in] dict pointer to dict.
  * @param[in] key key assosiated with value.
  * @param[out] func function pointer.
  * @return data pointer
  */
-void *LCH_DictGet(const LCH_Dict *self, const char *key);
+void *LCH_DictGet(const LCH_Dict *dict, const char *key);
 
 /**
  * Destroy dict and contents.

@@ -41,7 +41,7 @@ size_t LCH_BufferLength(const LCH_Buffer *buffer);
 
 /**
  * @brief destroy buffer.
- * @note noop if self is NULL.
+ * @note noop if buffer is NULL.
  * @param[in] buffer buffer.
  */
 void LCH_BufferDestroy(void *buffer);
@@ -95,7 +95,7 @@ void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
 
 /**
  * @brief get pointer to internal buffer and destroy surrounding data structure.
- * @param self buffer.
+ * @param buffer buffer.
  * @return pointer to internal char buffer.
  * @note returned buffer must be freed with free(3).
  */

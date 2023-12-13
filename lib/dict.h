@@ -10,28 +10,29 @@ typedef struct LCH_DictIter LCH_DictIter;
 
 /**
  * Set minus based on key.
- * @param [in] self left operand.
- * @param [in] other right operand.
+ * @param [in] left left operand.
+ * @param [in] right right operand.
  * @param [in] duplicate function to duplicate value.
  * @param [in] destroy function to destroy value.
- * @return dict containing entries found in self that is not found in other.
+ * @return dict containing entries found in left operand that is not found in
+ *         right operand.
  */
-LCH_Dict *LCH_DictSetMinus(const LCH_Dict *self, const LCH_Dict *other,
+LCH_Dict *LCH_DictSetMinus(const LCH_Dict *left, const LCH_Dict *right,
                            void *(*duplicate)(const void *),
                            void (*destroy)(void *));
 
 /**
  * Get set intersection where values are different.
- * @param [in] self left operand.
- * @param [in] other right operand.
+ * @param [in] left left operand.
+ * @param [in] right right operand.
  * @param [in] duplicate function to duplicate value.
  * @param [in] destroy function to destroy value.
  * @param [in] compare function to compare values.
- * @return dict containing entries found in both self and other, but where
- *         value is different.
+ * @return dict containing entries found in both left and right operands, but
+ *         where value is different.
  */
 LCH_Dict *LCH_DictSetChangedIntersection(
-    const LCH_Dict *self, const LCH_Dict *other,
+    const LCH_Dict *left, const LCH_Dict *right,
     void *(*duplicate)(const void *), void (*destroy)(void *),
     int (*compare)(const void *, const void *));
 
