@@ -43,5 +43,6 @@ bool LCH_HeadSet(const char *const name, const char *const workdir,
     return false;
   }
 
+  LCH_LOG_VERBOSE("Moved %s to %s", name, block_id);
   return true;
 }

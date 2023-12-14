@@ -26,8 +26,6 @@ libleech_la_SOURCES = leech.c \
         utils.h utils.c \
         sha1.h sha1.c
 
-libleech_la_LIBADD = @OPENSSL_LIBS@
-
 libleech_csv_la_SOURCES = \
         buffer.c \
         leech_csv.c \

@@ -14,17 +14,13 @@ const char *LCH_TableDefinitionGetPrimaryFields(
 const char *LCH_TableDefinitionGetSubsidiaryFields(
     const LCH_TableDefinition *definition);
 
-LCH_Dict *LCH_TableDefinitionLoadNewState(
+LCH_Json *LCH_TableDefinitionLoadNewState(
     const LCH_TableDefinition *definition);
 
-LCH_Dict *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *defintion,
+LCH_Json *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *defintion,
                                           const char *work_dir);
 
 bool LCH_TableStoreNewState(const LCH_TableDefinition *definition,
-                            const char *work_dir, const LCH_Dict *new_state);
-
-bool LCH_TableDefinitionPatch(const LCH_TableDefinition *definition,
-                              const LCH_Delta *patch, const char *uid_field,
-                              const char *uid_value);
+                            const char *work_dir, const LCH_Json *new_state);
 
 #endif  // _LEECH_TABLE_H

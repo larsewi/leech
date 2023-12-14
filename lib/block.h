@@ -7,27 +7,7 @@
 #include "buffer.h"
 #include "json.h"
 
-LCH_Json *LCH_BlockCreateV2(const char *const parent, LCH_Json *const payload);
-
-typedef struct LCH_Block LCH_Block;
-
-char *LCH_BlockGetParentID(const LCH_Block *block);
-
-time_t LCH_BlockGetTimestamp(const LCH_Block *block);
-
-size_t LCH_BlockGetDataLength(const LCH_Block *block);
-
-void *LCH_BlockGetData(LCH_Block *block);
-
-char *LCH_BlockGetBlockID(const LCH_Block *block);
-
-LCH_Block *LCH_BlockCreate(const char *parent_id, const void *data,
-                           const size_t data_len);
-
-char *LCH_BlockStore(const char *work_dir, const LCH_Block *block);
-
-LCH_Block *LCH_BlockLoad(const char *work_dir, const char *block_id);
-
-bool LCH_BlockRemove(const char *work_dir, const char *block_id);
+LCH_Json *LCH_BlockCreate(const char *const parent, LCH_Json *const payload);
+bool LCH_BlockStore(const LCH_Json *block, const char *work_dir);
 
 #endif  // _LEECH_BLOCK_H
