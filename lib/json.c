@@ -279,13 +279,68 @@ static const char *JsonParseString(const char *str, LCH_Json **json) {
   return str;
 }
 
+static bool StringComposeString(const char *const str,
+                                LCH_Buffer *const buffer) {
+  assert(str != NULL);
+  assert(buffer != NULL);
+
+  if (!LCH_BufferAppend(buffer, '"')) {
+    return false;
+  }
+
+  for (const char *ch = str; *ch != '\0'; ch++) {
+    const char *control_sequence = NULL;
+    switch (*ch) {
+      case '"':
+        control_sequence = "\\\"";
+        break;
+      case '\\':
+        control_sequence = "\\\\";
+        break;
+      case '\b':
+        control_sequence = "\\b";
+        break;
+      case '\f':
+        control_sequence = "\\f";
+        break;
+      case '\n':
+        control_sequence = "\\n";
+        break;
+      case '\r':
+        control_sequence = "\\r";
+        break;
+      case '\t':
+        control_sequence = "\\t";
+        break;
+      default:
+        if (!LCH_BufferAppend(buffer, *ch)) {
+          return false;
+        }
+        continue;
+    }
+    assert(control_sequence != NULL);
+    if (!LCH_BufferPrintFormat(buffer, control_sequence)) {
+      return false;
+    }
+  }
+  if (!LCH_BufferAppend(buffer, '"')) {
+    return false;
+  }
+  return true;
+}
+
 static bool JsonComposeString(const LCH_Json *const json,
                               LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_STRING);
   assert(json->str != NULL);
-  return LCH_BufferPrintFormat(buffer, "\"%s\"", json->str);
+
+  if (!StringComposeString(json->str, buffer)) {
+    return false;
+  }
+
+  return true;
 }
 
 static LCH_Json *JsonStringCopy(const LCH_Json *const json) {
@@ -568,7 +623,12 @@ static bool JsonComposeObject(const LCH_Json *const json,
     }
 
     const char *const key = (char *)LCH_ListGet(keys, i);
-    if (!LCH_BufferPrintFormat(buffer, "\"%s\":", key)) {
+    if (!StringComposeString(key, buffer)) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    if (!LCH_BufferAppend(buffer, ':')) {
       LCH_ListDestroy(keys);
       return false;
     }

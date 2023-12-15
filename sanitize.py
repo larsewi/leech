@@ -36,8 +36,12 @@ def sanitize(filenames):
             os.remove(f"{filename}.new")
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Sanitize CSV files")
     parser.add_argument("filename", nargs="+", help="name of file to sanitize")
     args = parser.parse_args()
     sanitize(args.filename)
+
+
+if __name__ == "__main__":
+    main()

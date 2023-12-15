@@ -329,6 +329,25 @@ START_TEST(test_JsonComposeString) {
   ck_assert_str_eq(str, "\"Leech\"");
   LCH_JsonDestroy(json);
   free(str);
+
+  const char *problematic =
+      "default,mount_units,mount_unit_show_items[snap-amazon\\x2dssm\\x2dagent-"
+      "5656][SloppyOptions][1],0,no,\"source=function,function="
+      "buildlinearray\"";
+  str = LCH_StringDuplicate(problematic);
+  json = LCH_JsonStringCreate(str);
+  ck_assert_ptr_nonnull(json);
+  str = LCH_JsonCompose(json);
+  ck_assert_ptr_nonnull(str);
+  const char *expected =
+      "\"default,mount_units,mount_unit_show_items[snap-"
+      "amazon\\\\x2dssm\\\\x2dagent-5656][SloppyOptions][1],0,no,\\\"source="
+      "function,function=buildlinearray\\\"\"";
+  LCH_LOG_INFO("expected: %s", expected);
+  LCH_LOG_INFO("actual  : %s", str);
+  ck_assert_str_eq(str, expected);
+  LCH_JsonDestroy(json);
+  free(str);
 }
 END_TEST
 
@@ -382,6 +401,8 @@ START_TEST(test_JsonComposeObject) {
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
   char *const str = LCH_JsonCompose(json);
+  LCH_LOG_INFO("expected: '%s'", "{\"name\":\"lars\",\"age\":29}");
+  LCH_LOG_INFO("actual:   '%s'", str);
   ck_assert(strcmp(str, "{\"name\":\"lars\",\"age\":29}") == 0 ||
             strcmp(str, "{\"age\":29},\"name\":\"lars\"") == 0);
   LCH_JsonDestroy(json);
