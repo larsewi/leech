@@ -84,7 +84,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
 
     /************************************************************************/
 
-    if (num_inserts > 0 && num_deletes > 0 && num_updates > 0) {
+    if (num_inserts > 0 || num_deletes > 0 || num_updates > 0) {
       if (!LCH_TableStoreNewState(table_def, work_dir, new_state)) {
         LCH_LOG_ERROR("Failed to store new state for table '%s'.", table_id);
         LCH_JsonDestroy(new_state);

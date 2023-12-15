@@ -120,17 +120,22 @@ LCH_Json *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *const self,
   assert(self->identifier != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot.json",
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
                     self->identifier)) {
     return NULL;
   }
 
-  if (LCH_IsRegularFile(path)) {
-    LCH_Json *const state = LCH_JsonParse(path);
+  if (!LCH_IsRegularFile(path)) {
+    LCH_Json *const state = LCH_JsonObjectCreate();
     return state;
   }
 
-  LCH_Json *const state = LCH_JsonObjectCreate();
+  char *const json = LCH_FileRead(path, NULL);
+  if (json == NULL) {
+    return NULL;
+  }
+
+  LCH_Json *const state = LCH_JsonParse(json);
   return state;
 }
 
@@ -138,7 +143,7 @@ bool LCH_TableStoreNewState(const LCH_TableDefinition *const self,
                             const char *const work_dir,
                             const LCH_Json *const state) {
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot.json",
+  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
                     self->identifier)) {
     return false;
   }
