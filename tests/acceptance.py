@@ -33,7 +33,7 @@ class Event:
             shutil.copy(file, dst)
 
     def record_state(self):
-        cmd = ["../bin/leech", "--info", f"--workdir={self.workdir}", "commit"]
+        cmd = ["../bin/leech", "--verbose", f"--workdir={self.workdir}", "commit"]
         execute(cmd)
 
     def generate_diff(self):
@@ -45,7 +45,7 @@ class Event:
 
         cmd = [
             "../bin/leech",
-            "--info",
+            "--verbose",
             f"--workdir={self.workdir}",
             "diff",
             f"--block={lastseen}",
@@ -56,7 +56,7 @@ class Event:
     def patch_tables(self):
         cmd = [
             "../bin/leech",
-            "--info",
+            "--verbose",
             f"--workdir={self.workdir}",
             "patch",
             "--field=uid",
