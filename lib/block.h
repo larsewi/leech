@@ -7,7 +7,7 @@
 #include "buffer.h"
 #include "json.h"
 
-LCH_Json *LCH_BlockCreate(const char *const parent, LCH_Json *const payload);
+LCH_Json *LCH_BlockCreate(const char *work_dir, LCH_Json *const payload);
 bool LCH_BlockStore(const LCH_Json *block, const char *work_dir);
 
 #endif  // _LEECH_BLOCK_H

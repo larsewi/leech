@@ -157,6 +157,7 @@ START_TEST(test_LCH_ReadWriteTextFile) {
 
   char expected[] = "Hello World!";
   ck_assert(LCH_FileWrite(path, expected));
+  ck_assert(LCH_FileExists(path));
 
   size_t size;
   char *actual = LCH_FileRead("testfile", &size);
@@ -164,6 +165,7 @@ START_TEST(test_LCH_ReadWriteTextFile) {
   ck_assert_int_eq(size, strlen(expected));
   free(actual);
   remove(path);
+  ck_assert(!LCH_FileExists(path));
 }
 END_TEST
 

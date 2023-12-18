@@ -5,6 +5,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "buffer.h"
 #include "csv.h"
@@ -258,49 +259,23 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
 /******************************************************************************/
 
 char *LCH_FileRead(const char *const path, size_t *const length) {
-  FILE *file = fopen(path, "r");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", path,
-                  strerror(errno));
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
     return NULL;
   }
 
-  char *buffer = NULL;
-  size_t buffer_size = LCH_BUFFER_SIZE;
-  size_t total_read = 0, bytes_read = 0;
-
-  do {
-    char *ptr = (char *)realloc(buffer, buffer_size);
-    if (ptr == NULL) {
-      LCH_LOG_ERROR(
-          "Failed to reallocate (%zu bytes) memory for read buffer: %s",
-          buffer_size, strerror(errno));
-      free(buffer);
-      fclose(file);
-      return NULL;
-    }
-
-    buffer = ptr;
-    bytes_read =
-        fread(buffer + total_read, 1, buffer_size - total_read - 1, file);
-    total_read += bytes_read;
-    buffer_size *= 2;
-  } while (bytes_read != 0);
-
-  if (ferror(file)) {
-    LCH_LOG_ERROR("Failed to read file '%s'.", path);
-    free(buffer);
-    fclose(file);
+  if (!LCH_BufferReadFile(buffer, path)) {
+    LCH_BufferDestroy(buffer);
     return NULL;
   }
-  fclose(file);
 
   if (length != NULL) {
-    *length = total_read;
+    *length = LCH_BufferLength(buffer);
   }
-  buffer[total_read] = '\0';
 
-  return buffer;
+  char *str = LCH_BufferToString(buffer);
+  assert(str != NULL);
+  return str;
 }
 
 /******************************************************************************/

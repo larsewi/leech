@@ -3,14 +3,18 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "definitions.h"
 #include "leech.h"
 
-#define INITIAL_CAPACITY 256
+#define INITIAL_CAPACITY 1028
 
 struct LCH_Buffer {
   size_t length;
@@ -269,4 +273,70 @@ char *LCH_BufferToString(LCH_Buffer *const self) {
   char *str = self->buffer;
   free(self);
   return str;
+}
+
+bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
+  assert(buffer != NULL);
+  assert(filename != NULL);
+
+  const int fd = open(filename, O_WRONLY);
+  if (fd == -1) {
+    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", filename,
+                  strerror(errno));
+    return false;
+  }
+
+  size_t tot_written = 0;
+  while (tot_written < buffer->length) {
+    ssize_t n_written = write(fd, buffer->buffer, buffer->length);
+    if (n_written < 0) {
+      LCH_LOG_ERROR("Failed to write to file '%s': %s", filename,
+                    strerror(errno));
+      close(fd);
+      return false;
+    }
+
+    tot_written += n_written;
+  }
+
+  close(fd);
+  LCH_LOG_DEBUG("Wrote %zu bytes to file '%s'", filename);
+
+  return true;
+}
+
+bool LCH_BufferReadFile(LCH_Buffer *const buffer, const char *const filename) {
+  assert(buffer != NULL);
+  assert(filename != NULL);
+
+  const int fd = open(filename, O_RDONLY);
+  if (fd < 0) {
+    LCH_LOG_ERROR("Failed to open file '%s' for reading: %s", filename,
+                  strerror(errno));
+    return false;
+  }
+
+  const size_t to_read = 4096;
+  ssize_t n_read = 0;
+  do {
+    if (!EnsureCapacity(buffer, to_read)) {
+      close(fd);
+      return false;
+    }
+
+    n_read = read(fd, buffer->buffer + buffer->length, to_read);
+    if (n_read < 0) {
+      LCH_LOG_ERROR("Failed to read file '%s': %s", filename, strerror(errno));
+      close(fd);
+      return false;
+    }
+
+    buffer->length += (size_t)n_read;
+  } while (n_read > 0);
+
+  close(fd);
+  buffer->buffer[buffer->length] = '\0';
+  LCH_LOG_DEBUG("Read %zu bytes from file '%s'", n_read, filename);
+
+  return true;
 }

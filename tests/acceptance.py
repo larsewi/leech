@@ -4,12 +4,14 @@ import shutil
 import subprocess
 from pathlib import Path
 from datetime import datetime
+import os
 
 SEED = 1 # Seed used by random generator
 CHANCE = 20 # Percent chance of report collection
 
 
 def execute(cmd):
+    print(f"Executing command: '{' '.join(cmd)}' from '{os.getcwd()}'")
     proc = subprocess.run(cmd, capture_output=True)
     print(proc.stdout.decode(errors="ignore"), end="")
     print(proc.stderr.decode(errors="ignore"), end="")
@@ -33,7 +35,7 @@ class Event:
             shutil.copy(file, dst)
 
     def record_state(self):
-        cmd = ["../bin/leech", "--verbose", f"--workdir={self.workdir}", "commit"]
+        cmd = ["../bin/leech", "--debug", f"--workdir={self.workdir}", "commit"]
         execute(cmd)
 
     def generate_diff(self):
@@ -45,7 +47,7 @@ class Event:
 
         cmd = [
             "../bin/leech",
-            "--verbose",
+            "--debug",
             f"--workdir={self.workdir}",
             "diff",
             f"--block={lastseen}",
@@ -56,7 +58,7 @@ class Event:
     def patch_tables(self):
         cmd = [
             "../bin/leech",
-            "--verbose",
+            "--debug",
             f"--workdir={self.workdir}",
             "patch",
             "--field=uid",

@@ -101,4 +101,8 @@ void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
  */
 char *LCH_BufferToString(LCH_Buffer *buffer);
 
+bool LCH_BufferReadFile(LCH_Buffer *buffer, const char *filename);
+
+bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename);
+
 #endif  // _LEECH_BUFFER_H

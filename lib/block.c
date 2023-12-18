@@ -13,7 +13,7 @@
 #include "leech.h"
 #include "utils.h"
 
-LCH_Json *LCH_BlockCreate(const char *const parent, LCH_Json *const payload) {
+LCH_Json *LCH_BlockCreate(const char *const work_dir, LCH_Json *const payload) {
   LCH_Json *const block = LCH_JsonObjectCreate();
   if (block == NULL) {
     return NULL;
@@ -25,10 +25,18 @@ LCH_Json *LCH_BlockCreate(const char *const parent, LCH_Json *const payload) {
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", parent)) {
+  char *const head = LCH_HeadGet("HEAD", work_dir);
+  if (head == NULL) {
+    LCH_LOG_ERROR("Failed to get head.");
+    return false;
+  }
+
+  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", head)) {
+    free(head);
     LCH_JsonDestroy(block);
     return NULL;
   }
+  free(head);
 
   if (!LCH_JsonObjectSet(block, "payload", payload)) {
     LCH_JsonDestroy(block);

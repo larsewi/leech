@@ -125,7 +125,7 @@ LCH_Json *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *const self,
     return NULL;
   }
 
-  if (!LCH_IsRegularFile(path)) {
+  if (!LCH_FileExists(path)) {
     LCH_Json *const state = LCH_JsonObjectCreate();
     return state;
   }

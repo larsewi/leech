@@ -6,12 +6,21 @@
 #include "definitions.h"
 #include "leech.h"
 
+#ifdef LCH_ENABLE_COLOR
 #define LCH_COLOR_RED "\x1b[31m"
 #define LCH_COLOR_YELLOW "\x1b[33m"
 #define LCH_COLOR_GREEN "\x1b[32m"
 #define LCH_COLOR_CYAN "\x1b[36m"
 #define LCH_COLOR_BLUE "\x1b[34m"
 #define LCH_COLOR_RESET "\x1b[0m"
+#else
+#define LCH_COLOR_RED ""
+#define LCH_COLOR_YELLOW ""
+#define LCH_COLOR_GREEN ""
+#define LCH_COLOR_CYAN ""
+#define LCH_COLOR_BLUE ""
+#define LCH_COLOR_RESET ""
+#endif
 
 struct LCH_DebugMessenger {
   unsigned char severity;

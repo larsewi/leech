@@ -34,7 +34,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
 
     /************************************************************************/
 
-    LCH_Json *new_state = LCH_TableDefinitionLoadNewState(table_def);
+    LCH_Json *const new_state = LCH_TableDefinitionLoadNewState(table_def);
     if (new_state == NULL) {
       LCH_LOG_ERROR("Failed to load new state for table '%s'.", table_id);
       LCH_JsonDestroy(deltas);
@@ -43,7 +43,8 @@ bool LCH_Commit(const LCH_Instance *const instance) {
     LCH_LOG_VERBOSE("Loaded new state for table '%s' containing %zu rows.",
                     table_id, LCH_JsonObjectLength(new_state));
 
-    LCH_Json *old_state = LCH_TableDefinitionLoadOldState(table_def, work_dir);
+    LCH_Json *const old_state =
+        LCH_TableDefinitionLoadOldState(table_def, work_dir);
     if (old_state == NULL) {
       LCH_LOG_ERROR("Failed to load old state for table '%s'.", table_id);
       LCH_JsonDestroy(new_state);
@@ -101,21 +102,12 @@ bool LCH_Commit(const LCH_Instance *const instance) {
     LCH_JsonDestroy(new_state);
   }
 
-  char *const head = LCH_HeadGet("HEAD", work_dir);
-  if (head == NULL) {
-    LCH_LOG_ERROR("Failed to get head.");
-    LCH_JsonDestroy(deltas);
-    return false;
-  }
-
-  LCH_Json *const block = LCH_BlockCreate(head, deltas);
+  LCH_Json *const block = LCH_BlockCreate(work_dir, deltas);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to create block.");
-    free(head);
     LCH_JsonDestroy(deltas);
     return false;
   }
-  free(head);
 
   if (!LCH_BlockStore(block, work_dir)) {
     LCH_LOG_ERROR("Failed to store block.");

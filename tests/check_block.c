@@ -29,7 +29,7 @@ START_TEST(test_LCH_BlockCreate) {
       "  }"
       "]");
 
-  const char *const head = "99ad5c35ca6c2d3ba9d7a792bd17550a772c0e6a";
+  const char *const head = ".";
   LCH_Json *const block = LCH_BlockCreate(head, payload);
 
   ck_assert(LCH_JsonObjectHasKey(block, "timestamp"));
