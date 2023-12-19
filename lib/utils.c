@@ -895,3 +895,27 @@ char *LCH_StringDuplicate(const char *const str) {
   }
   return dup;
 }
+
+char *LCH_StringFormat(const char *const format, ...) {
+  assert(format != NULL);
+
+  va_list ap;
+  va_start(ap, format);
+  const int length = vsnprintf(NULL, 0, format, ap);
+  assert(length >= 0);
+  va_end(ap);
+
+  char *const str = malloc((size_t)length);
+  if (str != NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory (LCH_StringFormat): %s", strerror(errno));
+    return NULL;
+  }
+
+  va_start(ap, format);
+  const int ret = vsnprintf(str, (size_t)length, format, ap);
+  (void) ret; // unused variable
+  va_end(ap);
+  assert(ret == length);
+
+  return str;
+}

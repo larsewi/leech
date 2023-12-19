@@ -95,4 +95,6 @@ char *LCH_VersionToString(size_t major, size_t minor, size_t patch);
 
 char *LCH_StringDuplicate(const char *str);
 
+char *LCH_StringFormat(const char *format, ...);
+
 #endif  // _LEECH_UTILS
