@@ -21,6 +21,23 @@
 #include "table.h"
 #include "utils.h"
 
+LCH_Json *LCH_InstanceLoad(const char *const work_dir) {
+  assert(work_dir != NULL);
+
+  char *const path = LCH_StringFormat("%s%c%s", work_dir, PATH_SEP, "leech.json");
+  if (path == NULL) {
+    return NULL;
+  }
+
+  if (!LCH_FileExists(path)) {
+    LCH_LOG_ERROR("Missing leech configuration file '%s'", path);
+    free(path);
+    return NULL;
+  }
+
+  return NULL;
+}
+
 struct LCH_Instance {
   const char *work_dir;
   LCH_List *table_defs;

@@ -2,6 +2,9 @@
 #define _LEECH_INSTANCE_H
 
 #include "leech.h"
+#include "json.h"
+
+LCH_Json *LCH_InstanceLoad(const char work_dir);
 
 /**
  * @brief Get table definition of a specific table
