@@ -118,3 +118,7 @@ config.h
 .vscode
 tests/tmp/*
 .DS_Store
+
+config.guess~
+config.sub~
+install-sh~

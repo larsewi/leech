@@ -1,10 +1,12 @@
 #ifndef _LEECH_INSTANCE_H
 #define _LEECH_INSTANCE_H
 
-#include "leech.h"
 #include "json.h"
+#include "leech.h"
 
-LCH_Json *LCH_InstanceLoad(const char work_dir);
+typedef struct LCH_InstanceNew LCH_InstanceNew;
+
+LCH_InstanceNew *LCH_InstanceLoad(const char *work_dir);
 
 /**
  * @brief Get table definition of a specific table

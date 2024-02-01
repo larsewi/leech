@@ -17,6 +17,9 @@ struct LCH_Json {
   LCH_Dict *object;
 };
 
+static const char *const LCH_JSON_TYPE_TO_STRING[] = {
+    "null", "true", "false", "string", "number", "array", "object"};
+
 static const char *JsonParse(const char *str, LCH_Json **json);
 static bool JsonCompose(const LCH_Json *const json, LCH_Buffer *const buffer);
 
@@ -144,7 +147,7 @@ LCH_Json *LCH_JsonStringCreate(char *const str) {
   return json;
 }
 
-const char *LCH_JsonStringGet(const LCH_Json *const json) {
+const char *LCH_JsonGetString(const LCH_Json *const json) {
   assert(json->type == LCH_JSON_TYPE_STRING);
   assert(json->str != NULL);
   return json->str;
@@ -417,10 +420,90 @@ bool LCH_JsonObjectHasKey(const LCH_Json *const json, const char *const key) {
 }
 
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
+  assert(json != NULL);
   assert(json->type == LCH_JSON_TYPE_OBJECT);
   assert(json->object != NULL);
   const LCH_Json *const value = (LCH_Json *)LCH_DictGet(json->object, key);
   return value;
+}
+
+const char *LCH_JsonObjectGetString(const LCH_Json *const json,
+                                    const char *const key) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+
+  if (!LCH_JsonObjectHasKey(json, key)) {
+    LCH_LOG_ERROR(
+        "Failed to get value using key '%s': "
+        "Key does not exist.",
+        key);
+    return NULL;
+  }
+
+  const LCH_Json *const child = LCH_JsonObjectGet(json, key);
+  if (child->type != LCH_JSON_TYPE_STRING) {
+    LCH_LOG_ERROR(
+        "Failed to get value using key '%s': "
+        "Expected type string, found type %s",
+        key, LCH_JSON_TYPE_TO_STRING[child->type]);
+    return NULL;
+  }
+
+  const char *const str = LCH_JsonGetString(child);
+  return str;
+}
+
+const LCH_Json *LCH_JsonObjectGetObject(const LCH_Json *const json,
+                                        const char *const key) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+
+  if (!LCH_JsonObjectHasKey(json, key)) {
+    LCH_LOG_ERROR(
+        "Failed to get value using key '%s': "
+        "Key does not exist.",
+        key);
+    return NULL;
+  }
+
+  const LCH_Json *child = LCH_JsonObjectGet(json, key);
+  if (child->type != LCH_JSON_TYPE_OBJECT) {
+    LCH_LOG_ERROR(
+        "Failed to get value using key '%s': "
+        "Expected type object, found type %s.",
+        key, LCH_JSON_TYPE_TO_STRING[child->type]);
+    return NULL;
+  }
+
+  return child;
+}
+
+const LCH_Json *LCH_JsonObjectGetArray(const LCH_Json *const json,
+                                       const char *const key) {
+  assert(json != NULL);
+  assert(key != NULL);
+  assert(json->type == LCH_JSON_TYPE_OBJECT);
+
+  if (!LCH_JsonObjectHasKey(json, key)) {
+    LCH_LOG_ERROR(
+        "Failed to get value using key '%s': "
+        "Key does not exist.",
+        key);
+    return NULL;
+  }
+
+  const LCH_Json *child = LCH_JsonObjectGet(json, key);
+  if (child->type != LCH_JSON_TYPE_ARRAY) {
+    LCH_LOG_ERROR(
+        "Failed to get value using key '%s': "
+        "Expected type array, found type %s.",
+        key, LCH_JSON_TYPE_TO_STRING[child->type]);
+    return NULL;
+  }
+
+  return child;
 }
 
 bool LCH_JsonObjectSet(LCH_Json *const json, const char *const key,
@@ -869,6 +952,33 @@ const LCH_Json *LCH_JsonArrayGet(const LCH_Json *const json,
   return value;
 }
 
+const char *LCH_JsonArrayGetString(const LCH_Json *const json,
+                                   const size_t index) {
+  assert(json != NULL);
+  assert(json->type == LCH_JSON_TYPE_ARRAY);
+
+  const size_t length = LCH_JsonArrayLength(json);
+  if (index >= length) {
+    LCH_LOG_ERROR(
+        "Failed to get value using index %zu: "
+        "Index out of bounds (%zu >= %zu)",
+        index, index, length);
+    return NULL;
+  }
+
+  const LCH_Json *const child = LCH_JsonArrayGet(json, index);
+  if (child->type != LCH_JSON_TYPE_STRING) {
+    LCH_LOG_ERROR(
+        "Failed to get value using index %zu: "
+        "Expected type string, found type %s",
+        index, LCH_JSON_TYPE_TO_STRING[child->type]);
+    return NULL;
+  }
+
+  const char *const str = LCH_JsonGetString(child);
+  return str;
+}
+
 bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const element) {
   assert(json != NULL);
   assert(json->type == LCH_JSON_TYPE_ARRAY);
@@ -1059,7 +1169,7 @@ LCH_Json *LCH_JsonNumberCreate(const double number) {
   return json;
 }
 
-double LCH_JsonNumberGet(const LCH_Json *const json) {
+double LCH_JsonGetNumber(const LCH_Json *const json) {
   assert(json->type == LCH_JSON_TYPE_NUMBER);
   return json->number;
 }

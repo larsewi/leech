@@ -116,6 +116,11 @@ bool LCH_Commit(const LCH_Instance *const instance) {
   }
   LCH_JsonDestroy(block);
 
+  LCH_LOG_VERBOSE(
+      "Created commit with %zu inserts, %zu deletes and %zu inserts over %zu "
+      "tables",
+      tot_inserts, tot_deletes, tot_updates, n_tables);
+
   return true;
 }
 

@@ -34,12 +34,12 @@ START_TEST(test_LCH_BlockCreate) {
 
   ck_assert(LCH_JsonObjectHasKey(block, "timestamp"));
   LCH_LOG_INFO("timestamp: %f",
-               LCH_JsonNumberGet(LCH_JsonObjectGet(block, "timestamp")));
+               LCH_JsonGetNumber(LCH_JsonObjectGet(block, "timestamp")));
 
   ck_assert(LCH_JsonObjectHasKey(block, "parent"));
-  ck_assert_str_eq(LCH_JsonStringGet(LCH_JsonObjectGet(block, "parent")), head);
+  ck_assert_str_eq(LCH_JsonGetString(LCH_JsonObjectGet(block, "parent")), head);
   LCH_LOG_INFO("parent: %s",
-               LCH_JsonStringGet(LCH_JsonObjectGet(block, "parent")));
+               LCH_JsonGetString(LCH_JsonObjectGet(block, "parent")));
 
   ck_assert(LCH_JsonObjectHasKey(block, "payload"));
 

@@ -308,16 +308,16 @@ START_TEST(test_LCH_TableToJsonObject) {
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
 
   const LCH_Json *str = LCH_JsonObjectGet(json, "McCartney,Paul");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "1942");
+  ck_assert_str_eq(LCH_JsonGetString(str), "1942");
 
   str = LCH_JsonObjectGet(json, "Starr,Ringo");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "1940");
+  ck_assert_str_eq(LCH_JsonGetString(str), "1940");
 
   str = LCH_JsonObjectGet(json, "Lennon,John");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "1940");
+  ck_assert_str_eq(LCH_JsonGetString(str), "1940");
 
   str = LCH_JsonObjectGet(json, "Harrison,George");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "1943");
+  ck_assert_str_eq(LCH_JsonGetString(str), "1943");
 
   LCH_JsonDestroy(json);
 }
@@ -343,16 +343,16 @@ START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
 
   const LCH_Json *str = LCH_JsonObjectGet(json, "1942,McCartney,Paul");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+  ck_assert_str_eq(LCH_JsonGetString(str), "");
 
   str = LCH_JsonObjectGet(json, "1940,Starr,Ringo");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+  ck_assert_str_eq(LCH_JsonGetString(str), "");
 
   str = LCH_JsonObjectGet(json, "1940,Lennon,John");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+  ck_assert_str_eq(LCH_JsonGetString(str), "");
 
   str = LCH_JsonObjectGet(json, "1943,Harrison,George");
-  ck_assert_str_eq(LCH_JsonStringGet(str), "");
+  ck_assert_str_eq(LCH_JsonGetString(str), "");
 
   LCH_JsonDestroy(json);
 }

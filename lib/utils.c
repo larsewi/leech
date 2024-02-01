@@ -14,6 +14,28 @@
 #include "list.h"
 #include "sha1.h"
 
+char *LCH_StringDuplicate(const char *const str) {
+  if (str == NULL) {
+    return NULL;
+  }
+
+  char *const dup = strdup(str);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("strdup(3): Failed to allocate memory: %s", strerror(errno));
+    return NULL;
+  }
+  return dup;
+}
+
+void *LCH_Allocate(const size_t size) {
+  void *const ptr = malloc(size);
+  if (ptr == NULL) {
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
+    return NULL;
+  }
+  return memset(ptr, 0, size);
+}
+
 bool LCH_StringEqual(const char *const str1, const char *const str2) {
   assert(str1 != NULL);
   assert(str2 != NULL);
@@ -888,14 +910,6 @@ char *LCH_VersionToString(const size_t major, const size_t minor,
   return version;
 }
 
-char *LCH_StringDuplicate(const char *const str) {
-  char *dup = strdup(str);
-  if (dup == NULL) {
-    LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
-  }
-  return dup;
-}
-
 char *LCH_StringFormat(const char *const format, ...) {
   assert(format != NULL);
 
@@ -907,13 +921,14 @@ char *LCH_StringFormat(const char *const format, ...) {
 
   char *const str = malloc((size_t)length);
   if (str != NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory (LCH_StringFormat): %s", strerror(errno));
+    LCH_LOG_ERROR("Failed to allocate memory (LCH_StringFormat): %s",
+                  strerror(errno));
     return NULL;
   }
 
   va_start(ap, format);
   const int ret = vsnprintf(str, (size_t)length, format, ap);
-  (void) ret; // unused variable
+  (void)ret;  // unused variable
   va_end(ap);
   assert(ret == length);
 

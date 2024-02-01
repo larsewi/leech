@@ -8,7 +8,7 @@
 typedef struct LCH_Json LCH_Json;
 
 typedef enum {
-  LCH_JSON_TYPE_NULL,
+  LCH_JSON_TYPE_NULL = 0,
   LCH_JSON_TYPE_TRUE,
   LCH_JSON_TYPE_FALSE,
   LCH_JSON_TYPE_STRING,
@@ -35,7 +35,7 @@ LCH_Json *LCH_JsonFalseCreate();
 
 LCH_Json *LCH_JsonStringCreate(char *str);
 
-const char *LCH_JsonStringGet(const LCH_Json *json);
+const char *LCH_JsonGetString(const LCH_Json *json);
 
 /****************************************************************************/
 
@@ -48,6 +48,12 @@ LCH_List *LCH_JsonObjectGetKeys(const LCH_Json *json);
 bool LCH_JsonObjectHasKey(const LCH_Json *json, const char *key);
 
 const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *key);
+
+const char *LCH_JsonObjectGetString(const LCH_Json *json, const char *key);
+
+const LCH_Json *LCH_JsonObjectGetObject(const LCH_Json *json, const char *key);
+
+const LCH_Json *LCH_JsonObjectGetArray(const LCH_Json *json, const char *key);
 
 bool LCH_JsonObjectSet(LCH_Json *json, const char *key, LCH_Json *value);
 
@@ -81,6 +87,8 @@ LCH_Json *LCH_JsonArrayCreateFromList(LCH_List *list);
 
 const LCH_Json *LCH_JsonArrayGet(const LCH_Json *json, size_t index);
 
+const char *LCH_JsonArrayGetString(const LCH_Json *json, size_t index);
+
 bool LCH_JsonArrayAppend(const LCH_Json *json, LCH_Json *value);
 
 size_t LCH_JsonArrayLength(const LCH_Json *json);
@@ -89,7 +97,7 @@ size_t LCH_JsonArrayLength(const LCH_Json *json);
 
 LCH_Json *LCH_JsonNumberCreate(double number);
 
-double LCH_JsonNumberGet(const LCH_Json *json);
+double LCH_JsonGetNumber(const LCH_Json *json);
 
 /****************************************************************************/
 

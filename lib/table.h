@@ -5,6 +5,8 @@
 #include "dict.h"
 #include "leech.h"
 
+typedef struct LCH_TableInfo LCH_TableInfo;
+
 const char *LCH_TableDefinitionGetIdentifier(
     const LCH_TableDefinition *definition);
 

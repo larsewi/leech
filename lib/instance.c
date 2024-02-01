@@ -1,3 +1,5 @@
+#include "instance.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
@@ -21,21 +23,39 @@
 #include "table.h"
 #include "utils.h"
 
-LCH_Json *LCH_InstanceLoad(const char *const work_dir) {
+struct LCH_InstanceNew {
+  char *work_dir;
+  char *version;
+  LCH_List *tables;
+};
+
+LCH_InstanceNew *LCH_InstanceLoad(const char *const work_dir) {
   assert(work_dir != NULL);
 
-  char *const path = LCH_StringFormat("%s%c%s", work_dir, PATH_SEP, "leech.json");
+  char *const path =
+      LCH_StringFormat("%s%c%s", work_dir, PATH_SEP, "leech.json");
   if (path == NULL) {
     return NULL;
   }
 
-  if (!LCH_FileExists(path)) {
-    LCH_LOG_ERROR("Missing leech configuration file '%s'", path);
-    free(path);
+  char *const raw = LCH_FileRead(path, NULL);
+  free(path);
+  if (raw == NULL) {
     return NULL;
   }
 
-  return NULL;
+  LCH_Json *const json = LCH_JsonParse(raw);
+  free(raw);
+  if (json == NULL) {
+    return NULL;
+  }
+
+  LCH_InstanceNew *instance = malloc(sizeof(LCH_InstanceNew));
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory for leech instance: %s",
+                  strerror(errno));
+    return NULL;
+  }
 }
 
 struct LCH_Instance {

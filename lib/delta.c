@@ -117,6 +117,6 @@ size_t LCH_DeltaGetNumUpdates(const LCH_Json *const delta) {
 const char *LCH_DeltaGetTableID(const LCH_Json *const delta) {
   assert(delta != NULL);
   const LCH_Json *const table_id = LCH_JsonObjectGet(delta, "id");
-  const char *const str = LCH_JsonStringGet(table_id);
+  const char *const str = LCH_JsonGetString(table_id);
   return str;
 }

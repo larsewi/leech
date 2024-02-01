@@ -6,6 +6,8 @@
 #include "json.h"
 #include "leech.h"
 
+void *LCH_Allocate(size_t size);
+
 /**
  * Check if two strings are equivalent.
  * @param first first string to check.

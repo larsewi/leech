@@ -26,6 +26,9 @@ libleech_la_SOURCES = leech.c \
         utils.h utils.c \
         sha1.h sha1.c
 
+libleech_la_CFLAGS = \
+        -ldl
+
 libleech_csv_la_SOURCES = \
         buffer.c \
         leech_csv.c \
