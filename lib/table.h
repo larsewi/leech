@@ -7,6 +7,9 @@
 
 typedef struct LCH_TableInfo LCH_TableInfo;
 
+LCH_TableInfo *LCH_TableInfoLoad(const char *identifer,
+                                 const LCH_Json *definition);
+
 const char *LCH_TableDefinitionGetIdentifier(
     const LCH_TableDefinition *definition);
 

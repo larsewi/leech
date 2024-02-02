@@ -122,3 +122,5 @@ tests/tmp/*
 config.guess~
 config.sub~
 install-sh~
+libltdl/
+m4/

@@ -99,4 +99,19 @@ char *LCH_StringDuplicate(const char *str);
 
 char *LCH_StringFormat(const char *format, ...);
 
+/**
+ * @brief Destroy string array.
+ * @param array Array to destroy.
+ * @note Array must be NULL-terminated or else behavior is undefined.
+ */
+void LCH_StringArrayDestroy(void *array);
+
+/**
+ * @brief Destroy string table.
+ * @param table Table to destroy.
+ * @note Both the table and its records must be NULL-terminated, otherwise
+ *       behavior is undefined.
+ */
+void LCH_StringTableDestroy(void *table);
+
 #endif  // _LEECH_UTILS

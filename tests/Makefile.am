@@ -2,6 +2,10 @@ TESTS = unit_test leak_test acceptance_test
 
 AM_CPPFLAGS = -include config.h
 
+pkglib_LTLIBRARIES = module.la
+module_la_SOURCES = module.c
+module_la_LDFLAGS = -avoid-version -module -shared
+
 check_PROGRAMS = unit_test
 unit_test_SOURCES = \
     unit_test.c \

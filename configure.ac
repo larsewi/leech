@@ -43,8 +43,14 @@ AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 # pkg-check modules.
 PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
+AC_CHECK_HEADER([ltdl.h],
+    [AC_CHECK_LIB([ltdl], [lt_dladvise_init],
+        [LIBLTDL=-lltdl], [LIBLTDL=])],
+    [LIBLTDL=])
 
-LT_INIT
+LT_INIT([dlopen])
+LT_CONFIG_LTDL_DIR([libltdl])
+LTDL_INIT([subproject])
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
 AC_OUTPUT

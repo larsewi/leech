@@ -36,8 +36,14 @@ export PKG_CONFIG_PATH="$(brew --prefix openssl)/lib/pkgconfig"
 ```
 
 ## Install
-`./bootstrap.sh && ./configure --enable-debug && make && sudo make install`
+```
+./bootstrap.sh && ./configure --enable-debug && make && sudo make install
+```
 
+## Run unit tests with GDB
+```
+libtool --mode=execute gdb --args ./unit_test no-fork
+```
 
 
 ## TODO: [doxygen](https://www.gnu.org/software/autoconf-archive/ax_prog_doxygen.html)

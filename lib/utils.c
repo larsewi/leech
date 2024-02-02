@@ -934,3 +934,19 @@ char *LCH_StringFormat(const char *const format, ...) {
 
   return str;
 }
+
+void LCH_StringArrayDestroy(void *const _array) {
+  char **const array = (char **)_array;
+  for (size_t i = 0; array[i] != NULL; i++) {
+    free(array[i]);
+  }
+  free(array);
+}
+
+void LCH_StringTableDestroy(void *const _table) {
+  char ***const table = (char ***)_table;
+  for (size_t i = 0; table[i] != NULL; i++) {
+    LCH_StringArrayDestroy(table[i]);
+  }
+  free(table);
+}

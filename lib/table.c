@@ -13,13 +13,6 @@
 #include "list.h"
 #include "utils.h"
 
-#define KEY_PRIMARY_FIELDS "primary_fields"
-#define KEY_SUBSIDIARY_FIELDS "subsidiary_fields"
-#define KEY_SOURCE "source"
-#define KEY_DESTINATION "destination"
-#define KEY_LOCATOR "locator"
-#define KEY_CALLBACK "callbacks"
-
 struct LCH_TableInfo {
   char *identifier;
   LCH_List *primary_fields;
@@ -32,25 +25,29 @@ struct LCH_TableInfo {
   char *destination_locator;
 
   const char ***(*load_callback)(const void *);  // Connection string / locator
-  void (*begin_tx_callback)(const void *);       // Connection string / locator
-  void (*end_tx_callback)(const void *,          // Connection info / object
+  void *(*begin_tx_callback)(const void *);      // Connection string / locator
+  bool (*end_tx_callback)(void *,                // Connection info / object
                           int);                  // Error code
-  bool (*insert_callback)(const void *,          // Connection info / object
+  bool (*insert_callback)(void *,                // Connection info / object
                           const char *,          // Table identifer
-                          const char *,          // Columns
-                          const char *);         // Values
-  bool (*delete_callback)(const void *,          // Connection info / object
+                          const char *const *,   // Columns
+                          const char *const *);  // Values
+  bool (*delete_callback)(void *,                // Connection info / object
                           const char *,          // Table identifer
-                          const char *,          // Columns
-                          const char *);         // Values
-  bool (*update_callback)(const void *,          // Connection info / object
+                          const char *const *,   // Columns
+                          const char *const *);  // Values
+  bool (*update_callback)(void *,                // Connection info / object
                           const char *,          // Table identifer
-                          const char *,          // Columns
-                          const char *);         // Values
+                          const char *const *,   // Columns
+                          const char *const *);  // Values
 };
 
 void LCH_TableInfoDestroy(void *const _info) {
   LCH_TableInfo *const info = (LCH_TableInfo *)_info;
+  assert(info != NULL);
+  assert(info->identifier != NULL);
+  assert(info->primary_fields != NULL);
+  assert(info->subsidiary_fields != NULL);
 
   free(info->identifier);
   LCH_ListDestroy(info->primary_fields);
@@ -66,13 +63,15 @@ void LCH_TableInfoDestroy(void *const _info) {
     LCH_LOG_ERROR("Failed to release reference to dynamic library");
   }
   free(info->destination_locator);
+
+  free(info);
 }
 
 LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
                                  const LCH_Json *const definition) {
   assert(identifer != NULL);
   assert(definition != NULL);
-  assert(LCH_JsonGetType(definition) != LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonGetType(definition) == LCH_JSON_TYPE_OBJECT);
 
   LCH_TableInfo *const info =
       (LCH_TableInfo *)LCH_Allocate(sizeof(LCH_TableInfo));
@@ -169,7 +168,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "%s",
       source_dlib_path);
   info->load_callback = dlsym(info->source_dlib_handle, "load_callback");
-  if (info->begin_tx_callback == NULL) {
+  if (info->load_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'load_callback' in dynamic shared "
         "library %s",
@@ -282,6 +281,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     LCH_TableInfoDestroy(info);
     return NULL;
   }
+
+  return info;
 }
 
 typedef struct LCH_TableDefinition {
