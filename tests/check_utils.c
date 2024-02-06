@@ -108,39 +108,12 @@ START_TEST(test_LCH_StringStrip) {
 END_TEST
 
 START_TEST(test_LCH_SplitString) {
-  const char *expected[] = {"+,a,b,c", "-,e,d,f"};
-  LCH_List *lst = LCH_SplitString("+,a,b,c\r\n-,e,d,f\r\n", "\r\n");
-  ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-  ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-  LCH_ListDestroy(lst);
-}
-END_TEST
-
-START_TEST(test_LCH_SplitStringSubstring) {
-  {
-    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
-    LCH_List *lst = LCH_SplitStringSubstring(
-        "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-    LCH_ListDestroy(lst);
-  }
-  {
-    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
-    LCH_List *lst = LCH_SplitStringSubstring(
-        "\r\n\r\n+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-    LCH_ListDestroy(lst);
-  }
-  {
-    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
-    LCH_List *lst = LCH_SplitStringSubstring(
-        "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i\r\n\r\n", "\r\n\r\n");
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-    LCH_ListDestroy(lst);
-  }
+  LCH_List *list = LCH_SplitString("1.2.3", ".");
+  ck_assert_int_eq(LCH_ListLength(list), 3);
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "1");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "2");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "3");
+  LCH_ListDestroy(list);
 }
 END_TEST
 
@@ -358,6 +331,34 @@ START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
 }
 END_TEST
 
+START_TEST(test_LCH_ParseNumber) {
+  long value;
+  ck_assert(LCH_ParseNumber("123", &value));
+  ck_assert_int_eq(value, 123);
+
+  ck_assert(LCH_ParseNumber("321abc", &value));
+  ck_assert_int_eq(value, 321);
+
+  ck_assert(!LCH_ParseNumber("abc321", &value));
+}
+END_TEST
+
+START_TEST(test_LCH_ParseVersion) {
+  size_t major, minor, patch;
+  ck_assert(LCH_ParseVersion("1.2.3", &major, &minor, &patch));
+  ck_assert_int_eq(major, 1);
+  ck_assert_int_eq(minor, 2);
+  ck_assert_int_eq(patch, 3);
+
+  ck_assert(!LCH_ParseVersion("1.2.", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1.2", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1.", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("a.b.c", &major, &minor, &patch));
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -378,11 +379,6 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_SplitString");
     tcase_add_test(tc, test_LCH_SplitString);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_SplitStringSubstring");
-    tcase_add_test(tc, test_LCH_SplitStringSubstring);
     suite_add_tcase(s, tc);
   }
   {
@@ -433,6 +429,16 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_TableToJsonObject no subsidiary key");
     tcase_add_test(tc, test_LCH_TableToJsonObjectNoSubsidiary);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ParseNumber");
+    tcase_add_test(tc, test_LCH_ParseNumber);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ParseVersion");
+    tcase_add_test(tc, test_LCH_ParseVersion);
     suite_add_tcase(s, tc);
   }
   return s;

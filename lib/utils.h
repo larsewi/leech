@@ -17,14 +17,12 @@ void *LCH_Allocate(size_t size);
 bool LCH_StringEqual(const char *str1, const char *str2);
 
 /**
- * Split a string with delimitor.
- * @param[in] str string to split.
- * @param[in] del delimitor.
- * @param[out] list list of substrings.
+ * @brief Split string into a list based on delimiters.
+ * @param[in] str String to split.
+ * @param[in] del Delimiters to split on.
+ * @return List of substrings split on delimiter.
  */
 LCH_List *LCH_SplitString(const char *str, const char *del);
-
-LCH_List *LCH_SplitStringSubstring(const char *str, const char *substr);
 
 bool LCH_StringStartsWith(const char *str, const char *substr);
 
@@ -80,7 +78,7 @@ LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
 bool LCH_MarshalString(LCH_Buffer *buffer, const char *str);
 
 /**
- * @breif Unmarshal string from buffer.
+ * @brief Unmarshal string from buffer.
  * @param[in] buffer.
  * @param[out] unmarshaled string.
  * @return pointer to remaining buffer.
@@ -93,7 +91,12 @@ const char *LCH_UnmarshalBinary(const char *buffer, char **str);
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
 
+bool LCH_ParseNumber(const char *str, long *number);
+
 char *LCH_VersionToString(size_t major, size_t minor, size_t patch);
+
+bool LCH_ParseVersion(const char *str, size_t *major, size_t *minor,
+                      size_t *patch);
 
 char *LCH_StringDuplicate(const char *str);
 

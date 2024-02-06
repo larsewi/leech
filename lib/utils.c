@@ -45,111 +45,32 @@ bool LCH_StringEqual(const char *const str1, const char *const str2) {
 /******************************************************************************/
 
 LCH_List *LCH_SplitString(const char *str, const char *del) {
-  LCH_List *list = LCH_ListCreate();
-  size_t to, from = 0, len = strlen(str);
-  bool is_delim, was_delim = true;
-
-  for (to = 0; to < len; to++) {
-    is_delim = strchr(del, str[to]) != NULL;
-    if (is_delim) {
-      if (was_delim) {
-        continue;
-      }
-      assert(to > from);
-      char *s = strndup(str + from, to - from);
-      if (s == NULL) {
-        LCH_LOG_ERROR("Failed to allocate memory during string split: %s",
-                      strerror(errno));
-        LCH_ListDestroy(list);
-        return NULL;
-      }
-      if (!LCH_ListAppend(list, s, free)) {
-        free(s);
-        LCH_ListDestroy(list);
-        return NULL;
-      }
-    } else {
-      if (was_delim) {
-        from = to;
-      }
-    }
-    was_delim = is_delim;
-  }
-
-  if (from < to && !is_delim) {
-    char *s = strndup(str + from, to - from);
-    if (s == NULL) {
-      LCH_ListDestroy(list);
-      return NULL;
-    }
-    if (!LCH_ListAppend(list, s, free)) {
-      LCH_ListDestroy(list);
-      return NULL;
-    }
-  }
-
-  return list;
-}
-
-/******************************************************************************/
-
-static bool SplitStringSubstringMaybeAddElement(LCH_List *const lst,
-                                                const char *const str,
-                                                const size_t from,
-                                                const size_t to) {
-  if (from < to) {
-    char *const item = strndup(str + from, to - from);
-    if (item == NULL) {
-      LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
-      return false;
-    }
-
-    if (!LCH_ListAppend(lst, item, free)) {
-      free(item);
-      return false;
-    }
-  }
-
-  return true;
-}
-
-LCH_List *LCH_SplitStringSubstring(const char *const str,
-                                   const char *const substr) {
   assert(str != NULL);
-  assert(substr != NULL);
+  assert(del != NULL);
 
-  LCH_List *const lst = LCH_ListCreate();
-  if (lst == NULL) {
+  LCH_List *const list = LCH_ListCreate();
+
+  const char *start = str;
+  const char *end = strpbrk(str, del);
+
+  while (end != NULL) {
+    char *tmp = strndup(start, end - start);
+    if (tmp == NULL) {
+      LCH_LOG_ERROR("strndup(): Failed to allocate memory: %s",
+                    strerror(errno));
+      return NULL;
+    }
+    LCH_ListAppend(list, tmp, free);
+    start = end + 1;
+    end = strpbrk(start, del);
+  }
+
+  char *tmp = LCH_StringDuplicate(start);
+  if (tmp == NULL) {
     return NULL;
   }
-
-  size_t from = 0, to;
-  for (to = 0; str[to] != '\0'; to++) {
-    size_t i;
-    bool is_match = true;
-    for (i = 0; substr[i] != '\0'; i++) {
-      if (str[to + i] != substr[i]) {
-        is_match = false;
-        break;
-      }
-    }
-
-    if (is_match) {
-      if (!SplitStringSubstringMaybeAddElement(lst, str, from, to)) {
-        LCH_ListDestroy(lst);
-        return NULL;
-      }
-      to += i;
-      from = to;
-    }
-  }
-
-  if (!SplitStringSubstringMaybeAddElement(lst, str, from, to)) {
-    LCH_ListDestroy(lst);
-    return NULL;
-  }
-
-  return lst;
+  LCH_ListAppend(list, tmp, free);
+  return list;
 }
 
 /******************************************************************************/
@@ -892,6 +813,97 @@ bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
   }
 
   LCH_BufferDestroy(digest_bytes);
+  return true;
+}
+
+bool LCH_ParseNumber(const char *const str, long *const number) {
+  assert(str != NULL);
+  assert(number != NULL);
+
+  char *endptr;
+  errno = 0;  // To distinguish success/failure after call
+  const long value = strtol(str, &endptr, 10);
+
+  if (errno != 0) {
+    LCH_LOG_ERROR("Failed to parse number '%s': %s", str, strerror(errno));
+    return false;
+  }
+
+  if (endptr == str) {
+    LCH_LOG_ERROR("Failed to parse number '%s': No digits were found", str);
+    return false;
+  }
+
+  if (*endptr != '\0') {
+    LCH_LOG_WARNING(
+        "Found trailing characters '%s' after parsing number '%ld' from string "
+        "'%s'",
+        endptr, value, str);
+  }
+
+  *number = value;
+  return true;
+}
+
+bool LCH_ParseVersion(const char *const str, size_t *const major,
+                      size_t *const minor, size_t *const patch) {
+  LCH_List *const list = LCH_SplitString(str, ".");
+  const size_t length = LCH_ListLength(list);
+
+  static const char *const error_messages[] = {
+      "Missing major version number",
+      "Missing minor version number",
+      "Missing patch version number",
+      "Too many version numbers",
+  };
+  if (length < 3 || length > 3) {
+    LCH_LOG_ERROR("Failed to parse version '%s': %s",
+                  error_messages[LCH_MIN(length, 3)]);
+    LCH_ListDestroy(list);
+    return false;
+  }
+
+  long val;
+  const char *sub = (char *)LCH_ListGet(list, 0);
+  if (!LCH_ParseNumber(sub, &val)) {
+    LCH_ListDestroy(list);
+    return false;
+  }
+  if (val < 0) {
+    LCH_LOG_ERROR("Failed to parse version '%s': Bad major version number %ld",
+                  str, val);
+    LCH_ListDestroy(list);
+    return false;
+  }
+  *major = (size_t)val;
+
+  sub = (char *)LCH_ListGet(list, 1);
+  if (!LCH_ParseNumber(sub, &val)) {
+    LCH_ListDestroy(list);
+    return false;
+  }
+  if (val < 0) {
+    LCH_LOG_ERROR("Failed to parse version '%s': Bad major version number %ld",
+                  str, val);
+    LCH_ListDestroy(list);
+    return false;
+  }
+  *minor = (size_t)val;
+
+  sub = (char *)LCH_ListGet(list, 2);
+  if (!LCH_ParseNumber(sub, &val)) {
+    LCH_ListDestroy(list);
+    return false;
+  }
+  if (val < 0) {
+    LCH_LOG_ERROR("Failed to parse version '%s': Bad major version number %ld",
+                  str, val);
+    LCH_ListDestroy(list);
+    return false;
+  }
+
+  LCH_ListDestroy(list);
+  *patch = (size_t)val;
   return true;
 }
 

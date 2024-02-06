@@ -8,6 +8,8 @@
 #define LCH_BUFFER_SIZE LCH_KIBIBYTE(4)
 
 #define LCH_LENGTH(x) (sizeof(x) / sizeof(*x))
+#define LCH_MIN(a, b) ((a < b) ? a : b)
+#define LCH_MAX(a, b) ((a > b) ? a : b)
 
 #define UNUSED(x) (void)x
 
