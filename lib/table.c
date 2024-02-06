@@ -24,22 +24,12 @@ struct LCH_TableInfo {
   void *destination_dlib_handle;
   char *destination_locator;
 
-  const char ***(*load_callback)(const void *);  // Connection string / locator
-  void *(*begin_tx_callback)(const void *);      // Connection string / locator
-  bool (*end_tx_callback)(void *,                // Connection info / object
-                          int);                  // Error code
-  bool (*insert_callback)(void *,                // Connection info / object
-                          const char *,          // Table identifer
-                          const char *const *,   // Columns
-                          const char *const *);  // Values
-  bool (*delete_callback)(void *,                // Connection info / object
-                          const char *,          // Table identifer
-                          const char *const *,   // Columns
-                          const char *const *);  // Values
-  bool (*update_callback)(void *,                // Connection info / object
-                          const char *,          // Table identifer
-                          const char *const *,   // Columns
-                          const char *const *);  // Values
+  LCH_LoadTableCallbackFn load_callback;
+  LCH_BeginTxCallbackFn begin_tx_callback;
+  LCH_EndTxCallbackFn end_tx_callback;
+  LCH_InsertCallbackFn insert_callback;
+  LCH_DeleteCallbackFn delete_callback;
+  LCH_UpdateCallbackFn update_callback;
 };
 
 void LCH_TableInfoDestroy(void *const _info) {
@@ -167,7 +157,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "Obtaining address of symbol 'load_callback' from dynamic shared library "
       "%s",
       source_dlib_path);
-  info->load_callback = dlsym(info->source_dlib_handle, "load_callback");
+  info->load_callback =
+      (LCH_LoadTableCallbackFn)dlsym(info->source_dlib_handle, "load_callback");
   if (info->load_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'load_callback' in dynamic shared "
@@ -215,8 +206,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "Obtaining address of symbol 'begin_tx_callback' from dynamic shared "
       "library %s",
       source_dlib_path);
-  info->begin_tx_callback =
-      dlsym(info->source_dlib_handle, "begin_tx_callback");
+  info->begin_tx_callback = (LCH_BeginTxCallbackFn)dlsym(
+      info->source_dlib_handle, "begin_tx_callback");
   if (info->begin_tx_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'begin_tx_callback' in dynamic "
@@ -230,7 +221,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "Obtaining address of symbol 'end_tx_callback' from dynamic shared "
       "library %s",
       source_dlib_path);
-  info->end_tx_callback = dlsym(info->source_dlib_handle, "end_tx_callback");
+  info->end_tx_callback =
+      (LCH_EndTxCallbackFn)dlsym(info->source_dlib_handle, "end_tx_callback");
   if (info->end_tx_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'end_tx_callback' in dynamic "
@@ -244,7 +236,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "Obtaining address of symbol 'insert_callback' from dynamic shared "
       "library %s",
       source_dlib_path);
-  info->insert_callback = dlsym(info->source_dlib_handle, "insert_callback");
+  info->insert_callback =
+      (LCH_InsertCallbackFn)dlsym(info->source_dlib_handle, "insert_callback");
   if (info->insert_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'insert_callback' in dynamic "
@@ -258,7 +251,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "Obtaining address of symbol 'delete_callback' from dynamic shared "
       "library %s",
       source_dlib_path);
-  info->delete_callback = dlsym(info->source_dlib_handle, "delete_callback");
+  info->delete_callback =
+      (LCH_DeleteCallbackFn)dlsym(info->source_dlib_handle, "delete_callback");
   if (info->delete_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'delete_callback' in dynamic "
@@ -272,7 +266,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       "Obtaining address of symbol 'update_callback' from dynamic shared "
       "library %s",
       source_dlib_path);
-  info->update_callback = dlsym(info->source_dlib_handle, "update_callback");
+  info->update_callback =
+      (LCH_UpdateCallbackFn)dlsym(info->source_dlib_handle, "update_callback");
   if (info->update_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'update_callback' in dynamic "

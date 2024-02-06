@@ -23,7 +23,8 @@ START_TEST(test_LCH_TableInfoLoad) {
   LCH_TableInfo *const info = LCH_TableInfoLoad("CLD", definition);
   LCH_JsonDestroy(definition);
 
-  char ***table = (char ***)info->load_callback("Hello CFEngine");
+  void *conn = strdup("Hello CFEngine");
+  char ***table = (char ***)info->load_callback(conn);
   ck_assert_str_eq(table[0][0], "Hello CFEngine");
   ck_assert_ptr_null(table[0][1]);
   ck_assert_ptr_null(table[1]);
@@ -33,20 +34,24 @@ START_TEST(test_LCH_TableInfoLoad) {
       (char *)info->begin_tx_callback(info->destination_locator);
   ck_assert_str_eq(actual, "Bye leech!");
 
-  ck_assert(info->end_tx_callback("Hello CFEngine", 3));
+  ck_assert(info->end_tx_callback(conn, 3));
 
   const char *const tid = "foo";
   const char *const col = "bar";
   const char *const val = "baz";
 
-  char *conn = "insert";
+  free(conn);
+  conn = strdup("insert");
   ck_assert(info->insert_callback(conn, tid, &col, &val));
 
-  conn = "delete";
+  free(conn);
+  conn = strdup("delete");
   ck_assert(info->delete_callback(conn, tid, &col, &val));
 
-  conn = "update";
+  free(conn);
+  conn = strdup("update");
   ck_assert(info->update_callback(conn, tid, &col, &val));
+  free(conn);
 
   LCH_TableInfoDestroy(info);
 }

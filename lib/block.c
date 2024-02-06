@@ -28,7 +28,7 @@ LCH_Json *LCH_BlockCreate(const char *const work_dir, LCH_Json *const payload) {
   char *const head = LCH_HeadGet("HEAD", work_dir);
   if (head == NULL) {
     LCH_LOG_ERROR("Failed to get head.");
-    return false;
+    return NULL;
   }
 
   if (!LCH_JsonObjectSetStringDuplicate(block, "parent", head)) {

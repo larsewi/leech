@@ -919,7 +919,7 @@ char *LCH_StringFormat(const char *const format, ...) {
   assert(length >= 0);
   va_end(ap);
 
-  char *const str = malloc((size_t)length);
+  char *const str = (char *)malloc((size_t)length);
   if (str != NULL) {
     LCH_LOG_ERROR("Failed to allocate memory (LCH_StringFormat): %s",
                   strerror(errno));

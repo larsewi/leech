@@ -50,12 +50,15 @@ LCH_InstanceNew *LCH_InstanceLoad(const char *const work_dir) {
     return NULL;
   }
 
-  LCH_InstanceNew *instance = malloc(sizeof(LCH_InstanceNew));
+  LCH_InstanceNew *const instance =
+      (LCH_InstanceNew *)malloc(sizeof(LCH_InstanceNew));
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for leech instance: %s",
                   strerror(errno));
     return NULL;
   }
+
+  return instance;
 }
 
 struct LCH_Instance {

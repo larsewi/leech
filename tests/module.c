@@ -7,16 +7,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-char ***load_callback(const void *locator) {
-  char ***table = malloc(2 * sizeof(char **));
-  table[0] = malloc(2 * sizeof(char *));
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+char ***load_callback(void *locator) {
+  char ***table = (char ***)malloc(2 * sizeof(char **));
+  table[0] = (char **)malloc(2 * sizeof(char *));
   table[0][0] = strdup((const char *)locator);
   table[0][1] = NULL;
   table[1] = NULL;
   return table;
 }
 
-void *begin_tx_callback(const void *locator) { return (void *)locator; }
+void *begin_tx_callback(void *locator) { return locator; }
 
 bool end_tx_callback(void *conn, int err) {
   const char *str = (char *)conn;
@@ -26,8 +30,8 @@ bool end_tx_callback(void *conn, int err) {
   return false;
 }
 
-bool insert_callback(void *conn, const char *tid, const char **cols,
-                     const char **vals) {
+bool insert_callback(void *conn, const char *tid, const char *const *cols,
+                     const char *const *vals) {
   const char *str = (char *)conn;
   if (strcmp(str, "insert") != 0) {
     return false;
@@ -44,8 +48,8 @@ bool insert_callback(void *conn, const char *tid, const char **cols,
   return true;
 }
 
-bool delete_callback(void *conn, const char *tid, const char **cols,
-                     const char **vals) {
+bool delete_callback(void *conn, const char *tid, const char *const *cols,
+                     const char *const *vals) {
   const char *str = (char *)conn;
   if (strcmp(str, "delete") != 0) {
     return false;
@@ -79,3 +83,7 @@ bool update_callback(void *conn, const char *tid, const char **cols,
   }
   return true;
 }
+
+#ifdef __cplusplus
+}
+#endif
