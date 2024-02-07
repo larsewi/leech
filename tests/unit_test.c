@@ -17,6 +17,7 @@ Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
 Suite *TableSuite(void);
 Suite *UtilsSuite(void);
+Suite *InstanceSuite(void);
 
 int main(int argc, char *argv[]) {
   SetupDebugMessenger();
@@ -31,6 +32,7 @@ int main(int argc, char *argv[]) {
   srunner_add_suite(sr, JSONSuite());
   srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, TableSuite());
+  srunner_add_suite(sr, InstanceSuite());
 
   if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {
     srunner_set_fork_status(sr, CK_NOFORK);

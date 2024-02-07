@@ -20,14 +20,24 @@
 #include "dict.h"
 #include "head.h"
 #include "leech.h"
+#include "list.h"
 #include "table.h"
 #include "utils.h"
 
 struct LCH_InstanceNew {
   char *work_dir;
-  char *version;
+  size_t major;
+  size_t minor;
+  size_t patch;
   LCH_List *tables;
 };
+
+void LCH_InstanceNewDestroy(void *const _instance) {
+  LCH_InstanceNew *const instance = (LCH_InstanceNew *)_instance;
+  free(instance->work_dir);
+  LCH_ListDestroy(instance->tables);
+  free(instance);
+}
 
 LCH_InstanceNew *LCH_InstanceLoad(const char *const work_dir) {
   assert(work_dir != NULL);
@@ -44,9 +54,9 @@ LCH_InstanceNew *LCH_InstanceLoad(const char *const work_dir) {
     return NULL;
   }
 
-  LCH_Json *const json = LCH_JsonParse(raw);
+  LCH_Json *const config = LCH_JsonParse(raw);
   free(raw);
-  if (json == NULL) {
+  if (config == NULL) {
     return NULL;
   }
 
@@ -55,8 +65,65 @@ LCH_InstanceNew *LCH_InstanceLoad(const char *const work_dir) {
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for leech instance: %s",
                   strerror(errno));
+    LCH_JsonDestroy(config);
     return NULL;
   }
+
+  instance->work_dir = LCH_StringDuplicate(work_dir);
+  if (instance->work_dir == NULL) {
+    LCH_InstanceNewDestroy(instance);
+    LCH_JsonDestroy(config);
+    return NULL;
+  }
+
+  const char *const version = LCH_JsonObjectGetString(config, "version");
+  assert(version != NULL);
+  if (!LCH_ParseVersion(version, &instance->major, &instance->minor,
+                        &instance->patch)) {
+    LCH_InstanceNewDestroy(instance);
+    LCH_JsonDestroy(config);
+    return NULL;
+  }
+
+  const LCH_Json *const table_definitions =
+      LCH_JsonObjectGetObject(config, "tables");
+  assert(table_definitions != NULL);
+
+  LCH_List *const table_ids = LCH_JsonObjectGetKeys(table_definitions);
+  const size_t num_tables = LCH_ListLength(table_ids);
+
+  instance->tables = LCH_ListCreateWithCapacity(num_tables);
+  if (instance->tables == NULL) {
+    LCH_ListDestroy(table_ids);
+    LCH_InstanceNewDestroy(instance);
+    return NULL;
+  }
+
+  for (size_t i = 0; i < num_tables; i++) {
+    const char *const table_id = (char *)LCH_ListGet(table_ids, i);
+    assert(table_id != NULL);
+
+    const LCH_Json *const table_definition =
+        LCH_JsonObjectGetObject(table_definitions, table_id);
+    LCH_TableInfo *const table_info =
+        LCH_TableInfoLoad(table_id, table_definition);
+    if (table_info == NULL) {
+      LCH_ListDestroy(table_ids);
+      LCH_InstanceNewDestroy(instance);
+      LCH_JsonDestroy(config);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(instance->tables, table_info, LCH_TableInfoDestroy)) {
+      LCH_TableInfoDestroy(table_info);
+      LCH_ListDestroy(table_ids);
+      LCH_InstanceNewDestroy(instance);
+      LCH_JsonDestroy(config);
+      return NULL;
+    }
+  }
+  LCH_ListDestroy(table_ids);
+  LCH_JsonDestroy(config);
 
   return instance;
 }

@@ -17,6 +17,8 @@ typedef bool (*LCH_DeleteCallbackFn)(void *, const char *, const char *const *,
 typedef bool (*LCH_UpdateCallbackFn)(void *, const char *, const char *const *,
                                      const char *const *);
 
+void LCH_TableInfoDestroy(void *info);
+
 LCH_TableInfo *LCH_TableInfoLoad(const char *identifer,
                                  const LCH_Json *definition);
 

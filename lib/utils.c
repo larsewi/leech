@@ -847,6 +847,11 @@ bool LCH_ParseNumber(const char *const str, long *const number) {
 
 bool LCH_ParseVersion(const char *const str, size_t *const major,
                       size_t *const minor, size_t *const patch) {
+  assert(str != NULL);
+  assert(major != NULL);
+  assert(minor != NULL);
+  assert(patch != NULL);
+
   LCH_List *const list = LCH_SplitString(str, ".");
   const size_t length = LCH_ListLength(list);
 
@@ -931,15 +936,14 @@ char *LCH_StringFormat(const char *const format, ...) {
   assert(length >= 0);
   va_end(ap);
 
-  char *const str = (char *)malloc((size_t)length);
-  if (str != NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory (LCH_StringFormat): %s",
-                  strerror(errno));
+  char *const str = (char *)malloc((size_t)length + 1);
+  if (str == NULL) {
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
   va_start(ap, format);
-  const int ret = vsnprintf(str, (size_t)length, format, ap);
+  const int ret = vsnprintf(str, (size_t)length + 1, format, ap);
   (void)ret;  // unused variable
   va_end(ap);
   assert(ret == length);

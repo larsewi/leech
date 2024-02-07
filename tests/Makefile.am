@@ -19,7 +19,8 @@ unit_test_SOURCES = \
     check_leech_csv.c \
     check_list.c \
     check_table.c \
-    check_utils.c
+    check_utils.c \
+    check_instance.c
 
 unit_test_CFLAGS = \
     @CHECK_CFLAGS@

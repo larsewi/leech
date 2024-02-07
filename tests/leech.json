@@ -1,16 +1,16 @@
 {
-    "version": "0.0.0",
+    "version": "1.2.3",
     "tables": {
         "CLD": {
             "primary_fields": [ "name" ],
             "subsidiary_fields": [ "meta" ],
             "source": {
                 "locator": "./leech/classes.in.csv",
-                "callbacks": "/var/lib/leech/leech_csv.a"
+                "callbacks": ".libs/module.so"
             },
             "destination": {
                 "locator": "psql -d cfdb -U root",
-                "callbacks": "/var/lib/leech/leech_psql.a"
+                "callbacks": ".libs/module.so"
             }
         },
         "VAD": {
@@ -18,11 +18,11 @@
             "subsidiary_fields": [ "type", "value", "meta" ],
             "source": {
                 "locator": "./leech/classes.in.csv",
-                "callbacks": "/var/lib/leech/leech_csv.a"
+                "callbacks": ".libs/module.so"
             },
             "destination": {
                 "locator": "psql -d cfdb -U root",
-                "callbacks": "/var/lib/leech/leech_psql.a"
+                "callbacks": ".libs/module.so"
             }
         },
         "LSD": {
@@ -30,11 +30,11 @@
             "subsidiary_fields": [ "address", "interval", "lastseen" ],
             "source": {
                 "locator": "./leech/classes.in.csv",
-                "callbacks": "/var/lib/leech/leech_csv.a"
+                "callbacks": ".libs/module.so"
             },
             "destination": {
                 "locator": "psql -d cfdb -U root",
-                "callbacks": "/var/lib/leech/leech_psql.a"
+                "callbacks": ".libs/module.so"
             }
         },
         "SDI": {
@@ -42,11 +42,11 @@
             "subsidiary_fields": [ ],
             "source": {
                 "locator": "./leech/classes.in.csv",
-                "callbacks": "/var/lib/leech/leech_csv.a"
+                "callbacks": ".libs/module.so"
             },
             "destination": {
                 "locator": "psql -d cfdb -U root",
-                "callbacks": "/var/lib/leech/leech_psql.a"
+                "callbacks": ".libs/module.so"
             }
         },
         "SPD": {
@@ -54,11 +54,11 @@
             "subsidiary_fields": [ "status" ],
             "source": {
                 "locator": "./leech/classes.in.csv",
-                "callbacks": "/var/lib/leech/leech_csv.a"
+                "callbacks": ".libs/module.so"
             },
             "destination": {
                 "locator": "psql -d cfdb -U root",
-                "callbacks": "/var/lib/leech/leech_psql.a"
+                "callbacks": ".libs/module.so"
             }
         },
         "ELD": {
@@ -80,11 +80,11 @@
             ],
             "source": {
                 "locator": "./leech/classes.in.csv",
-                "callbacks": "/var/lib/leech/leech_csv.a"
+                "callbacks": ".libs/module.so"
             },
             "destination": {
                 "locator": "psql -d cfdb -U root",
-                "callbacks": "/var/lib/leech/leech_psql.a"
+                "callbacks": ".libs/module.so"
             }
         }
     }
