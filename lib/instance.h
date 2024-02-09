@@ -3,10 +3,23 @@
 
 #include "json.h"
 #include "leech.h"
+#include "table.h"
 
-typedef struct LCH_InstanceNew LCH_InstanceNew;
+typedef struct LCH_Instance LCH_Instance;
 
-LCH_InstanceNew *LCH_InstanceLoad(const char *work_dir);
+/**
+ * @brief Load Leech instance from configuration file.
+ * @param work_dir Path to work directory.
+ * @return Handle to instance.
+ * @note Leech will look for leech.json within the work directory. The handle
+ *       must be destroyed by a call to LCH_InstanceDestroy().
+ */
+LCH_Instance *LCH_InstanceLoad(const char *work_dir);
+
+/**
+ * @brief Destroy handle to Leech instance.
+ */
+void LCH_InstanceDestroy(void *instance);
 
 /**
  * @brief Get table definition of a specific table
@@ -14,8 +27,8 @@ LCH_InstanceNew *LCH_InstanceLoad(const char *work_dir);
  * @param table_id unique table identifier
  * @return table definition
  */
-const LCH_TableDefinition *LCH_InstanceGetTable(const LCH_Instance *instance,
-                                                const char *table_id);
+const LCH_TableInfo *LCH_InstanceGetTable(const LCH_Instance *instance,
+                                          const char *table_id);
 
 /**
  * @brief Get a list of table definitions

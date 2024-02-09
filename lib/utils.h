@@ -103,18 +103,45 @@ char *LCH_StringDuplicate(const char *str);
 char *LCH_StringFormat(const char *format, ...);
 
 /**
- * @brief Destroy string array.
- * @param array Array to destroy.
- * @note Array must be NULL-terminated or else behavior is undefined.
+ * @brief Destroy NULL-terminated string array.
+ * @param array One dimentional array of strings.
  */
 void LCH_StringArrayDestroy(void *array);
 
 /**
- * @brief Destroy string table.
- * @param table Table to destroy.
- * @note Both the table and its records must be NULL-terminated, otherwise
- *       behavior is undefined.
+ * @brief Destroy NULL-terminated string table.
+ * @param table Two dimentional array of strings.
  */
-void LCH_StringTableDestroy(void *table);
+void LCH_StringArrayTableDestroy(void *table);
+
+/**
+ * @brief Create a NULL-terminated string array from list.
+ * @param list One dimentional list of strings.
+ * @return One dimentional array of strings.
+ */
+char **LCH_StringListToStringArray(const LCH_List *list);
+
+/**
+ * @brief Create a NULL-terminated string table from list.
+ * @param list Two dimentional list of strings.
+ * @return Two dimentional array of strings.
+ */
+char ***LCH_StringListTableToStringArrayTable(const LCH_List *list);
+
+/**
+ * @brief Create a list from NULL-terminated string array.
+ * @param str_array One dimentional array of strings.
+ * @return One dimentional list of strings.
+ */
+LCH_List *LCH_StringArrayToStringList(char **str_array);
+
+/**
+ * @brief Create a list from NULL-terminated string table.
+ * @param str_array Two dimentional array of strings.
+ * @return Two dimentional list of strings.
+ */
+LCH_List *LCH_StringArrayTableToStringListTable(char ***str_table);
+
+bool LCH_CreateParentDirectories(const char *filename);
 
 #endif  // _LEECH_UTILS

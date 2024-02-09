@@ -8,8 +8,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../lib/leech_csv.h"
-#include "../lib/leech_psql.h"
 #include "commit.h"
 #include "common.h"
 #include "diff.h"

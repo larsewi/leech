@@ -20,24 +20,21 @@ typedef bool (*LCH_UpdateCallbackFn)(void *, const char *, const char *const *,
 void LCH_TableInfoDestroy(void *info);
 
 LCH_TableInfo *LCH_TableInfoLoad(const char *identifer,
-                                 const LCH_Json *definition);
+                                 const LCH_Json *table_info);
 
-const char *LCH_TableDefinitionGetIdentifier(
-    const LCH_TableDefinition *definition);
+const char *LCH_TableInfoGetIdentifier(const LCH_TableInfo *table_info);
 
-const char *LCH_TableDefinitionGetPrimaryFields(
-    const LCH_TableDefinition *defintion);
+const LCH_List *LCH_TableInfoGetPrimaryFields(const LCH_TableInfo *table_info);
 
-const char *LCH_TableDefinitionGetSubsidiaryFields(
-    const LCH_TableDefinition *definition);
+const LCH_List *LCH_TableInfoGetSubsidiaryFields(
+    const LCH_TableInfo *table_info);
 
-LCH_Json *LCH_TableDefinitionLoadNewState(
-    const LCH_TableDefinition *definition);
+LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *table_info);
 
-LCH_Json *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *defintion,
-                                          const char *work_dir);
+LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,
+                                    const char *work_dir);
 
-bool LCH_TableStoreNewState(const LCH_TableDefinition *definition,
+bool LCH_TableStoreNewState(const LCH_TableInfo *table_info,
                             const char *work_dir, const LCH_Json *new_state);
 
 #endif  // _LEECH_TABLE_H

@@ -16,7 +16,6 @@ unit_test_SOURCES = \
     check_delta.c \
     check_dict.c \
     check_head.c \
-    check_leech_csv.c \
     check_list.c \
     check_table.c \
     check_utils.c \
@@ -27,6 +26,4 @@ unit_test_CFLAGS = \
 
 unit_test_LDADD = \
     @CHECK_LIBS@ \
-    $(top_builddir)/lib/libleech.la \
-    $(top_builddir)/lib/libleech_csv.la \
-    $(top_builddir)/lib/libleech_psql.la
+    $(top_builddir)/lib/libleech.la

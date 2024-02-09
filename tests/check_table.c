@@ -3,7 +3,6 @@
 #include "../lib/definitions.h"
 #include "../lib/json.h"
 #include "../lib/leech.h"
-#include "../lib/leech_csv.h"
 #include "../lib/table.c"
 
 START_TEST(test_LCH_TableInfoLoad) {
@@ -28,7 +27,7 @@ START_TEST(test_LCH_TableInfoLoad) {
   ck_assert_str_eq(table[0][0], "Hello CFEngine");
   ck_assert_ptr_null(table[0][1]);
   ck_assert_ptr_null(table[1]);
-  LCH_StringTableDestroy(table);
+  LCH_StringArrayTableDestroy(table);
 
   const char *actual =
       (char *)info->begin_tx_callback(info->destination_locator);

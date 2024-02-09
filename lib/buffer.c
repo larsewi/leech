@@ -13,6 +13,7 @@
 
 #include "definitions.h"
 #include "leech.h"
+#include "utils.h"
 
 #define INITIAL_CAPACITY 1028
 
@@ -279,6 +280,12 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
   assert(buffer != NULL);
   assert(filename != NULL);
 
+  if (!LCH_CreateParentDirectories(filename)) {
+    LCH_LOG_ERROR("Failed to create parent directories for file '%s'",
+                  filename);
+    return false;
+  }
+
   const int fd = open(filename, O_WRONLY);
   if (fd == -1) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", filename,
@@ -336,7 +343,7 @@ bool LCH_BufferReadFile(LCH_Buffer *const buffer, const char *const filename) {
 
   close(fd);
   buffer->buffer[buffer->length] = '\0';
-  LCH_LOG_DEBUG("Read %zu bytes from file '%s'", n_read, filename);
+  LCH_LOG_DEBUG("Read %zu bytes from file '%s'", buffer->length, filename);
 
   return true;
 }

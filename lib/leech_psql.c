@@ -1,15 +1,73 @@
-#include "leech_psql.h"
+#include <stdbool.h>
+#include <stdlib.h>
 
-#include <assert.h>
+#include "definitions.h"
 
-LCH_List *LCH_TableReadCallbackPSQL(const char *const locator) {
-  assert(locator != NULL);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * TODO: Implement load_callback.
+ */
+char ***load_callback(void *locator) {
+  UNUSED(locator);
   return NULL;
 }
 
-bool LCH_TableWriteCallbackPSQL(const char *const locator,
-                                const LCH_List *const table) {
-  assert(locator != NULL);
-  assert(table != NULL);
+/**
+ * TODO: Implement begin_tx_callback.
+ */
+void *begin_tx_callback(void *locator) {
+  UNUSED(locator);
+  return NULL;
+}
+
+/**
+ * TODO: Implement end_tx_callback.
+ */
+bool end_tx_callback(void *conn, int err) {
+  UNUSED(conn);
+  UNUSED(err);
   return false;
 }
+
+/**
+ * TODO: Implement insert_callback.
+ */
+bool insert_callback(void *conn, const char *tid, const char *const *cols,
+                     const char *const *vals) {
+  UNUSED(conn);
+  UNUSED(tid);
+  UNUSED(cols);
+  UNUSED(vals);
+  return false;
+}
+
+/**
+ * TODO: Implement delete_callback.
+ */
+bool delete_callback(void *conn, const char *tid, const char *const *cols,
+                     const char *const *vals) {
+  UNUSED(conn);
+  UNUSED(tid);
+  UNUSED(cols);
+  UNUSED(vals);
+  return false;
+}
+
+/**
+ * TODO: Implement update_callback.
+ */
+bool update_callback(void *conn, const char *tid, const char **cols,
+                     const char **vals) {
+  UNUSED(conn);
+  UNUSED(tid);
+  UNUSED(cols);
+  UNUSED(vals);
+  return false;
+}
+
+#ifdef __cplusplus
+}
+#endif

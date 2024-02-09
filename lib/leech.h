@@ -145,56 +145,11 @@ void *LCH_DictGet(const LCH_Dict *dict, const char *key);
  */
 void LCH_DictDestroy(void *dict);
 
-/****************************************************************************/
-/*  Table                                                                   */
-/****************************************************************************/
+bool LCH_Commit(const char *work_dir);
 
-typedef struct LCH_TableDefinition LCH_TableDefinition;
+char *LCH_Diff(const char *work_dir, const char *block_id, size_t *buf_len);
 
-typedef struct LCH_TableDefinitionCreateInfo {
-  const char *identifier;
-  const char *primary_fields;
-  const char *subsidiary_fields;
-  const void *read_locator;
-  const void *write_locator;
-  LCH_List *(*read_callback)(const void *);
-  bool (*write_callback)(const void *, const LCH_List *);
-  bool (*insert_callback)(const void *, const char *, const char *,
-                          const LCH_Dict *);
-  bool (*delete_callback)(const void *, const char *, const char *,
-                          const LCH_Dict *);
-  bool (*update_callback)(const void *, const char *, const char *,
-                          const LCH_Dict *);
-} LCH_TableDefinitionCreateInfo;
-
-LCH_TableDefinition *LCH_TableDefinitionCreate(
-    const LCH_TableDefinitionCreateInfo *createInfo);
-
-void LCH_TableDefinitionDestroy(void *table_def);
-
-/****************************************************************************/
-/*  Instance                                                                */
-/****************************************************************************/
-
-typedef struct LCH_Instance LCH_Instance;
-
-typedef struct LCH_InstanceCreateInfo {
-  const char *work_dir;
-} LCH_InstanceCreateInfo;
-
-LCH_Instance *LCH_InstanceCreate(const LCH_InstanceCreateInfo *createInfo);
-
-bool LCH_InstanceAddTableDefinition(LCH_Instance *instance,
-                                    LCH_TableDefinition *table_Def);
-
-bool LCH_Commit(const LCH_Instance *instance);
-
-char *LCH_Diff(const LCH_Instance *instance, const char *block_id,
-               size_t *buf_len);
-
-bool LCH_Patch(const LCH_Instance *instance, const char *patch,
-               const char *uid_field, const char *uid_value, size_t size);
-
-void LCH_InstanceDestroy(void *instance);
+bool LCH_Patch(const char *work_dir, const char *patch, const char *uid_field,
+               const char *uid_value, size_t size);
 
 #endif  // _LEECH_LEECH_H

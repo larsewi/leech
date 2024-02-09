@@ -13,7 +13,6 @@ Suite *JSONSuite(void);
 Suite *DeltaSuite(void);
 Suite *DictSuite(void);
 Suite *HeadSuite(void);
-Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
 Suite *TableSuite(void);
 Suite *UtilsSuite(void);
@@ -30,7 +29,6 @@ int main(int argc, char *argv[]) {
   // srunner_add_suite(sr, BlockSuite());
   srunner_add_suite(sr, CSVSuite());
   srunner_add_suite(sr, JSONSuite());
-  srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, TableSuite());
   srunner_add_suite(sr, InstanceSuite());
 

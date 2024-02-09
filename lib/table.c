@@ -80,7 +80,6 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     LCH_TableInfoDestroy(info);
     return NULL;
   }
-
   info->primary_fields = LCH_ListCreate();
   size_t length = LCH_JsonArrayLength(array);
   for (size_t i = 0; i < length; i++) {
@@ -97,13 +96,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       return NULL;
     }
   }
+  LCH_ListSort(info->primary_fields,
+               (int (*)(const void *, const void *))strcmp);
 
   array = LCH_JsonObjectGetArray(definition, "subsidiary_fields");
   if (array == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
-
   info->subsidiary_fields = LCH_ListCreate();
   length = LCH_JsonArrayLength(array);
   for (size_t i = 0; i < length; i++) {
@@ -120,6 +120,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       return NULL;
     }
   }
+  LCH_ListSort(info->subsidiary_fields,
+               (int (*)(const void *, const void *))strcmp);
 
   LCH_LOG_VERBOSE("Loading callback functions");
 
@@ -155,14 +157,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_LOG_DEBUG(
       "Obtaining address of symbol 'load_callback' from dynamic shared library "
-      "%s",
+      "'%s'",
       source_dlib_path);
   info->load_callback =
       (LCH_LoadTableCallbackFn)dlsym(info->source_dlib_handle, "load_callback");
   if (info->load_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'load_callback' in dynamic shared "
-        "library %s",
+        "library '%s'",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -196,7 +198,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   if (info->source_dlib_handle == NULL) {
     LCH_LOG_ERROR(
         "Failed to load dynamic shared library '%s' for destination callbacks: "
-        "%s",
+        "'%s",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -204,14 +206,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_LOG_DEBUG(
       "Obtaining address of symbol 'begin_tx_callback' from dynamic shared "
-      "library %s",
+      "library '%s'",
       source_dlib_path);
   info->begin_tx_callback = (LCH_BeginTxCallbackFn)dlsym(
       info->source_dlib_handle, "begin_tx_callback");
   if (info->begin_tx_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'begin_tx_callback' in dynamic "
-        "shared library %s: %s",
+        "shared library '%s': %s",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -219,14 +221,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_LOG_DEBUG(
       "Obtaining address of symbol 'end_tx_callback' from dynamic shared "
-      "library %s",
+      "library '%s'",
       source_dlib_path);
   info->end_tx_callback =
       (LCH_EndTxCallbackFn)dlsym(info->source_dlib_handle, "end_tx_callback");
   if (info->end_tx_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'end_tx_callback' in dynamic "
-        "shared library %s: %s",
+        "shared library '%s': %s",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -234,14 +236,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_LOG_DEBUG(
       "Obtaining address of symbol 'insert_callback' from dynamic shared "
-      "library %s",
+      "library '%s'",
       source_dlib_path);
   info->insert_callback =
       (LCH_InsertCallbackFn)dlsym(info->source_dlib_handle, "insert_callback");
   if (info->insert_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'insert_callback' in dynamic "
-        "shared library %s: %s",
+        "shared library '%s': %s",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -249,14 +251,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_LOG_DEBUG(
       "Obtaining address of symbol 'delete_callback' from dynamic shared "
-      "library %s",
+      "library '%s'",
       source_dlib_path);
   info->delete_callback =
       (LCH_DeleteCallbackFn)dlsym(info->source_dlib_handle, "delete_callback");
   if (info->delete_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'delete_callback' in dynamic "
-        "shared library %s: %s",
+        "shared library '%s': %s",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -264,14 +266,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_LOG_DEBUG(
       "Obtaining address of symbol 'update_callback' from dynamic shared "
-      "library %s",
+      "library '%s'",
       source_dlib_path);
   info->update_callback =
       (LCH_UpdateCallbackFn)dlsym(info->source_dlib_handle, "update_callback");
   if (info->update_callback == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol 'update_callback' in dynamic "
-        "shared library %s: %s",
+        "shared library '%s': %s",
         source_dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -280,117 +282,54 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   return info;
 }
 
-typedef struct LCH_TableDefinition {
-  const char *identifier;
-  const char *primary_fields;
-  const char *subsidiary_fields;
-  const void *read_locator;
-  const void *write_locator;
-  LCH_List *(*read_callback)(const void *);
-  bool (*write_callback)(const void *, const LCH_List *);
-  bool (*insert_callback)(const void *, const char *, const char *,
-                          const LCH_Dict *);
-  bool (*delete_callback)(const void *, const char *, const char *,
-                          const LCH_Dict *);
-  bool (*update_callback)(const void *, const char *, const char *,
-                          const LCH_Dict *);
-} LCH_TableDefinition;
-
-const char *LCH_TableDefinitionGetIdentifier(
-    const LCH_TableDefinition *const self) {
-  assert(self != NULL);
-  return self->identifier;
+const char *LCH_TableInfoGetIdentifier(const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->identifier;
 }
 
-const char *LCH_TableDefinitionGetPrimaryFields(
-    const LCH_TableDefinition *const self) {
-  assert(self != NULL);
-  return self->primary_fields;
+const LCH_List *LCH_TableInfoGetPrimaryFields(
+    const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->primary_fields;
 }
 
-const char *LCH_TableDefinitionGetSubsidiaryFields(
-    const LCH_TableDefinition *const self) {
-  assert(self != NULL);
-  return self->subsidiary_fields;
+const LCH_List *LCH_TableInfoGetSubsidiaryFields(
+    const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->subsidiary_fields;
 }
 
-LCH_TableDefinition *LCH_TableDefinitionCreate(
-    const LCH_TableDefinitionCreateInfo *const create_info) {
-  assert(create_info != NULL);
-  assert(create_info->identifier != NULL);
-  assert(create_info->primary_fields != NULL);
-  assert(create_info->read_locator != NULL);
-  assert(create_info->write_locator != NULL);
-  assert(create_info->read_callback != NULL);
-  assert(create_info->write_callback != NULL);
-  assert(create_info->insert_callback != NULL);
-  assert(create_info->delete_callback != NULL);
-  assert(create_info->update_callback != NULL);
+LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
 
-  LCH_TableDefinition *definition =
-      (LCH_TableDefinition *)calloc(1, sizeof(LCH_TableDefinition));
-  if (definition == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+  char ***const str_table =
+      table_info->load_callback(table_info->source_locator);
+  if (str_table == NULL) {
     return NULL;
   }
 
-  definition->identifier = create_info->identifier;
-  definition->primary_fields = create_info->primary_fields;
-  definition->subsidiary_fields = create_info->subsidiary_fields;
-  definition->read_locator = create_info->read_locator;
-  definition->write_locator = create_info->write_locator;
-  definition->read_callback = create_info->read_callback;
-  definition->write_callback = create_info->write_callback;
-  definition->insert_callback = create_info->insert_callback;
-  definition->delete_callback = create_info->delete_callback;
-  definition->update_callback = create_info->update_callback;
-
-  return definition;
-}
-
-LCH_Json *LCH_TableDefinitionLoadNewState(
-    const LCH_TableDefinition *const self) {
-  LCH_List *const table = self->read_callback(self->read_locator);
-  if (table == NULL) {
+  LCH_List *const list_table = LCH_StringArrayTableToStringListTable(str_table);
+  LCH_StringArrayTableDestroy(str_table);
+  if (list_table == NULL) {
     return NULL;
   }
 
-  LCH_List *const primary_fields = LCH_CSVParseRecord(self->primary_fields);
-  if (primary_fields == NULL) {
-    LCH_ListDestroy(table);
-    return NULL;
-  }
-  LCH_ListSort(primary_fields, (int (*)(const void *, const void *))strcmp);
+  LCH_Json *const state = LCH_TableToJsonObject(
+      list_table, table_info->primary_fields, table_info->subsidiary_fields);
 
-  LCH_List *const subsidiary_fields =
-      (self->subsidiary_fields != NULL)
-          ? LCH_CSVParseRecord(self->subsidiary_fields)
-          : LCH_ListCreate();
-  if (subsidiary_fields == NULL) {
-    LCH_ListDestroy(primary_fields);
-    LCH_ListDestroy(table);
-    return NULL;
-  }
-  LCH_ListSort(subsidiary_fields, (int (*)(const void *, const void *))strcmp);
-
-  LCH_Json *const state =
-      LCH_TableToJsonObject(table, primary_fields, subsidiary_fields);
-  LCH_ListDestroy(subsidiary_fields);
-  LCH_ListDestroy(primary_fields);
-  LCH_ListDestroy(table);
-
+  LCH_ListDestroy(list_table);
   return state;
 }
 
-LCH_Json *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *const self,
-                                          const char *const work_dir) {
-  assert(self != NULL);
+LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *const table_info,
+                                    const char *const work_dir) {
+  assert(table_info != NULL);
   assert(work_dir != NULL);
-  assert(self->identifier != NULL);
+  assert(table_info->identifier != NULL);
 
   char path[PATH_MAX];
   if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
-                    self->identifier)) {
+                    table_info->identifier)) {
     return NULL;
   }
 
@@ -408,7 +347,7 @@ LCH_Json *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *const self,
   return state;
 }
 
-bool LCH_TableStoreNewState(const LCH_TableDefinition *const self,
+bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
                             const char *const work_dir,
                             const LCH_Json *const state) {
   char path[PATH_MAX];

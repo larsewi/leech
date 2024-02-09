@@ -4,6 +4,7 @@
 
 #include "definitions.h"
 #include "leech.h"
+#include "utils.h"
 
 #define INITIAL_CAPACITY 32
 

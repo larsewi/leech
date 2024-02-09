@@ -26,6 +26,7 @@ class Event:
         self.timestamp = datetime.fromtimestamp(int(self.ts))
         self.workdir = Path("tmp", self.id)
         self.workdir.mkdir(parents=True, exist_ok=True)
+        shutil.copy("leech.json", self.workdir)
         self.patchfile = Path("tmp", self.id, f"{self.ts}.patch")
 
     def change_state(self):

@@ -1,15 +1,24 @@
 AM_CFLAGS = -Wall -Wextra -Werror
 AM_CPPFLAGS = -include config.h
 
-include_HEADERS = \
-        $(top_builddir)/lib/leech.h \
-        $(top_builddir)/lib/leech_csv.h \
-        $(top_builddir)/lib/leech_psql.h
+include_HEADERS = $(top_builddir)/lib/leech.h
 
-lib_LTLIBRARIES = \
-        libleech.la \
-        libleech_csv.la \
-        libleech_psql.la
+lib_LTLIBRARIES = libleech.la
+
+pkglib_LTLIBRARIES = \
+        leech_csv.la \
+        leech_psql.la
+
+leech_csv_la_SOURCES = leech_csv.c \
+        list.h list.c \
+        csv.h csv.c \
+        utils.h utils.c
+leech_csv_la_LDFLAGS = \
+        -avoid-version -module -shared
+
+leech_psql_la_SOURCES = leech_psql.c
+leech_psql_la_LDFLAGS = \
+        -avoid-version -module -shared
 
 libleech_la_SOURCES = leech.c \
         block.h block.c \
@@ -28,14 +37,3 @@ libleech_la_SOURCES = leech.c \
 
 libleech_la_LDFLAGS = \
         -ldl
-
-libleech_csv_la_SOURCES = \
-        buffer.c \
-        leech_csv.c \
-        debug_messenger.c \
-        list.c
-
-libleech_psql_la_SOURCES = \
-        leech_psql.c \
-        debug_messenger.c \
-        list.c

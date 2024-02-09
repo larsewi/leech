@@ -462,12 +462,10 @@ bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
     return false;
   }
 
-  char *const csv = LCH_BufferToString(buffer);
-  if (csv == NULL) {
+  if (!LCH_BufferWriteFile(buffer, path)) {
     return false;
   }
 
-  const bool success = LCH_FileWrite(path, csv);
-  free(csv);
-  return success;
+  LCH_BufferDestroy(buffer);
+  return true;
 }

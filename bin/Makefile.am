@@ -10,7 +10,4 @@ leech_SOURCES = leech.c \
     rebase.c rebase.h \
     patch.c patch.h
 
-leech_LDADD = \
-    $(top_builddir)/lib/libleech.la \
-    $(top_builddir)/lib/libleech_csv.la \
-    $(top_builddir)/lib/libleech_psql.la
+leech_LDADD = $(top_builddir)/lib/libleech.la

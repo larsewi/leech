@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <libgen.h>
 #include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -28,12 +29,13 @@ char *LCH_StringDuplicate(const char *const str) {
 }
 
 void *LCH_Allocate(const size_t size) {
-  void *const ptr = malloc(size);
+  void *ptr = malloc(size);
   if (ptr == NULL) {
     LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
-  return memset(ptr, 0, size);
+  ptr = memset(ptr, 0, size);
+  return ptr;
 }
 
 bool LCH_StringEqual(const char *const str1, const char *const str2) {
@@ -224,6 +226,11 @@ char *LCH_FileRead(const char *const path, size_t *const length) {
 /******************************************************************************/
 
 bool LCH_FileWrite(const char *const path, const char *const str) {
+  if (!LCH_CreateParentDirectories(path)) {
+    LCH_LOG_ERROR("Failed to create parent directories for file '%s'", path);
+    return false;
+  }
+
   FILE *file = fopen(path, "w");
   if (file == NULL) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
@@ -959,10 +966,143 @@ void LCH_StringArrayDestroy(void *const _array) {
   free(array);
 }
 
-void LCH_StringTableDestroy(void *const _table) {
+void LCH_StringArrayTableDestroy(void *const _table) {
   char ***const table = (char ***)_table;
   for (size_t i = 0; table[i] != NULL; i++) {
     LCH_StringArrayDestroy(table[i]);
   }
   free(table);
+}
+
+char **LCH_StringListToStringArray(const LCH_List *const list) {
+  assert(list != NULL);
+
+  const size_t length = LCH_ListLength(list);
+  char **const str_array = LCH_Allocate(
+      sizeof(char *) * (length + 1 /* Terminating NULL-pointer */));
+  if (str_array == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < length; i++) {
+    const char *const str = (char *)LCH_ListGet(list, i);
+    assert(str != NULL);
+
+    str_array[i] = LCH_StringDuplicate(str);
+    if (str_array[i] == NULL) {
+      LCH_StringArrayDestroy(str_array);
+      return NULL;
+    }
+  }
+
+  return str_array;
+}
+
+char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
+  assert(table != NULL);
+
+  const size_t length = LCH_ListLength(table);
+  char ***const str_table = LCH_Allocate(
+      sizeof(char **) * (length + 1) /* Terminating NULL-pointer */);
+  if (str_table == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < length; i++) {
+    LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
+    assert(record != NULL);
+
+    str_table[i] = LCH_StringListToStringArray(record);
+    if (str_table == NULL) {
+      LCH_StringArrayTableDestroy(str_table);
+      return NULL;
+    }
+  }
+
+  return str_table;
+}
+
+LCH_List *LCH_StringArrayToStringList(char **const str_array) {
+  assert(str_array != NULL);
+
+  LCH_List *const list = LCH_ListCreate();
+  if (list == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; str_array[i] != NULL; i++) {
+    char *const str = LCH_StringDuplicate(str_array[i]);
+    if (!LCH_ListAppend(list, str, free)) {
+      LCH_ListDestroy(list);
+      return NULL;
+    }
+  }
+
+  return list;
+}
+
+LCH_List *LCH_StringArrayTableToStringListTable(char ***const str_table) {
+  assert(str_table != NULL);
+
+  LCH_List *const table = LCH_ListCreate();
+  if (table == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; str_table[i] != NULL; i++) {
+    char **const str_array = str_table[i];
+    LCH_List *const record = LCH_StringArrayToStringList(str_array);
+    if (record == NULL) {
+      LCH_ListDestroy(table);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
+      LCH_ListDestroy(table);
+      return NULL;
+    }
+  }
+
+  return table;
+}
+
+bool LCH_CreateParentDirectories(const char *const filename) {
+  assert(filename != NULL);
+
+  char fcopy[strlen(filename) + 1];
+  strcpy(fcopy, filename);
+  char *parent = dirname(fcopy);
+
+  LCH_List *const dirs = LCH_ListCreate();
+  struct stat sb;
+
+  while (stat(parent, &sb) == -1) {
+    char *const dir = LCH_StringDuplicate(parent);
+    if (dir == NULL) {
+      LCH_ListDestroy(dirs);
+      return false;
+    }
+
+    if (!LCH_ListAppend(dirs, dir, free)) {
+      free(dir);
+      LCH_ListDestroy(dirs);
+      return false;
+    }
+
+    parent = dirname(parent);
+  }
+
+  const size_t num_dirs = LCH_ListLength(dirs);
+  for (size_t i = num_dirs; i > 0; i--) {
+    char *const dir = LCH_ListGet(dirs, i - 1);
+    if (mkdir(dir, (mode_t)0700) == -1) {
+      LCH_LOG_ERROR("Failed to create parent directory '%s' for file '%s': %s",
+                    dir, filename, strerror(errno));
+      LCH_ListDestroy(dirs);
+      return false;
+    }
+    LCH_LOG_VERBOSE("Created directory '%s' with mode %o", dir, (mode_t)0700);
+  }
+  LCH_ListDestroy(dirs);
+  return true;
 }

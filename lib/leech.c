@@ -13,14 +13,11 @@
 #include "table.h"
 #include "utils.h"
 
-bool LCH_Commit(const LCH_Instance *const instance) {
-  assert(instance != NULL);
-
+static bool Commit(const LCH_Instance *const instance) {
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
   size_t n_tables = LCH_ListLength(table_defs);
-
   size_t tot_inserts = 0, tot_deletes = 0, tot_updates = 0;
-  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
   LCH_Json *const deltas = LCH_JsonArrayCreate();
   if (deltas == NULL) {
@@ -28,13 +25,13 @@ bool LCH_Commit(const LCH_Instance *const instance) {
   }
 
   for (size_t i = 0; i < n_tables; i++) {
-    const LCH_TableDefinition *const table_def =
-        (LCH_TableDefinition *)LCH_ListGet(table_defs, i);
-    const char *const table_id = LCH_TableDefinitionGetIdentifier(table_def);
+    const LCH_TableInfo *const table_def =
+        (LCH_TableInfo *)LCH_ListGet(table_defs, i);
+    const char *const table_id = LCH_TableInfoGetIdentifier(table_def);
 
     /************************************************************************/
 
-    LCH_Json *const new_state = LCH_TableDefinitionLoadNewState(table_def);
+    LCH_Json *const new_state = LCH_TableInfoLoadNewState(table_def);
     if (new_state == NULL) {
       LCH_LOG_ERROR("Failed to load new state for table '%s'.", table_id);
       LCH_JsonDestroy(deltas);
@@ -43,8 +40,7 @@ bool LCH_Commit(const LCH_Instance *const instance) {
     LCH_LOG_VERBOSE("Loaded new state for table '%s' containing %zu rows.",
                     table_id, LCH_JsonObjectLength(new_state));
 
-    LCH_Json *const old_state =
-        LCH_TableDefinitionLoadOldState(table_def, work_dir);
+    LCH_Json *const old_state = LCH_TableInfoLoadOldState(table_def, work_dir);
     if (old_state == NULL) {
       LCH_LOG_ERROR("Failed to load old state for table '%s'.", table_id);
       LCH_JsonDestroy(new_state);
@@ -124,27 +120,79 @@ bool LCH_Commit(const LCH_Instance *const instance) {
   return true;
 }
 
-char *LCH_Diff(const LCH_Instance *const instance, const char *const block_id,
-               size_t *const buf_len) {
-  assert(instance != NULL);
-  assert(block_id != NULL);
-  (void)instance;
-  (void)block_id;
-  (void)buf_len;
+bool LCH_Commit(const char *const work_dir) {
+  assert(work_dir != NULL);
 
-  return LCH_StringDuplicate("placeholder");
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to load instance from configuration file");
+    return false;
+  }
+
+  const bool success = Commit(instance);
+  if (!success) {
+    LCH_LOG_ERROR("Failed to commit");
+  }
+  LCH_InstanceDestroy(instance);
+  return success;
 }
 
-bool LCH_Patch(const LCH_Instance *const instance, const char *const uid_field,
-               const char *const uid_value, const char *const patch,
-               const size_t size) {
-  assert(instance != NULL);
-  assert(patch != NULL);
+static char *Diff(const LCH_Instance *const instance,
+                  const char *const block_id, size_t *const buf_len) {
   (void)instance;
-  (void)uid_field;
-  (void)uid_value;
+  (void)block_id;
+  char *const buffer = LCH_StringDuplicate("placeholder");
+  *buf_len = strlen(buffer);
+  return buffer;
+}
+
+char *LCH_Diff(const char *const work_dir, const char *const block_id,
+               size_t *const buf_len) {
+  assert(work_dir != NULL);
+  assert(block_id != NULL);
+
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to load instance from configuration file");
+    return false;
+  }
+
+  char *const buffer = Diff(instance, block_id, buf_len);
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to generate diff");
+  }
+  return buffer;
+}
+
+static bool Patch(const LCH_Instance *const instance, const char *const field,
+                  const char *const value, const char *const patch,
+                  const size_t size) {
+  (void)instance;
+  (void)field;
+  (void)value;
   (void)patch;
   (void)size;
 
+  return true;
+}
+
+bool LCH_Patch(const char *const work_dir, const char *const field,
+               const char *const value, const char *const patch,
+               const size_t size) {
+  assert(work_dir != NULL);
+  assert(field != NULL);
+  assert(value != NULL);
+  assert(patch != NULL);
+
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to load instance from configuration file");
+    return false;
+  }
+
+  const bool success = Patch(instance, field, value, patch, size);
+  if (!success) {
+    LCH_LOG_ERROR("Failed to apply patch");
+  }
   return true;
 }
