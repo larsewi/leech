@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <openssl/sha.h>
 #include <string.h>
 
 #include "block.h"

@@ -1,6 +1,8 @@
 #ifndef _LEECH_UTILS
 #define _LEECH_UTILS
 
+#include <stdio.h>
+
 #include "buffer.h"
 #include "dict.h"
 #include "json.h"

@@ -1,17 +1,16 @@
 #include "utils.h"
 
+#include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
 #include <libgen.h>
 #include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 #include "buffer.h"
 #include "csv.h"
 #include "definitions.h"
-#include "leech.h"
 #include "list.h"
 #include "sha1.h"
 
@@ -177,7 +176,7 @@ bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
         truncated = true;
         break;
       }
-      path[used++] = PATH_SEP;
+      path[used++] = LCH_PATH_SEP;
     }
 
     char *const sub = va_arg(ap, char *);

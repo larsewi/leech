@@ -1,3 +1,4 @@
+#include <arpa/inet.h>
 #include <check.h>
 #include <stdio.h>
 

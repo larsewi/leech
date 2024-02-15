@@ -3,10 +3,8 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
-#include <memory.h>
 #include <string.h>
 
-#include "leech.h"
 #include "utils.h"
 
 struct LCH_Json {

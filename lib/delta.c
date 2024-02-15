@@ -1,16 +1,7 @@
 #include "delta.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
-#include <errno.h>
-#include <stdint.h>
-#include <string.h>
 
-#include "csv.h"
-#include "instance.h"
-#include "leech.h"
-#include "list.h"
-#include "table.h"
 #include "utils.h"
 
 #define VERSION_MAJOR 1

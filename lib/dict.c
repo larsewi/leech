@@ -4,8 +4,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include "definitions.h"
-
 #define INITIAL_CAPACITY 64
 #define LOAD_FACTOR 0.75f
 

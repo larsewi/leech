@@ -1,18 +1,14 @@
 #include "buffer.h"
 
+#include <arpa/inet.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
-#include "definitions.h"
-#include "leech.h"
 #include "utils.h"
 
 #define INITIAL_CAPACITY 1028

@@ -1,9 +1,11 @@
 #ifndef _LEECH_JSON_H
 #define _LEECH_JSON_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 
-#include "leech.h"
+#include "dict.h"
+#include "list.h"
 
 typedef struct LCH_Json LCH_Json;
 

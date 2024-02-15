@@ -3,6 +3,45 @@
 
 #include "leech.h"
 
+typedef struct LCH_List LCH_List;
+
+/**
+ * Create a list.
+ * The list is allocated on the heap and must be freed with `LCH_ListDestroy`.
+ * @return pointer to list.
+ */
+LCH_List *LCH_ListCreate(void);
+
+/**
+ * Get number of items in a list.
+ * @param[in] list pointer to list.
+ * @return length of list.
+ */
+size_t LCH_ListLength(const LCH_List *list);
+
+/**
+ * Get list item.
+ * @param[in] list pointer to list.
+ * @param[in] index index of item.
+ * @return data pointer.
+ */
+void *LCH_ListGet(const LCH_List *list, size_t index);
+
+/**
+ * Append value to a list.
+ * @param[in] list pointer to dict.
+ * @param[in] value data pointer.
+ * @param[in] destroy data destroy function.
+ * @return true if success.
+ */
+bool LCH_ListAppend(LCH_List *list, void *value, void (*destroy)(void *));
+
+/**
+ * Destroy list and contents.
+ * @param[in] list pointer to list.
+ */
+void LCH_ListDestroy(void *list);
+
 LCH_List *LCH_ListCreateWithCapacity(size_t capacity);
 
 /**

@@ -1,12 +1,7 @@
 #include <assert.h>
-#include <ctype.h>
 #include <errno.h>
-#include <math.h>
 #include <string.h>
 
-#include "buffer.h"
-#include "leech.h"
-#include "list.h"
 #include "utils.h"
 
 #define TEXTDATA(ch)                                                           \

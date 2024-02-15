@@ -2,9 +2,7 @@
 #define _LEECH_BLOCK_H
 
 #include <stdbool.h>
-#include <time.h>
 
-#include "buffer.h"
 #include "json.h"
 
 typedef LCH_Json LCH_Block;

@@ -1,8 +1,6 @@
 #ifndef _LEECH_DELTA_H
 #define _LEECH_DELTA_H
 
-#include "buffer.h"
-#include "dict.h"
 #include "json.h"
 
 typedef LCH_Json LCH_Delta;

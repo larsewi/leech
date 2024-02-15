@@ -42,7 +42,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   assert(work_dir != NULL);
 
   char *const path =
-      LCH_StringFormat("%s%c%s", work_dir, PATH_SEP, "leech.json");
+      LCH_StringFormat("%s%c%s", work_dir, LCH_PATH_SEP, "leech.json");
   if (path == NULL) {
     return NULL;
   }

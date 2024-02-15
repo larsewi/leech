@@ -1,7 +1,6 @@
 #ifndef _LEECH_BUFFER_H
 #define _LEECH_BUFFER_H
 
-#include <arpa/inet.h>
 #include <stdbool.h>
 #include <stdlib.h>
 

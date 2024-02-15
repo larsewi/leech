@@ -1,8 +1,6 @@
 #ifndef _LEECH_INSTANCE_H
 #define _LEECH_INSTANCE_H
 
-#include "json.h"
-#include "leech.h"
 #include "table.h"
 
 typedef struct LCH_Instance LCH_Instance;

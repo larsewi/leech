@@ -1,4 +1,5 @@
 #include <check.h>
+#include <stdio.h>
 
 #include "../lib/definitions.h"
 #include "../lib/dict.h"

@@ -1,22 +1,21 @@
 #include "block.h"
 
 #include <assert.h>
-#include <errno.h>
 #include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <time.h>
 
 #include "definitions.h"
 #include "head.h"
-#include "leech.h"
 #include "utils.h"
 
 void LCH_BlockDestroy(void *const block) { LCH_JsonDestroy(block); }
 
 LCH_Block *LCH_BlockCreate(const char *const parent_id,
                            LCH_Json *const payload) {
+  assert(parent_id != NULL);
+  assert(payload != NULL);
+
   LCH_Block *const block = LCH_JsonObjectCreate();
   if (block == NULL) {
     return NULL;

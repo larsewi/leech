@@ -1,12 +1,9 @@
 #include "head.h"
 
 #include <assert.h>
-#include <errno.h>
 #include <limits.h>
-#include <string.h>
 
 #include "definitions.h"
-#include "leech.h"
 #include "utils.h"
 
 char *LCH_HeadGet(const char *const work_dir) {

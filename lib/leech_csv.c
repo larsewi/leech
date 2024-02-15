@@ -27,7 +27,7 @@ char ***load_callback(void *locator) {
  * TODO: Implement begin_tx_callback.
  */
 void *begin_tx_callback(void *locator) {
-  UNUSED(locator);
+  LCH_UNUSED(locator);
   return NULL;
 }
 
@@ -35,8 +35,8 @@ void *begin_tx_callback(void *locator) {
  * TODO: Implement end_tx_callback.
  */
 bool end_tx_callback(void *conn, int err) {
-  UNUSED(conn);
-  UNUSED(err);
+  LCH_UNUSED(conn);
+  LCH_UNUSED(err);
   return false;
 }
 
@@ -45,10 +45,10 @@ bool end_tx_callback(void *conn, int err) {
  */
 bool insert_callback(void *conn, const char *tid, const char *const *cols,
                      const char *const *vals) {
-  UNUSED(conn);
-  UNUSED(tid);
-  UNUSED(cols);
-  UNUSED(vals);
+  LCH_UNUSED(conn);
+  LCH_UNUSED(tid);
+  LCH_UNUSED(cols);
+  LCH_UNUSED(vals);
   return false;
 }
 
@@ -57,10 +57,10 @@ bool insert_callback(void *conn, const char *tid, const char *const *cols,
  */
 bool delete_callback(void *conn, const char *tid, const char *const *cols,
                      const char *const *vals) {
-  UNUSED(conn);
-  UNUSED(tid);
-  UNUSED(cols);
-  UNUSED(vals);
+  LCH_UNUSED(conn);
+  LCH_UNUSED(tid);
+  LCH_UNUSED(cols);
+  LCH_UNUSED(vals);
   return false;
 }
 
@@ -69,10 +69,10 @@ bool delete_callback(void *conn, const char *tid, const char *const *cols,
  */
 bool update_callback(void *conn, const char *tid, const char **cols,
                      const char **vals) {
-  UNUSED(conn);
-  UNUSED(tid);
-  UNUSED(cols);
-  UNUSED(vals);
+  LCH_UNUSED(conn);
+  LCH_UNUSED(tid);
+  LCH_UNUSED(cols);
+  LCH_UNUSED(vals);
   return false;
 }
 

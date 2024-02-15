@@ -13,12 +13,12 @@
 #define LCH_MIN(a, b) ((a < b) ? a : b)
 #define LCH_MAX(a, b) ((a > b) ? a : b)
 
-#define UNUSED(x) (void)x
+#define LCH_UNUSED(x) (void)x
 
 #ifdef _WIN32
-#define PATH_SEP '\\'
+#define LCH_PATH_SEP '\\'
 #else  // _WIN32
-#define PATH_SEP '/'
+#define LCH_PATH_SEP '/'
 #endif  // _WIN32
 
 #endif  // _LEECH_DEFINITIONS_H

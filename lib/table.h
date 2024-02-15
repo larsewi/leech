@@ -1,9 +1,10 @@
 #ifndef _LEECH_TABLE_H
 #define _LEECH_TABLE_H
 
-#include "delta.h"
-#include "dict.h"
-#include "leech.h"
+#include <stdlib.h>
+
+#include "json.h"
+#include "list.h"
 
 typedef struct LCH_TableInfo LCH_TableInfo;
 
