@@ -15,7 +15,6 @@ START_TEST(test_LCH_BlockCreate) {
       "["
       "  {"
       "    \"type\": \"delta\","
-      "    \"version\": \"1.0.0\","
       "    \"inserts\": {"
       "      \"Lennon,John\":\"1940\""
       "    },"
@@ -37,9 +36,10 @@ START_TEST(test_LCH_BlockCreate) {
                LCH_JsonGetNumber(LCH_JsonObjectGet(block, "timestamp")));
 
   ck_assert(LCH_JsonObjectHasKey(block, "parent"));
-  ck_assert_str_eq(LCH_JsonGetString(LCH_JsonObjectGet(block, "parent")), head);
+  ck_assert_str_eq(LCH_JsonStringGetString(LCH_JsonObjectGet(block, "parent")),
+                   head);
   LCH_LOG_INFO("parent: %s",
-               LCH_JsonGetString(LCH_JsonObjectGet(block, "parent")));
+               LCH_JsonStringGetString(LCH_JsonObjectGet(block, "parent")));
 
   ck_assert(LCH_JsonObjectHasKey(block, "payload"));
 

@@ -48,7 +48,6 @@ START_TEST(test_LCH_Delta) {
 
   LCH_Json *expected = LCH_JsonParse(
       "{"
-      "  \"version\": \"1.0.0\","
       "  \"type\": \"delta\","
       "  \"id\": \"beatles\","
       "  \"inserts\": {"
@@ -68,7 +67,7 @@ START_TEST(test_LCH_Delta) {
   json = LCH_JsonCompose(expected);
   LCH_LOG_INFO("expected: '%s'", json);
   free(json);
-  ck_assert(LCH_JsonEqual(actual, expected));
+  ck_assert(LCH_JsonIsEqual(actual, expected));
 
   LCH_JsonDestroy(actual);
   LCH_JsonDestroy(expected);

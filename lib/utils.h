@@ -135,14 +135,15 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *list);
  * @param str_array One dimentional array of strings.
  * @return One dimentional list of strings.
  */
-LCH_List *LCH_StringArrayToStringList(char **str_array);
+LCH_List *LCH_StringArrayToStringList(const char *const *str_array);
 
 /**
  * @brief Create a list from NULL-terminated string table.
  * @param str_array Two dimentional array of strings.
  * @return Two dimentional list of strings.
  */
-LCH_List *LCH_StringArrayTableToStringListTable(char ***str_table);
+LCH_List *LCH_StringArrayTableToStringListTable(
+    const char *const *const *str_table);
 
 bool LCH_CreateParentDirectories(const char *filename);
 

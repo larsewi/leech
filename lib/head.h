@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 
-char *LCH_HeadGet(const char *work_dir);
+char *LCH_HeadGet(const char *name, const char *work_dir);
 
-bool LCH_HeadSet(const char *work_dir, const char *block_id);
+bool LCH_HeadSet(const char *name, const char *work_dir, const char *block_id);
 
 #endif  // _LEECH_HEAD_H

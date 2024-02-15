@@ -5,11 +5,13 @@
 #include <string.h>
 
 #include "block.h"
+#include "definitions.h"
 #include "delta.h"
 #include "head.h"
 #include "instance.h"
 #include "json.h"
 #include "logger.h"
+#include "patch.h"
 #include "table.h"
 #include "utils.h"
 
@@ -52,7 +54,7 @@ static bool Commit(const LCH_Instance *const instance) {
 
     /************************************************************************/
 
-    LCH_Delta *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
+    LCH_Json *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
     LCH_JsonDestroy(old_state);
     if (delta == NULL) {
       LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
@@ -73,7 +75,7 @@ static bool Commit(const LCH_Instance *const instance) {
     tot_updates += num_updates;
 
     if (!LCH_JsonArrayAppend(deltas, delta)) {
-      LCH_DeltaDestroy(delta);
+      LCH_JsonDestroy(delta);
       LCH_JsonDestroy(new_state);
       LCH_JsonDestroy(deltas);
       return false;
@@ -98,7 +100,7 @@ static bool Commit(const LCH_Instance *const instance) {
     LCH_JsonDestroy(new_state);
   }
 
-  char *const parent_id = LCH_HeadGet(work_dir);
+  char *const parent_id = LCH_HeadGet("HEAD", work_dir);
   if (parent_id == NULL) {
     LCH_LOG_ERROR("Failed to get identifier for block at head of chain");
     LCH_JsonDestroy(deltas);
@@ -120,8 +122,8 @@ static bool Commit(const LCH_Instance *const instance) {
   }
   LCH_JsonDestroy(block);
 
-  LCH_LOG_VERBOSE(
-      "Created commit with %zu inserts, %zu deletes and %zu inserts over %zu "
+  LCH_LOG_INFO(
+      "Created commit with %zu inserts, %zu deletes and %zu updates over %zu "
       "tables",
       tot_inserts, tot_deletes, tot_updates, n_tables);
 
@@ -145,13 +147,13 @@ bool LCH_Commit(const char *const work_dir) {
   return success;
 }
 
-static LCH_Block *CreateEmptyBlock(const char *const parent_id) {
+static LCH_Json *CreateEmptyBlock(const char *const parent_id) {
   LCH_Json *const empty_payload = LCH_JsonArrayCreate();
   if (empty_payload == NULL) {
     return NULL;
   }
 
-  LCH_Block *block = LCH_BlockCreate(parent_id, empty_payload);
+  LCH_Json *block = LCH_BlockCreate(parent_id, empty_payload);
   if (block == NULL) {
     LCH_JsonDestroy(empty_payload);
     return NULL;
@@ -160,31 +162,114 @@ static LCH_Block *CreateEmptyBlock(const char *const parent_id) {
   return block;
 }
 
-static LCH_Block *MergeBlocks(const LCH_Instance *const instance,
-                              const char *const final_id, LCH_Block *block) {
+static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
+                             const char *const final_id,
+                             LCH_Json *const child) {
   assert(instance != NULL);
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+  const char *const parent_id = LCH_BlockGetParentBlockIdentifier(child);
 
   if (LCH_StringEqual(parent_id, final_id)) {
     // Base case reached. Recursion ends here.
-    return block;
+    return child;
   }
 
-  LCH_Block *const parent = LCH_BlockLoad(work_dir, parent_id);
+  LCH_Json *const parent = LCH_BlockLoad(work_dir, parent_id);
   if (parent == NULL) {
     LCH_LOG_ERROR("Failed to load block with identifier %.7s", parent_id);
+    LCH_JsonDestroy(child);
     return NULL;
   }
   LCH_LOG_VERBOSE("Loaded block with identifier %.7s", parent_id);
 
-  // Merge delta here
-  LCH_LOG_DEBUG("Merge delta here");
+  const LCH_Json *const parent_payload = LCH_BlockGetPayload(parent);
+  if (parent_payload == NULL) {
+    LCH_JsonDestroy(child);
+    LCH_JsonDestroy(parent);
+    return NULL;
+  }
 
-  LCH_BlockDestroy(block);
-  block = MergeBlocks(instance, final_id, parent);
-  return block;
+  LCH_Json *const child_payload = LCH_BlockRemovePayload(child);
+  LCH_JsonDestroy(child);  // We don't need the child block anymore
+  if (child_payload == NULL) {
+    LCH_JsonDestroy(parent);
+    return NULL;
+  }
+
+  const size_t num_parent_deltas = LCH_JsonArrayLength(parent_payload);
+  while (LCH_JsonArrayLength(child_payload) > 0) {
+    LCH_Json *const child_delta = LCH_JsonArrayRemoveObject(child_payload, 0);
+    if (child_delta == NULL) {
+      LCH_JsonDestroy(child_payload);
+      LCH_JsonDestroy(parent);
+      return NULL;
+    }
+
+    const char *const child_table_id =
+        LCH_JsonObjectGetString(child_delta, "id");
+    if (child_table_id == NULL) {
+      LCH_JsonDestroy(child_delta);
+      LCH_JsonDestroy(child_payload);
+      LCH_JsonDestroy(parent);
+      return NULL;
+    }
+
+    bool found = false;
+    const LCH_Json *parent_delta = NULL;
+
+    for (size_t i = 0; i < num_parent_deltas; i++) {
+      parent_delta = LCH_JsonArrayGetObject(parent_payload, i);
+      if (parent_delta == NULL) {
+        LCH_JsonDestroy(child_delta);
+        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(parent);
+        return NULL;
+      }
+
+      const char *const parent_table_id =
+          LCH_JsonObjectGetString(parent_delta, "id");
+      if (parent_table_id == NULL) {
+        LCH_JsonDestroy(child_delta);
+        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(parent);
+        return NULL;
+      }
+
+      if (LCH_StringEqual(parent_table_id, child_table_id)) {
+        found = true;
+        break;
+      }
+    }
+
+    if (found) {
+      if (!LCH_DeltaMerge(parent_delta, child_delta)) {
+        LCH_LOG_ERROR(
+            "Failed to merge parent block delta with child block delta for "
+            "table '%s'",
+            child_table_id);
+        LCH_JsonDestroy(child_delta);
+        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(parent);
+        return NULL;
+      }
+    } else {
+      if (!LCH_JsonArrayAppend(parent, child_delta)) {
+        LCH_LOG_ERROR(
+            "Failed to append child block delta for table '%s' to parent block "
+            "payload",
+            child_table_id);
+        LCH_JsonDestroy(child_delta);
+        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(parent);
+        return NULL;
+      }
+    }
+  }
+
+  LCH_JsonDestroy(child_payload);
+  LCH_Json *const merged = MergeBlocks(instance, final_id, parent);
+  return merged;
 }
 
 char *LCH_Diff(const char *const work_dir, const char *const final_id,
@@ -198,7 +283,7 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
-  char *const block_id = LCH_HeadGet(work_dir);
+  char *const block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
     LCH_LOG_ERROR(
         "Failed to get block identifier from the head of the chain. "
@@ -207,22 +292,41 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
-  LCH_Block *block = CreateEmptyBlock(block_id);
+  LCH_Json *const patch = LCH_PatchCreate(block_id);
+  if (patch == NULL) {
+    LCH_LOG_ERROR("Failed to create patch");
+    free(block_id);
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  LCH_Json *block = CreateEmptyBlock(block_id);
   free(block_id);
   if (block == NULL) {
-    LCH_LOG_ERROR("Failed to create empty block for patch file generation");
+    LCH_LOG_ERROR("Failed to create empty block");
+    LCH_JsonDestroy(patch);
+    LCH_InstanceDestroy(instance);
     return NULL;
   }
 
   block = MergeBlocks(instance, final_id, block);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to generate patch file");
+    LCH_JsonDestroy(patch);
     LCH_InstanceDestroy(instance);
     return NULL;
   }
   LCH_InstanceDestroy(instance);
 
-  char *buffer = LCH_JsonCompose(block);
+  if (!LCH_PatchAppendBlock(patch, block)) {
+    LCH_LOG_ERROR("Failed to append block to patch");
+    LCH_JsonDestroy(block);
+    LCH_JsonDestroy(patch);
+    return NULL;
+  }
+
+  char *buffer = LCH_JsonCompose(patch);
+  LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
     return NULL;
@@ -232,14 +336,29 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
 }
 
 static bool Patch(const LCH_Instance *const instance, const char *const field,
-                  const char *const value, const char *const patch,
+                  const char *const value, const char *const buffer,
                   const size_t size) {
-  (void)instance;
-  (void)field;
-  (void)value;
-  (void)patch;
-  (void)size;
+  assert(instance != NULL);
+  assert(buffer != NULL);
 
+  LCH_UNUSED(field);
+  LCH_UNUSED(size);
+
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+
+  LCH_Json *const patch = LCH_JsonParse(buffer);
+  if (patch == NULL) {
+    LCH_LOG_ERROR("Failed to parse patch");
+    return false;
+  }
+
+  if (!LCH_PatchUpdateLastseen(patch, work_dir, value)) {
+    LCH_LOG_ERROR("Failed to update lastseen");
+    LCH_JsonDestroy(patch);
+    return false;
+  }
+
+  LCH_JsonDestroy(patch);
   return true;
 }
 

@@ -11,6 +11,7 @@
 #include "commit.h"
 #include "common.h"
 #include "diff.h"
+#include "libpq-fe.h"
 #include "patch.h"
 #include "rebase.h"
 
@@ -86,6 +87,15 @@ int main(int argc, char *argv[]) {
 
   const char *work_dir = ".leech";
 
+  /**
+   * For some reason, if we don't reference something from libpq, we get
+   * "undefined reference" errors when dlopen'ing the leech_psql.so, which uses
+   * libpq. My wildest guess is that libpq is stripped away if the build system
+   * doesn't find any references to it. Adding a reference to one of the symbols
+   * here, seems to fix the issue.
+   */
+  PQlibVersion();
+
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
@@ -108,6 +118,7 @@ int main(int argc, char *argv[]) {
         PrintHelp();
         return EXIT_SUCCESS;
       default:
+        fprintf(stderr, "Illegal option: '%s'\n", optarg);
         return EXIT_FAILURE;
     }
   }

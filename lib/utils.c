@@ -1021,7 +1021,7 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
   return str_table;
 }
 
-LCH_List *LCH_StringArrayToStringList(char **const str_array) {
+LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
   assert(str_array != NULL);
 
   LCH_List *const list = LCH_ListCreate();
@@ -1040,7 +1040,8 @@ LCH_List *LCH_StringArrayToStringList(char **const str_array) {
   return list;
 }
 
-LCH_List *LCH_StringArrayTableToStringListTable(char ***const str_table) {
+LCH_List *LCH_StringArrayTableToStringListTable(
+    const char *const *const *const str_table) {
   assert(str_table != NULL);
 
   LCH_List *const table = LCH_ListCreate();
@@ -1049,7 +1050,7 @@ LCH_List *LCH_StringArrayTableToStringListTable(char ***const str_table) {
   }
 
   for (size_t i = 0; str_table[i] != NULL; i++) {
-    char **const str_array = str_table[i];
+    const char *const *const str_array = str_table[i];
     LCH_List *const record = LCH_StringArrayToStringList(str_array);
     if (record == NULL) {
       LCH_ListDestroy(table);

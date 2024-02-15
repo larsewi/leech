@@ -304,7 +304,7 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
   }
 
   close(fd);
-  LCH_LOG_DEBUG("Wrote %zu bytes to file '%s'", filename);
+  LCH_LOG_DEBUG("Wrote %zu bytes to file '%s'", tot_written, filename);
 
   return true;
 }

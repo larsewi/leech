@@ -40,7 +40,8 @@ AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 # pkg-check modules.
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
+PKG_CHECK_MODULES([CHECK], [check])
+PKG_CHECK_MODULES([PSQL], [libpq])
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
 AC_OUTPUT

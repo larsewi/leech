@@ -66,7 +66,7 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
   size_t size;
   char *diff = LCH_Diff(work_dir, block_id, &size);
   if (diff == NULL) {
-    fprintf(stderr, "LCH_Diff");
+    fprintf(stderr, "LCH_Diff\n");
     return EXIT_FAILURE;
   }
 

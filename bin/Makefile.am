@@ -9,5 +9,5 @@ leech_SOURCES = leech.c \
     diff.c diff.h \
     rebase.c rebase.h \
     patch.c patch.h
-
-leech_LDADD = $(top_builddir)/lib/libleech.la
+leech_LDADD = @PSQL_LIBS@ $(top_builddir)/lib/libleech.la
+leech_CFLAGS = @PSQL_CFLAGS@

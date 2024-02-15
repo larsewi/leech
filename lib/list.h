@@ -4,6 +4,7 @@
 #include "leech.h"
 
 typedef struct LCH_List LCH_List;
+typedef int LCH_ListIndexCompareFn(const void *, const void *);
 
 /**
  * Create a list.
@@ -35,6 +36,8 @@ void *LCH_ListGet(const LCH_List *list, size_t index);
  * @return true if success.
  */
 bool LCH_ListAppend(LCH_List *list, void *value, void (*destroy)(void *));
+
+bool LCH_ListAppendStringDuplicate(LCH_List *list, const char *str);
 
 /**
  * Destroy list and contents.
@@ -73,5 +76,7 @@ void LCH_ListSort(LCH_List *const list,
 LCH_List *LCH_ListMoveElements(LCH_List *destination, LCH_List *source);
 
 void LCH_ListSwap(LCH_List *list, size_t i, size_t j);
+
+void *LCH_ListRemove(LCH_List *list, size_t index);
 
 #endif  // _LEECH_LIST_H

@@ -103,6 +103,20 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   return true;
 }
 
+bool LCH_ListAppendStringDuplicate(LCH_List *const list,
+                                   const char *const str) {
+  assert(list != NULL);
+  assert(str != NULL);
+
+  char *const dup = strdup(str);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
+    return false;
+  }
+
+  return LCH_ListAppend(list, dup, free);
+}
+
 void *LCH_ListGet(const LCH_List *const self, const size_t index) {
   assert(self != NULL);
   assert(self->buffer != NULL);
@@ -225,4 +239,20 @@ void LCH_ListSwap(LCH_List *const self, const size_t i, const size_t j) {
   ListElement *tmp = self->buffer[i];
   self->buffer[i] = self->buffer[j];
   self->buffer[j] = tmp;
+}
+
+void *LCH_ListRemove(LCH_List *const list, const size_t index) {
+  assert(list != NULL);
+  assert(list->buffer != NULL);
+  assert(list->length > index);
+
+  ListElement *const element = list->buffer[index];
+  void *value = element->value;
+  free(element);
+
+  list->length -= 1;
+  for (size_t i = index; i < list->length; i++) {
+    list->buffer[i] = list->buffer[i + 1];
+  }
+  return value;
 }

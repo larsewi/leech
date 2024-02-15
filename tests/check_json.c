@@ -72,21 +72,21 @@ START_TEST(test_JsonParseString) {
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(json), "Hello World");
+  ck_assert_str_eq(LCH_JsonStringGetString(json), "Hello World");
   LCH_JsonDestroy(json);
 
   str = JsonParseString(str, &json);
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(json), " \" \\ / \b \f \n \r \t ");
+  ck_assert_str_eq(LCH_JsonStringGetString(json), " \" \\ / \b \f \n \r \t ");
   LCH_JsonDestroy(json);
 
   str = JsonParseString(str, &json);
   ck_assert_ptr_nonnull(str);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(json), "AĀā");
+  ck_assert_str_eq(LCH_JsonStringGetString(json), "AĀā");
   LCH_JsonDestroy(json);
 
   ck_assert_str_eq(str, "bogus");
@@ -124,7 +124,7 @@ START_TEST(test_JsonParseObject) {
   const LCH_Json *child = LCH_JsonObjectGet(json, "name");
   ck_assert_ptr_nonnull(child);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(child), "leech");
+  ck_assert_str_eq(LCH_JsonStringGetString(child), "leech");
   LCH_JsonDestroy(json);
 
   str = JsonParseObject(str, &json);
@@ -135,11 +135,11 @@ START_TEST(test_JsonParseObject) {
   child = LCH_JsonObjectGet(json, "name");
   ck_assert_ptr_nonnull(child);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(child), "leech");
+  ck_assert_str_eq(LCH_JsonStringGetString(child), "leech");
   child = LCH_JsonObjectGet(json, "version");
   ck_assert_ptr_nonnull(child);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(child), "1.2.3");
+  ck_assert_str_eq(LCH_JsonStringGetString(child), "1.2.3");
   LCH_JsonDestroy(json);
 
   ck_assert_str_eq(str, "bogus");
@@ -177,7 +177,7 @@ START_TEST(test_JsonParseList) {
   ck_assert_int_eq(LCH_JsonArrayLength(json), 1);
   child = LCH_JsonArrayGet(json, 0);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(child), "leech");
+  ck_assert_str_eq(LCH_JsonStringGetString(child), "leech");
   LCH_JsonDestroy(json);
 
   str = JsonParseArray(str, &json);
@@ -187,10 +187,10 @@ START_TEST(test_JsonParseList) {
   ck_assert_int_eq(LCH_JsonArrayLength(json), 2);
   child = LCH_JsonArrayGet(json, 0);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(child), "leech");
+  ck_assert_str_eq(LCH_JsonStringGetString(child), "leech");
   child = LCH_JsonArrayGet(json, 1);
   ck_assert_int_eq(LCH_JsonGetType(child), LCH_JSON_TYPE_STRING);
-  ck_assert_str_eq(LCH_JsonGetString(child), "1.2.3");
+  ck_assert_str_eq(LCH_JsonStringGetString(child), "1.2.3");
   LCH_JsonDestroy(json);
 }
 END_TEST
@@ -275,8 +275,8 @@ START_TEST(test_LCH_JsonParse) {
   LCH_Json *json = LCH_JsonParse(str);
   double height = LCH_JsonGetNumber(LCH_JsonObjectGet(json, "height"));
   ck_assert_double_eq(height, 185.3);
-  const char *skill =
-      LCH_JsonGetString(LCH_JsonArrayGet(LCH_JsonObjectGet(json, "skills"), 1));
+  const char *skill = LCH_JsonStringGetString(
+      LCH_JsonArrayGet(LCH_JsonObjectGet(json, "skills"), 1));
   ck_assert_str_eq(skill, "C++");
   LCH_JsonDestroy(json);
 }
@@ -357,7 +357,7 @@ START_TEST(test_JsonComposeNumber) {
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_NUMBER);
   char *const str = LCH_JsonCompose(json);
   ck_assert_ptr_nonnull(str);
-  ck_assert_str_eq(str, "1.0123");
+  ck_assert_str_eq(str, "1.012300");
   LCH_JsonDestroy(json);
   free(str);
 }
@@ -365,17 +365,16 @@ END_TEST
 
 START_TEST(test_JsonComposeList) {
   const char values[][8] = {"one", "two", "three"};
-  LCH_List *const list = LCH_ListCreate();
-  ck_assert_ptr_nonnull(list);
+  LCH_Json *json = LCH_JsonArrayCreate();
+  ck_assert_ptr_nonnull(json);
   for (size_t i = 0; i < 3; i++) {
     char *value = strdup(values[i]);
     ck_assert_ptr_nonnull(value);
-    LCH_Json *json = LCH_JsonStringCreate(value);
-    ck_assert_ptr_nonnull(json);
-    ck_assert(LCH_ListAppend(list, json, LCH_JsonDestroy));
+    LCH_Json *child = LCH_JsonStringCreate(value);
+    ck_assert_ptr_nonnull(child);
+    ck_assert(LCH_JsonArrayAppend(json, child));
   }
 
-  LCH_Json *json = LCH_JsonArrayCreateFromList(list);
   ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_ARRAY);
   char *const str = LCH_JsonCompose(json);
@@ -387,24 +386,23 @@ START_TEST(test_JsonComposeList) {
 END_TEST
 
 START_TEST(test_JsonComposeObject) {
-  LCH_Dict *const dict = LCH_DictCreate();
-  ck_assert_ptr_nonnull(dict);
+  LCH_Json *const json = LCH_JsonObjectCreate();
+  ck_assert_ptr_nonnull(json);
+
   char *const lars = strdup("lars");
   ck_assert_ptr_nonnull(lars);
   LCH_Json *const name = LCH_JsonStringCreate(lars);
-  ck_assert(LCH_DictSet(dict, "name", name, LCH_JsonDestroy));
+  ck_assert(LCH_JsonObjectSet(json, "name", name));
   LCH_Json *const age = LCH_JsonNumberCreate(29.0f);
   ck_assert_ptr_nonnull(age);
-  ck_assert(LCH_DictSet(dict, "age", age, LCH_JsonDestroy));
+  ck_assert(LCH_JsonObjectSet(json, "age", age));
 
-  LCH_Json *const json = LCH_JsonObjectCreateFromDict(dict);
-  ck_assert_ptr_nonnull(json);
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
   char *const str = LCH_JsonCompose(json);
-  LCH_LOG_INFO("expected: '%s'", "{\"name\":\"lars\",\"age\":29}");
+  LCH_LOG_INFO("expected: '%s'", "{\"name\":\"lars\",\"age\":29.000000}");
   LCH_LOG_INFO("actual:   '%s'", str);
-  ck_assert(strcmp(str, "{\"name\":\"lars\",\"age\":29}") == 0 ||
-            strcmp(str, "{\"age\":29},\"name\":\"lars\"") == 0);
+  ck_assert(strcmp(str, "{\"name\":\"lars\",\"age\":29.000000}") == 0 ||
+            strcmp(str, "{\"age\":29.000000},\"name\":\"lars\"") == 0);
   LCH_JsonDestroy(json);
   free(str);
 }
@@ -436,7 +434,7 @@ START_TEST(test_LCH_JsonObjectSetMinus) {
       "  \"three\": 3"
       "}");
 
-  ck_assert(LCH_JsonEqual(actual, expected));
+  ck_assert(LCH_JsonIsEqual(actual, expected));
   LCH_JsonDestroy(actual);
   LCH_JsonDestroy(expected);
 }
@@ -470,7 +468,7 @@ START_TEST(test_LCH_JsonObjectSetIntersect) {
       "  \"four\": 4"
       "}");
 
-  ck_assert(LCH_JsonEqual(actual, expected));
+  ck_assert(LCH_JsonIsEqual(actual, expected));
   LCH_JsonDestroy(actual);
   LCH_JsonDestroy(expected);
 }

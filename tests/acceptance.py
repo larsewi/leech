@@ -5,9 +5,127 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 import os
+import json
 
-SEED = 1 # Seed used by random generator
-CHANCE = 20 # Percent chance of report collection
+SEED = 1  # Seed used by random generator
+CHANCE = 20  # Percent chance of report collection
+HUB_ID = "SHA=b9353fd"
+
+LEECH_CONFIG = {
+    "version": "0.1.0",
+    "tables": {
+        "CLD": {
+            "primary_fields": ["name"],
+            "subsidiary_fields": ["meta"],
+            "source": {
+                "params": "tmp/classes.cache",
+                "schema": "leech",
+                "table_name": "classes",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+            "destination": {
+                "params": "dbname=leech",
+                "schema": "leech",
+                "table_name": "classes",
+                "callbacks": "../lib/.libs/leech_psql.so",
+            },
+        },
+        "VAD": {
+            "primary_fields": ["namespace", "bundle", "name"],
+            "subsidiary_fields": ["type", "value", "meta"],
+            "source": {
+                "params": "tmp/variables.cache",
+                "schema": "leech",
+                "table_name": "variables",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+            "destination": {
+                "params": "dbname=leech",
+                "schema": "leech",
+                "table_name": "variables",
+                "callbacks": "../lib/.libs/leech_psql.so",
+            },
+        },
+        "LSD": {
+            "primary_fields": ["direction", "hostkey"],
+            "subsidiary_fields": ["address", "interval", "lastseen"],
+            "source": {
+                "params": "tmp/lastseen.cache",
+                "schema": "leech",
+                "table_name": "lastseen",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+            "destination": {
+                "params": "dbname=leech",
+                "schema": "leech",
+                "table_name": "lastseen",
+                "callbacks": "../lib/.libs/leech_psql.so",
+            },
+        },
+        "SDI": {
+            "primary_fields": ["name", "version", "architecture"],
+            "subsidiary_fields": [],
+            "source": {
+                "params": "tmp/software.cache",
+                "schema": "leech",
+                "table_name": "software",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+            "destination": {
+                "params": "dbname=leech",
+                "schema": "leech",
+                "table_name": "software",
+                "callbacks": "../lib/.libs/leech_psql.so",
+            },
+        },
+        "SPD": {
+            "primary_fields": ["name", "version", "architecture"],
+            "subsidiary_fields": ["status"],
+            "source": {
+                "params": "tmp/patch.cache",
+                "schema": "leech",
+                "table_name": "patch",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+            "destination": {
+                "params": "dbname=leech",
+                "schema": "leech",
+                "table_name": "patch",
+                "callbacks": "../lib/.libs/leech_psql.so",
+            },
+        },
+        "ELD": {
+            "primary_fields": ["promise_hash"],
+            "subsidiary_fields": [
+                "policy_filename",
+                "release_id",
+                "promise_outcome",
+                "namespace",
+                "bundle",
+                "promise_type",
+                "promiser",
+                "stack_path",
+                "handle",
+                "promisee",
+                "messages",
+                "line_number",
+                "policy_file_hash",
+            ],
+            "source": {
+                "params": "tmp/execution_log.cache",
+                "schema": "leech",
+                "table_name": "execution_log",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+            "destination": {
+                "params": "tmp/execution_log.csv",
+                "schema": "leech",
+                "table_name": "execution_log",
+                "callbacks": "../lib/.libs/leech_csv.so",
+            },
+        },
+    },
+}
 
 
 def execute(cmd):
@@ -26,8 +144,11 @@ class Event:
         self.timestamp = datetime.fromtimestamp(int(self.ts))
         self.workdir = Path("tmp", self.id)
         self.workdir.mkdir(parents=True, exist_ok=True)
-        shutil.copy("leech.json", self.workdir)
+        self.hub_workdir = Path("tmp", HUB_ID)
+        self.hub_workdir.mkdir(parents=True, exist_ok=True)
         self.patchfile = Path("tmp", self.id, f"{self.ts}.patch")
+        with open(Path(self.workdir, "leech.json"), "w") as f:
+            json.dump(LEECH_CONFIG, f, indent=2)
 
     def change_state(self):
         dst = Path("tmp")
@@ -41,7 +162,7 @@ class Event:
 
     def generate_diff(self):
         lastseen = "0000000000000000000000000000000000000000"
-        path = Path(self.workdir, self.id)
+        path = Path(self.hub_workdir, self.id)
         if path.exists():
             with open(path, "r") as f:
                 lastseen = f.read().strip()
@@ -60,7 +181,7 @@ class Event:
         cmd = [
             "../bin/leech",
             "--debug",
-            f"--workdir={self.workdir}",
+            f"--workdir={self.hub_workdir}",
             "patch",
             "--field=uid",
             f"--value={self.id}",
