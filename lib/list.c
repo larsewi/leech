@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "logger.h"
+
 #define INITIAL_CAPACITY 32
 
 typedef struct ListElement {

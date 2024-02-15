@@ -7,6 +7,7 @@
 
 #include "definitions.h"
 #include "head.h"
+#include "logger.h"
 #include "utils.h"
 
 void LCH_BlockDestroy(void *const block) { LCH_JsonDestroy(block); }

@@ -9,6 +9,7 @@
 #include "head.h"
 #include "instance.h"
 #include "json.h"
+#include "logger.h"
 #include "table.h"
 #include "utils.h"
 

@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <string.h>
 
+#include "logger.h"
 #include "utils.h"
 
 struct LCH_Json {

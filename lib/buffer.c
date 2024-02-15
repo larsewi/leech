@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "logger.h"
 #include "utils.h"
 
 #define INITIAL_CAPACITY 1028

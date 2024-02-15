@@ -1,3 +1,5 @@
+#include "logger.h"
+
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -21,22 +23,20 @@
 #define LCH_COLOR_RESET ""
 #endif
 
-struct LCH_DebugMessenger {
+struct Logger {
   unsigned char severity;
   void (*messageCallback)(unsigned char, const char *);
 };
 
-static struct LCH_DebugMessenger DEBUG_MESSENGER = {.severity = 0,
-                                                    .messageCallback = NULL};
+static struct Logger LOGGER = {.severity = 0, .messageCallback = NULL};
 
-void LCH_DebugMessengerInit(const LCH_DebugMessengerInitInfo *const initInfo) {
-  DEBUG_MESSENGER.severity = initInfo->severity;
-  DEBUG_MESSENGER.messageCallback = initInfo->messageCallback;
+void LCH_LoggerInit(unsigned char level, LCH_LoggerCallbackFn callback) {
+  LOGGER.severity = level;
+  LOGGER.messageCallback = callback;
 }
 
-void LCH_LogMessage(unsigned char severity, const char *format, ...) {
-  if ((DEBUG_MESSENGER.severity & severity) == 0 ||
-      DEBUG_MESSENGER.messageCallback == NULL) {
+void LCH_LoggerLogMessage(unsigned char severity, const char *format, ...) {
+  if ((LOGGER.severity & severity) == 0 || LOGGER.messageCallback == NULL) {
     return;
   }
 
@@ -50,30 +50,29 @@ void LCH_LogMessage(unsigned char severity, const char *format, ...) {
   }
   va_end(ap);
 
-  DEBUG_MESSENGER.messageCallback(severity, message);
+  LOGGER.messageCallback(severity, message);
 }
 
-void LCH_DebugMessengerCallbackDefault(unsigned char severity,
-                                       const char *message) {
+void LCH_LoggerCallbackDefault(unsigned char severity, const char *message) {
   assert(message != NULL);
   switch (severity) {
-    case LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT:
+    case LCH_LOGGER_MESSAGE_TYPE_DEBUG_BIT:
       fprintf(stdout, LCH_COLOR_BLUE "  DEBUG" LCH_COLOR_RESET ": %s\n",
               message);
       break;
-    case LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT:
+    case LCH_LOGGER_MESSAGE_TYPE_VERBOSE_BIT:
       fprintf(stdout, LCH_COLOR_CYAN "VERBOSE" LCH_COLOR_RESET ": %s\n",
               message);
       break;
-    case LCH_DEBUG_MESSAGE_TYPE_INFO_BIT:
+    case LCH_LOGGER_MESSAGE_TYPE_INFO_BIT:
       fprintf(stdout, LCH_COLOR_GREEN "   INFO" LCH_COLOR_RESET ": %s\n",
               message);
       break;
-    case LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT:
+    case LCH_LOGGER_MESSAGE_TYPE_WARNING_BIT:
       fprintf(stdout, LCH_COLOR_YELLOW "WARNING" LCH_COLOR_RESET ": %s\n",
               message);
       break;
-    case LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT:
+    case LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT:
       fprintf(stderr, LCH_COLOR_RED "  ERROR" LCH_COLOR_RESET ": %s\n",
               message);
       break;

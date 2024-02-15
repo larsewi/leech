@@ -43,6 +43,6 @@ int Rebase(const char *const work_dir, int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
   }
-  LCH_LOG_WARNING("Not implemented ...");
+  fprintf(stderr, "Not implemented ...");
   return EXIT_SUCCESS;
 }

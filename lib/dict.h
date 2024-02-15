@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "list.h"
+#include "logger.h"
 
 typedef struct LCH_Dict LCH_Dict;
 
