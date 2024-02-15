@@ -978,7 +978,7 @@ char **LCH_StringListToStringArray(const LCH_List *const list) {
   assert(list != NULL);
 
   const size_t length = LCH_ListLength(list);
-  char **const str_array = LCH_Allocate(
+  char **const str_array = (char **)LCH_Allocate(
       sizeof(char *) * (length + 1 /* Terminating NULL-pointer */));
   if (str_array == NULL) {
     return NULL;
@@ -1002,7 +1002,7 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
   assert(table != NULL);
 
   const size_t length = LCH_ListLength(table);
-  char ***const str_table = LCH_Allocate(
+  char ***const str_table = (char ***)LCH_Allocate(
       sizeof(char **) * (length + 1) /* Terminating NULL-pointer */);
   if (str_table == NULL) {
     return NULL;
@@ -1094,7 +1094,7 @@ bool LCH_CreateParentDirectories(const char *const filename) {
 
   const size_t num_dirs = LCH_ListLength(dirs);
   for (size_t i = num_dirs; i > 0; i--) {
-    char *const dir = LCH_ListGet(dirs, i - 1);
+    char *const dir = (char *)LCH_ListGet(dirs, i - 1);
     if (mkdir(dir, (mode_t)0700) == -1) {
       LCH_LOG_ERROR("Failed to create parent directory '%s' for file '%s': %s",
                     dir, filename, strerror(errno));

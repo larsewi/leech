@@ -66,7 +66,7 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
   size_t size;
   char *diff = LCH_Diff(work_dir, block_id, &size);
   if (diff == NULL) {
-    LCH_LOG_ERROR("Failed to enumerate blocks.");
+    LCH_LOG_ERROR("LCH_Diff");
     return EXIT_FAILURE;
   }
 

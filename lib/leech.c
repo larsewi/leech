@@ -52,7 +52,7 @@ static bool Commit(const LCH_Instance *const instance) {
 
     /************************************************************************/
 
-    LCH_Json *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
+    LCH_Delta *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
     LCH_JsonDestroy(old_state);
     if (delta == NULL) {
       LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
@@ -73,7 +73,7 @@ static bool Commit(const LCH_Instance *const instance) {
     tot_updates += num_updates;
 
     if (!LCH_JsonArrayAppend(deltas, delta)) {
-      LCH_JsonDestroy(delta);
+      LCH_DeltaDestroy(delta);
       LCH_JsonDestroy(new_state);
       LCH_JsonDestroy(deltas);
       return false;
@@ -98,14 +98,22 @@ static bool Commit(const LCH_Instance *const instance) {
     LCH_JsonDestroy(new_state);
   }
 
-  LCH_Json *const block = LCH_BlockCreate(work_dir, deltas);
+  char *const parent_id = LCH_HeadGet(work_dir);
+  if (parent_id == NULL) {
+    LCH_LOG_ERROR("Failed to get identifier for block at head of chain");
+    LCH_JsonDestroy(deltas);
+    return false;
+  }
+
+  LCH_Json *const block = LCH_BlockCreate(parent_id, deltas);
+  free(parent_id);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to create block.");
     LCH_JsonDestroy(deltas);
     return false;
   }
 
-  if (!LCH_BlockStore(block, work_dir)) {
+  if (!LCH_BlockStore(work_dir, block)) {
     LCH_LOG_ERROR("Failed to store block.");
     LCH_JsonDestroy(block);
     return false;
@@ -137,30 +145,89 @@ bool LCH_Commit(const char *const work_dir) {
   return success;
 }
 
-static char *Diff(const LCH_Instance *const instance,
-                  const char *const block_id, size_t *const buf_len) {
-  (void)instance;
-  (void)block_id;
-  char *const buffer = LCH_StringDuplicate("placeholder");
-  *buf_len = strlen(buffer);
-  return buffer;
+static LCH_Block *CreateEmptyBlock(const char *const parent_id) {
+  LCH_Json *const empty_payload = LCH_JsonArrayCreate();
+  if (empty_payload == NULL) {
+    return NULL;
+  }
+
+  LCH_Block *block = LCH_BlockCreate(parent_id, empty_payload);
+  if (block == NULL) {
+    LCH_JsonDestroy(empty_payload);
+    return NULL;
+  }
+
+  return block;
 }
 
-char *LCH_Diff(const char *const work_dir, const char *const block_id,
+static LCH_Block *MergeBlocks(const LCH_Instance *const instance,
+                              const char *const final_id, LCH_Block *block) {
+  assert(instance != NULL);
+
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+  const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+
+  if (LCH_StringEqual(parent_id, final_id)) {
+    // Base case reached. Recursion ends here.
+    return block;
+  }
+
+  LCH_Block *const parent = LCH_BlockLoad(work_dir, parent_id);
+  if (parent == NULL) {
+    LCH_LOG_ERROR("Failed to load block with identifier %.7s", parent_id);
+    return NULL;
+  }
+  LCH_LOG_VERBOSE("Loaded block with identifier %.7s", parent_id);
+
+  // Merge delta here
+  LCH_LOG_DEBUG("Merge delta here");
+
+  LCH_BlockDestroy(block);
+  block = MergeBlocks(instance, final_id, parent);
+  return block;
+}
+
+char *LCH_Diff(const char *const work_dir, const char *const final_id,
                size_t *const buf_len) {
   assert(work_dir != NULL);
-  assert(block_id != NULL);
+  assert(final_id != NULL);
 
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");
-    return false;
+    return NULL;
   }
 
-  char *const buffer = Diff(instance, block_id, buf_len);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to generate diff");
+  char *const block_id = LCH_HeadGet(work_dir);
+  if (block_id == NULL) {
+    LCH_LOG_ERROR(
+        "Failed to get block identifier from the head of the chain. "
+        "Maybe there has not been any commits yet?");
+    LCH_InstanceDestroy(instance);
+    return NULL;
   }
+
+  LCH_Block *block = CreateEmptyBlock(block_id);
+  free(block_id);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to create empty block for patch file generation");
+    return NULL;
+  }
+
+  block = MergeBlocks(instance, final_id, block);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to generate patch file");
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+  LCH_InstanceDestroy(instance);
+
+  char *buffer = LCH_JsonCompose(block);
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to compose patch into JSON");
+    return NULL;
+  }
+  *buf_len = strlen(buffer);
   return buffer;
 }
 

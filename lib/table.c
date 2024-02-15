@@ -123,7 +123,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   LCH_ListSort(info->subsidiary_fields,
                (int (*)(const void *, const void *))strcmp);
 
-  LCH_LOG_VERBOSE("Loading callback functions");
+  LCH_LOG_VERBOSE("Loading callback functions for table '%s'", identifer);
 
   const LCH_Json *const source = LCH_JsonObjectGetObject(definition, "source");
   if (source == NULL) {

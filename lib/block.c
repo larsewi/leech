@@ -13,8 +13,11 @@
 #include "leech.h"
 #include "utils.h"
 
-LCH_Json *LCH_BlockCreate(const char *const work_dir, LCH_Json *const payload) {
-  LCH_Json *const block = LCH_JsonObjectCreate();
+void LCH_BlockDestroy(void *const block) { LCH_JsonDestroy(block); }
+
+LCH_Block *LCH_BlockCreate(const char *const parent_id,
+                           LCH_Json *const payload) {
+  LCH_Block *const block = LCH_JsonObjectCreate();
   if (block == NULL) {
     return NULL;
   }
@@ -25,18 +28,10 @@ LCH_Json *LCH_BlockCreate(const char *const work_dir, LCH_Json *const payload) {
     return NULL;
   }
 
-  char *const head = LCH_HeadGet("HEAD", work_dir);
-  if (head == NULL) {
-    LCH_LOG_ERROR("Failed to get head.");
-    return NULL;
-  }
-
-  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", head)) {
-    free(head);
+  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", parent_id)) {
     LCH_JsonDestroy(block);
     return NULL;
   }
-  free(head);
 
   if (!LCH_JsonObjectSet(block, "payload", payload)) {
     LCH_JsonDestroy(block);
@@ -46,7 +41,7 @@ LCH_Json *LCH_BlockCreate(const char *const work_dir, LCH_Json *const payload) {
   return block;
 }
 
-bool LCH_BlockStore(const LCH_Json *const block, const char *const work_dir) {
+bool LCH_BlockStore(const char *const work_dir, const LCH_Block *const block) {
   assert(block != NULL);
   assert(work_dir != NULL);
 
@@ -82,7 +77,7 @@ bool LCH_BlockStore(const LCH_Json *const block, const char *const work_dir) {
     return false;
   }
 
-  if (!LCH_HeadSet("head", work_dir, block_id)) {
+  if (!LCH_HeadSet(work_dir, block_id)) {
     free(block_id);
     free(json);
   }
@@ -90,4 +85,46 @@ bool LCH_BlockStore(const LCH_Json *const block, const char *const work_dir) {
   free(block_id);
   free(json);
   return true;
+}
+
+LCH_Block *LCH_BlockLoad(const char *const work_dir,
+                         const char *const block_id) {
+  char path[PATH_MAX];
+  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    return NULL;
+  }
+
+  size_t num_bytes;
+  char *const raw = LCH_FileRead(path, &num_bytes);
+  if (raw == NULL) {
+    LCH_LOG_ERROR("Failed to read block %.7s", block_id);
+    return NULL;
+  }
+  LCH_LOG_DEBUG("Read JSON from block with identifer %.7s", block_id);
+
+  LCH_Json *const block = LCH_JsonParse(raw);
+  free(raw);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to parse block with identifer %.7s", block_id);
+    return NULL;
+  }
+  LCH_LOG_DEBUG("Parsed JSON from block with identifer %.7s", block_id);
+
+  return block;
+}
+
+const char *LCH_BlockGetParentBlockIdentifier(const LCH_Block *const block) {
+  assert(block != NULL);
+
+  const char *const parent_id = LCH_JsonObjectGetString(block, "parent");
+  if (parent_id == NULL) {
+    LCH_LOG_ERROR("Failed to retrieve parent block identifier");
+    return NULL;
+  }
+  return parent_id;
+}
+
+bool LCH_BlockIsGenisisBlockIdentifier(const char *const block_id) {
+  assert(block_id != NULL);
+  return LCH_StringEqual(block_id, LCH_GENISIS_BLOCK_ID);
 }

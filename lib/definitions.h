@@ -7,6 +7,8 @@
 
 #define LCH_BUFFER_SIZE LCH_KIBIBYTE(4)
 
+#define LCH_GENISIS_BLOCK_ID "0000000000000000000000000000000000000000"
+
 #define LCH_LENGTH(x) (sizeof(x) / sizeof(*x))
 #define LCH_MIN(a, b) ((a < b) ? a : b)
 #define LCH_MAX(a, b) ((a > b) ? a : b)
@@ -15,8 +17,8 @@
 
 #ifdef _WIN32
 #define PATH_SEP '\\'
-#else
+#else  // _WIN32
 #define PATH_SEP '/'
-#endif
+#endif  // _WIN32
 
 #endif  // _LEECH_DEFINITIONS_H

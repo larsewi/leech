@@ -17,9 +17,11 @@
 #define VERSION_MINOR 0
 #define VERSION_PATCH 0
 
-LCH_Json *LCH_DeltaCreate(const char *const table_id,
-                          const LCH_Json *const new_state,
-                          const LCH_Json *const old_state) {
+void LCH_DeltaDestroy(void *const delta) { LCH_JsonDestroy(delta); }
+
+LCH_Delta *LCH_DeltaCreate(const char *const table_id,
+                           const LCH_Json *const new_state,
+                           const LCH_Json *const old_state) {
   assert(table_id != NULL);
   assert(new_state != NULL);
   assert(old_state != NULL);
@@ -93,28 +95,28 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id,
   return delta;
 }
 
-size_t LCH_DeltaGetNumInserts(const LCH_Json *const delta) {
+size_t LCH_DeltaGetNumInserts(const LCH_Delta *const delta) {
   assert(delta != NULL);
   const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
   const size_t num_inserts = LCH_JsonObjectLength(inserts);
   return num_inserts;
 }
 
-size_t LCH_DeltaGetNumDeletes(const LCH_Json *const delta) {
+size_t LCH_DeltaGetNumDeletes(const LCH_Delta *const delta) {
   assert(delta != NULL);
   const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
   const size_t num_deletes = LCH_JsonObjectLength(deletes);
   return num_deletes;
 }
 
-size_t LCH_DeltaGetNumUpdates(const LCH_Json *const delta) {
+size_t LCH_DeltaGetNumUpdates(const LCH_Delta *const delta) {
   assert(delta != NULL);
   const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
   const size_t num_updates = LCH_JsonObjectLength(updates);
   return num_updates;
 }
 
-const char *LCH_DeltaGetTableID(const LCH_Json *const delta) {
+const char *LCH_DeltaGetTableID(const LCH_Delta *const delta) {
   assert(delta != NULL);
   const LCH_Json *const table_id = LCH_JsonObjectGet(delta, "id");
   const char *const str = LCH_JsonGetString(table_id);
