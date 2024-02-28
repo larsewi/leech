@@ -213,7 +213,7 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
     }
 
     if (found) {
-      LCH_List *const removed = LCH_ListRemove(conn->table, i);
+      LCH_List *const removed = (LCH_List *)LCH_ListRemove(conn->table, i);
       LCH_ListDestroy(removed);
       return true;
     }

@@ -137,7 +137,7 @@ void LCH_ListSet(LCH_List *const self, const size_t index, void *const value,
 }
 
 size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
-                     int (*compare)(const void *, const void *)) {
+                     LCH_ListIndexCompareFn compare) {
   assert(self != NULL);
   assert(compare != NULL);
 
@@ -162,8 +162,7 @@ static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
 }
 
 static size_t Partition(LCH_List *const list, const ssize_t low,
-                        const ssize_t high,
-                        int (*compare)(const void *, const void *)) {
+                        const ssize_t high, LCH_ListIndexCompareFn compare) {
   void *pivot = LCH_ListGet(list, high);
   ssize_t i = low;
   for (ssize_t j = low; j < high; j++) {
@@ -176,8 +175,7 @@ static size_t Partition(LCH_List *const list, const ssize_t low,
 }
 
 static void QuickSort(LCH_List *const list, const ssize_t low,
-                      const ssize_t high,
-                      int (*compare)(const void *, const void *)) {
+                      const ssize_t high, LCH_ListIndexCompareFn compare) {
   if (low < high) {
     const ssize_t pivot = Partition(list, low, high, compare);
     QuickSort(list, low, pivot - 1, compare);
@@ -185,8 +183,7 @@ static void QuickSort(LCH_List *const list, const ssize_t low,
   }
 }
 
-void LCH_ListSort(LCH_List *const self,
-                  int (*compare)(const void *, const void *)) {
+void LCH_ListSort(LCH_List *const self, LCH_ListIndexCompareFn compare) {
   assert(self != NULL);
   QuickSort(self, 0, self->length - 1, compare);
 }

@@ -4,7 +4,7 @@
 #include "leech.h"
 
 typedef struct LCH_List LCH_List;
-typedef int LCH_ListIndexCompareFn(const void *, const void *);
+typedef int (*LCH_ListIndexCompareFn)(const void *, const void *);
 
 /**
  * Create a list.
@@ -61,15 +61,14 @@ void LCH_ListSet(LCH_List *list, size_t index, void *value,
  * @param[in] compare comparison function.
  */
 size_t LCH_ListIndex(const LCH_List *list, const void *value,
-                     int (*compare)(const void *, const void *));
+                     LCH_ListIndexCompareFn compare);
 
 /**
  * Sort list.
  * @param[in] list pointer to list.
  * @param[in] compare comparison function.
  */
-void LCH_ListSort(LCH_List *const list,
-                  int (*compare)(const void *, const void *));
+void LCH_ListSort(LCH_List *const list, LCH_ListIndexCompareFn compare);
 
 void *LCH_ListRemove(LCH_List *list, size_t index);
 

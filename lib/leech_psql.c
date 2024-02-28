@@ -55,78 +55,80 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
 
   {
     const size_t len = strlen(table_name);
-    char *const escaped = PQescapeLiteral(conn, table_name, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", table_name,
+    char *const identifer = PQescapeIdentifier(conn, table_name, len);
+    if (identifer == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s", table_name,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    if (!LCH_BufferPrintFormat(buffer, "CREATE TABLE IF NOT EXISTS '%s ('",
-                               escaped)) {
-      PQfreemem(escaped);
+    if (!LCH_BufferPrintFormat(buffer, "CREATE TABLE IF NOT EXISTS %s",
+                               identifer)) {
+      PQfreemem(identifer);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifer);
   }
 
   for (size_t i = 0; primary_columns[i] != NULL; i++) {
     const char *const column = primary_columns[i];
     const size_t len = strlen(column);
-    char *const escaped = PQescapeLiteral(conn, column, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifier = PQescapeIdentifier(conn, column, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    if (!LCH_BufferPrintFormat(buffer, " '%s' TEXT NOT NULL, ", escaped)) {
-      PQfreemem(escaped);
+    const char *const format =
+        (i == 0) ? " (%s TEXT NOT NULL," : " %s TEXT NOT NULL,";
+    if (!LCH_BufferPrintFormat(buffer, format, identifier)) {
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   for (size_t i = 0; subsidiary_columns[i] != NULL; i++) {
     const char *const column = subsidiary_columns[i];
     const size_t len = strlen(column);
-    char *const escaped = PQescapeLiteral(conn, column, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifier = PQescapeIdentifier(conn, column, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    if (!LCH_BufferPrintFormat(buffer, " '%s' TEXT, ", escaped)) {
-      PQfreemem(escaped);
+    if (!LCH_BufferPrintFormat(buffer, " %s TEXT,", identifier)) {
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   for (size_t i = 0; primary_columns[i] != NULL; i++) {
     const char *const column = primary_columns[i];
     const size_t len = strlen(column);
-    char *const escaped = PQescapeLiteral(conn, column, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifier = PQescapeIdentifier(conn, column, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    const char *const format = (i = 0) ? "PRIMARY KEY(%s" : ", %s";
-    if (!LCH_BufferPrintFormat(buffer, format, escaped)) {
-      PQfreemem(escaped);
+    const char *const format = (i == 0) ? " PRIMARY KEY(%s" : ", %s";
+    if (!LCH_BufferPrintFormat(buffer, format, identifier)) {
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   if (!LCH_BufferPrintFormat(buffer, ") );")) {
@@ -173,27 +175,38 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
     const char *const column = columns[i];
     const size_t len = strlen(column);
 
-    char *const escaped = PQescapeLiteral(conn, column, len);
-    if (column == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifier = PQescapeIdentifier(conn, column, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return NULL;
     }
 
-    const char *const format = (i == 0) ? "'%s'" : ", '%s'";
+    const char *const format = (i == 0) ? "%s" : ", %s";
     if (!LCH_BufferPrintFormat(buffer, format, column)) {
       LCH_BufferDestroy(buffer);
-      PQfreemem(escaped);
+      PQfreemem(identifier);
       return NULL;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
-  if (!LCH_BufferPrintFormat(buffer, " FROM '%s';", table_name)) {
+  const size_t len = strlen(table_name);
+  char *const identifier = PQescapeIdentifier(conn, table_name, len);
+  if (identifier == NULL) {
+    LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s",
+                  PQerrorMessage(conn));
     LCH_BufferDestroy(buffer);
     return NULL;
   }
+
+  if (!LCH_BufferPrintFormat(buffer, " FROM %s;", identifier)) {
+    PQfreemem(identifier);
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+  PQfreemem(identifier);
 
   char *const query = LCH_BufferToString(buffer);
   LCH_LOG_DEBUG("Executing query: %s", query);
@@ -214,16 +227,16 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
 
   const int n_rows = PQntuples(result);
   const int n_cols = PQnfields(result);
-  LCH_LOG_DEBUG("Query returned '%d' rows and '%d' columns", n_rows, n_cols);
+  LCH_LOG_DEBUG("Query returned %d rows and %d columns", n_rows, n_cols);
 
-  char ***const table = calloc(n_rows + 2, sizeof(char **));
+  char ***const table = (char ***)calloc(n_rows + 2, sizeof(char **));
   if (table == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for table: %s", strerror(errno));
     PQclear(result);
     return NULL;
   }
 
-  char **const header = calloc(n_cols + 1, sizeof(char *));
+  char **const header = (char **)calloc(n_cols + 1, sizeof(char *));
   if (header == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for table header: %s",
                   strerror(errno));
@@ -254,7 +267,7 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
   }
 
   for (int i = 0; i < n_rows; i++) {
-    char **const record = calloc(n_cols + 1, sizeof(char *));
+    char **const record = (char **)calloc(n_cols + 1, sizeof(char *));
     if (record == NULL) {
       LCH_LOG_ERROR("Failed to allocate memory table record: %s",
                     strerror(errno));
@@ -359,61 +372,61 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
 
   {
     const size_t len = strlen(table_name);
-    char *const escaped = PQescapeLiteral(conn, table_name, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", escaped,
+    char *const identifier = PQescapeIdentifier(conn, table_name, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s", identifier,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    if (!LCH_BufferPrintFormat(buffer, "INSERT INTO '%s'", escaped)) {
-      PQfreemem(escaped);
+    if (!LCH_BufferPrintFormat(buffer, "INSERT INTO %s", identifier)) {
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   for (size_t i = 0; columns[i] != NULL; i++) {
     const char *const column = columns[i];
     const size_t len = strlen(column);
-    char *const escaped = PQescapeLiteral(conn, column, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifier = PQescapeIdentifier(conn, column, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    const char *const format = (i == 0) ? " ('%s'" : ", '%s'";
+    const char *const format = (i == 0) ? " (%s" : ", %s";
     if (!LCH_BufferPrintFormat(buffer, format, column)) {
-      PQfreemem(escaped);
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   for (size_t i = 0; values[i] != NULL; i++) {
     const char *const value = values[i];
     const size_t len = strlen(value);
 
-    char *const escaped = PQescapeLiteral(conn, value, len);
-    if (escaped == NULL) {
+    char *const literal = PQescapeLiteral(conn, value, len);
+    if (literal == NULL) {
       LCH_LOG_ERROR("Failed to escape literal '%s': %s", value,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    const char *const format = (i == 0) ? ") VALUES ('%s'" : ", '%s'";
-    if (!LCH_BufferPrintFormat(buffer, format, value)) {
-      PQfreemem(escaped);
+    const char *const format = (i == 0) ? ") VALUES (%s" : ", %s";
+    if (!LCH_BufferPrintFormat(buffer, format, literal)) {
+      PQfreemem(literal);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(literal);
   }
 
   if (!LCH_BufferPrintFormat(buffer, ");")) {
@@ -454,29 +467,29 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
 
   {
     const size_t len = strlen(table_name);
-    char *const escaped = PQescapeLiteral(conn, table_name, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", table_name,
+    char *const identifier = PQescapeIdentifier(conn, table_name, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s", table_name,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    if (!LCH_BufferPrintFormat(buffer, "DELETE FROM '%s'", escaped)) {
-      PQfreemem(escaped);
+    if (!LCH_BufferPrintFormat(buffer, "DELETE FROM %s", identifier)) {
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   for (size_t i = 0; primary_columns[i] != NULL && primary_values[i] != NULL;
        i++) {
     const char *const column = primary_columns[i];
     size_t len = strlen(column);
-    char *const col_escaped = PQescapeLiteral(conn, column, len);
-    if (col_escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifer = PQescapeIdentifier(conn, column, len);
+    if (identifer == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
@@ -484,27 +497,24 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
 
     const char *const value = primary_values[i];
     len = strlen(value);
-    char *const val_escaped = PQescapeLiteral(conn, value, len);
-    if (val_escaped == NULL) {
-      PQfreemem(col_escaped);
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const literal = PQescapeLiteral(conn, value, len);
+    if (literal == NULL) {
+      PQfreemem(identifer);
+      LCH_LOG_ERROR("Failed to escape literal '%s': %s", value,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    const char *const format =
-        (i == 0) ? " WHERE '%s' = '%s'" : " AND '%s' = '%s'";
-    if (!LCH_BufferPrintFormat(buffer, format, col_escaped, val_escaped)) {
-      PQfreemem(val_escaped);
-      PQfreemem(col_escaped);
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
-                    PQerrorMessage(conn));
+    const char *const format = (i == 0) ? " WHERE %s = %s" : " AND %s = %s";
+    if (!LCH_BufferPrintFormat(buffer, format, identifer, literal)) {
+      PQfreemem(literal);
+      PQfreemem(identifer);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(val_escaped);
-    PQfreemem(col_escaped);
+    PQfreemem(literal);
+    PQfreemem(identifer);
   }
 
   if (!LCH_BufferPrintFormat(buffer, ";")) {
@@ -547,29 +557,29 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
 
   {
     const size_t len = strlen(table_name);
-    char *const escaped = PQescapeLiteral(conn, table_name, len);
-    if (escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", table_name,
+    char *const identifier = PQescapeIdentifier(conn, table_name, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s", table_name,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    if (!LCH_BufferPrintFormat(buffer, "UPDATE '%s'", escaped)) {
-      PQfreemem(escaped);
+    if (!LCH_BufferPrintFormat(buffer, "UPDATE %s", identifier)) {
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(escaped);
+    PQfreemem(identifier);
   }
 
   for (size_t i = 0;
        subsidiary_columns[i] != NULL && subsidiary_values[i] != NULL; i++) {
     const char *const column = subsidiary_columns[i];
     size_t len = strlen(column);
-    char *const col_escaped = PQescapeLiteral(conn, column, len);
-    if (col_escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifer = PQescapeIdentifier(conn, column, len);
+    if (identifer == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
@@ -577,33 +587,33 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
 
     const char *const value = subsidiary_values[i];
     len = strlen(value);
-    char *const val_escaped = PQescapeLiteral(conn, value, len);
-    if (val_escaped == NULL) {
+    char *const literal = PQescapeLiteral(conn, value, len);
+    if (literal == NULL) {
       LCH_LOG_ERROR("Failed to escape literal '%s': %s", value,
                     PQerrorMessage(conn));
-      PQfreemem(col_escaped);
+      PQfreemem(identifer);
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    const char *const format = (i == 0) ? " SET '%s' = '%s'" : ", '%s' = '%s'";
-    if (!LCH_BufferPrintFormat(buffer, format, col_escaped, val_escaped)) {
-      PQfreemem(val_escaped);
-      PQfreemem(col_escaped);
+    const char *const format = (i == 0) ? " SET %s = %s" : ", %s = %s";
+    if (!LCH_BufferPrintFormat(buffer, format, identifer, literal)) {
+      PQfreemem(literal);
+      PQfreemem(identifer);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(val_escaped);
-    PQfreemem(col_escaped);
+    PQfreemem(literal);
+    PQfreemem(identifer);
   }
 
   for (size_t i = 0; primary_columns[i] != NULL && primary_values[i] != NULL;
        i++) {
     const char *const column = primary_columns[i];
     size_t len = strlen(column);
-    char *const col_escaped = PQescapeLiteral(conn, column, len);
-    if (col_escaped == NULL) {
-      LCH_LOG_ERROR("Failed to escape literal '%s': %s", column,
+    char *const identifier = PQescapeIdentifier(conn, column, len);
+    if (identifier == NULL) {
+      LCH_LOG_ERROR("Failed to escape identifier \"%s\": %s", column,
                     PQerrorMessage(conn));
       LCH_BufferDestroy(buffer);
       return false;
@@ -611,25 +621,24 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
 
     const char *const value = primary_values[i];
     len = strlen(value);
-    char *const val_escaped = PQescapeLiteral(conn, value, len);
-    if (val_escaped == NULL) {
+    char *const literal = PQescapeLiteral(conn, value, len);
+    if (literal == NULL) {
       LCH_LOG_ERROR("Failed to escape literal '%s': %s", value,
                     PQerrorMessage(conn));
-      PQfreemem(col_escaped);
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
 
-    const char *const format =
-        (i == 0) ? " WHERE '%s' = '%s'" : " AND '%s' = '%s'";
-    if (!LCH_BufferPrintFormat(buffer, format, col_escaped, val_escaped)) {
-      PQfreemem(val_escaped);
-      PQfreemem(col_escaped);
+    const char *const format = (i == 0) ? " WHERE %s = %s" : " AND %s = %s";
+    if (!LCH_BufferPrintFormat(buffer, format, identifier, literal)) {
+      PQfreemem(literal);
+      PQfreemem(identifier);
       LCH_BufferDestroy(buffer);
       return false;
     }
-    PQfreemem(val_escaped);
-    PQfreemem(col_escaped);
+    PQfreemem(literal);
+    PQfreemem(identifier);
   }
 
   if (!LCH_BufferPrintFormat(buffer, ";")) {

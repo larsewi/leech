@@ -10,6 +10,9 @@ import json
 SEED = 1  # Seed used by random generator
 CHANCE = 20  # Percent chance of report collection
 HUB_ID = "SHA=b9353fd"
+CSV_MODULE = "../lib/.libs/leech_csv.so"
+PSQL_MODULE = "../lib/.libs/leech_psql.so"
+PSQL_PARAMS = "dbname=leech"
 
 LEECH_CONFIG = {
     "version": "0.1.0",
@@ -21,13 +24,13 @@ LEECH_CONFIG = {
                 "params": "tmp/classes.cache",
                 "schema": "leech",
                 "table_name": "classes",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
             "destination": {
-                "params": "dbname=leech",
+                "params": PSQL_PARAMS,
                 "schema": "leech",
                 "table_name": "classes",
-                "callbacks": "../lib/.libs/leech_psql.so",
+                "callbacks": PSQL_MODULE,
             },
         },
         "VAD": {
@@ -37,13 +40,13 @@ LEECH_CONFIG = {
                 "params": "tmp/variables.cache",
                 "schema": "leech",
                 "table_name": "variables",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
             "destination": {
-                "params": "dbname=leech",
+                "params": PSQL_PARAMS,
                 "schema": "leech",
                 "table_name": "variables",
-                "callbacks": "../lib/.libs/leech_psql.so",
+                "callbacks": PSQL_MODULE,
             },
         },
         "LSD": {
@@ -53,13 +56,13 @@ LEECH_CONFIG = {
                 "params": "tmp/lastseen.cache",
                 "schema": "leech",
                 "table_name": "lastseen",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
             "destination": {
-                "params": "dbname=leech",
+                "params": PSQL_PARAMS,
                 "schema": "leech",
                 "table_name": "lastseen",
-                "callbacks": "../lib/.libs/leech_psql.so",
+                "callbacks": PSQL_MODULE,
             },
         },
         "SDI": {
@@ -69,13 +72,13 @@ LEECH_CONFIG = {
                 "params": "tmp/software.cache",
                 "schema": "leech",
                 "table_name": "software",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
             "destination": {
-                "params": "dbname=leech",
+                "params": PSQL_PARAMS,
                 "schema": "leech",
                 "table_name": "software",
-                "callbacks": "../lib/.libs/leech_psql.so",
+                "callbacks": PSQL_MODULE,
             },
         },
         "SPD": {
@@ -85,13 +88,13 @@ LEECH_CONFIG = {
                 "params": "tmp/patch.cache",
                 "schema": "leech",
                 "table_name": "patch",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
             "destination": {
-                "params": "dbname=leech",
+                "params": PSQL_PARAMS,
                 "schema": "leech",
                 "table_name": "patch",
-                "callbacks": "../lib/.libs/leech_psql.so",
+                "callbacks": PSQL_MODULE,
             },
         },
         "ELD": {
@@ -115,13 +118,13 @@ LEECH_CONFIG = {
                 "params": "tmp/execution_log.cache",
                 "schema": "leech",
                 "table_name": "execution_log",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
             "destination": {
                 "params": "tmp/execution_log.csv",
                 "schema": "leech",
                 "table_name": "execution_log",
-                "callbacks": "../lib/.libs/leech_csv.so",
+                "callbacks": CSV_MODULE,
             },
         },
     },
@@ -203,6 +206,8 @@ class Event:
 
 def main():
     shutil.rmtree("tmp", ignore_errors=True)
+    execute(["dropdb", "--if-exists", "leech"])
+    execute(["createdb", "leech"])
     random.seed()
     events = sorted([Event(path) for path in glob.glob("dumps/SHA=*/*")])
     for ev in events:

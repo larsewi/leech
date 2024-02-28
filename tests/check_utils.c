@@ -106,28 +106,26 @@ START_TEST(test_LCH_TableToJsonObject) {
       "Ringo,     Starr,     1940\r\n"
       "John,      Lennon,    1940\r\n"
       "George,    Harrison,  1943\r\n");
-  LCH_List *const primary = LCH_CSVParseRecord("lastname,firstname");
-  LCH_List *const subsidiary = LCH_CSVParseRecord("born");
+  static const char *primary[] = {"firstname", "lastname", NULL};
+  static const char *subsidiary[] = {"born", NULL};
 
   LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
   ck_assert_ptr_nonnull(json);
 
   LCH_ListDestroy(table);
-  LCH_ListDestroy(primary);
-  LCH_ListDestroy(subsidiary);
 
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
 
-  const LCH_Json *str = LCH_JsonObjectGet(json, "McCartney,Paul");
+  const LCH_Json *str = LCH_JsonObjectGet(json, "Paul,McCartney");
   ck_assert_str_eq(LCH_JsonStringGetString(str), "1942");
 
-  str = LCH_JsonObjectGet(json, "Starr,Ringo");
+  str = LCH_JsonObjectGet(json, "Ringo,Starr");
   ck_assert_str_eq(LCH_JsonStringGetString(str), "1940");
 
-  str = LCH_JsonObjectGet(json, "Lennon,John");
+  str = LCH_JsonObjectGet(json, "John,Lennon");
   ck_assert_str_eq(LCH_JsonStringGetString(str), "1940");
 
-  str = LCH_JsonObjectGet(json, "Harrison,George");
+  str = LCH_JsonObjectGet(json, "George,Harrison");
   ck_assert_str_eq(LCH_JsonStringGetString(str), "1943");
 
   LCH_JsonDestroy(json);
@@ -141,15 +139,13 @@ START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
       "Ringo,     Starr,     1940\r\n"
       "John,      Lennon,    1940\r\n"
       "George,    Harrison,  1943\r\n");
-  LCH_List *const primary = LCH_CSVParseRecord("born,lastname,firstname");
-  LCH_List *const subsidiary = LCH_ListCreate();
+  static const char *primary[] = {"born", "lastname", "firstname", NULL};
+  static const char *subsidiary[] = {NULL};
 
   LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
   ck_assert_ptr_nonnull(json);
 
   LCH_ListDestroy(table);
-  LCH_ListDestroy(primary);
-  LCH_ListDestroy(subsidiary);
 
   ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
 

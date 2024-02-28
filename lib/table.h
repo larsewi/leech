@@ -15,11 +15,6 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *identifer,
 
 const char *LCH_TableInfoGetIdentifier(const LCH_TableInfo *table_info);
 
-const LCH_List *LCH_TableInfoGetPrimaryFields(const LCH_TableInfo *table_info);
-
-const LCH_List *LCH_TableInfoGetSubsidiaryFields(
-    const LCH_TableInfo *table_info);
-
 LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *table_info);
 
 LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,
@@ -27,5 +22,8 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,
 
 bool LCH_TableStoreNewState(const LCH_TableInfo *table_info,
                             const char *work_dir, const LCH_Json *new_state);
+
+bool LCH_TablePatch(const LCH_TableInfo *table_info, const LCH_Json *inserts,
+                    const LCH_Json *deletes, const LCH_Json *updates);
 
 #endif  // _LEECH_TABLE_H

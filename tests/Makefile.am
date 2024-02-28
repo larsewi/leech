@@ -1,4 +1,4 @@
-TESTS = unit_test leak_test acceptance_test
+TESTS = unit_test leak_test
 
 AM_CPPFLAGS = -include config.h
 

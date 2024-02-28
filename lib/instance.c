@@ -133,7 +133,7 @@ const LCH_TableInfo *LCH_InstanceGetTable(const LCH_Instance *const self,
         (LCH_TableInfo *)LCH_ListGet(self->tables, i);
     assert(table_def != NULL);
 
-    if (strcmp(LCH_TableInfoGetIdentifier(table_def), table_id) == 0) {
+    if (LCH_StringEqual(LCH_TableInfoGetIdentifier(table_def), table_id)) {
       return table_def;
     }
   }

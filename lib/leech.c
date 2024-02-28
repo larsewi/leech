@@ -358,6 +358,101 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
     return false;
   }
 
+  const LCH_Json *const blocks = LCH_JsonObjectGetArray(patch, "blocks");
+  if (blocks == NULL) {
+    LCH_LOG_ERROR("Failed to extract blocks from patch");
+    LCH_JsonDestroy(patch);
+    return false;
+  }
+
+  const size_t num_blocks = LCH_JsonArrayLength(blocks);
+  for (size_t i = 0; i < num_blocks; i++) {
+    LCH_LOG_DEBUG("Extracting block at index %zu", i);
+
+    const LCH_Json *const block = LCH_JsonArrayGetObject(blocks, i);
+    if (block == NULL) {
+      LCH_LOG_ERROR("Failed to extract block");
+      LCH_JsonDestroy(patch);
+      return false;
+    }
+
+    const LCH_Json *const payload = LCH_JsonObjectGetArray(block, "payload");
+    if (payload == NULL) {
+      LCH_LOG_ERROR("Failed to extract payload");
+      LCH_JsonDestroy(patch);
+      return false;
+    }
+
+    const size_t num_deltas = LCH_JsonArrayLength(payload);
+    for (size_t j = 0; j < num_deltas; j++) {
+      LCH_LOG_DEBUG("Extracting delta at index %zu", j);
+
+      const LCH_Json *const delta = LCH_JsonArrayGetObject(payload, j);
+      if (delta == NULL) {
+        LCH_LOG_ERROR("Failed to extract delta");
+        LCH_JsonDestroy(patch);
+        return false;
+      }
+
+      const char *const type = LCH_JsonObjectGetString(delta, "type");
+      if (type == NULL) {
+        LCH_LOG_ERROR("Failed to extract type from delta");
+        LCH_JsonDestroy(patch);
+        return false;
+      }
+
+      const char *const table_id = LCH_JsonObjectGetString(delta, "id");
+      if (table_id == NULL) {
+        LCH_LOG_ERROR("Failed to extract table ID from delta");
+        LCH_JsonDestroy(patch);
+        return false;
+      }
+
+      const LCH_TableInfo *const table_info =
+          LCH_InstanceGetTable(instance, table_id);
+      if (table_info == NULL) {
+        LCH_LOG_WARNING(
+            "Table with identifer '%s' not found in config file. Skipping "
+            "patch...",
+            table_id);
+        continue;
+      }
+
+      if (LCH_StringEqual(type, "delta")) {
+        const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
+        if (table_id == NULL) {
+          LCH_LOG_ERROR("Failed to extract insert operations from delta");
+          LCH_JsonDestroy(patch);
+          return false;
+        }
+
+        const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
+        if (table_id == NULL) {
+          LCH_LOG_ERROR("Failed to extract delete operations from delta");
+          LCH_JsonDestroy(patch);
+          return false;
+        }
+
+        const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
+        if (table_id == NULL) {
+          LCH_LOG_ERROR("Failed to extract update operations from delta");
+          LCH_JsonDestroy(patch);
+          return false;
+        }
+
+        if (!LCH_TablePatch(table_info, inserts, deletes, updates)) {
+          LCH_LOG_ERROR("Failed to patch table '%s'", table_id);
+          LCH_JsonDestroy(patch);
+          return false;
+        }
+      } else {
+        LCH_LOG_ERROR("Unsupported payload of type '%s'", type);
+        LCH_JsonDestroy(patch);
+        return false;
+      }
+    }
+  }
+
   LCH_JsonDestroy(patch);
   return true;
 }
@@ -380,5 +475,5 @@ bool LCH_Patch(const char *const work_dir, const char *const field,
   if (!success) {
     LCH_LOG_ERROR("Failed to apply patch");
   }
-  return true;
+  return success;
 }

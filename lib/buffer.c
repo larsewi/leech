@@ -272,7 +272,7 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
     return false;
   }
 
-  const int fd = open(filename, O_WRONLY);
+  const int fd = open(filename, O_WRONLY | O_CREAT, (mode_t)0600);
   if (fd == -1) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", filename,
                   strerror(errno));

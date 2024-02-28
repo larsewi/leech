@@ -9,10 +9,8 @@
 #include "../lib/utils.h"
 
 START_TEST(test_LCH_Delta) {
-  LCH_List *primary_fields = LCH_CSVParseRecord("lastname,firstname");
-  ck_assert_ptr_nonnull(primary_fields);
-  LCH_List *subsidiary_fields = LCH_CSVParseRecord("born");
-  ck_assert_ptr_nonnull(subsidiary_fields);
+  static const char *primary_fields[] = {"lastname", "firstname", NULL};
+  static const char *subsidiary_fields[] = {"born", NULL};
 
   LCH_Json *new_state = NULL;
   {
@@ -37,9 +35,6 @@ START_TEST(test_LCH_Delta) {
     old_state = LCH_TableToJsonObject(table, primary_fields, subsidiary_fields);
     LCH_ListDestroy(table);
   }
-
-  LCH_ListDestroy(primary_fields);
-  LCH_ListDestroy(subsidiary_fields);
 
   LCH_Json *actual = LCH_DeltaCreate("beatles", new_state, old_state);
   LCH_JsonDestroy(new_state);

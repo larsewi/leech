@@ -61,8 +61,8 @@ char *LCH_FileRead(const char *path, size_t *length);
 bool LCH_FileWrite(const char *path, const char *str);
 
 LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
-                                const LCH_List *primary_fields,
-                                const LCH_List *subsidiary_fields);
+                                const char *const *primary_fields,
+                                const char *const *subsidiary_fields);
 
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
@@ -81,6 +81,8 @@ char *LCH_StringFormat(const char *format, ...);
  * @param array One dimentional array of strings.
  */
 void LCH_StringArrayDestroy(void *array);
+
+size_t LCH_StringArrayLength(const char *const *str_array);
 
 /**
  * @brief Destroy NULL-terminated string table.

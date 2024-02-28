@@ -250,20 +250,18 @@ bool LCH_FileWrite(const char *const path, const char *const str) {
 /******************************************************************************/
 
 static bool IndicesOfFieldsInHeader(size_t *const indices,
-                                    const LCH_List *const fields,
+                                    const char *const *const fields,
                                     const LCH_List *const header) {
   assert(indices != NULL);
   assert(fields != NULL);
   assert(header != NULL);
 
-  const size_t num_fields = LCH_ListLength(fields);
   const size_t header_len = LCH_ListLength(header);
-  assert(num_fields <= header_len);
 
-  for (size_t i = 0; i < num_fields; i++) {
-    const char *const field = (char *)LCH_ListGet(fields, i);
-    const size_t index = LCH_ListIndex(
-        header, field, (int (*)(const void *, const void *))strcmp);
+  for (size_t i = 0; fields[i] != NULL; i++) {
+    const char *const field = fields[i];
+    const size_t index =
+        LCH_ListIndex(header, field, (LCH_ListIndexCompareFn)strcmp);
     if (index >= header_len) {
       LCH_LOG_ERROR("Field '%s' not found in table header");
       return false;
@@ -296,8 +294,8 @@ static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
 }
 
 LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
-                                const LCH_List *const primary_fields,
-                                const LCH_List *const subsidiary_fields) {
+                                const char *const *const primary_fields,
+                                const char *const *const subsidiary_fields) {
   assert(primary_fields != NULL);
   assert(subsidiary_fields != NULL);
   assert(table != NULL);
@@ -305,8 +303,9 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
   const size_t num_records = LCH_ListLength(table);
   assert(num_records >= 1);  // Require at least a table header
   const LCH_List *const header = (LCH_List *)LCH_ListGet(table, 0);
-  const size_t num_primary = LCH_ListLength(primary_fields);
-  const size_t num_subsidiary = LCH_ListLength(subsidiary_fields);
+
+  const size_t num_primary = LCH_StringArrayLength(primary_fields);
+  const size_t num_subsidiary = LCH_StringArrayLength(subsidiary_fields);
   assert(num_primary > 0);  // Require at least one primary field
   assert(LCH_ListLength(header) == num_primary + num_subsidiary);
 
@@ -552,6 +551,16 @@ void LCH_StringArrayDestroy(void *const _array) {
     free(array[i]);
   }
   free(array);
+}
+
+size_t LCH_StringArrayLength(const char *const *const str_array) {
+  assert(str_array != NULL);
+
+  size_t length = 0;
+  while (str_array[length] != NULL) {
+    length += 1;
+  }
+  return length;
 }
 
 void LCH_StringArrayTableDestroy(void *const _table) {
