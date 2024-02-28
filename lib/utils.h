@@ -60,42 +60,14 @@ char *LCH_FileRead(const char *path, size_t *length);
  */
 bool LCH_FileWrite(const char *path, const char *str);
 
-LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
-                          const char *subsidiary, bool has_header);
-
 LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
                                 const LCH_List *primary_fields,
                                 const LCH_List *subsidiary_fields);
-
-LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
-                          const char *subsidiary, bool keep_header);
-
-/**
- * @brief Marshal string to buffer.
- * @param[in] buffer.
- * @param[in] string to marshal.
- * @return false in case of error.
- * @note String can be retrieved with LCH_UnmarshalString.
- */
-bool LCH_MarshalString(LCH_Buffer *buffer, const char *str);
-
-/**
- * @brief Unmarshal string from buffer.
- * @param[in] buffer.
- * @param[out] unmarshaled string.
- * @return pointer to remaining buffer.
- * @note unmarshaled string must be freed with free(3).
- */
-const char *LCH_UnmarshalString(const char *buffer, char **const str);
-
-const char *LCH_UnmarshalBinary(const char *buffer, char **str);
 
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
 
 bool LCH_ParseNumber(const char *str, long *number);
-
-char *LCH_VersionToString(size_t major, size_t minor, size_t patch);
 
 bool LCH_ParseVersion(const char *str, size_t *major, size_t *minor,
                       size_t *patch);
