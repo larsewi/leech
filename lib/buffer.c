@@ -39,7 +39,7 @@ static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
   return true;
 }
 
-LCH_Buffer *LCH_BufferCreateWithCapacity(size_t capacity) {
+static LCH_Buffer *LCH_BufferCreateWithCapacity(size_t capacity) {
   LCH_Buffer *self = (LCH_Buffer *)malloc(sizeof(LCH_Buffer));
   if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for buffer: %s", strerror(errno));
@@ -128,17 +128,6 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
 size_t LCH_BufferLength(const LCH_Buffer *const self) {
   assert(self != NULL);
   return self->length;
-}
-
-char *LCH_BufferStringDup(LCH_Buffer *const self) {
-  assert(self != NULL);
-  assert(self->buffer != NULL);
-  char *str = strdup(self->buffer);
-  if (str == NULL) {
-    LCH_LOG_ERROR("Failed to get string from string buffer: %s",
-                  strerror(errno));
-  }
-  return str;
 }
 
 const void *LCH_BufferGet(const LCH_Buffer *const self, const size_t offset) {
