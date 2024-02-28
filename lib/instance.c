@@ -85,7 +85,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   LCH_List *const table_ids = LCH_JsonObjectGetKeys(table_definitions);
   const size_t num_tables = LCH_ListLength(table_ids);
 
-  instance->tables = LCH_ListCreateWithCapacity(num_tables);
+  instance->tables = LCH_ListCreate();
   if (instance->tables == NULL) {
     LCH_ListDestroy(table_ids);
     LCH_InstanceDestroy(instance);

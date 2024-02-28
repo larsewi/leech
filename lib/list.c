@@ -46,7 +46,7 @@ static bool EnsureCapacity(LCH_List *const self, const size_t n_items) {
   return true;
 }
 
-LCH_List *LCH_ListCreateWithCapacity(const size_t capacity) {
+static LCH_List *LCH_ListCreateWithCapacity(const size_t capacity) {
   LCH_List *self = (LCH_List *)malloc(sizeof(LCH_List));
   if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for list: %s", strerror(errno));
@@ -228,17 +228,6 @@ LCH_List *LCH_ListMoveElements(LCH_List *const destination,
   free(source);
 
   return destination;
-}
-
-void LCH_ListSwap(LCH_List *const self, const size_t i, const size_t j) {
-  assert(self != NULL);
-  assert(self->buffer != NULL);
-  assert(self->length > i);
-  assert(self->length > j);
-
-  ListElement *tmp = self->buffer[i];
-  self->buffer[i] = self->buffer[j];
-  self->buffer[j] = tmp;
 }
 
 void *LCH_ListRemove(LCH_List *const list, const size_t index) {

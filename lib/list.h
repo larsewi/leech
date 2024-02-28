@@ -45,8 +45,6 @@ bool LCH_ListAppendStringDuplicate(LCH_List *list, const char *str);
  */
 void LCH_ListDestroy(void *list);
 
-LCH_List *LCH_ListCreateWithCapacity(size_t capacity);
-
 /**
  * Assing value to list item at index.
  * @param[in] list pointer to list.
@@ -74,8 +72,6 @@ void LCH_ListSort(LCH_List *const list,
                   int (*compare)(const void *, const void *));
 
 LCH_List *LCH_ListMoveElements(LCH_List *destination, LCH_List *source);
-
-void LCH_ListSwap(LCH_List *list, size_t i, size_t j);
 
 void *LCH_ListRemove(LCH_List *list, size_t index);
 
