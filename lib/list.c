@@ -211,25 +211,6 @@ void LCH_ListDestroy(void *const self) {
   free(list);
 }
 
-LCH_List *LCH_ListMoveElements(LCH_List *const destination,
-                               LCH_List *const source) {
-  assert(destination != NULL);
-  assert(source != NULL);
-
-  if (!EnsureCapacity(destination, source->length)) {
-    return NULL;
-  }
-
-  for (size_t i = 0; i < source->length; i++) {
-    destination->buffer[destination->length++] = source->buffer[i];
-  }
-
-  free(source->buffer);
-  free(source);
-
-  return destination;
-}
-
 void *LCH_ListRemove(LCH_List *const list, const size_t index) {
   assert(list != NULL);
   assert(list->buffer != NULL);
