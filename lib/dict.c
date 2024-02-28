@@ -21,11 +21,6 @@ struct LCH_Dict {
   DictElement **buffer;
 };
 
-struct LCH_DictIter {
-  size_t cur_pos;
-  const struct LCH_Dict *dict;
-};
-
 LCH_Dict *LCH_DictCreate() {
   LCH_Dict *self = (LCH_Dict *)malloc(sizeof(LCH_Dict));
   if (self == NULL) {
