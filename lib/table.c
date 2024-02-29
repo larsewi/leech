@@ -476,16 +476,18 @@ LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
     return NULL;
   }
 
-  if (!table_info->src_create_table(conn, table_info->src_table_name,
-                                    table_info->primary_fields,
-                                    table_info->subsidiary_fields)) {
+  if (!table_info->src_create_table(
+          conn, table_info->src_table_name,
+          (const char *const *)table_info->primary_fields,
+          (const char *const *)table_info->subsidiary_fields)) {
     LCH_LOG_ERROR("Failed to create table '%s'", table_info->src_table_name);
     table_info->src_disconnect(conn);
     return NULL;
   }
 
-  char ***const str_table = table_info->src_get_table(
-      conn, table_info->src_table_name, table_info->all_fields);
+  char ***const str_table =
+      table_info->src_get_table(conn, table_info->src_table_name,
+                                (const char *const *)table_info->all_fields);
   if (str_table == NULL) {
     return NULL;
   }
@@ -498,7 +500,8 @@ LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
   }
 
   LCH_Json *const state = LCH_TableToJsonObject(
-      list_table, table_info->primary_fields, table_info->subsidiary_fields);
+      list_table, (const char *const *)table_info->primary_fields,
+      (const char *const *)table_info->subsidiary_fields);
 
   LCH_ListDestroy(list_table);
   return state;
@@ -555,8 +558,7 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
 static char **ParseFields(const char *const str) {
   assert(str != NULL);
 
-  LCH_List *const list =
-      (LCH_StringEqual(str, "")) ? LCH_ListCreate() : LCH_CSVParseRecord(str);
+  LCH_List *const list = LCH_CSVParseRecord(str);
   if (list == NULL) {
     return NULL;
   }
@@ -610,9 +612,7 @@ static char **ParseConcatenateFields(const char *const str_a,
     return NULL;
   }
 
-  LCH_List *const list_b = (LCH_StringEqual(str_b, ""))
-                               ? LCH_ListCreate()
-                               : LCH_CSVParseRecord(str_b);
+  LCH_List *const list_b = LCH_CSVParseRecord(str_b);
   if (str_b == NULL) {
     LCH_ListDestroy(list_a);
     return NULL;
@@ -624,7 +624,33 @@ static char **ParseConcatenateFields(const char *const str_a,
   return fields;
 }
 
+static char **AddHostIdentifier(const char *const field,
+                                const char *const *const str_array) {
+  const size_t length = LCH_StringArrayLength(str_array);
+  char **const result = (char **)calloc(length + 2, sizeof(char *));
+  if (result == NULL) {
+    LCH_LOG_ERROR("Failed to allocate memory: calloc(3): %s", strerror(errno));
+    return NULL;
+  }
+
+  result[0] = LCH_StringDuplicate(field);
+  if (result[0] == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < length; i++) {
+    result[i + 1] = LCH_StringDuplicate(str_array[i]);
+    if (result[i + 1] == NULL) {
+      return NULL;
+    }
+  }
+
+  return result;
+}
+
 static bool TablePatchInserts(const LCH_TableInfo *const table_info,
+                              const char *const *const all_fields,
+                              const char *const host_id,
                               const LCH_Json *const inserts, void *const conn) {
   LCH_List *const keys = LCH_JsonObjectGetKeys(inserts);
   if (keys == NULL) {
@@ -642,20 +668,31 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    char **record = ParseConcatenateFields(key, value);
-    if (record == NULL) {
+    char **values = (LCH_StringArrayLength((const char *const *)table_info->subsidiary_fields) == 0)
+                        ? ParseFields(key)
+                        : ParseConcatenateFields(key, value);
+    if (values == NULL) {
       LCH_ListDestroy(keys);
       return false;
     }
+
+    char **tmp = AddHostIdentifier(host_id, (const char *const *)values);
+    LCH_StringArrayDestroy(values);
+    if (tmp == NULL) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+    values = tmp;
 
     if (!table_info->dst_insert_record(conn, table_info->dst_table_name,
-                                       table_info->all_fields, record)) {
+                                       (const char *const *)all_fields,
+                                       (const char *const *)values)) {
+      LCH_StringArrayDestroy(values);
       LCH_ListDestroy(keys);
-      LCH_StringArrayDestroy(record);
       return false;
     }
 
-    LCH_StringArrayDestroy(record);
+    LCH_StringArrayDestroy(values);
   }
 
   LCH_ListDestroy(keys);
@@ -663,6 +700,8 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
 }
 
 static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
+                              const char *const *const primary_fields,
+                              const char *const host_id,
                               const LCH_Json *const deletes, void *const conn) {
   LCH_List *const keys = LCH_JsonObjectGetKeys(deletes);
   if (keys == NULL) {
@@ -680,9 +719,18 @@ static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
       return false;
     }
 
+    char **tmp =
+        AddHostIdentifier(host_id, (const char *const *)primary_values);
+    LCH_StringArrayDestroy(primary_values);
+    if (tmp == NULL) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+    primary_values = tmp;
+
     if (!table_info->dst_delete_record(conn, table_info->dst_table_name,
-                                       table_info->primary_fields,
-                                       primary_values)) {
+                                       (const char *const *)primary_fields,
+                                       (const char *const *)primary_values)) {
       LCH_StringArrayDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
@@ -696,6 +744,8 @@ static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
 }
 
 static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
+                              const char *const *const primary_fields,
+                              const char *const host_value,
                               const LCH_Json *const updates, void *const conn) {
   LCH_List *const keys = LCH_JsonObjectGetKeys(updates);
   if (keys == NULL) {
@@ -713,11 +763,22 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
       return false;
     }
 
+    char **tmp =
+        AddHostIdentifier(host_value, (const char *const *)primary_values);
+    LCH_StringArrayDestroy(primary_values);
+    if (tmp == NULL) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+    primary_values = tmp;
+
     const char *const value = LCH_JsonObjectGetString(updates, key);
     if (value == NULL) {
       LCH_ListDestroy(keys);
       return false;
     }
+
+    LCH_LOG_ERROR("WHAAT '%s'", value);
 
     char **subsidiary_values = ParseFields(value);
     if (subsidiary_values == NULL) {
@@ -727,8 +788,11 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
     }
 
     if (!table_info->dst_update_record(
-            conn, table_info->dst_table_name, table_info->primary_fields,
-            primary_values, table_info->subsidiary_fields, subsidiary_values)) {
+            conn, table_info->dst_table_name,
+            (const char *const *)primary_fields,
+            (const char *const *)primary_values,
+            (const char *const *)table_info->subsidiary_fields,
+            (const char *const *)subsidiary_values)) {
       LCH_StringArrayDestroy(subsidiary_values);
       LCH_StringArrayDestroy(primary_values);
       LCH_ListDestroy(keys);
@@ -744,10 +808,13 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
 }
 
 bool LCH_TablePatch(const LCH_TableInfo *const table_info,
+                    const char *const field, const char *const value,
                     const LCH_Json *const inserts,
                     const LCH_Json *const deletes,
                     const LCH_Json *const updates) {
   assert(table_info != NULL);
+  assert(field != NULL);
+  assert(value != NULL);
   assert(inserts != NULL);
   assert(deletes != NULL);
   assert(updates != NULL);
@@ -759,49 +826,75 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
     return false;
   }
 
-  if (!table_info->dst_create_table(conn, table_info->dst_table_name,
-                                    table_info->primary_fields,
-                                    table_info->subsidiary_fields)) {
+  char **primary_fields =
+      AddHostIdentifier(field, (const char *const *)table_info->primary_fields);
+  if (primary_fields == NULL) {
+    table_info->dst_disconnect(conn);
+    return false;
+  }
+
+  if (!table_info->dst_create_table(
+          conn, table_info->dst_table_name, (const char *const *)primary_fields,
+          (const char *const *)table_info->subsidiary_fields)) {
     LCH_LOG_ERROR("Failed to create table '%s'", table_info->dst_table_name);
     table_info->dst_disconnect(conn);
+    LCH_StringArrayDestroy(primary_fields);
     return false;
   }
 
   if (!table_info->dst_begin_tx(conn)) {
     LCH_LOG_ERROR("Failed to begin transaction");
     table_info->dst_disconnect(conn);
+    LCH_StringArrayDestroy(primary_fields);
     return false;
   }
 
-  if (!TablePatchInserts(table_info, inserts, conn)) {
+  if (!TablePatchDeletes(table_info, (const char *const *)primary_fields, value,
+                         deletes, conn)) {
     LCH_LOG_INFO("Performing rollback of transactions for table '%s'",
                  table_info->dst_table_name);
     if (!table_info->dst_rollback_tx(conn)) {
       LCH_LOG_ERROR("Failed to rollback transactions");
     }
     table_info->dst_disconnect(conn);
+    LCH_StringArrayDestroy(primary_fields);
     return false;
   }
 
-  if (!TablePatchDeletes(table_info, deletes, conn)) {
+  if (!TablePatchUpdates(table_info, (const char *const *)primary_fields, value,
+                         updates, conn)) {
     LCH_LOG_INFO("Performing rollback of transactions for table '%s'",
                  table_info->dst_table_name);
     if (!table_info->dst_rollback_tx(conn)) {
       LCH_LOG_ERROR("Failed to rollback transactions");
     }
     table_info->dst_disconnect(conn);
+    LCH_StringArrayDestroy(primary_fields);
     return false;
   }
 
-  if (!TablePatchUpdates(table_info, updates, conn)) {
+  LCH_StringArrayDestroy(primary_fields);
+
+  char **const all_fields =
+      AddHostIdentifier(field, (const char *const *)table_info->all_fields);
+  if (all_fields == NULL) {
+    table_info->dst_disconnect(conn);
+    return false;
+  }
+
+  if (!TablePatchInserts(table_info, (const char *const *)all_fields, value,
+                         inserts, conn)) {
     LCH_LOG_INFO("Performing rollback of transactions for table '%s'",
                  table_info->dst_table_name);
     if (!table_info->dst_rollback_tx(conn)) {
       LCH_LOG_ERROR("Failed to rollback transactions");
     }
     table_info->dst_disconnect(conn);
+    LCH_StringArrayDestroy(all_fields);
     return false;
   }
+
+  LCH_StringArrayDestroy(all_fields);
 
   if (!table_info->dst_commit_tx(conn)) {
     LCH_LOG_ERROR("Failed to commit transaction");

@@ -440,7 +440,8 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
           return false;
         }
 
-        if (!LCH_TablePatch(table_info, inserts, deletes, updates)) {
+        if (!LCH_TablePatch(table_info, field, value, inserts, deletes,
+                            updates)) {
           LCH_LOG_ERROR("Failed to patch table '%s'", table_id);
           LCH_JsonDestroy(patch);
           return false;

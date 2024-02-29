@@ -24,7 +24,9 @@ bool LCH_StringEqual(const char *str1, const char *str2);
  * @param[in] del Delimiters to split on.
  * @return List of substrings split on delimiter.
  */
-LCH_List *LCH_SplitString(const char *str, const char *del);
+LCH_List *LCH_StringSplit(const char *str, const char *del);
+
+char *LCH_StringJoin(const LCH_List *list, const char *del);
 
 bool LCH_StringStartsWith(const char *str, const char *substr);
 
@@ -83,6 +85,8 @@ char *LCH_StringFormat(const char *format, ...);
 void LCH_StringArrayDestroy(void *array);
 
 size_t LCH_StringArrayLength(const char *const *str_array);
+
+char **LCH_StringArrayInsert(const char *const *str_array, size_t position);
 
 /**
  * @brief Destroy NULL-terminated string table.

@@ -45,7 +45,7 @@ bool LCH_StringEqual(const char *const str1, const char *const str2) {
 
 /******************************************************************************/
 
-LCH_List *LCH_SplitString(const char *str, const char *del) {
+LCH_List *LCH_StringSplit(const char *str, const char *del) {
   assert(str != NULL);
   assert(del != NULL);
 
@@ -72,6 +72,31 @@ LCH_List *LCH_SplitString(const char *str, const char *del) {
   }
   LCH_ListAppend(list, tmp, free);
   return list;
+}
+
+/******************************************************************************/
+
+char *LCH_StringJoin(const LCH_List *const list, const char *const del) {
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+
+  const size_t len = LCH_ListLength(list);
+  for (size_t i = 0; i < len; i++) {
+    if (i > 0) {
+      if (!LCH_BufferPrintFormat(buffer, "%s", del)) {
+        LCH_BufferDestroy(buffer);
+        return NULL;
+      }
+    }
+
+    const char *const str = (const char *)LCH_ListGet(list, i);
+    if (!LCH_BufferPrintFormat(buffer, "%s", str)) {
+      LCH_BufferDestroy(buffer);
+      return NULL;
+    }
+  }
+
+  char *const result = LCH_BufferToString(buffer);
+  return result;
 }
 
 /******************************************************************************/
@@ -461,7 +486,7 @@ bool LCH_ParseVersion(const char *const str, size_t *const major,
   assert(minor != NULL);
   assert(patch != NULL);
 
-  LCH_List *const list = LCH_SplitString(str, ".");
+  LCH_List *const list = LCH_StringSplit(str, ".");
   const size_t length = LCH_ListLength(list);
 
   static const char *const error_messages[] = {

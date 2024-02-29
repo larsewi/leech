@@ -39,7 +39,7 @@ START_TEST(test_LCH_StringStrip) {
 END_TEST
 
 START_TEST(test_LCH_SplitString) {
-  LCH_List *list = LCH_SplitString("1.2.3", ".");
+  LCH_List *list = LCH_StringSplit("1.2.3", ".");
   ck_assert_int_eq(LCH_ListLength(list), 3);
   ck_assert_str_eq((char *)LCH_ListGet(list, 0), "1");
   ck_assert_str_eq((char *)LCH_ListGet(list, 1), "2");

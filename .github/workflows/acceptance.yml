@@ -13,18 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Create PostgreSQL repository configuration
-      run: sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-    - name: Import PostgreSQL repository signing key
-      run: wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
     - name: Update apt repositories
       run: sudo apt -y update
     - name: Install dependencies
       run: sudo apt -y install check libtool-bin valgrind postgresql
     - name: Start PostgreSQL server
       run: sudo systemctl start postgresql.service
-    - name: Create database
-      run: sudo -u postgres createdb leech
     - name: Create PostgreSQL user
       run: sudo -u postgres createuser --superuser `whoami`
     - name: Bootstrap project

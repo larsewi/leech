@@ -134,7 +134,9 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
           key);
       LCH_ListDestroy(keys);
       return false;
-    } else if (LCH_JsonObjectHasKey(parent_deletes, key)) {
+    }
+
+    if (LCH_JsonObjectHasKey(parent_deletes, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with delete operations in parent
       //////////////////////////////////////////////////////////////////////////
@@ -167,7 +169,10 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
           return false;
         }
       }
-    } else if (LCH_JsonObjectHasKey(parent_updates, key)) {
+      continue;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_updates, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with update operations in parent
       //////////////////////////////////////////////////////////////////////////
@@ -176,6 +181,19 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
       LCH_LOG_ERROR(
           "Found an update operation in parent block followed by an insert "
           "operation in child block (key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    LCH_LOG_DEBUG(
+        "Merging: NOOP -> insert(key, val) => insert(key, val) (key=\"%s\")",
+        key);
+    LCH_Json *const child_value = LCH_JsonObjectRemove(child_inserts, key);
+    if (!LCH_JsonObjectSet(parent_inserts, key, child_value)) {
+      LCH_LOG_ERROR(
+          "Failed to move insert operation from child block into parent block "
+          "(key=\"%s\")",
           key);
       LCH_ListDestroy(keys);
       return false;
@@ -246,7 +264,10 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
             "(key=\"%s\")",
             key);
       }
-    } else if (LCH_JsonObjectHasKey(parent_deletes, key)) {
+      continue;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_deletes, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with delete operations in parent
       //////////////////////////////////////////////////////////////////////////
@@ -258,7 +279,9 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
           key);
       LCH_ListDestroy(keys);
       return false;
-    } else if (LCH_JsonObjectHasKey(parent_updates, key)) {
+    }
+
+    if (LCH_JsonObjectHasKey(parent_updates, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with update operations in parent
       //////////////////////////////////////////////////////////////////////////
@@ -316,6 +339,21 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
         LCH_ListDestroy(keys);
         return false;
       }
+
+      continue;
+    }
+
+    LCH_LOG_DEBUG(
+        "Merging: NOOP -> delete(key, val) => delete(key, val) (key=\"%s\")",
+        key);
+    LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
+    if (!LCH_JsonObjectSet(parent_deletes, key, child_value)) {
+      LCH_LOG_ERROR(
+          "Failed to move delete operation from child block into parent block "
+          "(key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
     }
   }
 
@@ -369,7 +407,10 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
         LCH_ListDestroy(keys);
         return false;
       }
-    } else if (LCH_JsonObjectHasKey(parent_deletes, key)) {
+      continue;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_deletes, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with delete operations in parent
       //////////////////////////////////////////////////////////////////////////
@@ -381,7 +422,9 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
 
       LCH_ListDestroy(keys);
       return false;
-    } else if (LCH_JsonObjectHasKey(parent_updates, key)) {
+    }
+
+    if (LCH_JsonObjectHasKey(parent_updates, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with update operations in parent
       //////////////////////////////////////////////////////////////////////////
@@ -401,6 +444,20 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
         LCH_ListDestroy(keys);
         return false;
       }
+      continue;
+    }
+
+    LCH_LOG_DEBUG(
+        "Merging: NOOP -> update(key, val) => update(key, val) (key=\"%s\")",
+        key);
+    LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
+    if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
+      LCH_LOG_ERROR(
+          "Failed to move update operation from child block into parent block "
+          "(key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
     }
   }
 

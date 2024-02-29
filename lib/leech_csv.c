@@ -21,7 +21,7 @@ typedef struct {
 void *LCH_CallbackConnect(const char *const conn_info) {
   CSVconn *const conn = (CSVconn *)malloc(sizeof(CSVconn));
   if (conn == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
@@ -54,6 +54,8 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
   LCH_UNUSED(table_name);  // Intended for database systems.
 
   if (LCH_IsRegularFile(conn->filename)) {
+    LCH_LOG_DEBUG("Skipped creating table '%s': Table already exists",
+                  conn->filename);
     return true;
   }
 
@@ -86,6 +88,11 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
     LCH_ListDestroy(table);
     return false;
   }
+
+  char *const str_repr = LCH_StringJoin(header, "', '");
+  LCH_LOG_DEBUG("Created table with header: '%s'", str_repr);
+  free(str_repr);
+
   LCH_ListDestroy(table);
   return true;
 }
@@ -101,6 +108,8 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
   if (table == NULL) {
     return NULL;
   }
+
+  LCH_LOG_DEBUG("Loaded table '%s' from '%s'", table_name, conn->filename);
 
   /**
    * TODO: Extract only the fields listed in the columns parameter, and in the
@@ -128,6 +137,8 @@ bool LCH_CallbackBeginTransaction(void *const _conn) {
     return false;
   }
 
+  LCH_LOG_DEBUG("Loaded table from '%s'", conn->filename);
+
   conn->table = table;
   return true;
 }
@@ -144,6 +155,8 @@ bool LCH_CallbackCommitTransaction(void *const _conn) {
     return false;
   }
 
+  LCH_LOG_DEBUG("Wrote table to '%s'", conn->filename);
+
   LCH_ListDestroy(conn->table);
   conn->table = NULL;
   return true;
@@ -155,6 +168,9 @@ bool LCH_CallbackRollbackTransaction(void *const _conn) {
 
   LCH_ListDestroy(conn->table);
   conn->table = NULL;
+
+  LCH_LOG_DEBUG("Destroyed table");
+
   return true;
 }
 
@@ -178,6 +194,11 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
     return false;
   }
 
+  char *const str_repr = LCH_StringJoin(record, "', '");
+  LCH_LOG_DEBUG("Inserted record %zu: '%s'", LCH_ListLength(conn->table),
+                str_repr);
+  free(str_repr);
+
   return true;
 }
 
@@ -193,15 +214,13 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
 
   const size_t num_records = LCH_ListLength(conn->table);
   assert(num_records > 0);
-  const LCH_List *const header = (const LCH_List *)LCH_ListGet(conn->table, 0);
-  const size_t num_fields = LCH_ListLength(header);
 
   for (size_t i = 1 /* Skip header */; i < num_records; i++) {
     const LCH_List *const record =
         (const LCH_List *)LCH_ListGet(conn->table, i);
     bool found = true;
 
-    for (size_t j = 0; j < num_fields; j++) {
+    for (size_t j = 0; primary_values[j] != NULL; j++) {
       const char *const field = (const char *)LCH_ListGet(record, j);
       const char *const value = primary_values[j];
       assert(value != NULL);
@@ -214,7 +233,10 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
 
     if (found) {
       LCH_List *const removed = (LCH_List *)LCH_ListRemove(conn->table, i);
+      char *const str_repr = LCH_StringJoin(removed, "', '");
       LCH_ListDestroy(removed);
+      LCH_LOG_DEBUG("Deleted record %zu: '%s'", i + 1, str_repr);
+      free(str_repr);
       return true;
     }
   }
@@ -261,6 +283,10 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
         }
         LCH_ListSet(record, j + k, value, free);
       }
+
+      char *const str_repr = LCH_StringJoin(record, "', '");
+      LCH_LOG_DEBUG("Updated record %zu: '%s'", i + 1, str_repr);
+      free(str_repr);
       return true;
     }
   }

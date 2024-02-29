@@ -186,7 +186,7 @@ class Event:
             "--debug",
             f"--workdir={self.hub_workdir}",
             "patch",
-            "--field=uid",
+            "--field=host_id",
             f"--value={self.id}",
             f"--file={self.patchfile}",
         ]
