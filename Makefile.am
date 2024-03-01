@@ -3,6 +3,7 @@ SUBDIRS = lib bin . tests
 
 format:
 	clang-format -i lib/*.c lib/*.h bin/*.c bin/*.h tests/*.c
+	black **/*.py
 
 super-clean:
 	git clean -fxd

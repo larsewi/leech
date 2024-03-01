@@ -33,10 +33,10 @@ START_TEST(test_LCH_ComposeCSV) {
     for (size_t j = 0; j < 3; j++) {
       char *field = strdup(data[i][j]);
       ck_assert_ptr_nonnull(field);
-      ck_assert(LCH_ListAppend(record, (void *)field, free));
+      ck_assert(LCH_ListAppend(record, field, free));
     }
 
-    ck_assert(LCH_ListAppend(table, record, (void (*)(void *))LCH_ListDestroy));
+    ck_assert(LCH_ListAppend(table, record, LCH_ListDestroy));
   }
 
   LCH_Buffer *buffer = NULL;

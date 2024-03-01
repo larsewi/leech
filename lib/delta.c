@@ -1,527 +1,543 @@
 #include "delta.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
-#include <errno.h>
-#include <stdint.h>
 #include <string.h>
 
-#include "csv.h"
-#include "instance.h"
-#include "leech.h"
-#include "list.h"
-#include "table.h"
 #include "utils.h"
 
-struct LCH_Delta {
-  const LCH_TableDefinition *table_def;
-  LCH_Dict *ins;
-  LCH_Dict *del;
-  LCH_Dict *upd;
-  size_t num_merged;
-  size_t num_canceled;
-};
+LCH_Json *LCH_DeltaCreate(const char *const table_id,
+                          const LCH_Json *const new_state,
+                          const LCH_Json *const old_state) {
+  assert(table_id != NULL);
+  assert(new_state != NULL);
+  assert(old_state != NULL);
 
-LCH_Delta *LCH_DeltaCreate(const LCH_TableDefinition *const table_def,
-                           const LCH_Dict *const new_state,
-                           const LCH_Dict *const old_state) {
-  assert(table_def != NULL);
-  assert((new_state != NULL && old_state != NULL) ||
-         (new_state == NULL && old_state == NULL));
-
-  LCH_Delta *delta = (LCH_Delta *)malloc(sizeof(LCH_Delta));
+  LCH_Json *const delta = LCH_JsonObjectCreate();
   if (delta == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for delta: %s", strerror(errno));
     return NULL;
   }
 
-  delta->table_def = table_def;
-  delta->num_merged = 0;
-  delta->num_canceled = 0;
-
-  const bool create_empty = (new_state == NULL) && (old_state == NULL);
-
-  delta->ins = (create_empty)
-                   ? LCH_DictCreate()
-                   : LCH_DictSetMinus(new_state, old_state,
-                                      (void *(*)(const void *))strdup, free);
-  if (delta->ins == NULL) {
-    LCH_LOG_ERROR("Failed to compute insertions for delta.");
-    free(delta);
+  if (!LCH_JsonObjectSetStringDuplicate(delta, "type", "delta")) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  delta->del = (create_empty)
-                   ? LCH_DictCreate()
-                   : LCH_DictSetMinus(old_state, new_state, NULL, NULL);
-  if (delta->del == NULL) {
-    LCH_LOG_ERROR("Failed to compute deletions for delta.");
-    LCH_DictDestroy(delta->ins);
-    free(delta);
+  if (!LCH_JsonObjectSetStringDuplicate(delta, "id", table_id)) {
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
-  delta->upd = (create_empty)
-                   ? LCH_DictCreate()
-                   : LCH_DictSetChangedIntersection(
-                         new_state, old_state, (void *(*)(const void *))strdup,
-                         free, (int (*)(const void *, const void *))strcmp);
-  if (delta->upd == NULL) {
-    LCH_LOG_ERROR("Failed to compute modifications for delta.");
-    LCH_DictDestroy(delta->del);
-    LCH_DictDestroy(delta->ins);
-    free(delta);
+  LCH_Json *const inserts = LCH_JsonObjectKeysSetMinus(new_state, old_state);
+  if (inserts == NULL) {
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSet(delta, "inserts", inserts)) {
+    LCH_JsonDestroy(inserts);
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  LCH_Json *const deletes = LCH_JsonObjectKeysSetMinus(old_state, new_state);
+  if (deletes == NULL) {
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSet(delta, "deletes", deletes)) {
+    LCH_JsonDestroy(deletes);
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  LCH_Json *const updates =
+      LCH_JsonObjectKeysSetIntersectAndValuesSetMinus(new_state, old_state);
+  if (updates == NULL) {
+    LCH_JsonDestroy(delta);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSet(delta, "updates", updates)) {
+    LCH_JsonDestroy(updates);
+    LCH_JsonDestroy(delta);
     return NULL;
   }
 
   return delta;
 }
 
-void LCH_DeltaDestroy(LCH_Delta *const delta) {
-  if (delta != NULL) {
-    assert(delta->ins != NULL);
-    LCH_DictDestroy(delta->ins);
-
-    assert(delta->del != NULL);
-    LCH_DictDestroy(delta->del);
-
-    assert(delta->upd != NULL);
-    LCH_DictDestroy(delta->upd);
-
-    free(delta);
-  }
-}
-
-static bool MarshalDeltaOperations(LCH_Buffer *buffer,
-                                   const LCH_TableDefinition *const table_def,
-                                   const LCH_Dict *const dict) {
-  size_t offset;
-  if (!LCH_BufferAllocate(buffer, sizeof(uint32_t), &offset)) {
-    return false;
-  }
-
-  const size_t before = LCH_BufferLength(buffer);
-
-  LCH_List *const records =
-      LCH_DictToTable(dict, LCH_TableDefinitionGetPrimaryFields(table_def),
-                      LCH_TableDefinitionGetSubsidiaryFields(table_def), false);
-  if (records == NULL) {
-    return false;
-  }
-
-  if (!LCH_CSVComposeTable(&buffer, records)) {
-    LCH_ListDestroy(records);
-    return false;
-  }
-  LCH_ListDestroy(records);
-
-  const size_t after = LCH_BufferLength(buffer);
-  if (after - before > UINT32_MAX) {
-    return false;
-  }
-
-  const uint32_t length = htonl(after - before);
-  LCH_BufferSet(buffer, offset, &length, sizeof(uint32_t));
-
-  return true;
-}
-
-bool LCH_DeltaMarshal(LCH_Buffer *const buffer, const LCH_Delta *const delta) {
-  assert(buffer != NULL);
+size_t LCH_DeltaGetNumInserts(const LCH_Json *const delta) {
   assert(delta != NULL);
-  assert(delta->table_def != NULL);
-  assert(delta->ins != NULL);
-  assert(delta->del != NULL);
-  assert(delta->upd != NULL);
-
-  if (LCH_DictLength(delta->ins) == 0 && LCH_DictLength(delta->del) == 0 &&
-      LCH_DictLength(delta->upd) == 0) {
-    LCH_LOG_DEBUG("Skipping delta marshaling of table '%s' due to no changes.",
-                  LCH_TableDefinitionGetIdentifier(delta->table_def));
-    return true;
-  }
-
-  if (!LCH_MarshalString(buffer,
-                         LCH_TableDefinitionGetIdentifier(delta->table_def))) {
-    LCH_LOG_ERROR("Failed to marshal delta table identifier.");
-    return false;
-  }
-
-  if (!MarshalDeltaOperations(buffer, delta->table_def, delta->ins)) {
-    LCH_LOG_ERROR("Failed to marshal delta insertion operations.");
-    return false;
-  }
-
-  if (!MarshalDeltaOperations(buffer, delta->table_def, delta->del)) {
-    LCH_LOG_ERROR("Failed to marshal delta deletion operations.");
-    return false;
-  }
-
-  if (!MarshalDeltaOperations(buffer, delta->table_def, delta->upd)) {
-    LCH_LOG_ERROR("Failed to marshal delta modification operations.");
-    return false;
-  }
-
-  return true;
+  const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
+  const size_t num_inserts = LCH_JsonObjectLength(inserts);
+  return num_inserts;
 }
 
-static const char *UnmarshalDeltaOperation(
-    LCH_Dict **const dict, const LCH_TableDefinition *const table_def,
-    const char *buffer) {
-  char *csv;
-  buffer = LCH_UnmarshalBinary(buffer, &csv);
-  if (buffer == NULL) {
-    return NULL;
-  }
-
-  LCH_List *const records =
-      (strcmp(csv, "") == 0) ? LCH_ListCreate() : LCH_CSVParseTable(csv);
-  free(csv);
-  if (records == NULL) {
-    return NULL;
-  }
-
-  *dict =
-      LCH_TableToDict(records, LCH_TableDefinitionGetPrimaryFields(table_def),
-                      LCH_TableDefinitionGetSubsidiaryFields(table_def), false);
-  LCH_ListDestroy(records);
-  if (*dict == NULL) {
-    return NULL;
-  }
-
-  return buffer;
-}
-
-const char *LCH_DeltaUnmarshal(LCH_Delta **delta,
-                               const LCH_Instance *const instance,
-                               const char *buffer) {
-  assert(buffer != NULL);
-
-  LCH_Delta *const _delta = (LCH_Delta *)malloc(sizeof(LCH_Delta));
-  if (_delta == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
-    return NULL;
-  }
-
-  char *table_id;
-  buffer = LCH_UnmarshalString(buffer, &table_id);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal table id.");
-    free(_delta);
-    return NULL;
-  }
-
-  const LCH_TableDefinition *table_def =
-      LCH_InstanceGetTable(instance, table_id);
-  if (table_def == NULL) {
-    LCH_LOG_ERROR("Table with identifier '%s' does not exist.", table_id);
-    free(table_id);
-    free(_delta);
-    return NULL;
-  }
-  free(table_id);
-  _delta->table_def = table_def;
-
-  buffer = UnmarshalDeltaOperation(&_delta->ins, _delta->table_def, buffer);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal delta insert operations for table '%s'.",
-                  LCH_TableDefinitionGetIdentifier(table_def));
-    free(_delta->ins);
-    free(_delta);
-    return NULL;
-  }
-
-  buffer = UnmarshalDeltaOperation(&_delta->del, _delta->table_def, buffer);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal delta delete operations for table '%s'.",
-                  LCH_TableDefinitionGetIdentifier(table_def));
-    free(_delta->del);
-    free(_delta->ins);
-    free(_delta);
-    return NULL;
-  }
-
-  buffer = UnmarshalDeltaOperation(&_delta->upd, _delta->table_def, buffer);
-  if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to unmarshal delta update operations for table '%s'.",
-                  LCH_TableDefinitionGetIdentifier(table_def));
-    LCH_DeltaDestroy(_delta);
-    return NULL;
-  }
-
-  *delta = _delta;
-  return buffer;
-}
-
-size_t LCH_DeltaGetNumInsertions(const LCH_Delta *const delta) {
+size_t LCH_DeltaGetNumDeletes(const LCH_Json *const delta) {
   assert(delta != NULL);
-  assert(delta->ins != NULL);
-  return LCH_DictLength(delta->ins);
+  const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
+  const size_t num_deletes = LCH_JsonObjectLength(deletes);
+  return num_deletes;
 }
 
-size_t LCH_DeltaGetNumDeletions(const LCH_Delta *const delta) {
+size_t LCH_DeltaGetNumUpdates(const LCH_Json *const delta) {
   assert(delta != NULL);
-  assert(delta->del != NULL);
-  return LCH_DictLength(delta->del);
+  const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
+  const size_t num_updates = LCH_JsonObjectLength(updates);
+  return num_updates;
 }
 
-size_t LCH_DeltaGetNumUpdates(const LCH_Delta *const delta) {
+const char *LCH_DeltaGetTableID(const LCH_Json *const delta) {
   assert(delta != NULL);
-  assert(delta->upd != NULL);
-  return LCH_DictLength(delta->upd);
+  const LCH_Json *const table_id = LCH_JsonObjectGet(delta, "id");
+  const char *const str = LCH_JsonStringGetString(table_id);
+  return str;
 }
 
-const LCH_Dict *LCH_DeltaGetInsertions(const LCH_Delta *const delta) {
-  assert(delta != NULL);
-  assert(delta->ins != NULL);
-  return delta->ins;
-}
-
-const LCH_Dict *LCH_DeltaGetDeletions(const LCH_Delta *const delta) {
-  assert(delta != NULL);
-  assert(delta->del != NULL);
-  return delta->del;
-}
-
-const LCH_Dict *LCH_DeltaGetUpdates(const LCH_Delta *const delta) {
-  assert(delta != NULL);
-  assert(delta->upd != NULL);
-  return delta->upd;
-}
-
-const LCH_TableDefinition *LCH_DeltaGetTable(const LCH_Delta *const delta) {
-  assert(delta != NULL);
-  assert(delta->table_def != NULL);
-  return delta->table_def;
-}
-
-size_t LCH_DeltaGetNumMergedOperations(const LCH_Delta *const delta) {
-  assert(delta != NULL);
-  return delta->num_merged;
-}
-
-size_t LCH_DeltaGetNumCanceledOperations(const LCH_Delta *const delta) {
-  assert(delta != NULL);
-  return delta->num_canceled;
-}
-
-static bool CompressInsertionOperations(const LCH_List *const keys,
-                                        LCH_Delta *const child,
-                                        const LCH_Delta *const parent) {
-  assert(keys != NULL);
-  assert(child->table_def != NULL);
-  assert(child->upd != NULL);
-  assert(parent->ins != NULL);
-  assert(parent->del != NULL);
-  assert(parent->upd != NULL);
-
-  size_t num_keys = LCH_ListLength(keys);
-  for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
-    assert(key != NULL);
-
-    // insert -> insert => error
-    if (LCH_DictHasKey(child->ins, key)) {
-      LCH_LOG_ERROR(
-          "Found two subsequent delta insert operations for key '%s' in "
-          "table '%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      return false;
-    }
-
-    // insert -> delete => noop
-    if (LCH_DictHasKey(child->del, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'insert -> delete => noop' for key '%s' in table '%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      LCH_DictRemove(child->del, key);
-      child->num_canceled += 1;
-      continue;
-    }
-
-    // insert -> update => insert
-    if (LCH_DictHasKey(child->upd, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'insert -> update => insert' for key '%s' in table "
-          "'%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      char *value = (char *)LCH_DictRemove(child->upd, key);
-      assert(value != NULL);
-      if (!LCH_DictSet(child->ins, key, value, free)) {
-        return false;
-      }
-      child->num_merged += 1;
-      continue;
-    }
-
-    // insert -> noop => insert
-    char *value = (char *)LCH_DictRemove(parent->ins, key);
-    if (!LCH_DictSet(child->ins, key, value, free)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-static bool CompressDeletionOperations(const LCH_List *const keys,
-                                       LCH_Delta *const child,
-                                       const LCH_Delta *const parent) {
-  assert(keys != NULL);
-  assert(child->table_def != NULL);
-  assert(child->del != NULL);
-  assert(parent->ins != NULL);
-  assert(parent->del != NULL);
-  assert(parent->upd != NULL);
-
-  size_t num_keys = LCH_ListLength(keys);
-  for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
-    assert(key != NULL);
-
-    // delete -> insert => update
-    if (LCH_DictHasKey(child->ins, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'delete -> insert => update' for key '%s' in table "
-          "'%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      char *value = (char *)LCH_DictRemove(child->ins, key);
-      assert(value != NULL);
-      if (!LCH_DictSet(child->upd, key, value, free)) {
-        return false;
-      }
-      child->num_merged += 1;
-      continue;
-    }
-
-    // delete -> delete => error
-    if (LCH_DictHasKey(child->del, key)) {
-      LCH_LOG_ERROR(
-          "Found two subsequent delta delete operations for key '%s' in table "
-          "'%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      return false;
-    }
-
-    // delete -> update => error
-    if (LCH_DictHasKey(child->upd, key)) {
-      LCH_LOG_ERROR(
-          "Found two subsequent delta delete- and update operations for key "
-          "'%s' in table '%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      return false;
-    }
-
-    // delete -> noop => delete
-    char *value = (char *)LCH_DictRemove(parent->del, key);
-    if (!LCH_DictSet(child->del, key, value, free)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-static bool CompressUpdateOperations(const LCH_List *const keys,
-                                     LCH_Delta *const child,
-                                     const LCH_Delta *const parent) {
-  assert(keys != NULL);
-  assert(parent->ins != NULL);
-  assert(parent->del != NULL);
-  assert(parent->upd != NULL);
-  assert(child->ins != NULL);
-
-  size_t num_keys = LCH_ListLength(keys);
-  for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
-    assert(key != NULL);
-
-    // update -> insert => err
-    if (LCH_DictHasKey(child->ins, key)) {
-      LCH_LOG_ERROR(
-          "Found two subsequent delta update- and insert operations for key "
-          "'%s' in table '%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      return false;
-    }
-
-    // update -> delete => delete
-    if (LCH_DictHasKey(child->del, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'update -> delete => delete' for key '%s' in table "
-          "'%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      child->num_merged += 1;
-      continue;
-    }
-
-    // update -> update => update
-    if (LCH_DictHasKey(child->upd, key)) {
-      LCH_LOG_DEBUG(
-          "Compressing 'update -> update => update' for key '%s' in table "
-          "'%s'.",
-          key, LCH_TableDefinitionGetIdentifier(child->table_def));
-      child->num_merged += 1;
-      continue;
-    }
-
-    // update -> noop => update
-    char *value = (char *)LCH_DictRemove(parent->upd, key);
-    assert(value != NULL);
-    if (!LCH_DictSet(child->upd, key, value, free)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-bool LCH_DeltaCompress(LCH_Delta *const child, const LCH_Delta *const parent) {
-  assert(child != NULL);
+static bool MergeInsertOperations(const LCH_Json *const parent,
+                                  LCH_Json *const child_inserts) {
   assert(parent != NULL);
-  assert(child->table_def != NULL);
-  assert(parent->table_def != NULL);
-  assert(strcmp(LCH_TableDefinitionGetIdentifier(child->table_def),
-                LCH_TableDefinitionGetIdentifier(parent->table_def)) == 0);
+  assert(child_inserts != NULL);
 
-  // child->num_merged = parent->num_merged;
-  // child->num_canceled = parent->num_canceled;
+  const LCH_Json *const parent_inserts =
+      LCH_JsonObjectGetObject(parent, "inserts");
+  assert(parent_inserts != NULL);
 
-  LCH_List *const ins = LCH_DictGetKeys(parent->ins);
-  if (ins == NULL) {
-    return false;
-  }
-  if (!CompressInsertionOperations(ins, child, parent)) {
-    LCH_LOG_ERROR("Failed to compress insert operations for table '%s'.",
-                  LCH_TableDefinitionGetIdentifier(child->table_def));
-    LCH_ListDestroy(ins);
-    return false;
-  }
-  LCH_ListDestroy(ins);
+  const LCH_Json *const parent_deletes =
+      LCH_JsonObjectGetObject(parent, "deletes");
+  assert(parent_deletes != NULL);
 
-  LCH_List *const del = (LCH_List *)LCH_DictGetKeys(parent->del);
-  if (del == NULL) {
-    return false;
-  }
-  if (!CompressDeletionOperations(del, child, parent)) {
-    LCH_LOG_ERROR("Failed to compress delete operations for table '%s'.",
-                  LCH_TableDefinitionGetIdentifier(child->table_def));
-    LCH_ListDestroy(del);
-    return false;
-  }
-  LCH_ListDestroy(del);
+  const LCH_Json *const parent_updates =
+      LCH_JsonObjectGetObject(parent, "updates");
+  assert(parent_updates != NULL);
 
-  LCH_List *const upd = LCH_DictGetKeys(parent->upd);
-  if (upd == NULL) {
+  LCH_List *const keys = LCH_JsonObjectGetKeys(child_inserts);
+  if (keys == NULL) {
+    LCH_LOG_ERROR("Failed to get keys from child block's insert operations");
     return false;
   }
-  if (!CompressUpdateOperations(upd, child, parent)) {
-    LCH_LOG_ERROR("Failed to compress update operations for table '%s'.",
-                  LCH_TableDefinitionGetIdentifier(child->table_def));
-    LCH_ListDestroy(upd);
-    return false;
-  }
-  LCH_ListDestroy(upd);
 
+  const size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = (const char *)LCH_ListGet(keys, i);
+
+    if (LCH_JsonObjectHasKey(parent_inserts, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with insert operations in parent:
+      //////////////////////////////////////////////////////////////////////////
+
+      // parent_insert(key, val) -> child_insert(key, val) => ERROR
+      LCH_LOG_ERROR(
+          "Found two subsequent insert operations with the same key in parent "
+          "and child block (key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_deletes, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with delete operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      LCH_Json *const parent_value = LCH_JsonObjectRemove(parent_deletes, key);
+      LCH_Json *const child_value = LCH_JsonObjectRemove(child_inserts, key);
+
+      const bool is_equal = LCH_JsonIsEqual(parent_value, child_value);
+      LCH_JsonDestroy(parent_value);
+
+      if (is_equal) {
+        LCH_LOG_DEBUG(
+            "Merging: delete(key, val) -> insert(key, val) => NOOP "
+            "(key=\"%s\")",
+            key);
+        LCH_JsonDestroy(child_value);
+      } else {
+        LCH_LOG_DEBUG(
+            "Merging: delete(key, val1) -> insert(key, val2) => update(key, "
+            "val2) (key=\"%s\")",
+            key);
+
+        if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
+          LCH_LOG_ERROR(
+              "Failed to insert operation from child block into update "
+              "operations in parent block (key=\"%s\")",
+              key);
+          LCH_JsonDestroy(child_value);
+          LCH_ListDestroy(keys);
+          return false;
+        }
+      }
+      continue;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_updates, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with update operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      // parent_update(key, val) -> child_insert(key, val) => ERROR
+      LCH_LOG_ERROR(
+          "Found an update operation in parent block followed by an insert "
+          "operation in child block (key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    LCH_LOG_DEBUG(
+        "Merging: NOOP -> insert(key, val) => insert(key, val) (key=\"%s\")",
+        key);
+    LCH_Json *const child_value = LCH_JsonObjectRemove(child_inserts, key);
+    if (!LCH_JsonObjectSet(parent_inserts, key, child_value)) {
+      LCH_LOG_ERROR(
+          "Failed to move insert operation from child block into parent block "
+          "(key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+  }
+
+  LCH_ListDestroy(keys);
   return true;
+}
+
+static bool MergeDeleteOperations(const LCH_Json *const parent,
+                                  LCH_Json *const child_deletes) {
+  assert(parent != NULL);
+  assert(child_deletes != NULL);
+
+  const LCH_Json *const parent_inserts =
+      LCH_JsonObjectGetObject(parent, "inserts");
+  assert(parent_inserts != NULL);
+
+  const LCH_Json *const parent_deletes =
+      LCH_JsonObjectGetObject(parent, "deletes");
+  assert(parent_deletes != NULL);
+
+  const LCH_Json *const parent_updates =
+      LCH_JsonObjectGetObject(parent, "updates");
+  assert(parent_updates != NULL);
+
+  LCH_List *const keys = LCH_JsonObjectGetKeys(child_deletes);
+  if (keys == NULL) {
+    LCH_LOG_ERROR("Failed to get keys from child block's delete operations");
+    return false;
+  }
+
+  const size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = (const char *)LCH_ListGet(keys, i);
+
+    if (LCH_JsonObjectHasKey(parent_inserts, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with insert operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      LCH_Json *const parent_value = LCH_JsonObjectRemove(parent_inserts, key);
+      LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
+
+      const bool is_equal = LCH_JsonIsEqual(parent_value, child_value);
+      const bool is_null = LCH_JsonIsNull(child_value);
+
+      LCH_JsonDestroy(parent_value);
+      LCH_JsonDestroy(child_value);
+
+      if (is_equal) {
+        LCH_LOG_DEBUG(
+            "Merging: insert(key, val) -> delete(key, val) => NOOP "
+            "(key=\"%s\")",
+            key);
+      } else if (!is_null) {
+        LCH_LOG_ERROR(
+            "Found insert operation in parent block followed by delete "
+            "operation in child block with the same key, but different values "
+            "(key=\"%s\")",
+            key);
+        LCH_ListDestroy(keys);
+        return false;
+      } else {
+        LCH_LOG_DEBUG(
+            "Merging: insert(key, val) -> delete(key, null) => NOOP "
+            "(key=\"%s\")",
+            key);
+      }
+      continue;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_deletes, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with delete operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      // parent_delete(key, val) -> child_delete(key, val) => ERROR
+      LCH_LOG_ERROR(
+          "Found two subsequent delete operations with the same key in parent "
+          "and child block (key='%s')",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_updates, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with update operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      LCH_Json *const parent_value = LCH_JsonObjectRemove(parent_updates, key);
+      LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
+
+      const bool is_equal = LCH_JsonIsEqual(parent_value, child_value);
+      const bool is_null = LCH_JsonIsNull(child_value);
+
+      LCH_JsonDestroy(parent_value);
+      LCH_JsonDestroy(child_value);
+
+      if (is_equal) {
+        LCH_LOG_DEBUG(
+            "Merging: update(key, val) -> delete(key, val) => delete(key, "
+            "null) "
+            "(key=\"%s\")",
+            key);
+      } else if (!is_null) {
+        LCH_LOG_ERROR(
+            "Found update operation in parent block followed by delete "
+            "operation in child block with the same key, but different values "
+            "(key=\"%s\")",
+            key);
+        LCH_ListDestroy(keys);
+        return false;
+      } else {
+        LCH_LOG_DEBUG(
+            "Merging: update(key, val) -> delete(key, null) => delete(key, "
+            "null) "
+            "(key=\"%s\")",
+            key);
+      }
+
+      /* We have to use null as place holder, because we have no clue what the
+       * value was before the update in the child block. This null value will be
+       * carried down the chain and will end up in the final patch. However it
+       * does not matter, as only the key is required in a delete operation. */
+      LCH_Json *const null = LCH_JsonNullCreate();
+      if (null == NULL) {
+        LCH_LOG_ERROR(
+            "Failed to create null value for delete operation in parent block"
+            "(key=\"%s\")",
+            key);
+        LCH_ListDestroy(keys);
+        return false;
+      }
+
+      if (!LCH_JsonObjectSet(parent_deletes, key, null)) {
+        LCH_LOG_ERROR(
+            "Failed to set created delete operation in parent block "
+            "(key=\"%s\")",
+            key);
+        LCH_ListDestroy(keys);
+        return false;
+      }
+
+      continue;
+    }
+
+    LCH_LOG_DEBUG(
+        "Merging: NOOP -> delete(key, val) => delete(key, val) (key=\"%s\")",
+        key);
+    LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
+    if (!LCH_JsonObjectSet(parent_deletes, key, child_value)) {
+      LCH_LOG_ERROR(
+          "Failed to move delete operation from child block into parent block "
+          "(key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+  }
+
+  LCH_ListDestroy(keys);
+  return true;
+}
+
+static bool MergeUpdateOperations(const LCH_Json *const parent,
+                                  LCH_Json *const child_updates) {
+  assert(parent != NULL);
+  assert(child_updates != NULL);
+
+  const LCH_Json *const parent_inserts =
+      LCH_JsonObjectGetObject(parent, "inserts");
+  assert(parent_inserts != NULL);
+
+  const LCH_Json *const parent_deletes =
+      LCH_JsonObjectGetObject(parent, "deletes");
+  assert(parent_deletes != NULL);
+
+  const LCH_Json *const parent_updates =
+      LCH_JsonObjectGetObject(parent, "updates");
+  assert(parent_updates != NULL);
+
+  LCH_List *const keys = LCH_JsonObjectGetKeys(child_updates);
+  if (keys == NULL) {
+    LCH_LOG_ERROR("Failed to get keys from child block's update operations");
+    return false;
+  }
+
+  const size_t num_keys = LCH_ListLength(keys);
+  for (size_t i = 0; i < num_keys; i++) {
+    const char *const key = (const char *)LCH_ListGet(keys, i);
+
+    if (LCH_JsonObjectHasKey(parent_inserts, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with insert operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      LCH_LOG_DEBUG(
+          "Merging: insert(key, val1) -> update(key, val2) => insert(key, "
+          "val2) (key=\"%s\")",
+          key);
+
+      LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
+      if (!LCH_JsonObjectSet(parent_inserts, key, child_value)) {
+        LCH_LOG_ERROR(
+            "Failed to move update operation from child block into insert "
+            "operations in parent block (key=\"%s\")",
+            key);
+        LCH_ListDestroy(keys);
+        return false;
+      }
+      continue;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_deletes, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with delete operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      LCH_LOG_DEBUG(
+          "Found a delete operation in parent block followed by an update "
+          "operation in child block (key=\"%s\")",
+          key);
+
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    if (LCH_JsonObjectHasKey(parent_updates, key)) {
+      //////////////////////////////////////////////////////////////////////////
+      // Merge with update operations in parent
+      //////////////////////////////////////////////////////////////////////////
+
+      LCH_LOG_DEBUG(
+          "Merging: update(key, val1) -> update(key, val2) => update(key, "
+          "val2) (key=\"%s\")",
+          key);
+
+      LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
+      if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
+        LCH_LOG_ERROR(
+            "Failed to move update operation from child block into update "
+            "operations in parent block (key=\"%s\")",
+            key);
+        LCH_JsonDestroy(child_value);
+        LCH_ListDestroy(keys);
+        return false;
+      }
+      continue;
+    }
+
+    LCH_LOG_DEBUG(
+        "Merging: NOOP -> update(key, val) => update(key, val) (key=\"%s\")",
+        key);
+    LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
+    if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
+      LCH_LOG_ERROR(
+          "Failed to move update operation from child block into parent block "
+          "(key=\"%s\")",
+          key);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+  }
+
+  LCH_ListDestroy(keys);
+  return true;
+}
+
+bool LCH_DeltaMerge(const LCH_Json *const parent, LCH_Json *const child) {
+  assert(parent != NULL);
+  assert(child != NULL);
+
+  // We assume deltas are for the same table
+  const char *const table_id = LCH_DeltaGetTableID(child);
+  assert(LCH_StringEqual(table_id, LCH_DeltaGetTableID(parent)));
+  LCH_LOG_VERBOSE("Merging deltas for table '%s'", table_id);
+
+  static const char *const operations[] = {"inserts", "deletes", "updates"};
+
+  // Make sure child block's delta has the required keys
+  for (size_t i = 0; i < sizeof(operations) / sizeof(operations[0]); i++) {
+    const char *const operation = operations[i];
+    if (!LCH_JsonObjectHasKey(parent, operation)) {
+      LCH_LOG_ERROR(
+          "Missing required key \"%s\" in parent block's delta for table '%s'",
+          operation, table_id);
+      return false;
+    }
+  }
+
+  LCH_Json *const child_inserts = LCH_JsonObjectRemoveObject(child, "inserts");
+  LCH_Json *const child_deletes = LCH_JsonObjectRemoveObject(child, "deletes");
+  LCH_Json *const child_updates = LCH_JsonObjectRemoveObject(child, "updates");
+  LCH_JsonDestroy(child);
+
+  // Make sure parent block's delta has the required keys
+  for (size_t i = 0; i < sizeof(operations) / sizeof(operations[0]); i++) {
+    const char *const operation = operations[i];
+    if (!LCH_JsonObjectHasKey(parent, operation)) {
+      LCH_LOG_ERROR(
+          "Missing required key \"%s\" in parent block's delta for table '%s'",
+          operation, table_id);
+      LCH_JsonDestroy(child_inserts);
+      LCH_JsonDestroy(child_deletes);
+      LCH_JsonDestroy(child_updates);
+      return false;
+    }
+  }
+
+  if (!MergeInsertOperations(parent, child_inserts)) {
+    LCH_LOG_ERROR(
+        "Failed to merge insert operations from child into parent block's "
+        "delta for table '%s'",
+        table_id);
+    LCH_JsonDestroy(child_inserts);
+    LCH_JsonDestroy(child_deletes);
+    LCH_JsonDestroy(child_updates);
+    return false;
+  }
+  LCH_JsonDestroy(child_inserts);
+
+  if (!MergeDeleteOperations(parent, child_deletes)) {
+    LCH_LOG_ERROR(
+        "Failed to merge delete operations from child into parent block's "
+        "delta for table '%s'",
+        table_id);
+    LCH_JsonDestroy(child_deletes);
+    LCH_JsonDestroy(child_updates);
+    return false;
+  }
+  LCH_JsonDestroy(child_deletes);
+
+  if (!MergeUpdateOperations(parent, child_updates)) {
+    LCH_LOG_ERROR(
+        "Failed to merge update operations from child into parent block's "
+        "delta for table '%s'",
+        table_id);
+    LCH_JsonDestroy(child_updates);
+    return false;
+  }
+  LCH_JsonDestroy(child_updates);
+
+  return parent;
 }

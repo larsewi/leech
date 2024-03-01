@@ -42,19 +42,10 @@ int Commit(const char *const work_dir, int argc, char *argv[]) {
     }
   }
 
-  LCH_Instance *instance = SetupInstance(work_dir);
-  if (instance == NULL) {
-    LCH_LOG_ERROR("SetupInstance");
+  if (!LCH_Commit(work_dir)) {
+    fprintf(stderr, "LCH_Commit");
     return EXIT_FAILURE;
   }
-
-  if (!LCH_Commit(instance)) {
-    LCH_LOG_ERROR("LCH_InstanceCommit");
-    LCH_InstanceDestroy(instance);
-    return EXIT_FAILURE;
-  }
-
-  LCH_InstanceDestroy(instance);
 
   return EXIT_SUCCESS;
 }

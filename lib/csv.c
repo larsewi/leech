@@ -1,12 +1,8 @@
 #include <assert.h>
-#include <ctype.h>
 #include <errno.h>
-#include <math.h>
 #include <string.h>
 
-#include "buffer.h"
-#include "leech.h"
-#include "list.h"
+#include "logger.h"
 #include "utils.h"
 
 #define TEXTDATA(ch)                                                           \
@@ -139,7 +135,7 @@ static LCH_List *ParseRecord(Parser *const parser) {
     return NULL;
   }
 
-  if (!LCH_ListAppend(record, (void *)field, free)) {
+  if (!LCH_ListAppend(record, field, free)) {
     LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
                   field, parser->row, parser->column);
     free(field);
@@ -159,7 +155,7 @@ static LCH_List *ParseRecord(Parser *const parser) {
       return NULL;
     }
 
-    if (!LCH_ListAppend(record, (void *)field, free)) {
+    if (!LCH_ListAppend(record, field, free)) {
       LCH_LOG_ERROR("Failed to append field '%s' to record (Row %zu, Col %zu)",
                     field, parser->row, parser->column);
       free(field);
@@ -188,8 +184,7 @@ static LCH_List *ParseTable(Parser *const parser) {
     return NULL;
   }
 
-  if (!LCH_ListAppend(table, (void *)record,
-                      (void (*)(void *))LCH_ListDestroy)) {
+  if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
     LCH_LOG_ERROR("Failed to append record to table (Row %zu)", parser->row);
     LCH_ListDestroy(record);
     LCH_ListDestroy(table);
@@ -214,8 +209,7 @@ static LCH_List *ParseTable(Parser *const parser) {
       return NULL;
     }
 
-    if (!LCH_ListAppend(table, (void *)record,
-                        (void (*)(void *))LCH_ListDestroy)) {
+    if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
       LCH_LOG_ERROR("Failed append record to table (Row %zu)", parser->row);
       LCH_ListDestroy(record);
       LCH_ListDestroy(table);
@@ -464,12 +458,10 @@ bool LCH_CSVComposeFile(const LCH_List *table, const char *path) {
     return false;
   }
 
-  char *const csv = LCH_BufferToString(buffer);
-  if (csv == NULL) {
+  if (!LCH_BufferWriteFile(buffer, path)) {
     return false;
   }
 
-  const bool success = LCH_FileWrite(path, csv);
-  free(csv);
-  return success;
+  LCH_BufferDestroy(buffer);
+  return true;
 }

@@ -1,7 +1,6 @@
 #ifndef _LEECH_BUFFER_H
 #define _LEECH_BUFFER_H
 
-#include <arpa/inet.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -41,10 +40,10 @@ size_t LCH_BufferLength(const LCH_Buffer *buffer);
 
 /**
  * @brief destroy buffer.
- * @note noop if self is NULL.
+ * @note noop if buffer is NULL.
  * @param[in] buffer buffer.
  */
-void LCH_BufferDestroy(LCH_Buffer *buffer);
+void LCH_BufferDestroy(void *buffer);
 
 /**
  * @brief get buffer.
@@ -93,14 +92,16 @@ bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *in);
 
 void LCH_BufferChop(LCH_Buffer *const buffer, size_t offset);
 
-void LCH_BufferDestroyShallow(LCH_Buffer *buffer);
-
 /**
  * @brief get pointer to internal buffer and destroy surrounding data structure.
- * @param self buffer.
+ * @param buffer buffer.
  * @return pointer to internal char buffer.
  * @note returned buffer must be freed with free(3).
  */
 char *LCH_BufferToString(LCH_Buffer *buffer);
+
+bool LCH_BufferReadFile(LCH_Buffer *buffer, const char *filename);
+
+bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename);
 
 #endif  // _LEECH_BUFFER_H

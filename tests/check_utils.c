@@ -3,6 +3,7 @@
 
 #include "../lib/definitions.h"
 #include "../lib/dict.h"
+#include "../lib/json.h"
 #include "../lib/leech.h"
 #include "../lib/utils.c"
 
@@ -11,75 +12,6 @@ START_TEST(test_LCH_StringEqual) {
   ck_assert(!LCH_StringEqual("one", "two"));
   ck_assert(!LCH_StringEqual("two", "one"));
   ck_assert(LCH_StringEqual("two", "two"));
-}
-END_TEST
-
-START_TEST(test_ExtractFieldsAtIndices) {
-  LCH_List *header = LCH_CSVParseRecord("one,two,three,four,five");
-  ck_assert_ptr_nonnull(header);
-  ck_assert_int_eq(LCH_ListLength(header), 5);
-
-  LCH_List *fields = LCH_CSVParseRecord("two,four");
-  ck_assert_ptr_nonnull(fields);
-  ck_assert_int_eq(LCH_ListLength(fields), 2);
-
-  LCH_List *indices = GetIndexOfFields(header, fields);
-  ck_assert_ptr_nonnull(indices);
-  ck_assert_int_eq(LCH_ListLength(indices), 2);
-
-  LCH_ListDestroy(fields);
-  fields = ExtractFieldsAtIndices(header, indices);
-  ck_assert_ptr_nonnull(fields);
-  ck_assert_int_eq(LCH_ListLength(fields), 2);
-  ck_assert_str_eq((char *)LCH_ListGet(fields, 0), "two");
-  ck_assert_str_eq((char *)LCH_ListGet(fields, 1), "four");
-
-  LCH_ListDestroy(header);
-  LCH_ListDestroy(fields);
-  LCH_ListDestroy(indices);
-}
-END_TEST
-
-START_TEST(test_ParseConcat) {
-  LCH_List *list = ParseConcatFields("one,two", "three,four", false);
-  ck_assert_ptr_nonnull(list);
-  ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
-  LCH_ListDestroy(list);
-  list = NULL;
-
-  list = ParseConcatFields("one", "two,three,four", false);
-  ck_assert_ptr_nonnull(list);
-  ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
-  LCH_ListDestroy(list);
-  list = NULL;
-
-  list = ParseConcatFields("one,two,three", "four", false);
-  ck_assert_ptr_nonnull(list);
-  ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
-  LCH_ListDestroy(list);
-  list = NULL;
-
-  list = ParseConcatFields("one,two,three,four", NULL, false);
-  ck_assert_ptr_nonnull(list);
-  ck_assert_int_eq(LCH_ListLength(list), 4);
-  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
-  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "four");
-  LCH_ListDestroy(list);
-  list = NULL;
 }
 END_TEST
 
@@ -107,39 +39,12 @@ START_TEST(test_LCH_StringStrip) {
 END_TEST
 
 START_TEST(test_LCH_SplitString) {
-  const char *expected[] = {"+,a,b,c", "-,e,d,f"};
-  LCH_List *lst = LCH_SplitString("+,a,b,c\r\n-,e,d,f\r\n", "\r\n");
-  ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-  ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-  LCH_ListDestroy(lst);
-}
-END_TEST
-
-START_TEST(test_LCH_SplitStringSubstring) {
-  {
-    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
-    LCH_List *lst = LCH_SplitStringSubstring(
-        "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-    LCH_ListDestroy(lst);
-  }
-  {
-    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
-    LCH_List *lst = LCH_SplitStringSubstring(
-        "\r\n\r\n+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i", "\r\n\r\n");
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-    LCH_ListDestroy(lst);
-  }
-  {
-    const char *expected[] = {"+,a,b,c\r\n-,e,d,f", "%%,g,h,i"};
-    LCH_List *lst = LCH_SplitStringSubstring(
-        "+,a,b,c\r\n-,e,d,f\r\n\r\n%%,g,h,i\r\n\r\n", "\r\n\r\n");
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 0), expected[0]);
-    ck_assert_str_eq((char *)LCH_ListGet(lst, 1), expected[1]);
-    LCH_ListDestroy(lst);
-  }
+  LCH_List *list = LCH_StringSplit("1.2.3", ".");
+  ck_assert_int_eq(LCH_ListLength(list), 3);
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "1");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "2");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "3");
+  LCH_ListDestroy(list);
 }
 END_TEST
 
@@ -156,6 +61,7 @@ START_TEST(test_LCH_ReadWriteTextFile) {
 
   char expected[] = "Hello World!";
   ck_assert(LCH_FileWrite(path, expected));
+  ck_assert(LCH_FileExists(path));
 
   size_t size;
   char *actual = LCH_FileRead("testfile", &size);
@@ -163,99 +69,7 @@ START_TEST(test_LCH_ReadWriteTextFile) {
   ck_assert_int_eq(size, strlen(expected));
   free(actual);
   remove(path);
-}
-END_TEST
-
-START_TEST(test_GetIndexOfFields) {
-  LCH_List *const header = LCH_CSVParseRecord("zero,one,two,three,four,five");
-  LCH_List *const fields = LCH_CSVParseRecord("two,four");
-  LCH_List *const indices = GetIndexOfFields(header, fields);
-  ck_assert_ptr_nonnull(indices);
-  ck_assert_int_eq(LCH_ListLength(indices), 2);
-  ck_assert_int_eq((size_t)LCH_ListGet(indices, 0), 2);
-  ck_assert_int_eq((size_t)LCH_ListGet(indices, 1), 4);
-  LCH_ListDestroy(header);
-  LCH_ListDestroy(fields);
-  LCH_ListDestroy(indices);
-}
-END_TEST
-
-START_TEST(test_LCH_TableToDict) {
-  const char *const csv =
-      "firstname, lastname,  born\r\n"
-      "Paul,      McCartney, 1942\r\n"
-      "Ringo,     Starr,     1940\r\n"
-      "John,      Lennon,    1940\r\n"
-      "George,    Harrison,  1943\r\n";
-  LCH_List *table = LCH_CSVParseTable(csv);
-  LCH_Dict *dict = LCH_TableToDict(table, "lastname,firstname", "born", true);
-
-  LCH_ListDestroy(table);
-
-  ck_assert_ptr_nonnull(dict);
-  ck_assert_str_eq((char *)LCH_DictGet(dict, "Paul,McCartney"), "1942");
-  ck_assert_str_eq((char *)LCH_DictGet(dict, "Ringo,Starr"), "1940");
-  ck_assert_str_eq((char *)LCH_DictGet(dict, "John,Lennon"), "1940");
-  ck_assert_str_eq((char *)LCH_DictGet(dict, "George,Harrison"), "1943");
-
-  LCH_DictDestroy(dict);
-}
-END_TEST
-
-START_TEST(test_LCH_DictToTable) {
-  const char *const csv =
-      "firstname, lastname,  born\r\n"
-      "Paul,      McCartney, 1942\r\n"
-      "Ringo,     Starr,     1940\r\n"
-      "John,      Lennon,    1940\r\n"
-      "George,    Harrison,  1943\r\n";
-  LCH_List *table = LCH_CSVParseTable(csv);
-  LCH_Dict *dict = LCH_TableToDict(table, "firstname", "born,lastname", true);
-  LCH_ListDestroy(table);
-
-  table = LCH_DictToTable(dict, "firstname", "lastname,born", true);
-  ck_assert_ptr_nonnull(table);
-  LCH_DictDestroy(dict);
-
-  size_t num_records = LCH_ListLength(table);
-  ck_assert_int_eq(num_records, 5);
-
-  for (size_t i = 0; i < num_records; i++) {
-    LCH_List *record = (LCH_List *)LCH_ListGet(table, i);
-    ck_assert_ptr_nonnull(record);
-    ck_assert_int_eq(LCH_ListLength(record), 3);
-
-    char *first = (char *)LCH_ListGet(record, 0);
-    ck_assert_ptr_nonnull(first);
-
-    char *second = (char *)LCH_ListGet(record, 1);
-    ck_assert_ptr_nonnull(second);
-
-    char *third = (char *)LCH_ListGet(record, 2);
-    ck_assert_ptr_nonnull(third);
-
-    if (i == 0) {
-      ck_assert_str_eq(first, "firstname");
-      ck_assert_str_eq(second, "born");
-      ck_assert_str_eq(third, "lastname");
-    } else if (strcmp(first, "Paul") == 0) {
-      ck_assert_str_eq(second, "1942");
-      ck_assert_str_eq(third, "McCartney");
-    } else if (strcmp(first, "Ringo") == 0) {
-      ck_assert_str_eq(second, "1940");
-      ck_assert_str_eq(third, "Starr");
-    } else if (strcmp(first, "John") == 0) {
-      ck_assert_str_eq(second, "1940");
-      ck_assert_str_eq(third, "Lennon");
-    } else if (strcmp(first, "George") == 0) {
-      ck_assert_str_eq(second, "1943");
-      ck_assert_str_eq(third, "Harrison");
-    } else {
-      assert(false);
-    }
-  }
-
-  LCH_ListDestroy(table);
+  ck_assert(!LCH_FileExists(path));
 }
 END_TEST
 
@@ -285,6 +99,100 @@ START_TEST(test_LCH_MessageDigest) {
 }
 END_TEST
 
+START_TEST(test_LCH_TableToJsonObject) {
+  LCH_List *const table = LCH_CSVParseTable(
+      "firstname, lastname,  born\r\n"
+      "Paul,      McCartney, 1942\r\n"
+      "Ringo,     Starr,     1940\r\n"
+      "John,      Lennon,    1940\r\n"
+      "George,    Harrison,  1943\r\n");
+  static const char *primary[] = {"firstname", "lastname", NULL};
+  static const char *subsidiary[] = {"born", NULL};
+
+  LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
+  ck_assert_ptr_nonnull(json);
+
+  LCH_ListDestroy(table);
+
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+
+  const LCH_Json *str = LCH_JsonObjectGet(json, "Paul,McCartney");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "1942");
+
+  str = LCH_JsonObjectGet(json, "Ringo,Starr");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "1940");
+
+  str = LCH_JsonObjectGet(json, "John,Lennon");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "1940");
+
+  str = LCH_JsonObjectGet(json, "George,Harrison");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "1943");
+
+  LCH_JsonDestroy(json);
+}
+END_TEST
+
+START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
+  LCH_List *const table = LCH_CSVParseTable(
+      "firstname, lastname,  born\r\n"
+      "Paul,      McCartney, 1942\r\n"
+      "Ringo,     Starr,     1940\r\n"
+      "John,      Lennon,    1940\r\n"
+      "George,    Harrison,  1943\r\n");
+  static const char *primary[] = {"born", "lastname", "firstname", NULL};
+  static const char *subsidiary[] = {NULL};
+
+  LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
+  ck_assert_ptr_nonnull(json);
+
+  LCH_ListDestroy(table);
+
+  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+
+  const LCH_Json *str = LCH_JsonObjectGet(json, "1942,McCartney,Paul");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+
+  str = LCH_JsonObjectGet(json, "1940,Starr,Ringo");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+
+  str = LCH_JsonObjectGet(json, "1940,Lennon,John");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+
+  str = LCH_JsonObjectGet(json, "1943,Harrison,George");
+  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+
+  LCH_JsonDestroy(json);
+}
+END_TEST
+
+START_TEST(test_LCH_ParseNumber) {
+  long value;
+  ck_assert(LCH_ParseNumber("123", &value));
+  ck_assert_int_eq(value, 123);
+
+  ck_assert(LCH_ParseNumber("321abc", &value));
+  ck_assert_int_eq(value, 321);
+
+  ck_assert(!LCH_ParseNumber("abc321", &value));
+}
+END_TEST
+
+START_TEST(test_LCH_ParseVersion) {
+  size_t major, minor, patch;
+  ck_assert(LCH_ParseVersion("1.2.3", &major, &minor, &patch));
+  ck_assert_int_eq(major, 1);
+  ck_assert_int_eq(minor, 2);
+  ck_assert_int_eq(patch, 3);
+
+  ck_assert(!LCH_ParseVersion("1.2.", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1.2", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1.", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("a.b.c", &major, &minor, &patch));
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -293,23 +201,8 @@ Suite *UtilsSuite(void) {
     suite_add_tcase(s, tc);
   }
   {
-    TCase *tc = tcase_create("ExtractFieldsAtIndices");
-    tcase_add_test(tc, test_ExtractFieldsAtIndices);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("ParseConcat");
-    tcase_add_test(tc, test_ParseConcat);
-    suite_add_tcase(s, tc);
-  }
-  {
     TCase *tc = tcase_create("LCH_SplitString");
     tcase_add_test(tc, test_LCH_SplitString);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_SplitStringSubstring");
-    tcase_add_test(tc, test_LCH_SplitStringSubstring);
     suite_add_tcase(s, tc);
   }
   {
@@ -333,23 +226,28 @@ Suite *UtilsSuite(void) {
     suite_add_tcase(s, tc);
   }
   {
-    TCase *tc = tcase_create("GetIndexOfFields");
-    tcase_add_test(tc, test_GetIndexOfFields);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_TableToDict");
-    tcase_add_test(tc, test_LCH_TableToDict);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_DictToTable");
-    tcase_add_test(tc, test_LCH_DictToTable);
-    suite_add_tcase(s, tc);
-  }
-  {
     TCase *tc = tcase_create("LCH_MessageDigest");
     tcase_add_test(tc, test_LCH_MessageDigest);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_TableToJsonObject");
+    tcase_add_test(tc, test_LCH_TableToJsonObject);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_TableToJsonObject no subsidiary key");
+    tcase_add_test(tc, test_LCH_TableToJsonObjectNoSubsidiary);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ParseNumber");
+    tcase_add_test(tc, test_LCH_ParseNumber);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ParseVersion");
+    tcase_add_test(tc, test_LCH_ParseVersion);
     suite_add_tcase(s, tc);
   }
   return s;

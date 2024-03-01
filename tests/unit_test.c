@@ -4,8 +4,6 @@
 
 #include "../lib/leech.h"
 
-static void SetupDebugMessenger(void);
-
 Suite *BlockSuite(void);
 Suite *BufferSuite(void);
 Suite *CSVSuite(void);
@@ -13,13 +11,17 @@ Suite *JSONSuite(void);
 Suite *DeltaSuite(void);
 Suite *DictSuite(void);
 Suite *HeadSuite(void);
-Suite *LeechCSVSuite(void);
 Suite *ListSuite(void);
 Suite *TableSuite(void);
 Suite *UtilsSuite(void);
+Suite *InstanceSuite(void);
 
 int main(int argc, char *argv[]) {
-  SetupDebugMessenger();
+  LCH_LoggerInit(LCH_LOGGER_MESSAGE_TYPE_VERBOSE_BIT |
+                     LCH_LOGGER_MESSAGE_TYPE_INFO_BIT |
+                     LCH_LOGGER_MESSAGE_TYPE_WARNING_BIT |
+                     LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT,
+                 LCH_LoggerCallbackDefault);
 
   SRunner *sr = srunner_create(DictSuite());
   srunner_add_suite(sr, BufferSuite());
@@ -29,8 +31,8 @@ int main(int argc, char *argv[]) {
   srunner_add_suite(sr, BlockSuite());
   srunner_add_suite(sr, CSVSuite());
   srunner_add_suite(sr, JSONSuite());
-  srunner_add_suite(sr, LeechCSVSuite());
   srunner_add_suite(sr, TableSuite());
+  srunner_add_suite(sr, InstanceSuite());
 
   if (argc > 1 && strcmp(argv[1], "no-fork") == 0) {
     srunner_set_fork_status(sr, CK_NOFORK);
@@ -41,41 +43,4 @@ int main(int argc, char *argv[]) {
 
   srunner_free(sr);
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-static void DebugMessengerCallbackDefault(unsigned char severity,
-                                          const char *message) {
-  assert(message != NULL);
-  switch (severity) {
-    case LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT:
-      fprintf(stderr, "DEBUG: %s\n", message);
-      break;
-    case LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT:
-      fprintf(stderr, "VERBOSE: %s\n", message);
-      break;
-    case LCH_DEBUG_MESSAGE_TYPE_INFO_BIT:
-      fprintf(stderr, "INFO: %s\n", message);
-      break;
-    case LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT:
-      fprintf(stderr, "WARNING: %s\n", message);
-      break;
-    case LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT:
-      fprintf(stderr, "ERROR: %s\n", message);
-      break;
-    default:
-      assert(false);
-  }
-}
-
-static void SetupDebugMessenger(void) {
-  LCH_DebugMessengerInitInfo initInfo = {
-      .severity =
-          LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT |
-          LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT | LCH_DEBUG_MESSAGE_TYPE_INFO_BIT |
-          LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT /* |
-                                                LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT*/
-      ,
-      .messageCallback = &DebugMessengerCallbackDefault,
-  };
-  LCH_DebugMessengerInit(&initInfo);
 }

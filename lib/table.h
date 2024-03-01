@@ -1,30 +1,30 @@
 #ifndef _LEECH_TABLE_H
 #define _LEECH_TABLE_H
 
-#include "delta.h"
-#include "dict.h"
-#include "leech.h"
+#include <stdlib.h>
 
-const char *LCH_TableDefinitionGetIdentifier(
-    const LCH_TableDefinition *definition);
+#include "json.h"
+#include "list.h"
 
-const char *LCH_TableDefinitionGetPrimaryFields(
-    const LCH_TableDefinition *defintion);
+typedef struct LCH_TableInfo LCH_TableInfo;
 
-const char *LCH_TableDefinitionGetSubsidiaryFields(
-    const LCH_TableDefinition *definition);
+void LCH_TableInfoDestroy(void *info);
 
-LCH_Dict *LCH_TableDefinitionLoadNewState(
-    const LCH_TableDefinition *definition);
+LCH_TableInfo *LCH_TableInfoLoad(const char *identifer,
+                                 const LCH_Json *table_info);
 
-LCH_Dict *LCH_TableDefinitionLoadOldState(const LCH_TableDefinition *defintion,
-                                          const char *work_dir);
+const char *LCH_TableInfoGetIdentifier(const LCH_TableInfo *table_info);
 
-bool LCH_TableStoreNewState(const LCH_TableDefinition *definition,
-                            const char *work_dir, const LCH_Dict *new_state);
+LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *table_info);
 
-bool LCH_TableDefinitionPatch(const LCH_TableDefinition *definition,
-                              const LCH_Delta *patch, const char *uid_field,
-                              const char *uid_value);
+LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,
+                                    const char *work_dir);
+
+bool LCH_TableStoreNewState(const LCH_TableInfo *table_info,
+                            const char *work_dir, const LCH_Json *new_state);
+
+bool LCH_TablePatch(const LCH_TableInfo *table_info, const char *field,
+                    const char *value, const LCH_Json *inserts,
+                    const LCH_Json *deletes, const LCH_Json *updates);
 
 #endif  // _LEECH_TABLE_H

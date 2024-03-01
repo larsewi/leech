@@ -16,16 +16,16 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AM_PROG_AR
 
+LT_INIT([dlopen])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
+
 # Checks for header files.
-AC_CHECK_HEADERS([arpa/inet.h unistd.h stdint.h])
+AC_CHECK_HEADERS([arpa/inet.h unistd.h stdint.h fcntl.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
-AC_TYPE_UINT8_T
-AC_TYPE_UINT16_T
-AC_TYPE_UINT32_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
@@ -36,16 +36,12 @@ AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strndup mkdir rmdir
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
               [debug=$enableval], [debug=no])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
-
 # Automake conditionals.
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 # pkg-check modules.
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
-PKG_CHECK_MODULES([OPENSSL], [openssl >= 1.0.0])
-
-LT_INIT
+PKG_CHECK_MODULES([CHECK], [check])
+PKG_CHECK_MODULES([PSQL], [libpq])
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
 AC_OUTPUT

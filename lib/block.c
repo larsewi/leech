@@ -1,220 +1,159 @@
 #include "block.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
-#include <errno.h>
 #include <limits.h>
-#include <openssl/sha.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <time.h>
 
 #include "definitions.h"
-#include "leech.h"
+#include "head.h"
+#include "logger.h"
 #include "utils.h"
 
-struct __attribute__((__packed__)) LCH_Block {
-  unsigned char parent_id[SHA_DIGEST_LENGTH];
-  uint32_t timestamp;
-  uint32_t data_len;
-  unsigned char data[0];
-};
+LCH_Json *LCH_BlockCreate(const char *const parent_id,
+                          LCH_Json *const payload) {
+  assert(parent_id != NULL);
+  assert(payload != NULL);
 
-static char *DigestToString(const unsigned char digest[SHA_DIGEST_LENGTH]) {
-  // Two characters per byte, plus terminating null byte
-  const int len = (SHA_DIGEST_LENGTH * 2) + 1;
-
-  char *const str = (char *)malloc(len);
-  if (str == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
+  LCH_Json *const block = LCH_JsonObjectCreate();
+  if (block == NULL) {
     return NULL;
   }
 
-  for (int i = 0; i < SHA_DIGEST_LENGTH; i++) {
-    int ret = snprintf(str + (i * 2), len - (i * 2), "%02x", digest[i]);
-    assert(ret == 2);
-  }
-
-  return str;
-}
-
-static bool StringToDigest(const char *str,
-                           unsigned char digest[SHA_DIGEST_LENGTH]) {
-  for (int i = 0; i < SHA_DIGEST_LENGTH; i++) {
-    if (sscanf(str, "%2hhx", &digest[i]) != 1) {
-      return false;
-    }
-    str += 2;
-  }
-
-  return true;
-}
-
-char *LCH_BlockGetParentID(const LCH_Block *const block) {
-  return DigestToString(block->parent_id);
-}
-
-time_t LCH_BlockGetTimestamp(const LCH_Block *const block) {
-  return (time_t)ntohl(block->timestamp);
-}
-
-size_t LCH_BlockGetDataLength(const LCH_Block *const block) {
-  return (size_t)ntohl(block->data_len);
-}
-
-void *LCH_BlockGetData(LCH_Block *const block) { return block->data; }
-
-char *LCH_BlockGetBlockID(const LCH_Block *const block) {
-  unsigned char digest[SHA_DIGEST_LENGTH];
-
-  if (block == NULL) {
-    memset(digest, 0, sizeof(digest));
-  } else {
-    const size_t len = sizeof(LCH_Block) + LCH_BlockGetDataLength(block);
-    SHA1((unsigned char *)block, len, digest);
-  }
-
-  return DigestToString(digest);
-}
-
-LCH_Block *LCH_BlockCreate(const char *const parent_id, const void *const data,
-                           const size_t data_len) {
-  LCH_Block *block = (LCH_Block *)malloc(sizeof(LCH_Block) + data_len);
-  if (block == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for block: %s");
+  if (!LCH_JsonObjectSetStringDuplicate(block, "version", PACKAGE_VERSION)) {
+    LCH_LOG_ERROR("Failed to set version field in block");
+    LCH_JsonDestroy(block);
     return NULL;
   }
 
-  assert(StringToDigest(parent_id, block->parent_id));
+  const double timestamp = (double)time(NULL);
+  if (!LCH_JsonObjectSetNumber(block, "timestamp", timestamp)) {
+    LCH_LOG_ERROR("Failed to set timestamp field in block");
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
 
-  const time_t timestamp = time(NULL);
-  assert(timestamp <= UINT32_MAX);
-  block->timestamp = htonl((uint32_t)timestamp);
+  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", parent_id)) {
+    LCH_LOG_ERROR("Failed to set parent block identifier field in block");
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
 
-  assert(data_len <= UINT32_MAX);
-  block->data_len = htonl((uint32_t)data_len);
-
-  memcpy(block->data, data, data_len);
+  if (!LCH_JsonObjectSet(block, "payload", payload)) {
+    LCH_LOG_ERROR("Failed to set payload field in block");
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
 
   return block;
 }
 
-char *LCH_BlockStore(const char *const work_dir, const LCH_Block *const block) {
-  assert(work_dir != NULL);
+bool LCH_BlockStore(const char *const work_dir, const LCH_Json *const block) {
   assert(block != NULL);
-
-  char *const block_id = LCH_BlockGetBlockID(block);
-  if (block_id == NULL) {
-    LCH_LOG_ERROR("Failed to compute block ID");
-    return NULL;
-  }
-
-  char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "blocks", block_id)) {
-    free(block_id);
-    return NULL;
-  }
-
-  FILE *const file = fopen(path, "wb");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for binary writing: %s", path,
-                  strerror(errno));
-    free(block_id);
-    return NULL;
-  }
-
-  if (fwrite(block, sizeof(LCH_Block), 1, file) != 1) {
-    LCH_LOG_ERROR("Failed to write block header to file '%s': %s", path,
-                  strerror(errno));
-    fclose(file);
-    free(block_id);
-    return NULL;
-  }
-
-  const size_t data_len = LCH_BlockGetDataLength(block);
-  if (fwrite(block->data, 1, data_len, file) != data_len) {
-    LCH_LOG_ERROR("Failed to write block payload to file '%s': %s", path,
-                  strerror(errno));
-    fclose(file);
-    free(block_id);
-    return NULL;
-  }
-
-  fclose(file);
-  return block_id;
-}
-
-LCH_Block *LCH_BlockLoad(const char *const work_dir,
-                         const char *const block_id) {
   assert(work_dir != NULL);
-  assert(block_id != NULL);
 
-  char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "blocks", block_id)) {
-    return NULL;
-  }
-
-  FILE *const file = fopen(path, "rb");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for binary reading: %s", path,
-                  strerror(errno));
-    return NULL;
-  }
-
-  LCH_Block *block = (LCH_Block *)malloc(sizeof(LCH_Block));
-  if (block == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: %s", strerror(errno));
-    fclose(file);
-    return NULL;
-  }
-
-  if (fread(block, sizeof(LCH_Block), 1, file) != 1) {
-    LCH_LOG_ERROR("Failed to read block header from file '%s': %s", path,
-                  strerror(errno));
-    free(block);
-    fclose(file);
-    return NULL;
-  }
-
-  const size_t data_len = LCH_BlockGetDataLength(block);
-  {
-    void *ptr = realloc(block, sizeof(LCH_Block) + data_len);
-    if (ptr == NULL) {
-      LCH_LOG_ERROR("Failed to reallocate memory: %s", strerror(errno));
-      free(block);
-      fclose(file);
-      return NULL;
-    }
-    block = (LCH_Block *)ptr;
-  }
-
-  if (fread(block->data, 1, data_len, file) != data_len) {
-    LCH_LOG_ERROR("Failed to read block payload from file '%s': %s", path,
-                  strerror(errno));
-    free(block);
-    fclose(file);
-    return NULL;
-  }
-
-  fclose(file);
-  return block;
-}
-
-bool LCH_BlockRemove(const char *const work_dir, const char *const block_id) {
-  assert(work_dir != NULL);
-  assert(block_id != NULL);
-
-  char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "blocks", block_id)) {
-    return NULL;
-  }
-
-  if (unlink(path) != 0) {
-    LCH_LOG_ERROR("Failed to delete block at path '%s': %s", path,
-                  strerror(errno));
+  char *const json = LCH_JsonCompose(block);
+  if (json == NULL) {
     return false;
   }
 
+  LCH_Buffer *const digest = LCH_BufferCreate();
+  if (digest == NULL) {
+    free(json);
+    return false;
+  }
+
+  if (!LCH_MessageDigest((unsigned char *)json, strlen(json), digest)) {
+    LCH_BufferDestroy(digest);
+    free(json);
+    return false;
+  }
+
+  char *const block_id = LCH_BufferToString(digest);
+  assert(block_id != NULL);
+
+  char path[PATH_MAX];
+  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    free(block_id);
+    free(json);
+    return false;
+  }
+
+  if (!LCH_FileWrite(path, json)) {
+    free(json);
+    return false;
+  }
+
+  if (!LCH_HeadSet("HEAD", work_dir, block_id)) {
+    free(block_id);
+    free(json);
+  }
+
+  free(block_id);
+  free(json);
   return true;
+}
+
+LCH_Json *LCH_BlockLoad(const char *const work_dir,
+                        const char *const block_id) {
+  char path[PATH_MAX];
+  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    return NULL;
+  }
+
+  size_t num_bytes;
+  char *const raw = LCH_FileRead(path, &num_bytes);
+  if (raw == NULL) {
+    LCH_LOG_ERROR("Failed to read block %.7s", block_id);
+    return NULL;
+  }
+  LCH_LOG_DEBUG("Read JSON from block with identifer %.7s", block_id);
+
+  LCH_Json *const block = LCH_JsonParse(raw);
+  free(raw);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to parse block with identifer %.7s", block_id);
+    return NULL;
+  }
+  LCH_LOG_DEBUG("Parsed JSON from block with identifer %.7s", block_id);
+
+  return block;
+}
+
+const char *LCH_BlockGetParentBlockIdentifier(const LCH_Json *const block) {
+  assert(block != NULL);
+
+  const char *const parent_id = LCH_JsonObjectGetString(block, "parent");
+  if (parent_id == NULL) {
+    LCH_LOG_ERROR("Failed to retrieve parent block identifier");
+    return NULL;
+  }
+  return parent_id;
+}
+
+bool LCH_BlockIsGenisisBlockIdentifier(const char *const block_id) {
+  assert(block_id != NULL);
+  return LCH_StringEqual(block_id, LCH_GENISIS_BLOCK_ID);
+}
+
+const LCH_Json *LCH_BlockGetPayload(const LCH_Json *const block) {
+  assert(block != NULL);
+
+  const LCH_Json *const payload = LCH_JsonObjectGetArray(block, "payload");
+  if (payload == NULL) {
+    LCH_LOG_ERROR("Failed to get payload from block");
+    return NULL;
+  }
+  return payload;
+}
+
+LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
+  assert(block != NULL);
+
+  LCH_Json *const payload = LCH_JsonObjectRemoveArray(block, "payload");
+  if (payload == NULL) {
+    LCH_LOG_ERROR("Failed to remove payload from block");
+    return NULL;
+  }
+  return payload;
 }

@@ -8,11 +8,10 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../lib/leech_csv.h"
-#include "../lib/leech_psql.h"
 #include "commit.h"
 #include "common.h"
 #include "diff.h"
+#include "libpq-fe.h"
 #include "patch.h"
 #include "rebase.h"
 
@@ -82,19 +81,20 @@ static void PrintHelp(void) {
   printf("\n");
 }
 
-static void SetupDebugMessenger(unsigned char severity) {
-  LCH_DebugMessengerInitInfo initInfo = {
-      .severity = severity,
-      .messageCallback = &LCH_DebugMessengerCallbackDefault,
-  };
-  LCH_DebugMessengerInit(&initInfo);
-}
-
 int main(int argc, char *argv[]) {
   unsigned char severity =
-      LCH_DEBUG_MESSAGE_TYPE_ERROR_BIT | LCH_DEBUG_MESSAGE_TYPE_WARNING_BIT;
+      LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT | LCH_LOGGER_MESSAGE_TYPE_WARNING_BIT;
 
   const char *work_dir = ".leech";
+
+  /**
+   * For some reason, if we don't reference something from libpq, we get
+   * "undefined reference" errors when dlopen'ing the leech_psql.so, which uses
+   * libpq. My wildest guess is that libpq is stripped away if the build system
+   * doesn't find any references to it. Adding a reference to one of the symbols
+   * here, seems to fix the issue.
+   */
+  PQlibVersion();
 
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
@@ -103,13 +103,13 @@ int main(int argc, char *argv[]) {
         work_dir = optarg;
         break;
       case OPTION_DEBUG:
-        severity |= LCH_DEBUG_MESSAGE_TYPE_DEBUG_BIT;
+        severity |= LCH_LOGGER_MESSAGE_TYPE_DEBUG_BIT;
         // fallthrough
       case OPTION_VERBOSE:
-        severity |= LCH_DEBUG_MESSAGE_TYPE_VERBOSE_BIT;
+        severity |= LCH_LOGGER_MESSAGE_TYPE_VERBOSE_BIT;
         // fallthrough
       case OPTION_INFORM:
-        severity |= LCH_DEBUG_MESSAGE_TYPE_INFO_BIT;
+        severity |= LCH_LOGGER_MESSAGE_TYPE_INFO_BIT;
         break;
       case OPTION_VERSION:
         PrintVersion();
@@ -118,14 +118,15 @@ int main(int argc, char *argv[]) {
         PrintHelp();
         return EXIT_SUCCESS;
       default:
+        fprintf(stderr, "Illegal option: '%s'\n", optarg);
         return EXIT_FAILURE;
     }
   }
 
-  SetupDebugMessenger(severity);
+  LCH_LoggerInit(severity, LCH_LoggerCallbackDefault);
 
   if (optind >= argc) {
-    LCH_LOG_WARNING("Missing command ...");
+    fprintf(stderr, "Missing command ...");
     return EXIT_SUCCESS;
   }
 

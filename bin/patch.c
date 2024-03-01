@@ -88,21 +88,12 @@ int Patch(const char *const work_dir, int argc, char *argv[]) {
   }
   LCH_LOG_DEBUG("Loaded patch file '%s' %zu Bytes.", patch_file, size);
 
-  LCH_Instance *const instance = SetupInstance(work_dir);
-  if (instance == NULL) {
-    LCH_LOG_ERROR("Failed to setup leech instance.");
-    free(buffer);
-    return EXIT_FAILURE;
-  }
-
-  if (!LCH_Patch(instance, uid_field, uid_value, buffer, size)) {
+  if (!LCH_Patch(work_dir, uid_field, uid_value, buffer, size)) {
     LCH_LOG_ERROR("Failed to apply patch from file '%s'.", patch_file);
-    LCH_InstanceDestroy(instance);
     free(buffer);
     return EXIT_FAILURE;
   }
 
-  LCH_InstanceDestroy(instance);
   free(buffer);
   return EXIT_SUCCESS;
 }

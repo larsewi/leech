@@ -2,7 +2,7 @@
 #define _LEECH_CSV_H
 
 #include "buffer.h"
-#include "leech.h"
+#include "list.h"
 
 LCH_List *LCH_CSVParseTable(const char *str);
 

@@ -14,7 +14,7 @@ START_TEST(test_LCH_List) {
     int *data = (int *)malloc(sizeof(int));
     ck_assert_ptr_nonnull(data);
     *data = i;
-    ck_assert(LCH_ListAppend(list, (void *)data, free));
+    ck_assert(LCH_ListAppend(list, data, free));
   }
   ck_assert_int_eq(LCH_ListLength(list), 10);
 

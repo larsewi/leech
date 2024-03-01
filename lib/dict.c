@@ -4,8 +4,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include "definitions.h"
-
 #define INITIAL_CAPACITY 64
 #define LOAD_FACTOR 0.75f
 
@@ -21,11 +19,6 @@ struct LCH_Dict {
   size_t capacity;
   size_t in_use;
   DictElement **buffer;
-};
-
-struct LCH_DictIter {
-  size_t cur_pos;
-  const struct LCH_Dict *dict;
 };
 
 LCH_Dict *LCH_DictCreate() {
@@ -324,14 +317,15 @@ LCH_Dict *LCH_DictSetChangedIntersection(
   return result;
 }
 
-void LCH_DictDestroy(LCH_Dict *self) {
-  if (self == NULL) {
+void LCH_DictDestroy(void *const self) {
+  LCH_Dict *const dict = (LCH_Dict *)self;
+  if (dict == NULL) {
     return;
   }
-  assert(self->buffer != NULL);
+  assert(dict->buffer != NULL);
 
-  for (size_t i = 0; i < self->capacity; i++) {
-    DictElement *item = self->buffer[i];
+  for (size_t i = 0; i < dict->capacity; i++) {
+    DictElement *item = dict->buffer[i];
     if (item == NULL) {
       continue;
     }
@@ -343,8 +337,8 @@ void LCH_DictDestroy(LCH_Dict *self) {
     }
     free(item);
   }
-  free(self->buffer);
-  free(self);
+  free(dict->buffer);
+  free(dict);
 }
 
 LCH_List *LCH_DictGetKeys(const LCH_Dict *const self) {

@@ -13,15 +13,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: update apt repositories
+    - name: Update apt repositories
       run: sudo apt -y update
-    - name: install dependencies
+    - name: Install dependencies
       run: sudo apt -y install check libtool-bin valgrind
-    - name: bootstrap
+    - name: Bootstrap project
       run: ./bootstrap.sh
-    - name: configure
-      run: ./configure CC=gcc --enable-debug
-    - name: make
+    - name: Configure project with g++ compiler
+      run: ./configure CC=g++ --enable-debug
+    - name: Compile project
       run: make
-    - name: make check
+    - name: Run tests
       run: make check

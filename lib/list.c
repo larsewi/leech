@@ -1,9 +1,11 @@
+#include "list.h"
+
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 
-#include "definitions.h"
-#include "leech.h"
+#include "logger.h"
 
 #define INITIAL_CAPACITY 32
 
@@ -44,7 +46,7 @@ static bool EnsureCapacity(LCH_List *const self, const size_t n_items) {
   return true;
 }
 
-LCH_List *LCH_ListCreateWithCapacity(const size_t capacity) {
+static LCH_List *LCH_ListCreateWithCapacity(const size_t capacity) {
   LCH_List *self = (LCH_List *)malloc(sizeof(LCH_List));
   if (self == NULL) {
     LCH_LOG_ERROR("Failed to allocate memory for list: %s", strerror(errno));
@@ -101,6 +103,20 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   return true;
 }
 
+bool LCH_ListAppendStringDuplicate(LCH_List *const list,
+                                   const char *const str) {
+  assert(list != NULL);
+  assert(str != NULL);
+
+  char *const dup = strdup(str);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
+    return false;
+  }
+
+  return LCH_ListAppend(list, dup, free);
+}
+
 void *LCH_ListGet(const LCH_List *const self, const size_t index) {
   assert(self != NULL);
   assert(self->buffer != NULL);
@@ -121,7 +137,7 @@ void LCH_ListSet(LCH_List *const self, const size_t index, void *const value,
 }
 
 size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
-                     int (*compare)(const void *, const void *)) {
+                     LCH_ListIndexCompareFn compare) {
   assert(self != NULL);
   assert(compare != NULL);
 
@@ -146,8 +162,7 @@ static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
 }
 
 static size_t Partition(LCH_List *const list, const ssize_t low,
-                        const ssize_t high,
-                        int (*compare)(const void *, const void *)) {
+                        const ssize_t high, LCH_ListIndexCompareFn compare) {
   void *pivot = LCH_ListGet(list, high);
   ssize_t i = low;
   for (ssize_t j = low; j < high; j++) {
@@ -160,8 +175,7 @@ static size_t Partition(LCH_List *const list, const ssize_t low,
 }
 
 static void QuickSort(LCH_List *const list, const ssize_t low,
-                      const ssize_t high,
-                      int (*compare)(const void *, const void *)) {
+                      const ssize_t high, LCH_ListIndexCompareFn compare) {
   if (low < high) {
     const ssize_t pivot = Partition(list, low, high, compare);
     QuickSort(list, low, pivot - 1, compare);
@@ -169,71 +183,43 @@ static void QuickSort(LCH_List *const list, const ssize_t low,
   }
 }
 
-void LCH_ListSort(LCH_List *const self,
-                  int (*compare)(const void *, const void *)) {
+void LCH_ListSort(LCH_List *const self, LCH_ListIndexCompareFn compare) {
   assert(self != NULL);
   QuickSort(self, 0, self->length - 1, compare);
 }
 
-void LCH_ListDestroy(LCH_List *self) {
-  if (self == NULL) {
+void LCH_ListDestroy(void *const self) {
+  LCH_List *const list = (LCH_List *)self;
+  if (list == NULL) {
     return;
   }
-  assert(self->buffer != NULL);
 
-  for (size_t i = 0; i < self->length; i++) {
-    ListElement *item = self->buffer[i];
+  assert(list->buffer != NULL);
+
+  for (size_t i = 0; i < list->length; i++) {
+    ListElement *item = list->buffer[i];
     assert(item != NULL);
     if (item->destroy != NULL) {
       item->destroy(item->value);
     }
     free(item);
   }
-  free(self->buffer);
-  free(self);
+  free(list->buffer);
+  free(list);
 }
 
-void LCH_ListDestroyShallow(LCH_List *self) {
-  if (self == NULL) {
-    return;
+void *LCH_ListRemove(LCH_List *const list, const size_t index) {
+  assert(list != NULL);
+  assert(list->buffer != NULL);
+  assert(list->length > index);
+
+  ListElement *const element = list->buffer[index];
+  void *value = element->value;
+  free(element);
+
+  list->length -= 1;
+  for (size_t i = index; i < list->length; i++) {
+    list->buffer[i] = list->buffer[i + 1];
   }
-  assert(self->buffer != NULL);
-
-  for (size_t i = 0; i < self->length; i++) {
-    ListElement *item = self->buffer[i];
-    free(item);
-  }
-
-  free(self->buffer);
-  free(self);
-}
-
-LCH_List *LCH_ListMoveElements(LCH_List *const destination,
-                               LCH_List *const source) {
-  assert(destination != NULL);
-  assert(source != NULL);
-
-  if (!EnsureCapacity(destination, source->length)) {
-    return NULL;
-  }
-
-  for (size_t i = 0; i < source->length; i++) {
-    destination->buffer[destination->length++] = source->buffer[i];
-  }
-
-  free(source->buffer);
-  free(source);
-
-  return destination;
-}
-
-void LCH_ListSwap(LCH_List *const self, const size_t i, const size_t j) {
-  assert(self != NULL);
-  assert(self->buffer != NULL);
-  assert(self->length > i);
-  assert(self->length > j);
-
-  ListElement *tmp = self->buffer[i];
-  self->buffer[i] = self->buffer[j];
-  self->buffer[j] = tmp;
+  return value;
 }

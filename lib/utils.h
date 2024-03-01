@@ -1,9 +1,14 @@
 #ifndef _LEECH_UTILS
 #define _LEECH_UTILS
 
+#include <stdio.h>
+
 #include "buffer.h"
 #include "dict.h"
+#include "json.h"
 #include "leech.h"
+
+void *LCH_Allocate(size_t size);
 
 /**
  * Check if two strings are equivalent.
@@ -14,14 +19,14 @@
 bool LCH_StringEqual(const char *str1, const char *str2);
 
 /**
- * Split a string with delimitor.
- * @param[in] str string to split.
- * @param[in] del delimitor.
- * @param[out] list list of substrings.
+ * @brief Split string into a list based on delimiters.
+ * @param[in] str String to split.
+ * @param[in] del Delimiters to split on.
+ * @return List of substrings split on delimiter.
  */
-LCH_List *LCH_SplitString(const char *str, const char *del);
+LCH_List *LCH_StringSplit(const char *str, const char *del);
 
-LCH_List *LCH_SplitStringSubstring(const char *str, const char *substr);
+char *LCH_StringJoin(const LCH_List *list, const char *del);
 
 bool LCH_StringStartsWith(const char *str, const char *substr);
 
@@ -57,33 +62,67 @@ char *LCH_FileRead(const char *path, size_t *length);
  */
 bool LCH_FileWrite(const char *path, const char *str);
 
-LCH_Dict *LCH_TableToDict(const LCH_List *table, const char *primary,
-                          const char *subsidiary, bool has_header);
-
-LCH_List *LCH_DictToTable(const LCH_Dict *dict, const char *primary,
-                          const char *subsidiary, bool keep_header);
-
-/**
- * @brief Marshal string to buffer.
- * @param[in] buffer.
- * @param[in] string to marshal.
- * @return false in case of error.
- * @note String can be retrieved with LCH_UnmarshalString.
- */
-bool LCH_MarshalString(LCH_Buffer *buffer, const char *str);
-
-/**
- * @breif Unmarshal string from buffer.
- * @param[in] buffer.
- * @param[out] unmarshaled string.
- * @return pointer to remaining buffer.
- * @note unmarshaled string must be freed with free(3).
- */
-const char *LCH_UnmarshalString(const char *buffer, char **const str);
-
-const char *LCH_UnmarshalBinary(const char *buffer, char **str);
+LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
+                                const char *const *primary_fields,
+                                const char *const *subsidiary_fields);
 
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
+
+bool LCH_ParseNumber(const char *str, long *number);
+
+bool LCH_ParseVersion(const char *str, size_t *major, size_t *minor,
+                      size_t *patch);
+
+char *LCH_StringDuplicate(const char *str);
+
+char *LCH_StringFormat(const char *format, ...);
+
+/**
+ * @brief Destroy NULL-terminated string array.
+ * @param array One dimentional array of strings.
+ */
+void LCH_StringArrayDestroy(void *array);
+
+size_t LCH_StringArrayLength(const char *const *str_array);
+
+char **LCH_StringArrayInsert(const char *const *str_array, size_t position);
+
+/**
+ * @brief Destroy NULL-terminated string table.
+ * @param table Two dimentional array of strings.
+ */
+void LCH_StringArrayTableDestroy(void *table);
+
+/**
+ * @brief Create a NULL-terminated string array from list.
+ * @param list One dimentional list of strings.
+ * @return One dimentional array of strings.
+ */
+char **LCH_StringListToStringArray(const LCH_List *list);
+
+/**
+ * @brief Create a NULL-terminated string table from list.
+ * @param list Two dimentional list of strings.
+ * @return Two dimentional array of strings.
+ */
+char ***LCH_StringListTableToStringArrayTable(const LCH_List *list);
+
+/**
+ * @brief Create a list from NULL-terminated string array.
+ * @param str_array One dimentional array of strings.
+ * @return One dimentional list of strings.
+ */
+LCH_List *LCH_StringArrayToStringList(const char *const *str_array);
+
+/**
+ * @brief Create a list from NULL-terminated string table.
+ * @param str_array Two dimentional array of strings.
+ * @return Two dimentional list of strings.
+ */
+LCH_List *LCH_StringArrayTableToStringListTable(
+    const char *const *const *str_table);
+
+bool LCH_CreateParentDirectories(const char *filename);
 
 #endif  // _LEECH_UTILS
