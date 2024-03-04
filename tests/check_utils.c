@@ -178,18 +178,18 @@ START_TEST(test_LCH_ParseNumber) {
 END_TEST
 
 START_TEST(test_LCH_ParseVersion) {
-  size_t major, minor, patch;
-  ck_assert(LCH_ParseVersion("1.2.3", &major, &minor, &patch));
-  ck_assert_int_eq(major, 1);
-  ck_assert_int_eq(minor, 2);
-  ck_assert_int_eq(patch, 3);
+  size_t v_major, v_minor, v_patch;
+  ck_assert(LCH_ParseVersion("1.2.3", &v_major, &v_minor, &v_patch));
+  ck_assert_int_eq(v_major, 1);
+  ck_assert_int_eq(v_minor, 2);
+  ck_assert_int_eq(v_patch, 3);
 
-  ck_assert(!LCH_ParseVersion("1.2.", &major, &minor, &patch));
-  ck_assert(!LCH_ParseVersion("1.2", &major, &minor, &patch));
-  ck_assert(!LCH_ParseVersion("1.", &major, &minor, &patch));
-  ck_assert(!LCH_ParseVersion("1", &major, &minor, &patch));
-  ck_assert(!LCH_ParseVersion("", &major, &minor, &patch));
-  ck_assert(!LCH_ParseVersion("a.b.c", &major, &minor, &patch));
+  ck_assert(!LCH_ParseVersion("1.2.", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_ParseVersion("1.2", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_ParseVersion("1.", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_ParseVersion("1", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_ParseVersion("", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_ParseVersion("a.b.c", &v_major, &v_minor, &v_patch));
 }
 END_TEST
 
