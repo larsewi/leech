@@ -76,7 +76,7 @@ void LCH_TableInfoDestroy(void *const _info) {
   LCH_StringArrayDestroy(info->primary_fields);
   LCH_StringArrayDestroy(info->subsidiary_fields);
 
-  if (dlclose(info->src_dlib_handle) == -1) {
+  if (info->src_dlib_handle != NULL && dlclose(info->src_dlib_handle) == -1) {
     LCH_LOG_ERROR("Failed to release reference to dynamic library");
   }
   free(info->src_params);
@@ -668,9 +668,11 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    char **values = (LCH_StringArrayLength((const char *const *)table_info->subsidiary_fields) == 0)
-                        ? ParseFields(key)
-                        : ParseConcatenateFields(key, value);
+    char **values =
+        (LCH_StringArrayLength(
+             (const char *const *)table_info->subsidiary_fields) == 0)
+            ? ParseFields(key)
+            : ParseConcatenateFields(key, value);
     if (values == NULL) {
       LCH_ListDestroy(keys);
       return false;
