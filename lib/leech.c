@@ -473,6 +473,7 @@ bool LCH_Patch(const char *const work_dir, const char *const field,
   }
 
   const bool success = Patch(instance, field, value, patch, size);
+  LCH_InstanceDestroy(instance);
   if (!success) {
     LCH_LOG_ERROR("Failed to apply patch");
   }
