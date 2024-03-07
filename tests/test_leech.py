@@ -103,7 +103,7 @@ def test_leech_csv(tmp_path):
     assert execute(command, True) == 0
 
     ##########################################################################
-    # Create patch file
+    # Create delta patch file
     ##########################################################################
 
     lastknown = "0000000000000000000000000000000000000000"
@@ -119,7 +119,35 @@ def test_leech_csv(tmp_path):
     assert execute(command, True) == 0
 
     ##########################################################################
-    # Apply patch file
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value='SHA=123'",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create rebase patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "rebase",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply rebase patch file
     ##########################################################################
 
     command = [
@@ -255,7 +283,35 @@ def test_leech_psql(tmp_path):
     assert execute(command, True) == 0
 
     ##########################################################################
-    # Apply patch file
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value='SHA=123'",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create rebase patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "rebase",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply rebase patch file
     ##########################################################################
 
     command = [

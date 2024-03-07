@@ -36,7 +36,7 @@ START_TEST(test_LCH_Delta) {
     LCH_ListDestroy(table);
   }
 
-  LCH_Json *actual = LCH_DeltaCreate("beatles", new_state, old_state);
+  LCH_Json *actual = LCH_DeltaCreate("beatles", "delta", new_state, old_state);
   LCH_JsonDestroy(new_state);
   LCH_JsonDestroy(old_state);
   ck_assert_ptr_nonnull(actual);
