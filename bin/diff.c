@@ -64,14 +64,14 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
   }
 
   size_t size;
-  char *diff = LCH_Diff(work_dir, block_id, &size);
-  if (diff == NULL) {
+  char *patch = LCH_Diff(work_dir, block_id, &size);
+  if (patch == NULL) {
     fprintf(stderr, "LCH_Diff\n");
     return EXIT_FAILURE;
   }
 
   if (patch_file == NULL) {
-    free(diff);
+    free(patch);
     return EXIT_SUCCESS;
   }
 
@@ -79,19 +79,19 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
   if (file == NULL) {
     fprintf(stderr, "Failed to open file '%s' for binary writing: %s",
             patch_file, strerror(errno));
-    free(diff);
+    free(patch);
     return EXIT_FAILURE;
   }
 
-  if (fwrite(diff, 1, size, file) != size) {
+  if (fwrite(patch, 1, size, file) != size) {
     fprintf(stderr, "Failed to write to file '%s': %s", patch_file,
             strerror(errno));
     fclose(file);
-    free(diff);
+    free(patch);
     return EXIT_FAILURE;
   }
 
   fclose(file);
-  free(diff);
+  free(patch);
   return EXIT_SUCCESS;
 }
