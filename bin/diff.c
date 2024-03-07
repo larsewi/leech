@@ -63,16 +63,21 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
     }
   }
 
+  if (block_id == NULL) {
+    fprintf(stderr, "Missing required argument --block\n");
+    return EXIT_SUCCESS;
+  }
+
+  if (patch_file == NULL) {
+    fprintf(stderr, "Missing required argument --file\n");
+    return EXIT_SUCCESS;
+  }
+
   size_t size;
   char *patch = LCH_Diff(work_dir, block_id, &size);
   if (patch == NULL) {
     fprintf(stderr, "LCH_Diff\n");
     return EXIT_FAILURE;
-  }
-
-  if (patch_file == NULL) {
-    free(patch);
-    return EXIT_SUCCESS;
   }
 
   FILE *file = fopen(patch_file, "wb");
