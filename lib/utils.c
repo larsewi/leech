@@ -479,12 +479,12 @@ bool LCH_ParseNumber(const char *const str, long *const number) {
   return true;
 }
 
-bool LCH_ParseVersion(const char *const str, size_t *const major,
-                      size_t *const minor, size_t *const patch) {
+bool LCH_ParseVersion(const char *const str, size_t *const v_major,
+                      size_t *const v_minor, size_t *const v_patch) {
   assert(str != NULL);
-  assert(major != NULL);
-  assert(minor != NULL);
-  assert(patch != NULL);
+  assert(v_major != NULL);
+  assert(v_minor != NULL);
+  assert(v_patch != NULL);
 
   LCH_List *const list = LCH_StringSplit(str, ".");
   const size_t length = LCH_ListLength(list);
@@ -514,7 +514,7 @@ bool LCH_ParseVersion(const char *const str, size_t *const major,
     LCH_ListDestroy(list);
     return false;
   }
-  *major = (size_t)val;
+  *v_major = (size_t)val;
 
   sub = (char *)LCH_ListGet(list, 1);
   if (!LCH_ParseNumber(sub, &val)) {
@@ -527,7 +527,7 @@ bool LCH_ParseVersion(const char *const str, size_t *const major,
     LCH_ListDestroy(list);
     return false;
   }
-  *minor = (size_t)val;
+  *v_minor = (size_t)val;
 
   sub = (char *)LCH_ListGet(list, 2);
   if (!LCH_ParseNumber(sub, &val)) {
@@ -542,7 +542,7 @@ bool LCH_ParseVersion(const char *const str, size_t *const major,
   }
 
   LCH_ListDestroy(list);
-  *patch = (size_t)val;
+  *v_patch = (size_t)val;
   return true;
 }
 

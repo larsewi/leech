@@ -256,7 +256,7 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
     }
 
     char *const copy = strdup(field);
-    if (field == NULL) {
+    if (copy == NULL) {
       LCH_LOG_ERROR("Failed to duplicate string '%s': %s", field,
                     strerror(errno));
       LCH_StringArrayDestroy(table);
@@ -275,6 +275,7 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
       PQclear(result);
       return NULL;
     }
+    table[i + 1] = record;
 
     for (int j = 0; j < n_cols; j++) {
       const char *const value = PQgetvalue(result, i, j);
@@ -284,6 +285,14 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
         PQclear(result);
         return NULL;
       }
+
+      char *const copy = strdup(value);
+      if (copy == NULL) {
+        LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
+        LCH_StringArrayDestroy(table);
+        PQclear(result);
+      }
+      record[j] = copy;
     }
   }
 

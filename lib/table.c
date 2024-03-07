@@ -73,18 +73,26 @@ void LCH_TableInfoDestroy(void *const _info) {
   }
 
   free(info->identifier);
+
+  LCH_StringArrayDestroy(info->all_fields);
   LCH_StringArrayDestroy(info->primary_fields);
   LCH_StringArrayDestroy(info->subsidiary_fields);
 
-  if (dlclose(info->src_dlib_handle) == -1) {
+  free(info->src_table_name);
+  free(info->src_params);
+  free(info->src_schema);
+
+  if (info->src_dlib_handle != NULL && dlclose(info->src_dlib_handle) == -1) {
     LCH_LOG_ERROR("Failed to release reference to dynamic library");
   }
-  free(info->src_params);
+
+  free(info->dst_table_name);
+  free(info->dst_params);
+  free(info->dst_schema);
 
   if (info->dst_dlib_handle != NULL && dlclose(info->dst_dlib_handle) == -1) {
     LCH_LOG_ERROR("Failed to release reference to dynamic library");
   }
-  free(info->dst_params);
 
   free(info);
 }
@@ -492,6 +500,8 @@ LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
     return NULL;
   }
 
+  table_info->src_disconnect(conn);
+
   LCH_List *const list_table = LCH_StringArrayTableToStringListTable(
       (const char *const *const *)str_table);
   LCH_StringArrayTableDestroy(str_table);
@@ -530,6 +540,7 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *const table_info,
   }
 
   LCH_Json *const state = LCH_JsonParse(json);
+  free(json);
   return state;
 }
 
@@ -597,6 +608,7 @@ static char **ConcatenateFields(const LCH_List *const a,
   }
 
   char **const result = LCH_StringListToStringArray(list);
+  LCH_ListDestroy(list);
   return result;
 }
 
@@ -668,9 +680,11 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    char **values = (LCH_StringArrayLength((const char *const *)table_info->subsidiary_fields) == 0)
-                        ? ParseFields(key)
-                        : ParseConcatenateFields(key, value);
+    char **values =
+        (LCH_StringArrayLength(
+             (const char *const *)table_info->subsidiary_fields) == 0)
+            ? ParseFields(key)
+            : ParseConcatenateFields(key, value);
     if (values == NULL) {
       LCH_ListDestroy(keys);
       return false;
