@@ -82,14 +82,14 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
 
   FILE *file = fopen(patch_file, "wb");
   if (file == NULL) {
-    fprintf(stderr, "Failed to open file '%s' for binary writing: %s",
+    fprintf(stderr, "Failed to open file '%s' for binary writing: %s\n",
             patch_file, strerror(errno));
     free(patch);
     return EXIT_FAILURE;
   }
 
   if (fwrite(patch, 1, size, file) != size) {
-    fprintf(stderr, "Failed to write to file '%s': %s", patch_file,
+    fprintf(stderr, "Failed to write to file '%s': %s\n", patch_file,
             strerror(errno));
     fclose(file);
     free(patch);
