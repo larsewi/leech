@@ -5,10 +5,11 @@
 
 #include "utils.h"
 
-LCH_Json *LCH_DeltaCreate(const char *const table_id,
+LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
                           const LCH_Json *const new_state,
                           const LCH_Json *const old_state) {
   assert(table_id != NULL);
+  assert(type != NULL);
   assert(new_state != NULL);
   assert(old_state != NULL);
 
@@ -17,7 +18,7 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id,
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetStringDuplicate(delta, "type", "delta")) {
+  if (!LCH_JsonObjectSetStringDuplicate(delta, "type", type)) {
     LCH_JsonDestroy(delta);
     return NULL;
   }

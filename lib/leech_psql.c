@@ -157,6 +157,43 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
   return true;
 }
 
+bool LCH_CallbackTruncateTable(void *const _conn,
+                               const char *const table_name) {
+  PGconn *const conn = (PGconn *)_conn;
+
+  const size_t len = strlen(table_name);
+  char *const identifier = PQescapeIdentifier(conn, table_name, len);
+  if (identifier == NULL) {
+    LCH_LOG_ERROR("Failed to escape identifer \"%s\": %s", table_name,
+                  PQerrorMessage(conn));
+    return false;
+  }
+
+  char *const query = LCH_StringFormat("TRUNCATE %s;", table_name);
+  PQfreemem(identifier);
+  if (query == NULL) {
+    return false;
+  }
+  LCH_LOG_DEBUG("Executing query: %s", query);
+
+  PGresult *const result = PQexec(conn, query);
+  free(query);
+  if (result == NULL) {
+    LCH_LOG_ERROR("Failed to execute query: Likely out of memory");
+    return false;
+  }
+
+  ExecStatusType status = PQresultStatus(result);
+  if (status != PGRES_COMMAND_OK) {
+    LCH_LOG_ERROR("Failed to execute query: %s", PQerrorMessage(conn));
+    PQclear(result);
+    return false;
+  }
+
+  PQclear(result);
+  return true;
+}
+
 char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
                              const char *const *const columns) {
   PGconn *const conn = (PGconn *)_conn;

@@ -23,8 +23,9 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,
 bool LCH_TableStoreNewState(const LCH_TableInfo *table_info,
                             const char *work_dir, const LCH_Json *new_state);
 
-bool LCH_TablePatch(const LCH_TableInfo *table_info, const char *field,
-                    const char *value, const LCH_Json *inserts,
-                    const LCH_Json *deletes, const LCH_Json *updates);
+bool LCH_TablePatch(const LCH_TableInfo *table_info, const char *type,
+                    const char *field, const char *value,
+                    const LCH_Json *inserts, const LCH_Json *deletes,
+                    const LCH_Json *updates);
 
 #endif  // _LEECH_TABLE_H

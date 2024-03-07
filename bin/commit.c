@@ -43,7 +43,7 @@ int Commit(const char *const work_dir, int argc, char *argv[]) {
   }
 
   if (!LCH_Commit(work_dir)) {
-    fprintf(stderr, "LCH_Commit");
+    fprintf(stderr, "LCH_Commit\n");
     return EXIT_FAILURE;
   }
 

@@ -97,6 +97,48 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
   return true;
 }
 
+bool LCH_CallbackTruncateTable(void *const _conn,
+                               const char *const table_name) {
+  CSVconn *const conn = (CSVconn *)_conn;
+  assert(conn != NULL);
+  assert(conn->filename != NULL);
+  assert(conn->table != NULL);
+  LCH_UNUSED(table_name);  // Intended for database systems.
+
+  assert(LCH_ListLength(conn->table) > 0);
+  const LCH_List *const header = (LCH_List *)LCH_ListGet(conn->table, 0);
+
+  LCH_List *const copy = LCH_ListCreate();
+  if (copy == NULL) {
+    return false;
+  }
+
+  const size_t num_fields = LCH_ListLength(header);
+  for (size_t i = 0; i < num_fields; i++) {
+    const char *const field = (const char *)LCH_ListGet(header, i);
+    if (!LCH_ListAppendStringDuplicate(copy, field)) {
+      LCH_ListDestroy(copy);
+      return false;
+    }
+  }
+
+  LCH_List *const table = LCH_ListCreate();
+  if (table == NULL) {
+    LCH_ListDestroy(copy);
+    return false;
+  }
+
+  if (!LCH_ListAppend(table, copy, LCH_ListDestroy)) {
+    LCH_ListDestroy(copy);
+    LCH_ListDestroy(table);
+    return false;
+  }
+
+  LCH_ListDestroy(conn->table);
+  conn->table = table;
+  return true;
+}
+
 char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
                              const char *const *const columns) {
   CSVconn *const conn = (CSVconn *)_conn;
@@ -195,7 +237,7 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
   }
 
   char *const str_repr = LCH_StringJoin(record, "', '");
-  LCH_LOG_DEBUG("Inserted record %zu: '%s'", LCH_ListLength(conn->table),
+  LCH_LOG_DEBUG("Inserted record %zu: '%s'", LCH_ListLength(conn->table) - 1,
                 str_repr);
   free(str_repr);
 

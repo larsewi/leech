@@ -17,6 +17,7 @@ typedef void (*LCH_CallbackDisconnect)(void *conn);
 typedef bool (*LCH_CallbackCreateTable)(void *conn, const char *table_name,
                                         const char *const *primary_columns,
                                         const char *const *subsidiary_columns);
+typedef bool (*LCH_CallbackTruncateTable)(void *conn, const char *table_name);
 typedef char ***(*LCH_CallbackGetTable)(void *conn, const char *table_name,
                                         const char *const *columns);
 typedef bool (*LCH_CallbackBeginTransaction)(void *conn);
@@ -58,6 +59,7 @@ struct LCH_TableInfo {
   LCH_CallbackConnect dst_connect;
   LCH_CallbackDisconnect dst_disconnect;
   LCH_CallbackCreateTable dst_create_table;
+  LCH_CallbackTruncateTable dst_truncate_table;
   LCH_CallbackBeginTransaction dst_begin_tx;
   LCH_CallbackCommitTransaction dst_commit_tx;
   LCH_CallbackRollbackTransaction dst_rollback_tx;
@@ -369,6 +371,21 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   info->dst_create_table =
       (LCH_CallbackCreateTable)dlsym(info->dst_dlib_handle, symbol);
   if (info->dst_create_table == NULL) {
+    LCH_LOG_ERROR(
+        "Failed to obtain address of symbol '%s' in dynamic shared library "
+        "'%s': %s",
+        symbol, dlib_path, dlerror());
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+
+  symbol = "LCH_CallbackTruncateTable";
+  LCH_LOG_DEBUG(
+      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
+      symbol, dlib_path);
+  info->dst_truncate_table =
+      (LCH_CallbackTruncateTable)dlsym(info->dst_dlib_handle, symbol);
+  if (info->dst_truncate_table == NULL) {
     LCH_LOG_ERROR(
         "Failed to obtain address of symbol '%s' in dynamic shared library "
         "'%s': %s",
@@ -820,11 +837,12 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
 }
 
 bool LCH_TablePatch(const LCH_TableInfo *const table_info,
-                    const char *const field, const char *const value,
-                    const LCH_Json *const inserts,
+                    const char *const type, const char *const field,
+                    const char *const value, const LCH_Json *const inserts,
                     const LCH_Json *const deletes,
                     const LCH_Json *const updates) {
   assert(table_info != NULL);
+  assert(type != NULL);
   assert(field != NULL);
   assert(value != NULL);
   assert(inserts != NULL);
@@ -859,6 +877,17 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
     table_info->dst_disconnect(conn);
     LCH_StringArrayDestroy(primary_fields);
     return false;
+  }
+
+  if (LCH_StringEqual(type, "rebase")) {
+    LCH_LOG_INFO("Patch type is 'rebase': Truncating table '%s'",
+                 table_info->dst_table_name);
+    if (!table_info->dst_truncate_table(conn, table_info->dst_table_name)) {
+      LCH_LOG_ERROR("Failed to truncate table");
+      table_info->dst_disconnect(conn);
+      LCH_StringArrayDestroy(primary_fields);
+      return false;
+    }
   }
 
   if (!TablePatchDeletes(table_info, (const char *const *)primary_fields, value,

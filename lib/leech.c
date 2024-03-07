@@ -54,7 +54,8 @@ static bool Commit(const LCH_Instance *const instance) {
 
     /************************************************************************/
 
-    LCH_Json *const delta = LCH_DeltaCreate(table_id, new_state, old_state);
+    LCH_Json *const delta =
+        LCH_DeltaCreate(table_id, "delta", new_state, old_state);
     LCH_JsonDestroy(old_state);
     if (delta == NULL) {
       LCH_LOG_ERROR("Failed to compute delta for table '%s'.", table_id);
@@ -335,6 +336,126 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
   return buffer;
 }
 
+char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
+  assert(work_dir != NULL);
+  assert(buf_len != NULL);
+
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to load instance from configuration file");
+    return NULL;
+  }
+
+  const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
+  size_t n_tables = LCH_ListLength(table_defs);
+  size_t tot_inserts;
+
+  LCH_Json *const deltas = LCH_JsonArrayCreate();
+  if (deltas == NULL) {
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  for (size_t i = 0; i < n_tables; i++) {
+    const LCH_TableInfo *const table_def =
+        (LCH_TableInfo *)LCH_ListGet(table_defs, i);
+    const char *const table_id = LCH_TableInfoGetIdentifier(table_def);
+
+    /************************************************************************/
+    LCH_Json *const new_state = LCH_TableInfoLoadOldState(table_def, work_dir);
+    if (new_state == NULL) {
+      LCH_LOG_ERROR("Failed to load old state as new state for table '%s'.",
+                    table_id);
+      LCH_JsonDestroy(deltas);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+    LCH_LOG_VERBOSE(
+        "Loaded old state as new state for table '%s' containing %zu rows.",
+        table_id, LCH_JsonObjectLength(new_state));
+
+    LCH_Json *const old_state = LCH_JsonObjectCreate();
+    if (old_state == NULL) {
+      LCH_LOG_ERROR("Failed create fake empty old state for table '%s'.",
+                    table_id);
+      LCH_JsonDestroy(new_state);
+      LCH_JsonDestroy(deltas);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+    LCH_LOG_VERBOSE(
+        "Created fake empty old state for table '%s' containing %zu rows.",
+        table_id, LCH_JsonObjectLength(old_state));
+
+    /************************************************************************/
+
+    LCH_Json *const delta =
+        LCH_DeltaCreate(table_id, "rebase", new_state, old_state);
+    LCH_JsonDestroy(old_state);
+    LCH_JsonDestroy(new_state);
+    if (delta == NULL) {
+      LCH_LOG_ERROR("Failed to compute rebase delta for table '%s'.", table_id);
+      LCH_JsonDestroy(deltas);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+
+    const size_t num_inserts = LCH_DeltaGetNumInserts(delta);
+
+    LCH_LOG_VERBOSE(
+        "Computed rebase delta for table '%s' including; %zu insertions",
+        table_id, num_inserts);
+    tot_inserts += num_inserts;
+
+    if (!LCH_JsonArrayAppend(deltas, delta)) {
+      LCH_JsonDestroy(delta);
+      LCH_JsonDestroy(deltas);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
+  char *const parent_id = LCH_HeadGet("HEAD", work_dir);
+  if (parent_id == NULL) {
+    LCH_LOG_ERROR("Failed to get identifier for block at head of chain");
+    LCH_JsonDestroy(deltas);
+    return NULL;
+  }
+
+  LCH_InstanceDestroy(instance);
+
+  LCH_Json *const block = LCH_BlockCreate(parent_id, deltas);
+  if (block == NULL) {
+    LCH_LOG_ERROR("Failed to create block.");
+    free(parent_id);
+    LCH_JsonDestroy(deltas);
+    return NULL;
+  }
+
+  LCH_Json *const patch = LCH_PatchCreate(parent_id);
+  free(parent_id);
+  if (patch == NULL) {
+    LCH_LOG_ERROR("Failed to create patch");
+    return NULL;
+  }
+
+  if (!LCH_PatchAppendBlock(patch, block)) {
+    LCH_LOG_ERROR("Failed to append block to patch");
+    LCH_JsonDestroy(block);
+    LCH_JsonDestroy(patch);
+    return NULL;
+  }
+
+  char *buffer = LCH_JsonCompose(patch);
+  LCH_JsonDestroy(patch);
+  if (buffer == NULL) {
+    LCH_LOG_ERROR("Failed to compose patch into JSON");
+    return NULL;
+  }
+  *buf_len = strlen(buffer);
+  return buffer;
+}
+
 static bool Patch(const LCH_Instance *const instance, const char *const field,
                   const char *const value, const char *const buffer,
                   const size_t size) {
@@ -418,36 +539,30 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
         continue;
       }
 
-      if (LCH_StringEqual(type, "delta")) {
-        const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
-        if (table_id == NULL) {
-          LCH_LOG_ERROR("Failed to extract insert operations from delta");
-          LCH_JsonDestroy(patch);
-          return false;
-        }
+      const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
+      if (table_id == NULL) {
+        LCH_LOG_ERROR("Failed to extract insert operations from delta");
+        LCH_JsonDestroy(patch);
+        return false;
+      }
 
-        const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
-        if (table_id == NULL) {
-          LCH_LOG_ERROR("Failed to extract delete operations from delta");
-          LCH_JsonDestroy(patch);
-          return false;
-        }
+      const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
+      if (table_id == NULL) {
+        LCH_LOG_ERROR("Failed to extract delete operations from delta");
+        LCH_JsonDestroy(patch);
+        return false;
+      }
 
-        const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
-        if (table_id == NULL) {
-          LCH_LOG_ERROR("Failed to extract update operations from delta");
-          LCH_JsonDestroy(patch);
-          return false;
-        }
+      const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
+      if (table_id == NULL) {
+        LCH_LOG_ERROR("Failed to extract update operations from delta");
+        LCH_JsonDestroy(patch);
+        return false;
+      }
 
-        if (!LCH_TablePatch(table_info, field, value, inserts, deletes,
-                            updates)) {
-          LCH_LOG_ERROR("Failed to patch table '%s'", table_id);
-          LCH_JsonDestroy(patch);
-          return false;
-        }
-      } else {
-        LCH_LOG_ERROR("Unsupported payload of type '%s'", type);
+      if (!LCH_TablePatch(table_info, type, field, value, inserts, deletes,
+                          updates)) {
+        LCH_LOG_ERROR("Failed to patch table '%s'", table_id);
         LCH_JsonDestroy(patch);
         return false;
       }
