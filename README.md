@@ -1,12 +1,21 @@
 # leech
 
+Welcome to the **leech** repository!
+
 ![logo](logo.jpeg)
+
+The **leech** library provides a method for efficient synchronization of tabular
+data. It allows you to synchronize table state changes across multiple hosts on
+to a centeralized server. This process is optimized for efficiency by only
+transmitting the necessary data required in order to replicate end state of
+the recorded changes on a host, onto the server.
+
 
 ```mermaid
     graph TD;
-            C1-->S;
-            C2-->S;
-            C3-->S;
+        H1[Host 1]-->S[Server];
+        H2[Host 2]-->S[Server];
+        H3[Host 3]-->S[Server];
 ```
 
 ## Prerequesites
