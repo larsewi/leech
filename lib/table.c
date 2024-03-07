@@ -792,8 +792,6 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    LCH_LOG_ERROR("WHAAT '%s'", value);
-
     char **subsidiary_values = ParseFields(value);
     if (subsidiary_values == NULL) {
       LCH_StringArrayDestroy(primary_values);
