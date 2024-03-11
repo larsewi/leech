@@ -18,6 +18,11 @@ the recorded changes on a host, onto the server.
         H3[Host 3]-->S[Server];
 ```
 
+**leech** consists of four primary functions: `LCH_Commit()`, `LCH_Delta()`,
+`LCH_Rebase()` and `LCH_Patch()`, all located within `leech.h`. In the
+following sections, we'll delve into the mechanics of each function, in order to
+provide you with a greater insight into the workings of **leech**.
+
 ## Prerequesites
 
 ### On debian:
