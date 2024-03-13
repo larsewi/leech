@@ -97,45 +97,77 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
   return true;
 }
 
-bool LCH_CallbackTruncateTable(void *const _conn,
-                               const char *const table_name) {
+bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
+                               const char *const uq_field,
+                               const char *const uq_value) {
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->filename != NULL);
   assert(conn->table != NULL);
   LCH_UNUSED(table_name);  // Intended for database systems.
+  assert(uq_field != NULL);
+  assert(uq_value != NULL);
 
-  assert(LCH_ListLength(conn->table) > 0);
+  const size_t num_records = LCH_ListLength(conn->table);
+  assert(num_records > 0);
+
   const LCH_List *const header = (LCH_List *)LCH_ListGet(conn->table, 0);
-
-  LCH_List *const copy = LCH_ListCreate();
-  if (copy == NULL) {
+  const size_t index =
+      LCH_ListIndex(header, uq_field, (LCH_ListIndexCompareFn)strcmp);
+  if (index >= LCH_ListLength(header)) {
+    LCH_LOG_ERROR(
+        "Missing field name '%s' for unique host identifier in table header",
+        uq_field);
     return false;
   }
 
-  const size_t num_fields = LCH_ListLength(header);
-  for (size_t i = 0; i < num_fields; i++) {
-    const char *const field = (const char *)LCH_ListGet(header, i);
-    if (!LCH_ListAppendStringDuplicate(copy, field)) {
-      LCH_ListDestroy(copy);
+  LCH_List *const truncated = LCH_ListCreate();
+  if (truncated == NULL) {
+    return false;
+  }
+
+  for (size_t i = 1; i < num_records; i++) {
+    const LCH_List *const record =
+        (const LCH_List *)LCH_ListGet(conn->table, i);
+    const char *const value = (const char *)LCH_ListGet(record, index);
+
+    char *const str_repr = LCH_StringJoin(record, "', '");
+    LCH_LOG_DEBUG("Comparing unique host identifier '%s' with '%s'", uq_value,
+                  value);
+    if (LCH_StringEqual(uq_value, value)) {
+      // Records with the unqiue host identifier are to be removed
+      LCH_LOG_DEBUG("Skipping record %zu: '%s'", i, str_repr);
+      free(str_repr);
+      continue;
+    }
+    LCH_LOG_DEBUG("Keeping record %zu: '%s'", i, str_repr);
+    free(str_repr);
+
+    LCH_List *const record_copy = LCH_ListCreate();
+    if (record_copy == NULL) {
+      LCH_ListDestroy(truncated);
+      return false;
+    }
+
+    const size_t num_fields = LCH_ListLength(record);
+    for (size_t j = 0; j < num_fields; j++) {
+      const char *const field = (const char *)LCH_ListGet(record, j);
+      if (!LCH_ListAppendStringDuplicate(record_copy, field)) {
+        LCH_ListDestroy(record_copy);
+        LCH_ListDestroy(truncated);
+        return false;
+      }
+    }
+
+    if (!LCH_ListAppend(truncated, record_copy, LCH_ListDestroy)) {
+      LCH_ListDestroy(record_copy);
+      LCH_ListDestroy(truncated);
       return false;
     }
   }
 
-  LCH_List *const table = LCH_ListCreate();
-  if (table == NULL) {
-    LCH_ListDestroy(copy);
-    return false;
-  }
-
-  if (!LCH_ListAppend(table, copy, LCH_ListDestroy)) {
-    LCH_ListDestroy(copy);
-    LCH_ListDestroy(table);
-    return false;
-  }
-
   LCH_ListDestroy(conn->table);
-  conn->table = table;
+  conn->table = truncated;
   return true;
 }
 
