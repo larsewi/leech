@@ -17,7 +17,9 @@ typedef void (*LCH_CallbackDisconnect)(void *conn);
 typedef bool (*LCH_CallbackCreateTable)(void *conn, const char *table_name,
                                         const char *const *primary_columns,
                                         const char *const *subsidiary_columns);
-typedef bool (*LCH_CallbackTruncateTable)(void *conn, const char *table_name);
+typedef bool (*LCH_CallbackTruncateTable)(void *conn, const char *table_name,
+                                          const char *const field,
+                                          const char *const value);
 typedef char ***(*LCH_CallbackGetTable)(void *conn, const char *table_name,
                                         const char *const *columns);
 typedef bool (*LCH_CallbackBeginTransaction)(void *conn);
@@ -882,7 +884,8 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
   if (LCH_StringEqual(type, "rebase")) {
     LCH_LOG_INFO("Patch type is 'rebase': Truncating table '%s'",
                  table_info->dst_table_name);
-    if (!table_info->dst_truncate_table(conn, table_info->dst_table_name)) {
+    if (!table_info->dst_truncate_table(conn, table_info->dst_table_name, field,
+                                        value)) {
       LCH_LOG_ERROR("Failed to truncate table");
       table_info->dst_disconnect(conn);
       LCH_StringArrayDestroy(primary_fields);
