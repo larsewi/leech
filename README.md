@@ -1,13 +1,85 @@
 # leech
 
+Welcome to the **leech** repository!
+
 ![logo](logo.jpeg)
+
+The **leech** library provides a method for efficient synchronization of tabular
+data. It allows you to synchronize table state changes across multiple hosts on
+to a centeralized server. This process is optimized for efficiency by only
+transmitting the necessary data required in order to replicate end state of
+the recorded changes on a host, onto the server.
+
 
 ```mermaid
     graph TD;
-            C1-->S;
-            C2-->S;
-            C3-->S;
+        H1[Host 1]-->S[Server];
+        H2[Host 2]-->S[Server];
+        H3[Host 3]-->S[Server];
 ```
+
+**leech** consists of four primary functions: `LCH_Commit()`, `LCH_Delta()`,
+`LCH_Rebase()` and `LCH_Patch()`, all located within `leech.h`. In the
+following sections, we'll delve into the mechanics of each function, in order to
+provide you with a greater insight into the workings of **leech**.
+
+## Commit
+
+When ever changes are made to a system, these changes can be recorded by calling
+`LCH_Commit()`. Its operation involves the computation of deltas by leveraging
+the current- and previous states. States are loaded as two dimantional,
+`NULL`-terminated, string arrays.
+
+```C
+char ***old_state = {
+    { "foo", "bar", "baz", "qux", NULL },
+    { "A",   "B",   "1",   "2",   NULL },
+    { "C",   "D",   "3",   "4",   NULL },
+    { "E",   "F",   "5",   "6",   NULL },
+    NULL,
+};
+char ***new_state = {
+    { "foo", "bar", "baz", "qux", NULL },
+    { "A",   "B",   "1",   "2",   NULL },
+    { "C",   "D",   "3",   "4",   NULL },
+    { "E",   "F",   "5",   "6",   NULL },
+    NULL,
+};
+```
+
+**leech** transforms these tables into hash maps in order to achieve effiecient
+indexing based on the table's composite primary key.
+
+**Old State:**
+```json
+{
+    "old_state": {
+        "A,B": "1,2",
+        "C,D": "3,4",
+        "E,F": "5,6",
+    },
+    "new_state": {
+        "A,C": "1,2",
+        "C,D": "3,4",
+        "E,F": "5,5",
+    }
+}
+```
+
+```json
+{
+    "inserts": {
+        "A,C": "1,2"
+    },
+    "deletes": {
+        "A,B": "1,2"
+    },
+    "updates": {
+        "E,F": "5,5"
+    }
+}
+```
+
 
 ## Prerequesites
 
