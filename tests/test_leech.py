@@ -590,3 +590,74 @@ def test_leech_psql_rebase(tmp_path):
 
     cur.close()
     conn.close()
+
+
+def test_leech_csv_binary(tmp_path):
+    ##########################################################################
+    # Create config
+    ##########################################################################
+
+    bin_path = os.path.join("bin", "leech")
+    leech_conf_path = os.path.join(tmp_path, "leech.json")
+    table_src_path = os.path.join(tmp_path, "beatles.src.csv")
+    table_dst_path = os.path.join(tmp_path, "beatles.dst.csv")
+
+    config = {
+        "version": "0.1.0",
+        "tables": {
+            "BTL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": table_src_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": table_dst_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+            }
+        },
+    }
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Create table and commit
+    ##########################################################################
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["Paul", "McCartney", b"\x19\x00\x42"],
+        ["Ringo", "Starr", "1940"],
+        ["John", "Lennon", "1940"],
+        ["George", "Harrison", "1943"],
+    ]
+    with open(table_src_path, "wb") as f:
+        f.write(
+            b"first_name,last_name,born\r\n"
+            + b"Paul,McCartney,\x31\x39\x34\x32\r\n"
+            + b"Ringo,Starr,\x31\x39\x34\x30\r\n"
+            + b"John,Lennon,\x00\x00\x00\x00\r\n"
+            + b"George,Harrison,\x31\x39\x34\x33"
+        )
+    print(f"Created table '{table_src_path}' with content:")
+    with open(table_src_path, "rb") as f:
+        print(f.read())
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+    assert execute(command, True) == 0
+
+    snapshot_path = os.path.join(tmp_path, "snapshot", "BTL")
+    print(f"Reading snapshot '{snapshot_path}' with content:")
+    with open(snapshot_path, "rb") as f:
+        print(f.read())
+
+    assert False

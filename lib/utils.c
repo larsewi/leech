@@ -284,9 +284,14 @@ static bool IndicesOfFieldsInHeader(size_t *const indices,
   const size_t header_len = LCH_ListLength(header);
 
   for (size_t i = 0; fields[i] != NULL; i++) {
-    const char *const field = fields[i];
-    const size_t index =
-        LCH_ListIndex(header, field, (LCH_ListIndexCompareFn)strcmp);
+    LCH_Buffer *const field = LCH_BufferFromString(fields[i]);
+    if (field == NULL) {
+      return false;
+    }
+
+    const size_t index = LCH_ListIndex(
+        header, field, (LCH_ListElementCompareFn)LCH_BufferCompare);
+    LCH_BufferDestroy(field);
     if (index >= header_len) {
       LCH_LOG_ERROR("Field '%s' not found in table header");
       return false;
@@ -306,7 +311,7 @@ static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
 
   for (size_t i = 0; i < num_indices; i++) {
     const size_t index = indices[i];
-    char *const field = (char *)LCH_ListGet(record, index);
+    LCH_Buffer *const field = (LCH_Buffer *)LCH_ListGet(record, index);
     assert(field != NULL);
 
     if (!LCH_ListAppend(fields, field, NULL)) {
@@ -368,6 +373,7 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
       if (!LCH_CSVComposeRecord(&buffer, list)) {
         LCH_ListDestroy(list);
         LCH_JsonDestroy(object);
+        return NULL;
       }
 
       LCH_ListDestroy(list);
@@ -390,6 +396,7 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
         LCH_ListDestroy(list);
         free(key);
         LCH_JsonDestroy(object);
+        return NULL;
       }
 
       LCH_ListDestroy(list);
@@ -563,19 +570,19 @@ char *LCH_StringFormat(const char *const format, ...) {
 
   va_start(ap, format);
   const int ret = vsnprintf(str, (size_t)length + 1, format, ap);
-  (void)ret;  // unused variable
+  LCH_UNUSED(ret);
   va_end(ap);
   assert(ret == length);
 
   return str;
 }
 
-void LCH_StringArrayDestroy(void *const _array) {
-  char **const array = (char **)_array;
-  for (size_t i = 0; array[i] != NULL; i++) {
-    free(array[i]);
+void LCH_StringArrayDestroy(void *const _str_array) {
+  char **const str_array = (char **)_str_array;
+  for (size_t i = 0; str_array[i] != NULL; i++) {
+    free(str_array[i]);
   }
-  free(array);
+  free(str_array);
 }
 
 size_t LCH_StringArrayLength(const char *const *const str_array) {
@@ -596,37 +603,42 @@ void LCH_StringArrayTableDestroy(void *const _table) {
   free(table);
 }
 
-char **LCH_StringListToStringArray(const LCH_List *const list) {
+char **LCH_RecordToStringArray(const LCH_List *const list) {
   assert(list != NULL);
 
   const size_t length = LCH_ListLength(list);
-  char **const str_array = (char **)LCH_Allocate(
-      sizeof(char *) * (length + 1 /* Terminating NULL-pointer */));
+  char **const str_array = (char **)calloc(length + 1, sizeof(char *));
   if (str_array == NULL) {
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
   for (size_t i = 0; i < length; i++) {
-    const char *const str = (char *)LCH_ListGet(list, i);
-    assert(str != NULL);
+    const LCH_Buffer *const buffer = (LCH_Buffer *)LCH_ListGet(list, i);
 
-    str_array[i] = LCH_StringDuplicate(str);
+    const size_t length = LCH_BufferLength(buffer);
+    str_array[i] = (char *)calloc(length + 1, sizeof(char));
     if (str_array[i] == NULL) {
+      LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s",
+                    strerror(errno));
       LCH_StringArrayDestroy(str_array);
       return NULL;
     }
+
+    const char *const data = LCH_BufferData(buffer);
+    memcpy(str_array[i], data, length);
   }
 
   return str_array;
 }
 
-char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
+char ***LCH_TableToStringArrayTable(const LCH_List *const table) {
   assert(table != NULL);
 
   const size_t length = LCH_ListLength(table);
-  char ***const str_table = (char ***)LCH_Allocate(
-      sizeof(char **) * (length + 1) /* Terminating NULL-pointer */);
+  char ***const str_table = (char ***)calloc(length + 1, sizeof(char **));
   if (str_table == NULL) {
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
@@ -634,7 +646,7 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
     LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
     assert(record != NULL);
 
-    str_table[i] = LCH_StringListToStringArray(record);
+    str_table[i] = LCH_RecordToStringArray(record);
     if (str_table == NULL) {
       LCH_StringArrayTableDestroy(str_table);
       return NULL;
@@ -644,7 +656,7 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
   return str_table;
 }
 
-LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
+LCH_List *LCH_StringArrayToRecord(const char *const *const str_array) {
   assert(str_array != NULL);
 
   LCH_List *const list = LCH_ListCreate();
@@ -653,8 +665,14 @@ LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
   }
 
   for (size_t i = 0; str_array[i] != NULL; i++) {
-    char *const str = LCH_StringDuplicate(str_array[i]);
-    if (!LCH_ListAppend(list, str, free)) {
+    LCH_Buffer *const buffer = LCH_BufferFromString(str_array[i]);
+    if (buffer == NULL) {
+      LCH_ListDestroy(list);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(list, buffer, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(buffer);
       LCH_ListDestroy(list);
       return NULL;
     }
@@ -663,7 +681,7 @@ LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
   return list;
 }
 
-LCH_List *LCH_StringArrayTableToStringListTable(
+LCH_List *LCH_StringArrayTableToTable(
     const char *const *const *const str_table) {
   assert(str_table != NULL);
 
@@ -674,7 +692,7 @@ LCH_List *LCH_StringArrayTableToStringListTable(
 
   for (size_t i = 0; str_table[i] != NULL; i++) {
     const char *const *const str_array = str_table[i];
-    LCH_List *const record = LCH_StringArrayToStringList(str_array);
+    LCH_List *const record = LCH_StringArrayToRecord(str_array);
     if (record == NULL) {
       LCH_ListDestroy(table);
       return NULL;

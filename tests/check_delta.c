@@ -14,11 +14,12 @@ START_TEST(test_LCH_Delta) {
 
   LCH_Json *new_state = NULL;
   {
-    LCH_List *table = LCH_CSVParseTable(
+    const char *const csv =
         "firstname,lastname,born\r\n"
         "Paul,McCartney,1942\r\n"
         "Ringo,Starr,1941\r\n"
-        "John,Lennon,1940\r\n");
+        "John,Lennon,1940\r\n";
+    LCH_List *table = LCH_CSVParseTable(csv, strlen(csv));
     ck_assert_ptr_nonnull(table);
     new_state = LCH_TableToJsonObject(table, primary_fields, subsidiary_fields);
     LCH_ListDestroy(table);
@@ -26,11 +27,12 @@ START_TEST(test_LCH_Delta) {
 
   LCH_Json *old_state = NULL;
   {
-    LCH_List *table = LCH_CSVParseTable(
+    const char *const csv =
         "firstname,lastname,born\r\n"
         "Paul,McCartney,1942\r\n"
         "Ringo,Starr,1940\r\n"
-        "George,Harrison,1943\r\n");
+        "George,Harrison,1943\r\n";
+    LCH_List *table = LCH_CSVParseTable(csv, strlen(csv));
     ck_assert_ptr_nonnull(table);
     old_state = LCH_TableToJsonObject(table, primary_fields, subsidiary_fields);
     LCH_ListDestroy(table);

@@ -99,29 +99,28 @@ void LCH_StringArrayTableDestroy(void *table);
  * @param list One dimentional list of strings.
  * @return One dimentional array of strings.
  */
-char **LCH_StringListToStringArray(const LCH_List *list);
+char **LCH_RecordToStringArray(const LCH_List *list);
 
 /**
  * @brief Create a NULL-terminated string table from list.
  * @param list Two dimentional list of strings.
  * @return Two dimentional array of strings.
  */
-char ***LCH_StringListTableToStringArrayTable(const LCH_List *list);
+char ***LCH_TableToStringArrayTable(const LCH_List *list);
 
 /**
  * @brief Create a list from NULL-terminated string array.
  * @param str_array One dimentional array of strings.
  * @return One dimentional list of strings.
  */
-LCH_List *LCH_StringArrayToStringList(const char *const *str_array);
+LCH_List *LCH_StringArrayToRecord(const char *const *str_array);
 
 /**
  * @brief Create a list from NULL-terminated string table.
  * @param str_array Two dimentional array of strings.
  * @return Two dimentional list of strings.
  */
-LCH_List *LCH_StringArrayTableToStringListTable(
-    const char *const *const *str_table);
+LCH_List *LCH_StringArrayTableToTable(const char *const *const *str_table);
 
 bool LCH_CreateParentDirectories(const char *filename);
 

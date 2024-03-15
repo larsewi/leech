@@ -100,12 +100,13 @@ START_TEST(test_LCH_MessageDigest) {
 END_TEST
 
 START_TEST(test_LCH_TableToJsonObject) {
-  LCH_List *const table = LCH_CSVParseTable(
+  const char *const csv =
       "firstname, lastname,  born\r\n"
       "Paul,      McCartney, 1942\r\n"
       "Ringo,     Starr,     1940\r\n"
       "John,      Lennon,    1940\r\n"
-      "George,    Harrison,  1943\r\n");
+      "George,    Harrison,  1943\r\n";
+  LCH_List *const table = LCH_CSVParseTable(csv, strlen(csv));
   static const char *primary[] = {"firstname", "lastname", NULL};
   static const char *subsidiary[] = {"born", NULL};
 
@@ -133,12 +134,13 @@ START_TEST(test_LCH_TableToJsonObject) {
 END_TEST
 
 START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
-  LCH_List *const table = LCH_CSVParseTable(
+  const char *const csv =
       "firstname, lastname,  born\r\n"
       "Paul,      McCartney, 1942\r\n"
       "Ringo,     Starr,     1940\r\n"
       "John,      Lennon,    1940\r\n"
-      "George,    Harrison,  1943\r\n");
+      "George,    Harrison,  1943\r\n";
+  LCH_List *const table = LCH_CSVParseTable(csv, strlen(csv));
   static const char *primary[] = {"born", "lastname", "firstname", NULL};
   static const char *subsidiary[] = {NULL};
 

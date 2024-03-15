@@ -50,37 +50,57 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->filename != NULL);
-
-  LCH_UNUSED(table_name);  // Intended for database systems.
+  assert(primary_columns != NULL);
+  assert(subsidiary_columns != NULL);
 
   if (LCH_IsRegularFile(conn->filename)) {
-    LCH_LOG_DEBUG("Skipped creating table '%s': Table already exists",
-                  conn->filename);
+    LCH_LOG_DEBUG("Skipped creating CSV file '%s': Table \"%s\" already exists",
+                  conn->filename, table_name);
     return true;
   }
 
-  LCH_List *const header = LCH_StringArrayToStringList(primary_columns);
-  if (header == NULL) {
+  LCH_List *const table_header = LCH_ListCreate();
+  if (table_header == NULL) {
     return false;
   }
 
+  for (size_t i = 0; primary_columns[i] != NULL; i++) {
+    LCH_Buffer *const column_name = LCH_BufferFromString(primary_columns[i]);
+    if (column_name == NULL) {
+      LCH_ListDestroy(table_header);
+      return false;
+    }
+
+    if (!LCH_ListAppend(table_header, column_name, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(column_name);
+      LCH_ListDestroy(table_header);
+      return false;
+    }
+  }
+
   for (size_t i = 0; subsidiary_columns[i] != NULL; i++) {
-    const char *const column = subsidiary_columns[i];
-    if (!LCH_ListAppendStringDuplicate(header, column)) {
-      LCH_ListDestroy(header);
+    LCH_Buffer *const column_name = LCH_BufferFromString(subsidiary_columns[i]);
+    if (column_name == NULL) {
+      LCH_ListDestroy(table_header);
+      return false;
+    }
+
+    if (!LCH_ListAppend(table_header, column_name, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(column_name);
+      LCH_ListDestroy(table_header);
       return false;
     }
   }
 
   LCH_List *const table = LCH_ListCreate();
   if (table == NULL) {
-    LCH_ListDestroy(header);
+    LCH_ListDestroy(table_header);
     return false;
   }
 
-  if (!LCH_ListAppend(table, header, LCH_ListDestroy)) {
+  if (!LCH_ListAppend(table, table_header, LCH_ListDestroy)) {
     LCH_ListDestroy(table);
-    LCH_ListDestroy(header);
+    LCH_ListDestroy(table_header);
     return false;
   }
 
@@ -89,85 +109,60 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
     return false;
   }
 
-  char *const str_repr = LCH_StringJoin(header, "', '");
-  LCH_LOG_DEBUG("Created table with header: '%s'", str_repr);
-  free(str_repr);
+  // Print debug info
+  LCH_Buffer *csv = NULL;
+  if (LCH_CSVComposeRecord(&csv, table_header)) {
+    const char *const str_repr = LCH_BufferData(csv);
+    LCH_LOG_DEBUG("Created table with header: \n\t%s", str_repr);
+    LCH_BufferDestroy(csv);
+  }
 
   LCH_ListDestroy(table);
   return true;
 }
 
 bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
-                               const char *const uq_field,
-                               const char *const uq_value) {
+                               const char *const uq_column,
+                               const char *const uq_field) {
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->filename != NULL);
   assert(conn->table != NULL);
-  LCH_UNUSED(table_name);  // Intended for database systems.
+  assert(uq_column != NULL);
   assert(uq_field != NULL);
-  assert(uq_value != NULL);
 
   const size_t num_records = LCH_ListLength(conn->table);
   assert(num_records > 0);
 
-  const LCH_List *const header = (LCH_List *)LCH_ListGet(conn->table, 0);
-  const size_t index =
-      LCH_ListIndex(header, uq_field, (LCH_ListIndexCompareFn)strcmp);
-  if (index >= LCH_ListLength(header)) {
-    LCH_LOG_ERROR(
-        "Missing field name '%s' for unique host identifier in table header",
-        uq_field);
-    return false;
-  }
+  const LCH_List *const table_header = (LCH_List *)LCH_ListGet(conn->table, 0);
+  const size_t uq_col_idx =
+      LCH_ListIndex(table_header, uq_column, (LCH_ListElementCompareFn)strcmp);
 
-  LCH_List *const truncated = LCH_ListCreate();
-  if (truncated == NULL) {
+  if (uq_col_idx >= LCH_ListLength(table_header)) {
+    LCH_LOG_ERROR(
+        "Missing field name \"%s\" for unique host identifier "
+        "in table header of table '%s'",
+        uq_column, table_name);
     return false;
   }
 
   for (size_t i = 1; i < num_records; i++) {
-    const LCH_List *const record =
-        (const LCH_List *)LCH_ListGet(conn->table, i);
-    const char *const value = (const char *)LCH_ListGet(record, index);
+    const LCH_List *const record = (LCH_List *)LCH_ListGet(conn->table, i);
+    const LCH_Buffer *const field_buf =
+        (LCH_Buffer *)LCH_ListGet(record, uq_col_idx);
+    const char *const field = LCH_BufferData(field_buf);
 
-    char *const str_repr = LCH_StringJoin(record, "', '");
-    LCH_LOG_DEBUG("Comparing unique host identifier '%s' with '%s'", uq_value,
-                  value);
-    if (LCH_StringEqual(uq_value, value)) {
+    if (LCH_StringEqual(uq_field, field)) {
       // Records with the unqiue host identifier are to be removed
-      LCH_LOG_DEBUG("Skipping record %zu: '%s'", i, str_repr);
-      free(str_repr);
-      continue;
-    }
-    LCH_LOG_DEBUG("Keeping record %zu: '%s'", i, str_repr);
-    free(str_repr);
-
-    LCH_List *const record_copy = LCH_ListCreate();
-    if (record_copy == NULL) {
-      LCH_ListDestroy(truncated);
-      return false;
-    }
-
-    const size_t num_fields = LCH_ListLength(record);
-    for (size_t j = 0; j < num_fields; j++) {
-      const char *const field = (const char *)LCH_ListGet(record, j);
-      if (!LCH_ListAppendStringDuplicate(record_copy, field)) {
-        LCH_ListDestroy(record_copy);
-        LCH_ListDestroy(truncated);
-        return false;
-      }
-    }
-
-    if (!LCH_ListAppend(truncated, record_copy, LCH_ListDestroy)) {
-      LCH_ListDestroy(record_copy);
-      LCH_ListDestroy(truncated);
-      return false;
+      LCH_LOG_DEBUG(
+          "Deleting record %zu form table \"%s\" because unique host "
+          "identifier \"%s\" is '%s'",
+          i, table_name, uq_column, field);
+      LCH_Buffer *const buf = (LCH_Buffer *)LCH_ListRemove(conn->table, i);
+      LCH_BufferDestroy(buf);
     }
   }
 
-  LCH_ListDestroy(conn->table);
-  conn->table = truncated;
   return true;
 }
 
@@ -176,14 +171,12 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->filename != NULL);
-  LCH_UNUSED(table_name);  // Intended for database systems.
 
   LCH_List *const table = LCH_CSVParseFile(conn->filename);
   if (table == NULL) {
     return NULL;
   }
-
-  LCH_LOG_DEBUG("Loaded table '%s' from '%s'", table_name, conn->filename);
+  LCH_LOG_DEBUG("Loaded table \"%s\" from '%s'", table_name, conn->filename);
 
   /**
    * TODO: Extract only the fields listed in the columns parameter, and in the
@@ -191,7 +184,7 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
    */
   LCH_UNUSED(columns);
 
-  char ***const result = LCH_StringListTableToStringArrayTable(table);
+  char ***const result = LCH_TableToStringArrayTable(table);
   if (result == NULL) {
     LCH_ListDestroy(table);
     return NULL;
@@ -258,7 +251,7 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
   LCH_UNUSED(table_name);  // Intended for database systems.
   LCH_UNUSED(columns);     // Intended for database systems.
 
-  LCH_List *const record = LCH_StringArrayToStringList(values);
+  LCH_List *const record = LCH_StringArrayToRecord(values);
   if (record == NULL) {
     return false;
   }

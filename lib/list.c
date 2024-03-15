@@ -137,7 +137,7 @@ void LCH_ListSet(LCH_List *const self, const size_t index, void *const value,
 }
 
 size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
-                     LCH_ListIndexCompareFn compare) {
+                     LCH_ListElementCompareFn compare) {
   assert(self != NULL);
   assert(compare != NULL);
 
@@ -162,7 +162,7 @@ static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
 }
 
 static size_t Partition(LCH_List *const list, const ssize_t low,
-                        const ssize_t high, LCH_ListIndexCompareFn compare) {
+                        const ssize_t high, LCH_ListElementCompareFn compare) {
   void *pivot = LCH_ListGet(list, high);
   ssize_t i = low;
   for (ssize_t j = low; j < high; j++) {
@@ -175,7 +175,7 @@ static size_t Partition(LCH_List *const list, const ssize_t low,
 }
 
 static void QuickSort(LCH_List *const list, const ssize_t low,
-                      const ssize_t high, LCH_ListIndexCompareFn compare) {
+                      const ssize_t high, LCH_ListElementCompareFn compare) {
   if (low < high) {
     const ssize_t pivot = Partition(list, low, high, compare);
     QuickSort(list, low, pivot - 1, compare);
@@ -183,7 +183,7 @@ static void QuickSort(LCH_List *const list, const ssize_t low,
   }
 }
 
-void LCH_ListSort(LCH_List *const self, LCH_ListIndexCompareFn compare) {
+void LCH_ListSort(LCH_List *const self, LCH_ListElementCompareFn compare) {
   assert(self != NULL);
   QuickSort(self, 0, self->length - 1, compare);
 }
@@ -222,4 +222,33 @@ void *LCH_ListRemove(LCH_List *const list, const size_t index) {
     list->buffer[i] = list->buffer[i + 1];
   }
   return value;
+}
+
+LCH_List *LCH_ListCopy(const LCH_List *const original,
+                       LCH_ListElementCopyFn copy_fn,
+                       void (*destroy_fn)(void *)) {
+  assert(original != NULL);
+  assert(original->buffer != NULL);
+
+  LCH_List *const copy = LCH_ListCreateWithCapacity(original->length);
+  if (copy == NULL) {
+    return NULL;
+  }
+
+  for (size_t i = 0; i < original->length; i++) {
+    void *orig_element = LCH_ListGet(original, i);
+    void *copy_element = copy_fn(orig_element);
+    if (copy_element == NULL) {
+      LCH_ListDestroy(copy);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(copy, copy_element, destroy_fn)) {
+      destroy_fn(copy_element);
+      LCH_ListDestroy(copy);
+      return NULL;
+    }
+  }
+
+  return copy;
 }

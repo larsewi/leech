@@ -172,9 +172,9 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     return NULL;
   }
 
-  info->all_fields = LCH_StringListToStringArray(all_list);
-  info->primary_fields = LCH_StringListToStringArray(primary_list);
-  info->subsidiary_fields = LCH_StringListToStringArray(subsidiary_list);
+  info->all_fields = LCH_RecordToStringArray(all_list);
+  info->primary_fields = LCH_RecordToStringArray(primary_list);
+  info->subsidiary_fields = LCH_RecordToStringArray(subsidiary_list);
   LCH_ListDestroy(all_list);
   LCH_ListDestroy(primary_list);
   LCH_ListDestroy(subsidiary_list);
@@ -521,8 +521,8 @@ LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
 
   table_info->src_disconnect(conn);
 
-  LCH_List *const list_table = LCH_StringArrayTableToStringListTable(
-      (const char *const *const *)str_table);
+  LCH_List *const list_table =
+      LCH_StringArrayTableToTable((const char *const *const *)str_table);
   LCH_StringArrayTableDestroy(str_table);
   if (list_table == NULL) {
     return NULL;
@@ -588,12 +588,12 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
 static char **ParseFields(const char *const str) {
   assert(str != NULL);
 
-  LCH_List *const list = LCH_CSVParseRecord(str);
+  LCH_List *const list = LCH_CSVParseRecord(str, strlen(str));
   if (list == NULL) {
     return NULL;
   }
 
-  char **fields = LCH_StringListToStringArray(list);
+  char **fields = LCH_RecordToStringArray(list);
   LCH_ListDestroy(list);
   return fields;
 }
@@ -626,7 +626,7 @@ static char **ConcatenateFields(const LCH_List *const a,
     }
   }
 
-  char **const result = LCH_StringListToStringArray(list);
+  char **const result = LCH_RecordToStringArray(list);
   LCH_ListDestroy(list);
   return result;
 }
@@ -638,12 +638,12 @@ static char **ParseConcatenateFields(const char *const str_a,
 
   LCH_List *const list_a = (LCH_StringEqual(str_a, ""))
                                ? LCH_ListCreate()
-                               : LCH_CSVParseRecord(str_a);
+                               : LCH_CSVParseRecord(str_a, strlen(str_b));
   if (list_a == NULL) {
     return NULL;
   }
 
-  LCH_List *const list_b = LCH_CSVParseRecord(str_b);
+  LCH_List *const list_b = LCH_CSVParseRecord(str_b, strlen(str_b));
   if (str_b == NULL) {
     LCH_ListDestroy(list_a);
     return NULL;
