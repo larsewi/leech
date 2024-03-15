@@ -275,7 +275,7 @@ bool LCH_FileWrite(const char *const path, const char *const str) {
 /******************************************************************************/
 
 static bool IndicesOfFieldsInHeader(size_t *const indices,
-                                    const char *const *const fields,
+                                    const LCH_List *const fields,
                                     const LCH_List *const header) {
   assert(indices != NULL);
   assert(fields != NULL);
@@ -283,10 +283,15 @@ static bool IndicesOfFieldsInHeader(size_t *const indices,
 
   const size_t header_len = LCH_ListLength(header);
 
-  for (size_t i = 0; fields[i] != NULL; i++) {
-    const char *const field = fields[i];
+  const size_t num_fields = LCH_ListLength(fields);
+  for (size_t i = 0; i < num_fields; i++) {
+    const LCH_Buffer *const field = (LCH_Buffer *)LCH_ListGet(fields, i);
+    if (field == NULL) {
+      return false;
+    }
+
     const size_t index =
-        LCH_ListIndex(header, field, (LCH_ListIndexCompareFn)strcmp);
+        LCH_ListIndex(header, field, (LCH_CompareFn)LCH_BufferCompare);
     if (index >= header_len) {
       LCH_LOG_ERROR("Field '%s' not found in table header");
       return false;
@@ -306,7 +311,7 @@ static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
 
   for (size_t i = 0; i < num_indices; i++) {
     const size_t index = indices[i];
-    char *const field = (char *)LCH_ListGet(record, index);
+    LCH_Buffer *const field = (LCH_Buffer *)LCH_ListGet(record, index);
     assert(field != NULL);
 
     if (!LCH_ListAppend(fields, field, NULL)) {
@@ -319,18 +324,14 @@ static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
 }
 
 LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
-                                const char *const *const primary_fields,
-                                const char *const *const subsidiary_fields) {
-  assert(primary_fields != NULL);
-  assert(subsidiary_fields != NULL);
-  assert(table != NULL);
-
+                                const LCH_List *const primary_fields,
+                                const LCH_List *const subsidiary_fields) {
   const size_t num_records = LCH_ListLength(table);
   assert(num_records >= 1);  // Require at least a table header
   const LCH_List *const header = (LCH_List *)LCH_ListGet(table, 0);
 
-  const size_t num_primary = LCH_StringArrayLength(primary_fields);
-  const size_t num_subsidiary = LCH_StringArrayLength(subsidiary_fields);
+  const size_t num_primary = LCH_ListLength(primary_fields);
+  const size_t num_subsidiary = LCH_ListLength(subsidiary_fields);
   assert(num_primary > 0);  // Require at least one primary field
   assert(LCH_ListLength(header) == num_primary + num_subsidiary);
 
@@ -355,56 +356,53 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
     assert(LCH_ListLength(header) == LCH_ListLength(record));
 
     // Create key from primary fields
-    char *key = NULL;
+    LCH_Buffer *key = NULL;
     {
-      LCH_List *list =
+      LCH_List *const list =
           FieldsInRecordAtIndices(primary_indices, num_primary, record);
       if (list == NULL) {
         LCH_JsonDestroy(object);
         return NULL;
       }
 
-      LCH_Buffer *buffer = NULL;
-      if (!LCH_CSVComposeRecord(&buffer, list)) {
+      if (!LCH_CSVComposeRecord(&key, list)) {
         LCH_ListDestroy(list);
-        LCH_JsonDestroy(object);
-      }
-
-      LCH_ListDestroy(list);
-      key = LCH_BufferToString(buffer);
-    }
-
-    // Create value from subsidiary fields
-    LCH_Json *value = NULL;
-    {
-      LCH_List *const list =
-          FieldsInRecordAtIndices(subsidiary_indices, num_subsidiary, record);
-      if (list == NULL) {
-        free(key);
         LCH_JsonDestroy(object);
         return NULL;
       }
 
-      LCH_Buffer *buffer = NULL;
-      if (!LCH_CSVComposeRecord(&buffer, list)) {
-        LCH_ListDestroy(list);
-        free(key);
+      LCH_ListDestroy(list);
+    }
+
+    // Create value from subsidiary fields
+    LCH_Buffer *value = NULL;
+    {
+      LCH_List *const list =
+          FieldsInRecordAtIndices(subsidiary_indices, num_subsidiary, record);
+      if (list == NULL) {
+        LCH_BufferDestroy(key);
         LCH_JsonDestroy(object);
+        return NULL;
       }
 
+      if (!LCH_CSVComposeRecord(&value, list)) {
+        LCH_ListDestroy(list);
+        LCH_BufferDestroy(key);
+        LCH_JsonDestroy(object);
+        return NULL;
+      }
       LCH_ListDestroy(list);
-      char *const str = LCH_BufferToString(buffer);
-      value = LCH_JsonStringCreate(str);
     }
 
     assert(key != NULL);
     assert(value != NULL);
-    if (!LCH_JsonObjectSet(object, key, value)) {
-      free(value);
-      free(key);
+    if (!LCH_JsonObjectSetString(object, key, value)) {
+      LCH_BufferDestroy(value);
+      LCH_BufferDestroy(key);
       LCH_JsonDestroy(object);
+      return NULL;
     }
-    free(key);
+    LCH_BufferDestroy(key);
   }
 
   return object;
@@ -563,19 +561,19 @@ char *LCH_StringFormat(const char *const format, ...) {
 
   va_start(ap, format);
   const int ret = vsnprintf(str, (size_t)length + 1, format, ap);
-  (void)ret;  // unused variable
+  LCH_UNUSED(ret);
   va_end(ap);
   assert(ret == length);
 
   return str;
 }
 
-void LCH_StringArrayDestroy(void *const _array) {
-  char **const array = (char **)_array;
-  for (size_t i = 0; array[i] != NULL; i++) {
-    free(array[i]);
+void LCH_StringArrayDestroy(void *const _str_array) {
+  char **const str_array = (char **)_str_array;
+  for (size_t i = 0; str_array[i] != NULL; i++) {
+    free(str_array[i]);
   }
-  free(array);
+  free(str_array);
 }
 
 size_t LCH_StringArrayLength(const char *const *const str_array) {
@@ -596,37 +594,42 @@ void LCH_StringArrayTableDestroy(void *const _table) {
   free(table);
 }
 
-char **LCH_StringListToStringArray(const LCH_List *const list) {
+char **LCH_RecordToStringArray(const LCH_List *const list) {
   assert(list != NULL);
 
   const size_t length = LCH_ListLength(list);
-  char **const str_array = (char **)LCH_Allocate(
-      sizeof(char *) * (length + 1 /* Terminating NULL-pointer */));
+  char **const str_array = (char **)calloc(length + 1, sizeof(char *));
   if (str_array == NULL) {
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
   for (size_t i = 0; i < length; i++) {
-    const char *const str = (char *)LCH_ListGet(list, i);
-    assert(str != NULL);
+    const LCH_Buffer *const buffer = (LCH_Buffer *)LCH_ListGet(list, i);
 
-    str_array[i] = LCH_StringDuplicate(str);
+    const size_t length = LCH_BufferLength(buffer);
+    str_array[i] = (char *)calloc(length + 1, sizeof(char));
     if (str_array[i] == NULL) {
+      LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s",
+                    strerror(errno));
       LCH_StringArrayDestroy(str_array);
       return NULL;
     }
+
+    const char *const data = LCH_BufferData(buffer);
+    memcpy(str_array[i], data, length);
   }
 
   return str_array;
 }
 
-char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
+char ***LCH_TableToStringArrayTable(const LCH_List *const table) {
   assert(table != NULL);
 
   const size_t length = LCH_ListLength(table);
-  char ***const str_table = (char ***)LCH_Allocate(
-      sizeof(char **) * (length + 1) /* Terminating NULL-pointer */);
+  char ***const str_table = (char ***)calloc(length + 1, sizeof(char **));
   if (str_table == NULL) {
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 
@@ -634,7 +637,7 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
     LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
     assert(record != NULL);
 
-    str_table[i] = LCH_StringListToStringArray(record);
+    str_table[i] = LCH_RecordToStringArray(record);
     if (str_table == NULL) {
       LCH_StringArrayTableDestroy(str_table);
       return NULL;
@@ -644,7 +647,7 @@ char ***LCH_StringListTableToStringArrayTable(const LCH_List *const table) {
   return str_table;
 }
 
-LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
+LCH_List *LCH_StringArrayToRecord(const char *const *const str_array) {
   assert(str_array != NULL);
 
   LCH_List *const list = LCH_ListCreate();
@@ -653,8 +656,14 @@ LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
   }
 
   for (size_t i = 0; str_array[i] != NULL; i++) {
-    char *const str = LCH_StringDuplicate(str_array[i]);
-    if (!LCH_ListAppend(list, str, free)) {
+    LCH_Buffer *const buffer = LCH_BufferFromString(str_array[i]);
+    if (buffer == NULL) {
+      LCH_ListDestroy(list);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(list, buffer, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(buffer);
       LCH_ListDestroy(list);
       return NULL;
     }
@@ -663,7 +672,7 @@ LCH_List *LCH_StringArrayToStringList(const char *const *const str_array) {
   return list;
 }
 
-LCH_List *LCH_StringArrayTableToStringListTable(
+LCH_List *LCH_StringArrayTableToTable(
     const char *const *const *const str_table) {
   assert(str_table != NULL);
 
@@ -674,7 +683,7 @@ LCH_List *LCH_StringArrayTableToStringListTable(
 
   for (size_t i = 0; str_table[i] != NULL; i++) {
     const char *const *const str_array = str_table[i];
-    LCH_List *const record = LCH_StringArrayToStringList(str_array);
+    LCH_List *const record = LCH_StringArrayToRecord(str_array);
     if (record == NULL) {
       LCH_ListDestroy(table);
       return NULL;
@@ -728,4 +737,52 @@ bool LCH_CreateParentDirectories(const char *const filename) {
   }
   LCH_ListDestroy(dirs);
   return true;
+}
+
+bool LCH_ListInsertBufferDuplicate(LCH_List *const list, const size_t index,
+                                   const LCH_Buffer *const buffer) {
+  LCH_Buffer *const duplicate = LCH_BufferDuplicate(buffer);
+  if (duplicate == NULL) {
+    return false;
+  }
+
+  if (!LCH_ListInsert(list, index, duplicate, LCH_BufferDestroy)) {
+    LCH_BufferDestroy(duplicate);
+    return false;
+  }
+  return true;
+}
+
+bool LCH_ListAppendBufferDuplicate(LCH_List *const list,
+                                   const LCH_Buffer *const buffer) {
+  LCH_Buffer *const duplicate = LCH_BufferDuplicate(buffer);
+  if (duplicate == NULL) {
+    return false;
+  }
+
+  return LCH_ListAppend(list, duplicate, LCH_BufferDestroy);
+}
+
+char *LCH_StringTruncate(const char *const str, const size_t len,
+                         const size_t max) {
+  assert(max >= 3);  // We need at least Bytes for ...
+
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  for (size_t i = 0; i < max; i++) {
+    if ((i < len) && (str[i] == '\0')) {
+      return LCH_BufferToString(buffer);
+    }
+    if (!LCH_BufferAppend(buffer, str[i])) {
+      LCH_BufferDestroy(buffer);
+      return NULL;
+    }
+  }
+
+  LCH_BufferChop(buffer, max - 3);
+  if (!LCH_BufferPrintFormat(buffer, "...")) {
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  return LCH_BufferToString(buffer);
 }

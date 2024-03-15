@@ -100,66 +100,106 @@ START_TEST(test_LCH_MessageDigest) {
 END_TEST
 
 START_TEST(test_LCH_TableToJsonObject) {
-  LCH_List *const table = LCH_CSVParseTable(
-      "firstname, lastname,  born\r\n"
-      "Paul,      McCartney, 1942\r\n"
-      "Ringo,     Starr,     1940\r\n"
-      "John,      Lennon,    1940\r\n"
-      "George,    Harrison,  1943\r\n");
-  static const char *primary[] = {"firstname", "lastname", NULL};
-  static const char *subsidiary[] = {"born", NULL};
+  LCH_List *table = NULL;
+  {
+    const char *const csv =
+        "firstname, lastname,  born\r\n"
+        "Paul,      McCartney, 1942\r\n"
+        "Ringo,     Starr,     1940\r\n"
+        "John,      Lennon,    1940\r\n"
+        "George,    Harrison,  1943\r\n";
+    table = LCH_CSVParseTable(csv, strlen(csv));
+  }
+  ck_assert_ptr_nonnull(table);
+
+  LCH_List *primary = NULL;
+  {
+    const char *const csv = "firstname,lastname";
+    primary = LCH_CSVParseRecord(csv, strlen(csv));
+  }
+  ck_assert_ptr_nonnull(primary);
+
+  LCH_List *subsidiary = NULL;
+  {
+    const char *const csv = "born";
+    subsidiary = LCH_CSVParseRecord(csv, strlen(csv));
+  }
+  ck_assert_ptr_nonnull(subsidiary);
 
   LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
   ck_assert_ptr_nonnull(json);
+  ck_assert(LCH_JsonIsObject(json));
 
+  LCH_ListDestroy(subsidiary);
+  LCH_ListDestroy(primary);
   LCH_ListDestroy(table);
 
-  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+  const LCH_Buffer *str = LCH_JsonObjectGetString(
+      json, LCH_BufferStaticFromString("Paul,McCartney"));
+  ck_assert_str_eq(LCH_BufferData(str), "1942");
 
-  const LCH_Json *str = LCH_JsonObjectGet(json, "Paul,McCartney");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "1942");
+  str =
+      LCH_JsonObjectGetString(json, LCH_BufferStaticFromString("Ringo,Starr"));
+  ck_assert_str_eq(LCH_BufferData(str), "1940");
 
-  str = LCH_JsonObjectGet(json, "Ringo,Starr");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "1940");
+  str =
+      LCH_JsonObjectGetString(json, LCH_BufferStaticFromString("John,Lennon"));
+  ck_assert_str_eq(LCH_BufferData(str), "1940");
 
-  str = LCH_JsonObjectGet(json, "John,Lennon");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "1940");
-
-  str = LCH_JsonObjectGet(json, "George,Harrison");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "1943");
+  str = LCH_JsonObjectGetString(json,
+                                LCH_BufferStaticFromString("George,Harrison"));
+  ck_assert_str_eq(LCH_BufferData(str), "1943");
 
   LCH_JsonDestroy(json);
 }
 END_TEST
 
 START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
-  LCH_List *const table = LCH_CSVParseTable(
-      "firstname, lastname,  born\r\n"
-      "Paul,      McCartney, 1942\r\n"
-      "Ringo,     Starr,     1940\r\n"
-      "John,      Lennon,    1940\r\n"
-      "George,    Harrison,  1943\r\n");
-  static const char *primary[] = {"born", "lastname", "firstname", NULL};
-  static const char *subsidiary[] = {NULL};
+  LCH_List *table = NULL;
+  {
+    const char *const csv =
+        "firstname, lastname,  born\r\n"
+        "Paul,      McCartney, 1942\r\n"
+        "Ringo,     Starr,     1940\r\n"
+        "John,      Lennon,    1940\r\n"
+        "George,    Harrison,  1943\r\n";
+    table = LCH_CSVParseTable(csv, strlen(csv));
+  }
+  ck_assert_ptr_nonnull(table);
+
+  LCH_List *primary = NULL;
+  {
+    const char *const csv = "firstname,lastname,born";
+    primary = LCH_CSVParseRecord(csv, strlen(csv));
+  }
+  ck_assert_ptr_nonnull(primary);
+
+  LCH_List *const subsidiary = LCH_ListCreate();
+  ck_assert_ptr_nonnull(subsidiary);
 
   LCH_Json *const json = LCH_TableToJsonObject(table, primary, subsidiary);
   ck_assert_ptr_nonnull(json);
+  ck_assert(LCH_JsonIsObject(json));
 
+  LCH_ListDestroy(subsidiary);
+  LCH_ListDestroy(primary);
   LCH_ListDestroy(table);
 
-  ck_assert_int_eq(LCH_JsonGetType(json), LCH_JSON_TYPE_OBJECT);
+  const LCH_Buffer *str = LCH_JsonObjectGetString(
+      json, LCH_BufferStaticFromString("Paul,McCartney,1942"));
+  ck_assert_str_eq(LCH_BufferData(str), "");
 
-  const LCH_Json *str = LCH_JsonObjectGet(json, "1942,McCartney,Paul");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+  str = LCH_JsonObjectGetString(json,
+                                LCH_BufferStaticFromString("Ringo,Starr,1940"));
+  ck_assert_str_eq(LCH_BufferData(str), "");
 
-  str = LCH_JsonObjectGet(json, "1940,Starr,Ringo");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+  str = LCH_JsonObjectGetString(json,
+                                LCH_BufferStaticFromString("John,Lennon,1940"));
+  ck_assert_str_eq(LCH_BufferData(str), "");
 
-  str = LCH_JsonObjectGet(json, "1940,Lennon,John");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
-
-  str = LCH_JsonObjectGet(json, "1943,Harrison,George");
-  ck_assert_str_eq(LCH_JsonStringGetString(str), "");
+  str = LCH_JsonObjectGetString(
+      json, LCH_BufferStaticFromString("George,Harrison,1943"));
+  ck_assert_str_eq(LCH_BufferData(str), "");
 
   LCH_JsonDestroy(json);
 }
@@ -190,6 +230,22 @@ START_TEST(test_LCH_ParseVersion) {
   ck_assert(!LCH_ParseVersion("1", &v_major, &v_minor, &v_patch));
   ck_assert(!LCH_ParseVersion("", &v_major, &v_minor, &v_patch));
   ck_assert(!LCH_ParseVersion("a.b.c", &v_major, &v_minor, &v_patch));
+}
+END_TEST
+
+START_TEST(test_LCH_StringTruncate) {
+  {
+    const char *const str = "Very long string!";
+    char *const truncated = LCH_StringTruncate(str, strlen(str), 8);
+    ck_assert_str_eq(truncated, "Very ...");
+    free(truncated);
+  }
+  {
+    const char *const str = "Very long string!";
+    char *const truncated = LCH_StringTruncate(str, strlen(str), 32);
+    ck_assert_str_eq(truncated, "Very long string!");
+    free(truncated);
+  }
 }
 END_TEST
 
@@ -248,6 +304,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_ParseVersion");
     tcase_add_test(tc, test_LCH_ParseVersion);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_StringTruncate");
+    tcase_add_test(tc, test_LCH_StringTruncate);
     suite_add_tcase(s, tc);
   }
   return s;

@@ -11,10 +11,15 @@
 struct LCH_Json {
   LCH_JsonType type;
   double number;
-  char *str;
+  LCH_Buffer *str;
   LCH_List *array;
   LCH_Dict *object;
 };
+
+typedef struct {
+  const char *cursor;
+  const char *const end;
+} LCH_JsonParser;
 
 /****************************************************************************/
 
@@ -32,155 +37,218 @@ const char *LCH_JsonGetTypeAsString(const LCH_Json *const json) {
 
 bool LCH_JsonIsNull(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_NULL;
+
+  const bool is_null = json->type == LCH_JSON_TYPE_NULL;
+  return is_null;
 }
 
 bool LCH_JsonIsTrue(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_TRUE;
+
+  const bool is_true = json->type == LCH_JSON_TYPE_TRUE;
+  return is_true;
 }
 
 bool LCH_JsonIsFalse(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_FALSE;
+
+  const bool is_false = json->type == LCH_JSON_TYPE_FALSE;
+  return is_false;
 }
 
 bool LCH_JsonIsString(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_STRING;
+
+  const bool is_string = json->type == LCH_JSON_TYPE_STRING;
+  return is_string;
 }
 
 bool LCH_JsonIsNumber(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_NUMBER;
+
+  const bool is_number = json->type == LCH_JSON_TYPE_NUMBER;
+  return is_number;
 }
 
 bool LCH_JsonIsObject(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_OBJECT;
+
+  const bool is_object = json->type == LCH_JSON_TYPE_OBJECT;
+  return is_object;
 }
 
 bool LCH_JsonIsArray(const LCH_Json *const json) {
   assert(json != NULL);
-  return json->type == LCH_JSON_TYPE_ARRAY;
+
+  const bool is_array = json->type == LCH_JSON_TYPE_ARRAY;
+  return is_array;
 }
 
 /****************************************************************************/
 
 bool LCH_JsonObjectChildIsNull(const LCH_Json *const json,
-                               const char *const key) {
+                               const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsNull(child);
+  assert(child != NULL);
+
+  const bool is_null = LCH_JsonIsNull(child);
+  return is_null;
 }
 
 bool LCH_JsonObjectChildIsTrue(const LCH_Json *const json,
-                               const char *const key) {
+                               const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsTrue(child);
+  assert(child != NULL);
+
+  const bool is_true = LCH_JsonIsTrue(child);
+  return is_true;
 }
 
 bool LCH_JsonObjectChildIsFalse(const LCH_Json *const json,
-                                const char *const key) {
+                                const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsFalse(child);
+  assert(child != NULL);
+
+  const bool is_false = LCH_JsonIsFalse(child);
+  return is_false;
 }
 
 bool LCH_JsonObjectChildIsString(const LCH_Json *const json,
-                                 const char *const key) {
+                                 const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsString(child);
+  assert(child != NULL);
+
+  const bool is_string = LCH_JsonIsString(child);
+  return is_string;
 }
 
-bool LCH_JsonObjectChildIsNumber(const LCH_Json *json, const char *key) {
+bool LCH_JsonObjectChildIsNumber(const LCH_Json *json, const LCH_Buffer *key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsNumber(child);
+  assert(child != NULL);
+
+  const bool is_number = LCH_JsonIsNumber(child);
+  return is_number;
 }
 
 bool LCH_JsonObjectChildIsObject(const LCH_Json *const json,
-                                 const char *const key) {
+                                 const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsObject(child);
+  assert(child != NULL);
+
+  const bool is_object = LCH_JsonIsObject(child);
+  return is_object;
 }
 
 bool LCH_JsonObjectChildIsArray(const LCH_Json *const json,
-                                const char *const key) {
+                                const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  return LCH_JsonIsArray(child);
+  assert(child != NULL);
+
+  const bool is_array = LCH_JsonIsArray(child);
+  return is_array;
 }
 
 /****************************************************************************/
 
 bool LCH_JsonArrayChildIsNull(const LCH_Json *const json, const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsNull(child);
+  assert(child != NULL);
+
+  const bool is_null = LCH_JsonIsNull(child);
+  return is_null;
 }
 
 bool LCH_JsonArrayChildIsTrue(const LCH_Json *const json, const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsTrue(child);
+  assert(child != NULL);
+
+  const bool is_true = LCH_JsonIsTrue(child);
+  return is_true;
 }
 
 bool LCH_JsonArrayChildIsFalse(const LCH_Json *const json, const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsFalse(child);
+  assert(child != NULL);
+
+  const bool is_false = LCH_JsonIsFalse(child);
+  return is_false;
 }
 
 bool LCH_JsonArrayChildIsString(const LCH_Json *const json,
                                 const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsString(child);
+  assert(child != NULL);
+
+  const bool is_string = LCH_JsonIsString(child);
+  return is_string;
 }
 
 bool LCH_JsonArrayChildIsNumber(const LCH_Json *const json,
                                 const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsNumber(child);
+  assert(child != NULL);
+
+  const bool is_number = LCH_JsonIsNumber(child);
+  return is_number;
 }
 
 bool LCH_JsonArrayChildIsObject(const LCH_Json *const json,
                                 const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsObject(child);
+  assert(child != NULL);
+
+  const bool is_object = LCH_JsonIsObject(child);
+  return is_object;
 }
 
 bool LCH_JsonArrayChildIsArray(const LCH_Json *const json, const size_t index) {
   assert(json != NULL);
+
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  return LCH_JsonIsArray(child);
+  assert(child != NULL);
+
+  const bool is_array = LCH_JsonIsArray(child);
+  return is_array;
 }
 
 /****************************************************************************/
@@ -188,10 +256,10 @@ bool LCH_JsonArrayChildIsArray(const LCH_Json *const json, const size_t index) {
 LCH_Json *LCH_JsonNullCreate() {
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
+
   json->type = LCH_JSON_TYPE_NULL;
   return json;
 }
@@ -199,10 +267,10 @@ LCH_Json *LCH_JsonNullCreate() {
 LCH_Json *LCH_JsonTrueCreate() {
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
+
   json->type = LCH_JSON_TYPE_TRUE;
   return json;
 }
@@ -210,23 +278,23 @@ LCH_Json *LCH_JsonTrueCreate() {
 LCH_Json *LCH_JsonFalseCreate() {
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
+
   json->type = LCH_JSON_TYPE_FALSE;
   return json;
 }
 
-LCH_Json *LCH_JsonStringCreate(char *const str) {
+LCH_Json *LCH_JsonStringCreate(LCH_Buffer *const str) {
   assert(str != NULL);
 
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
+
   json->type = LCH_JSON_TYPE_STRING;
   json->str = str;
   return json;
@@ -235,13 +303,12 @@ LCH_Json *LCH_JsonStringCreate(char *const str) {
 LCH_Json *LCH_JsonNumberCreate(const double number) {
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
+
   json->type = LCH_JSON_TYPE_NUMBER;
   json->number = number;
-
   return json;
 }
 
@@ -253,13 +320,12 @@ LCH_Json *LCH_JsonObjectCreate() {
 
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
+
   json->type = LCH_JSON_TYPE_OBJECT;
   json->object = dict;
-
   return json;
 }
 
@@ -271,8 +337,7 @@ LCH_Json *LCH_JsonArrayCreate() {
 
   LCH_Json *const json = (LCH_Json *)calloc(1, sizeof(LCH_Json));
   if (json == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memeory for JSON data structure: %s",
-                  strerror(errno));
+    LCH_LOG_ERROR("calloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
   json->type = LCH_JSON_TYPE_ARRAY;
@@ -283,103 +348,129 @@ LCH_Json *LCH_JsonArrayCreate() {
 
 /****************************************************************************/
 
-double LCH_JsonGetNumber(const LCH_Json *const json) {
-  assert(json->type == LCH_JSON_TYPE_NUMBER);
+double LCH_JsonNumberGet(const LCH_Json *const json) {
+  assert(json != NULL);
+  assert(LCH_JsonIsNumber(json));
+
   return json->number;
 }
 
-const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json, const char *const key) {
+const LCH_Json *LCH_JsonObjectGet(const LCH_Json *json,
+                                  const LCH_Buffer *const key) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
 
   if (!LCH_JsonObjectHasKey(json, key)) {
     LCH_LOG_ERROR(
-        "Failed to get value using key '%s': "
-        "Key does not exist.",
-        key);
+        "Failed to get value from JSON object: "
+        "Entry with key \"%s\" does not exist.",
+        LCH_BufferData(key));
     return NULL;
   }
 
   const LCH_Json *const value = (LCH_Json *)LCH_DictGet(json->object, key);
+  assert(value != NULL);
+
   return value;
 }
 
 const LCH_Json *LCH_JsonArrayGet(const LCH_Json *const json,
                                  const size_t index) {
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(json != NULL);
+  assert(LCH_JsonIsArray(json));
   assert(json->array != NULL);
 
   const size_t length = LCH_JsonArrayLength(json);
   if (index >= length) {
     LCH_LOG_ERROR(
-        "Failed to get value with index %zu: "
-        "Index out of bounds (%zu >= %zu)",
+        "Failed to get value from JSON array: "
+        "Index %zu is out of bounds (%zu >= %zu)",
         index, index, length);
     return NULL;
   }
 
   const LCH_Json *const value = (LCH_Json *)LCH_ListGet(json->array, index);
+  assert(value != NULL);
+
   return value;
 }
 
-const char *LCH_JsonStringGetString(const LCH_Json *const json) {
-  assert(json->type == LCH_JSON_TYPE_STRING);
+const LCH_Buffer *LCH_JsonStringGet(const LCH_Json *const json) {
+  assert(json != NULL);
+  assert(LCH_JsonIsString(json));
   assert(json->str != NULL);
+
   return json->str;
 }
 
-const char *LCH_JsonObjectGetString(const LCH_Json *const json,
-                                    const char *const key) {
+const LCH_Buffer *LCH_JsonObjectGetString(const LCH_Json *const json,
+                                          const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(key != NULL);
 
   const LCH_Json *const child = LCH_JsonObjectGet(json, key);
-  if (!LCH_JsonIsString(child)) {
-    const char *const type = LCH_JsonGetTypeAsString(child);
-    LCH_LOG_ERROR(
-        "Failed to get value using key '%s': "
-        "Expected type string, found type %s",
-        key, type);
+  if (child == NULL) {
     return NULL;
   }
 
-  const char *const str = LCH_JsonStringGetString(child);
-  return str;
-}
-
-const char *LCH_JsonArrayGetString(const LCH_Json *const json,
-                                   const size_t index) {
-  assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
-
-  const LCH_Json *const child = LCH_JsonArrayGet(json, index);
   if (!LCH_JsonIsString(child)) {
     const char *const type = LCH_JsonGetTypeAsString(child);
     LCH_LOG_ERROR(
-        "Failed to get value with index %zu: "
+        "Failed to get value from JSON object with key \"%s\": "
+        "Expected type string, but found type %s",
+        LCH_BufferData(key), type);
+    return NULL;
+  }
+
+  const LCH_Buffer *const str = LCH_JsonStringGet(child);
+  assert(str != NULL);
+
+  return str;
+}
+
+const LCH_Buffer *LCH_JsonArrayGetString(const LCH_Json *const json,
+                                         const size_t index) {
+  assert(json != NULL);
+  assert(LCH_JsonIsArray(json));
+
+  const LCH_Json *const child = LCH_JsonArrayGet(json, index);
+  if (child == NULL) {
+    return NULL;
+  }
+
+  if (!LCH_JsonIsString(child)) {
+    const char *const type = LCH_JsonGetTypeAsString(child);
+    LCH_LOG_ERROR(
+        "Failed to get value from JSON array at index %zu: "
         "Expected type string, type %s",
         index, type);
     return NULL;
   }
 
-  const char *const str = LCH_JsonStringGetString(child);
+  const LCH_Buffer *const str = LCH_JsonStringGet(child);
+  assert(str != NULL);
+
   return str;
 }
 
 const LCH_Json *LCH_JsonObjectGetObject(const LCH_Json *const json,
-                                        const char *const key) {
+                                        const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(key != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
 
   const LCH_Json *child = LCH_JsonObjectGet(json, key);
+  if (child == NULL) {
+    return NULL;
+  }
+
   if (!LCH_JsonIsObject(child)) {
     const char *const type = LCH_JsonGetTypeAsString(child);
     LCH_LOG_ERROR(
-        "Failed to get value using key '%s': "
-        "Expected type object, found type %s.",
-        key, type);
+        "Failed to get value from JSON object with key \"%s\": "
+        "Expected type object, but found type %s.",
+        LCH_BufferData(key), type);
     return NULL;
   }
 
@@ -389,16 +480,19 @@ const LCH_Json *LCH_JsonObjectGetObject(const LCH_Json *const json,
 const LCH_Json *LCH_JsonArrayGetObject(const LCH_Json *const json,
                                        const size_t index) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(LCH_JsonIsArray(json));
   assert(json->array != NULL);
 
   const LCH_Json *const child = LCH_JsonArrayGet(json, index);
-  assert(child != NULL);
+  if (child == NULL) {
+    return NULL;
+  }
+
   if (!LCH_JsonIsObject(child)) {
     const char *const type = LCH_JsonGetTypeAsString(child);
     LCH_LOG_ERROR(
-        "Failed to get value with index %zu: "
-        "Expected type object, found %s",
+        "Failed to get value from JSON array at index %zu: "
+        "Expected type object, but found %s",
         index, type);
     return NULL;
   }
@@ -407,18 +501,22 @@ const LCH_Json *LCH_JsonArrayGetObject(const LCH_Json *const json,
 }
 
 const LCH_Json *LCH_JsonObjectGetArray(const LCH_Json *const json,
-                                       const char *const key) {
+                                       const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(key != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
 
   const LCH_Json *child = LCH_JsonObjectGet(json, key);
+  if (child == NULL) {
+    return NULL;
+  }
+
   if (!LCH_JsonIsArray(child)) {
     const char *const type = LCH_JsonGetTypeAsString(child);
     LCH_LOG_ERROR(
-        "Failed to get value using key '%s': "
-        "Expected type array, found type %s.",
-        key, type);
+        "Failed to get value from JSON object with key \"%s\": "
+        "Expected type array, but found type %s.",
+        LCH_BufferData(key), type);
     return NULL;
   }
 
@@ -427,23 +525,25 @@ const LCH_Json *LCH_JsonObjectGetArray(const LCH_Json *const json,
 
 /****************************************************************************/
 
-bool LCH_JsonObjectSet(const LCH_Json *const json, const char *const key,
+bool LCH_JsonObjectSet(const LCH_Json *const json, const LCH_Buffer *const key,
                        LCH_Json *const value) {
   assert(json != NULL);
   assert(key != NULL);
   assert(value != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
+
   const bool success = LCH_DictSet(json->object, key, value, LCH_JsonDestroy);
   return success;
 }
 
-bool LCH_JsonObjectSetString(const LCH_Json *const json, const char *const key,
-                             char *const str) {
+bool LCH_JsonObjectSetString(const LCH_Json *const json,
+                             const LCH_Buffer *const key,
+                             LCH_Buffer *const str) {
   assert(json != NULL);
   assert(key != NULL);
   assert(str != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
 
   LCH_Json *const value = LCH_JsonStringCreate(str);
@@ -460,32 +560,32 @@ bool LCH_JsonObjectSetString(const LCH_Json *const json, const char *const key,
 }
 
 bool LCH_JsonObjectSetStringDuplicate(const LCH_Json *const json,
-                                      const char *const key,
-                                      const char *const str) {
+                                      const LCH_Buffer *const key,
+                                      const LCH_Buffer *const str) {
   assert(json != NULL);
   assert(key != NULL);
   assert(str != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
 
-  char *const dup = LCH_StringDuplicate(str);
+  LCH_Buffer *const dup = LCH_BufferDuplicate(str);
   if (dup == NULL) {
     return false;
   }
 
   if (!LCH_JsonObjectSetString(json, key, dup)) {
-    free(dup);
+    LCH_BufferDestroy(dup);
     return false;
   }
 
   return true;
 }
 
-bool LCH_JsonObjectSetNumber(const LCH_Json *const json, const char *const key,
-                             const double number) {
+bool LCH_JsonObjectSetNumber(const LCH_Json *const json,
+                             const LCH_Buffer *const key, const double number) {
   assert(json != NULL);
   assert(key != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
 
   LCH_Json *const value = LCH_JsonNumberCreate(number);
@@ -501,11 +601,14 @@ bool LCH_JsonObjectSetNumber(const LCH_Json *const json, const char *const key,
   return true;
 }
 
+/****************************************************************************/
+
 bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const element) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(LCH_JsonIsArray(json));
   assert(json->array != NULL);
   assert(element != NULL);
+
   const bool success = LCH_ListAppend(json->array, element, LCH_JsonDestroy);
   return success;
 }
@@ -513,10 +616,10 @@ bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const element) {
 /****************************************************************************/
 
 LCH_Json *LCH_JsonObjectRemove(const LCH_Json *const json,
-                               const char *const key) {
+                               const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(key != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
 
   LCH_Json *const value = (LCH_Json *)LCH_DictRemove(json->object, key);
@@ -526,74 +629,84 @@ LCH_Json *LCH_JsonObjectRemove(const LCH_Json *const json,
 
 LCH_Json *LCH_JsonArrayRemove(const LCH_Json *const json, const size_t index) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(LCH_JsonIsArray(json));
   assert(json->array != NULL);
 
   LCH_Json *const child = (LCH_Json *)LCH_ListRemove(json->array, index);
+  assert(child != NULL);
   return child;
 }
 
 LCH_Json *LCH_JsonObjectRemoveObject(const LCH_Json *const json,
-                                     const char *const key) {
+                                     const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(key != NULL);
 
   {
     const LCH_Json *const child = LCH_JsonObjectGet(json, key);
+    assert(child != NULL);
+
     if (!LCH_JsonIsObject(child)) {
       const char *const type = LCH_JsonGetTypeAsString(child);
       LCH_LOG_ERROR(
           "Failed to remove object from object with key \"%s\": "
-          "Expected type object, found %s",
-          key, type);
+          "Expected type object, but found %s",
+          LCH_BufferData(key), type);
       return NULL;
     }
   }
 
   LCH_Json *const child = LCH_JsonObjectRemove(json, key);
+  assert(child != NULL);
   return child;
 }
 
 LCH_Json *LCH_JsonArrayRemoveObject(const LCH_Json *const json,
                                     const size_t index) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(LCH_JsonIsArray(json));
   assert(json->array != NULL);
 
   {
     const LCH_Json *const child = LCH_JsonArrayGet(json, index);
+    assert(child != NULL);
+
     if (!LCH_JsonIsObject(child)) {
       const char *const type = LCH_JsonGetTypeAsString(child);
       LCH_LOG_ERROR(
           "Failed to remove element at index %zu from array: "
-          "Expected type object, found %s",
+          "Expected type object, but found %s",
           index, type);
       return NULL;
     }
   }
 
   LCH_Json *const child = LCH_JsonArrayRemove(json, index);
+  assert(child != NULL);
   return child;
 }
 
 LCH_Json *LCH_JsonObjectRemoveArray(const LCH_Json *const json,
-                                    const char *const key) {
+                                    const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(key != NULL);
 
   {
     const LCH_Json *const child = LCH_JsonObjectGet(json, key);
+    assert(child != NULL);
+
     if (!LCH_JsonIsArray(child)) {
       const char *const type = LCH_JsonGetTypeAsString(child);
       LCH_LOG_ERROR(
           "Failed to remove array from object with key \"%s\": "
-          "Expected type array, found %s",
-          key, type);
+          "Expected type array, but found %s",
+          LCH_BufferData(key), type);
       return NULL;
     }
   }
 
   LCH_Json *const child = LCH_JsonObjectRemove(json, key);
+  assert(child != NULL);
   return child;
 }
 
@@ -603,17 +716,20 @@ LCH_Json *LCH_JsonArrayRemoveArray(const LCH_Json *const json,
 
   {
     const LCH_Json *const child = LCH_JsonArrayGet(json, index);
+    assert(child != NULL);
+
     if (!LCH_JsonIsArray(child)) {
       const char *const type = LCH_JsonGetTypeAsString(child);
       LCH_LOG_ERROR(
           "Failed to remove array from array with index %zu: "
-          "Expected type array, found %s",
+          "Expected type array, but found %s",
           index, type);
       return NULL;
     }
   }
 
   LCH_Json *const child = LCH_JsonArrayRemove(json, index);
+  assert(child != NULL);
   return child;
 }
 
@@ -621,49 +737,56 @@ LCH_Json *LCH_JsonArrayRemoveArray(const LCH_Json *const json,
 
 LCH_List *LCH_JsonObjectGetKeys(const LCH_Json *const json) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
+
   LCH_List *const keys = LCH_DictGetKeys(json->object);
   return keys;
 }
 
-bool LCH_JsonObjectHasKey(const LCH_Json *const json, const char *const key) {
+bool LCH_JsonObjectHasKey(const LCH_Json *const json,
+                          const LCH_Buffer *const key) {
   assert(json != NULL);
   assert(json->object != NULL);
   assert(key != NULL);
+
   const bool has_key = LCH_DictHasKey(json->object, key);
   return has_key;
 }
 
 size_t LCH_JsonObjectLength(const LCH_Json *json) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(json));
   assert(json->object != NULL);
-  return LCH_DictLength(json->object);
+
+  const size_t length = LCH_DictLength(json->object);
+  return length;
 }
 
 size_t LCH_JsonArrayLength(const LCH_Json *const json) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_ARRAY);
+  assert(LCH_JsonIsArray(json));
   assert(json->array != NULL);
-  return LCH_ListLength(json->array);
+
+  const size_t length = LCH_ListLength(json->array);
+  return length;
 }
 
 /****************************************************************************/
 
-LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *const a,
-                                     const LCH_Json *const b) {
-  assert(a != NULL);
-  assert(LCH_JsonIsObject(a));
-  assert(b != NULL);
-  assert(LCH_JsonIsObject(b));
+LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *const left,
+                                     const LCH_Json *const right) {
+  assert(left != NULL);
+  assert(LCH_JsonIsObject(left));
+  assert(right != NULL);
+  assert(LCH_JsonIsObject(right));
 
   LCH_Json *const result = LCH_JsonObjectCreate();
   if (result == NULL) {
     return NULL;
   }
 
-  LCH_List *const keys = LCH_JsonObjectGetKeys(a);
+  LCH_List *const keys = LCH_JsonObjectGetKeys(left);
   if (keys == NULL) {
     LCH_JsonDestroy(result);
     return NULL;
@@ -671,14 +794,14 @@ LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *const a,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    if (!LCH_JsonObjectHasKey(b, key)) {
-      const LCH_Json *const value_a = LCH_JsonObjectGet(a, key);
-      assert(value_a != NULL);
+    if (!LCH_JsonObjectHasKey(right, key)) {
+      const LCH_Json *const left_value = LCH_JsonObjectGet(left, key);
+      assert(left_value != NULL);
 
-      LCH_Json *const copy = LCH_JsonCopy(value_a);
+      LCH_Json *const copy = LCH_JsonCopy(left_value);
       if (copy == NULL) {
         LCH_ListDestroy(keys);
         LCH_JsonDestroy(result);
@@ -699,18 +822,18 @@ LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *const a,
 }
 
 LCH_Json *LCH_JsonObjectKeysSetIntersectAndValuesSetMinus(
-    const LCH_Json *const a, const LCH_Json *const b) {
-  assert(a != NULL);
-  assert(LCH_JsonIsObject(a));
-  assert(b != NULL);
-  assert(LCH_JsonIsObject(b));
+    const LCH_Json *const left, const LCH_Json *const right) {
+  assert(left != NULL);
+  assert(LCH_JsonIsObject(left));
+  assert(right != NULL);
+  assert(LCH_JsonIsObject(right));
 
   LCH_Json *const result = LCH_JsonObjectCreate();
   if (result == NULL) {
     return NULL;
   }
 
-  LCH_List *const keys = LCH_JsonObjectGetKeys(a);
+  LCH_List *const keys = LCH_JsonObjectGetKeys(left);
   if (keys == NULL) {
     LCH_JsonDestroy(result);
     return NULL;
@@ -718,18 +841,18 @@ LCH_Json *LCH_JsonObjectKeysSetIntersectAndValuesSetMinus(
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    if (LCH_JsonObjectHasKey(b, key)) {
-      const LCH_Json *const value_a = LCH_JsonObjectGet(a, key);
-      assert(value_a != NULL);
+    if (LCH_JsonObjectHasKey(right, key)) {
+      const LCH_Json *const left_value = LCH_JsonObjectGet(left, key);
+      assert(left_value != NULL);
 
-      const LCH_Json *const value_b = LCH_JsonObjectGet(b, key);
-      assert(value_b != NULL);
+      const LCH_Json *const right_value = LCH_JsonObjectGet(right, key);
+      assert(right_value != NULL);
 
-      if (!LCH_JsonIsEqual(value_a, value_b)) {
-        LCH_Json *const copy = LCH_JsonCopy(value_a);
+      if (!LCH_JsonEqual(left_value, right_value)) {
+        LCH_Json *const copy = LCH_JsonCopy(left_value);
         if (copy == NULL) {
           LCH_ListDestroy(keys);
           LCH_JsonDestroy(result);
@@ -754,27 +877,29 @@ LCH_Json *LCH_JsonObjectKeysSetIntersectAndValuesSetMinus(
 
 static LCH_Json *JsonNumberCopy(const LCH_Json *const json) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_NUMBER);
+  assert(LCH_JsonIsNumber(json));
+
   LCH_Json *copy = LCH_JsonNumberCreate(json->number);
   return copy;
 }
 
 static LCH_Json *JsonStringCopy(const LCH_Json *const json) {
   assert(json != NULL);
-  assert(json->type == LCH_JSON_TYPE_STRING);
+  assert(LCH_JsonIsString(json));
   assert(json->str != NULL);
 
-  char *const dup = LCH_StringDuplicate(json->str);
+  LCH_Buffer *const dup = LCH_BufferDuplicate(json->str);
   if (dup == NULL) {
     return NULL;
   }
+
   LCH_Json *const copy = LCH_JsonStringCreate(dup);
   return copy;
 }
 
 static LCH_Json *JsonObjectCopy(const LCH_Json *const object) {
   assert(object != NULL);
-  assert(object->type == LCH_JSON_TYPE_OBJECT);
+  assert(LCH_JsonIsObject(object));
 
   LCH_Json *const object_copy = LCH_JsonObjectCreate();
   if (object_copy != NULL) {
@@ -789,7 +914,7 @@ static LCH_Json *JsonObjectCopy(const LCH_Json *const object) {
 
   const size_t length = LCH_ListLength(keys);
   for (size_t i = 0; i < length; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
     const LCH_Json *const value = LCH_JsonObjectGet(object, key);
@@ -816,7 +941,7 @@ static LCH_Json *JsonObjectCopy(const LCH_Json *const object) {
 
 static LCH_Json *JsonArrayCopy(const LCH_Json *const array) {
   assert(array != NULL);
-  assert(array->type == LCH_JSON_TYPE_ARRAY);
+  assert(LCH_JsonIsArray(array));
 
   LCH_Json *const array_copy = LCH_JsonArrayCreate();
   if (array_copy == NULL) {
@@ -871,72 +996,72 @@ LCH_Json *LCH_JsonCopy(const LCH_Json *const json) {
       return JsonObjectCopy(json);
 
     default:
-      assert(false);
-      LCH_LOG_ERROR("Failed to copy JSON: Illegal type %d", type);
-      return NULL;
+      abort();  // THIS SHOULD NEVER EVER HAPPEN!
   }
 }
 
 /****************************************************************************/
 
-static bool JsonStringEqual(const LCH_Json *const a, const LCH_Json *const b) {
-  assert(a != NULL);
-  assert(a->type == LCH_JSON_TYPE_STRING);
-  assert(a->str != NULL);
+static bool JsonStringEqual(const LCH_Json *const left,
+                            const LCH_Json *const right) {
+  assert(left != NULL);
+  assert(LCH_JsonIsString(left));
+  assert(left->str != NULL);
 
-  assert(b != NULL);
-  assert(b->type == LCH_JSON_TYPE_STRING);
-  assert(b->str != NULL);
+  assert(right != NULL);
+  assert(LCH_JsonIsString(right));
+  assert(right->str != NULL);
 
-  const bool equal = LCH_StringEqual(a->str, b->str);
-  return equal;
+  const bool is_equal = LCH_BufferEqual(left->str, right->str);
+  return is_equal;
 }
 
-static bool JsonNumberEqual(const LCH_Json *const a, const LCH_Json *const b) {
-  assert(a != NULL);
-  assert(a->type == LCH_JSON_TYPE_NUMBER);
+static bool JsonNumberEqual(const LCH_Json *const left,
+                            const LCH_Json *const right) {
+  assert(left != NULL);
+  assert(LCH_JsonIsNumber(left));
 
-  assert(b != NULL);
-  assert(b->type == LCH_JSON_TYPE_NUMBER);
+  assert(right != NULL);
+  assert(LCH_JsonIsNumber(right));
 
-  const bool equal = a->number == b->number;
-  return equal;
+  const bool is_equal = left->number == right->number;
+  return is_equal;
 }
 
-static bool JsonObjectEqual(const LCH_Json *const a, const LCH_Json *const b) {
-  assert(a != NULL);
-  assert(a->type == LCH_JSON_TYPE_OBJECT);
-  assert(a->object != NULL);
+static bool JsonObjectEqual(const LCH_Json *const left,
+                            const LCH_Json *const right) {
+  assert(left != NULL);
+  assert(LCH_JsonIsObject(left));
+  assert(left->object != NULL);
 
-  assert(b != NULL);
-  assert(b->type == LCH_JSON_TYPE_OBJECT);
-  assert(b->object != NULL);
+  assert(right != NULL);
+  assert(LCH_JsonIsObject(right));
+  assert(right->object != NULL);
 
-  const size_t length = LCH_JsonObjectLength(a);
-  if (length != LCH_JsonObjectLength(b)) {
+  const size_t length = LCH_JsonObjectLength(left);
+  if (length != LCH_JsonObjectLength(right)) {
     return false;
   }
 
-  LCH_List *const keys = LCH_JsonObjectGetKeys(a);
+  LCH_List *const keys = LCH_JsonObjectGetKeys(left);
   assert(length == LCH_ListLength(keys));
 
   for (size_t i = 0; i < length; i++) {
-    const char *const key = (char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    if (!LCH_JsonObjectHasKey(b, key)) {
+    if (!LCH_JsonObjectHasKey(right, key)) {
       LCH_ListDestroy(keys);
       return false;
     }
-    assert(LCH_JsonObjectHasKey(a, key));
 
-    const LCH_Json *const value_a = LCH_JsonObjectGet(a, key);
-    assert(value_a != NULL);
+    const LCH_Json *const left_child = LCH_JsonObjectGet(left, key);
+    assert(left_child != NULL);
 
-    const LCH_Json *const value_b = LCH_JsonObjectGet(b, key);
-    assert(value_b != NULL);
+    const LCH_Json *const right_child = LCH_JsonObjectGet(right, key);
+    assert(right_child != NULL);
 
-    if (!LCH_JsonIsEqual(value_a, value_b)) {
+    if (!LCH_JsonEqual(left_child, right_child)) {
       LCH_ListDestroy(keys);
       return false;
     }
@@ -946,28 +1071,30 @@ static bool JsonObjectEqual(const LCH_Json *const a, const LCH_Json *const b) {
   return true;
 }
 
-static bool JsonArrayEqual(const LCH_Json *const a, const LCH_Json *const b) {
-  assert(a != NULL);
-  assert(a->type == LCH_JSON_TYPE_ARRAY);
-  assert(a->array != NULL);
+static bool JsonArrayEqual(const LCH_Json *const left,
+                           const LCH_Json *const right) {
+  assert(left != NULL);
+  assert(LCH_JsonIsArray(left));
+  assert(left->array != NULL);
 
-  assert(b != NULL);
-  assert(b->type == LCH_JSON_TYPE_ARRAY);
-  assert(b->array != NULL);
+  assert(right != NULL);
+  assert(LCH_JsonIsArray(right));
+  assert(right->array != NULL);
 
-  const size_t length = LCH_JsonArrayLength(a);
-  if (length != LCH_JsonArrayLength(b)) {
+  const size_t length = LCH_JsonArrayLength(left);
+  if (length != LCH_JsonArrayLength(right)) {
     return false;
   }
 
   for (size_t i = 0; i < length; i++) {
-    const LCH_Json *const element_a = (LCH_Json *)LCH_JsonArrayGet(a, i);
-    assert(element_a != NULL);
+    const LCH_Json *const left_element = (LCH_Json *)LCH_JsonArrayGet(left, i);
+    assert(left_element != NULL);
 
-    const LCH_Json *const element_b = (LCH_Json *)LCH_JsonArrayGet(b, i);
-    assert(element_b != NULL);
+    const LCH_Json *const right_element =
+        (LCH_Json *)LCH_JsonArrayGet(right, i);
+    assert(right_element != NULL);
 
-    if (!LCH_JsonIsEqual(element_a, element_b)) {
+    if (!LCH_JsonEqual(left_element, right_element)) {
       return false;
     }
   }
@@ -975,15 +1102,15 @@ static bool JsonArrayEqual(const LCH_Json *const a, const LCH_Json *const b) {
   return true;
 }
 
-bool LCH_JsonIsEqual(const LCH_Json *const a, const LCH_Json *b) {
-  assert(a != NULL);
-  assert(b != NULL);
+bool LCH_JsonEqual(const LCH_Json *const left, const LCH_Json *right) {
+  assert(left != NULL);
+  assert(right != NULL);
 
-  if (a->type != b->type) {
+  if (left->type != right->type) {
     return false;
   }
 
-  switch (a->type) {
+  switch (left->type) {
     case LCH_JSON_TYPE_NULL:
       // fallthrough
 
@@ -994,438 +1121,562 @@ bool LCH_JsonIsEqual(const LCH_Json *const a, const LCH_Json *b) {
       return true;
 
     case LCH_JSON_TYPE_STRING:
-      return JsonStringEqual(a, b);
+      return JsonStringEqual(left, right);
 
     case LCH_JSON_TYPE_NUMBER:
-      return JsonNumberEqual(a, b);
+      return JsonNumberEqual(left, right);
 
     case LCH_JSON_TYPE_OBJECT:
-      return JsonObjectEqual(a, b);
+      return JsonObjectEqual(left, right);
 
     case LCH_JSON_TYPE_ARRAY:
-      return JsonArrayEqual(a, b);
+      return JsonArrayEqual(left, right);
 
     default:
-      assert(false);
-      LCH_LOG_ERROR("Failed to copy JSON: Illegal type %d", a->type);
-      return false;
+      abort();  // THIS SHOULD NEVER EVER HAPPEN!
   }
 }
 
 /****************************************************************************/
 
-static const char *JsonParse(const char *str, LCH_Json **json);
+static void TrimLeadingWhitespace(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
 
-static const char *JsonParseNull(const char *const str, LCH_Json **json) {
-  assert(str != NULL);
-  assert(strncmp(str, "null", strlen("null")) == 0);
-
-  LCH_Json *const tmp = LCH_JsonNullCreate();
-  if (tmp == NULL) {
-    return NULL;
+  const char *const whitespace = " \r\n\t";
+  while (parser->cursor < parser->end) {
+    bool is_whitespace = false;
+    for (const char *ws = whitespace; *ws != '\0'; ws++) {
+      if (parser->cursor[0] == *ws) {
+        is_whitespace = true;
+        break;
+      }
+    }
+    if (is_whitespace) {
+      parser->cursor += 1;
+    } else {
+      return;
+    }
   }
-  *json = tmp;
-
-  return str + strlen("null");
 }
 
-static const char *JsonParseTrue(const char *const str, LCH_Json **json) {
-  assert(str != NULL);
-  assert(strncmp(str, "true", strlen("true")) == 0);
+static bool CheckToken(LCH_JsonParser *const parser, const char *const token) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
+  assert(token != NULL);
 
-  LCH_Json *const tmp = LCH_JsonTrueCreate();
-  if (tmp == NULL) {
-    return NULL;
+  const size_t length = strlen(token);
+  assert(parser->end >= parser->cursor);
+  if ((size_t)(parser->end - parser->cursor) < length) {
+    return false;
   }
-  *json = tmp;
 
-  return str + strlen("true");
+  for (size_t i = 0; i < length; i++) {
+    if (parser->cursor[i] != token[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
-static const char *JsonParseFalse(const char *const str, LCH_Json **json) {
-  assert(str != NULL);
-  assert(strncmp(str, "false", strlen("false")) == 0);
+static bool ParseToken(LCH_JsonParser *const parser, const char *const token) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
 
-  LCH_Json *const tmp = LCH_JsonFalseCreate();
-  if (tmp == NULL) {
-    return NULL;
+  const size_t length = strlen(token);
+  assert(parser->end >= parser->cursor);
+  if ((size_t)(parser->end - parser->cursor) < length) {
+    LCH_LOG_ERROR(
+        "Failed to parse JSON: Expected token '%s', but reaced End-of-Buffer",
+        token);
+    return false;
   }
-  *json = tmp;
 
-  return str + strlen("false");
+  for (size_t i = 0; i < length; i++) {
+    if (parser->cursor[i] != token[i]) {
+      char *const truncated =
+          LCH_StringTruncate(parser->cursor, parser->end - parser->cursor, 64);
+      LCH_LOG_ERROR("Failed to parse JSON: Expected '%s', but found '%s'",
+                    token, truncated);
+      free(truncated);
+      return false;
+    }
+  }
+
+  parser->cursor += length;
+  return true;
 }
 
-static const char *BufferParseString(const char *str, LCH_Buffer **buffer) {
-  assert(str != NULL);
-  assert(*str == '"');
+static LCH_Json *Parse(LCH_JsonParser *parser);
 
-  str++;  // Skip initial double quote
+static LCH_Json *ParseNull(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
 
-  *buffer = LCH_BufferCreate();
-  if (*buffer == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for JSON string");
+  const bool success = ParseToken(parser, "null");
+  assert(success);
+
+  LCH_Json *const json = LCH_JsonNullCreate();
+  if (json == NULL) {
+    return NULL;
+  }
+  return json;
+}
+
+static LCH_Json *ParseTrue(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
+
+  const bool success = ParseToken(parser, "true");
+  assert(success);
+
+  LCH_Json *const json = LCH_JsonTrueCreate();
+  if (json == NULL) {
+    return NULL;
+  }
+  return json;
+}
+
+static LCH_Json *ParseFalse(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
+
+  const bool success = ParseToken(parser, "false");
+  assert(success);
+
+  LCH_Json *const json = LCH_JsonFalseCreate();
+  if (json == NULL) {
+    return NULL;
+  }
+  return json;
+}
+
+static LCH_Buffer *BufferParseString(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
+
+  const bool success = ParseToken(parser, "\"");
+  assert(success);
+
+  LCH_Buffer *const str = LCH_BufferCreate();
+  if (str == NULL) {
     return NULL;
   }
 
-  while (*str != '\0' && *str != '"') {
-    if (*str == '\\') {
-      switch (str[1]) {
+  while ((parser->cursor < parser->end) && (parser->cursor[0] != '"')) {
+    if (parser->cursor[0] == '\\') {
+      if (parser->cursor + 2 > parser->end) {
+        LCH_LOG_ERROR(
+            "Failed to parse JSON: Expected control character after '\\', "
+            "but reached End-of-Buffer");
+        LCH_BufferDestroy(str);
+        return NULL;
+      }
+
+      switch (parser->cursor[1]) {
         case '"':
-          if (!LCH_BufferAppend(*buffer, '"')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '"')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case '\\':
-          if (!LCH_BufferAppend(*buffer, '\\')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '\\')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case '/':
-          if (!LCH_BufferAppend(*buffer, '/')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '/')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case 'b':
-          if (!LCH_BufferAppend(*buffer, '\b')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '\b')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case 'f':
-          if (!LCH_BufferAppend(*buffer, '\f')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '\f')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case 'n':
-          if (!LCH_BufferAppend(*buffer, '\n')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '\n')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case 'r':
-          if (!LCH_BufferAppend(*buffer, '\r')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '\r')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
         case 't':
-          if (!LCH_BufferAppend(*buffer, '\t')) {
-            LCH_BufferDestroy(*buffer);
+          if (!LCH_BufferAppend(str, '\t')) {
+            LCH_BufferDestroy(str);
             return NULL;
           }
           break;
 
-        case 'u':
-          if (!LCH_BufferUnicodeToUTF8(*buffer, str + 2)) {
-            LCH_LOG_ERROR(
-                "Failed to parse JSON string: Illegal unicode control sequence "
-                "'%.6s'",
-                str);
-            LCH_BufferDestroy(*buffer);
-          }
-          str += 4;
-          break;
+          /* Cannot have this is we want to support binary data in strings */
+          // case 'u':
+          //   if (parser->cursor + 6 > parser->end) {
+          //     LCH_LOG_ERROR(
+          //         "Failed to parse JSON: "
+          //         "Expected uncode control sequence after '\\u', "
+          //         "but reached End-of-Buffer");
+          //     LCH_BufferDestroy(str);
+          //     return NULL;
+          //   }
+          //   if (!LCH_BufferUnicodeToUTF8(str, parser->cursor + 2)) {
+          //     LCH_BufferDestroy(str);
+          //     return NULL;
+          //   }
+          //   parser->cursor += 4;
+          //   break;
 
         default:
-          LCH_LOG_ERROR(
-              "Failed to parse JSON string: Illegal control character '\\%c'",
-              *str);
-          LCH_BufferDestroy(*buffer);
-          return NULL;
+          /* Same reason as above */
+          // LCH_LOG_ERROR(
+          //     "Failed to parse JSON string: "
+          //     "Illegal control character '\\%c'",
+          //     parser->cursor[0]);
+          // LCH_BufferDestroy(str);
+          // return NULL;
+          if (!LCH_BufferAppend(str, parser->cursor[1])) {
+            LCH_BufferDestroy(str);
+            return NULL;
+          }
       }
-      str++;
-    } else if (!LCH_BufferAppend(*buffer, str[0])) {
-      LCH_BufferDestroy(*buffer);
+      parser->cursor++;
+    } else if (!LCH_BufferAppend(str, parser->cursor[0])) {
+      LCH_BufferDestroy(str);
       return NULL;
     }
-    str++;
+    parser->cursor++;
   }
 
-  if (*str != '"') {
-    LCH_LOG_ERROR(
-        "Failed to parse JSON string: Syntax error; expected '\"', found '%c'",
-        *str);
-    LCH_BufferDestroy(*buffer);
+  if (!ParseToken(parser, "\"")) {
+    LCH_BufferDestroy(str);
     return NULL;
   }
-
-  return str + 1;
-}
-
-static const char *JsonParseString(const char *str, LCH_Json **json) {
-  assert(str != NULL);
-  assert(*str == '"');
-
-  LCH_Buffer *buffer;
-  str = BufferParseString(str, &buffer);
-  if (str == NULL) {
-    return NULL;
-  }
-  char *value = LCH_BufferToString(buffer);
-
-  LCH_Json *const tmp = LCH_JsonStringCreate(value);
-  if (tmp == NULL) {
-    free(value);
-    return NULL;
-  }
-  *json = tmp;
 
   return str;
 }
 
-static const char *JsonParseObject(const char *str, LCH_Json **json) {
-  assert(str != NULL);
-  assert(*str == '{');
+static LCH_Json *ParseString(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
+
+  LCH_Buffer *buffer = BufferParseString(parser);
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  LCH_Json *const json = LCH_JsonStringCreate(buffer);
+  if (json == NULL) {
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  return json;
+}
+
+static LCH_Json *ParseObject(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
 
   LCH_Json *const object = LCH_JsonObjectCreate();
   if (object == NULL) {
     return NULL;
   }
 
-  // Skip initial curly brace
-  str++;
+  bool success = ParseToken(parser, "{");
+  assert(success);
 
-  // Skip whitespace
-  str += strspn(str, " \r\n\t");
+  TrimLeadingWhitespace(parser);
 
   bool first = true;
-  while (*str != '\0' && *str != '}') {
+  while ((parser->cursor < parser->end) && (parser->cursor[0] != '}')) {
     if (!first) {
-      // Skip comma
-      if (*str != ',') {
-        LCH_LOG_ERROR(
-            "Failed to parse JSON: Syntax error; expected ',', found '%c'",
-            *str);
+      if (!ParseToken(parser, ",")) {
         LCH_JsonDestroy(object);
         return NULL;
       }
-      str++;
-
-      // Skip whitespace
-      str += strspn(str, " \r\n\t");
+      TrimLeadingWhitespace(parser);
     }
     first = false;
 
-    // Extract key
-    LCH_Buffer *buffer;
-    str = BufferParseString(str, &buffer);
-    if (str == NULL) {
+    LCH_Buffer *key = BufferParseString(parser);
+    if (key == NULL) {
       LCH_JsonDestroy(object);
       return NULL;
     }
-    char *const key = LCH_BufferToString(buffer);
 
-    // Skip whitespace
-    str += strspn(str, " \r\n\t");
+    TrimLeadingWhitespace(parser);
 
-    // Skip colon
-    if (*str != ':') {
-      LCH_LOG_ERROR(
-          "Failed to parse JSON: Syntax error; expected ':', found '%c'", *str);
-      free(key);
+    if (!ParseToken(parser, ":")) {
+      LCH_BufferDestroy(key);
       LCH_JsonDestroy(object);
       return NULL;
     }
-    str++;
 
-    // Extract value
-    LCH_Json *value;
-    str = JsonParse(str, &value);
-    if (str == NULL) {
-      free(key);
+    LCH_Json *value = Parse(parser);
+    if (value == NULL) {
+      LCH_BufferDestroy(key);
       LCH_JsonDestroy(object);
     }
 
     if (!LCH_JsonObjectSet(object, key, value)) {
-      free(key);
       LCH_JsonDestroy(value);
+      LCH_BufferDestroy(key);
       LCH_JsonDestroy(object);
       return NULL;
     }
 
-    free(key);
-
-    // Skip whitespace
-    str += strspn(str, " \r\n\t");
+    LCH_BufferDestroy(key);
+    TrimLeadingWhitespace(parser);
   }
 
-  if (*str != '}') {
-    LCH_LOG_ERROR(
-        "Failed to parse JSON string: Syntax error; expected '}', found '%c'",
-        *str);
+  if (!ParseToken(parser, "}")) {
     LCH_JsonDestroy(object);
     return NULL;
   }
 
-  *json = object;
-  return str + 1;
+  return object;
 }
 
-static const char *JsonParseArray(const char *str, LCH_Json **json) {
-  assert(str != NULL);
-  assert(*str == '[');
+static LCH_Json *ParseArray(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
 
-  LCH_Json *const child = LCH_JsonArrayCreate();
-  if (child == NULL) {
+  LCH_Json *const json = LCH_JsonArrayCreate();
+  if (json == NULL) {
     return NULL;
   }
 
-  // Skip initial square bracket
-  str++;
+  const bool success = ParseToken(parser, "[");
+  assert(success);
 
-  // Skip whitespace
-  str += strspn(str, " \r\n\t");
+  TrimLeadingWhitespace(parser);
 
   bool first = true;
-  while (*str != '\0' && *str != ']') {
+  while ((parser->cursor < parser->end) && parser->cursor[0] != ']') {
     if (!first) {
-      // Skip comma
-      if (*str != ',') {
-        LCH_LOG_ERROR(
-            "Failed to parse JSON: Syntax error; expected ',', found '%c'",
-            *str);
-        LCH_JsonDestroy(child);
+      if (!ParseToken(parser, ",")) {
+        LCH_JsonDestroy(json);
         return NULL;
       }
-      str++;
-
-      // Skip whitespace
-      str += strspn(str, " \r\n\t");
+      TrimLeadingWhitespace(parser);
     }
     first = false;
 
-    // Extract value
-    LCH_Json *value;
-    str = JsonParse(str, &value);
-    if (str == NULL) {
-      LCH_JsonDestroy(child);
+    LCH_Json *const child = Parse(parser);
+    if (child == NULL) {
+      LCH_JsonDestroy(json);
       return NULL;
     }
 
-    if (!LCH_JsonArrayAppend(child, value)) {
-      LCH_JsonDestroy(value);
+    if (!LCH_JsonArrayAppend(json, child)) {
       LCH_JsonDestroy(child);
+      LCH_JsonDestroy(json);
       return NULL;
     }
 
-    // Skip whitespace
-    str += strspn(str, " \r\n\t");
+    TrimLeadingWhitespace(parser);
   }
 
-  if (*str != ']') {
-    LCH_LOG_ERROR(
-        "Failed to parse JSON string: Syntax error; expected ']', found '%c'",
-        *str);
-    LCH_JsonDestroy(child);
+  if (!ParseToken(parser, "]")) {
+    LCH_JsonDestroy(json);
     return NULL;
   }
 
-  *json = child;
-  return str + 1;
+  return json;
 }
 
-static const char *JsonParseNumber(const char *const str, LCH_Json **json) {
+static LCH_Json *ParseNumber(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
+
+  /* We make a null-byte terminated copy in order to make sure we don't scan
+   * beyond the buffer. */
+  const size_t max = parser->end - parser->cursor;
+  char nt_copy[max + 1];
+  strncpy(nt_copy, parser->cursor, max);
+  nt_copy[max] = '\0';
+
   int n_chars;
   double number;
-  int ret = sscanf(str, "%le%n", &number, &n_chars);
+  int ret = sscanf(nt_copy, "%le%n", &number, &n_chars);
   if (ret != 1) {
-    LCH_LOG_ERROR(
-        "Failed to parse JSON string: Syntax error; expected a number");
+    char *const truncated =
+        LCH_StringTruncate(parser->cursor, parser->end - parser->cursor, 64);
+    LCH_LOG_ERROR("Failed to parse JSON string: Expected NUMBER, found %s",
+                  truncated);
     return NULL;
   }
+  parser->cursor += n_chars;
 
-  LCH_Json *const tmp = LCH_JsonNumberCreate(number);
-  if (tmp == NULL) {
+  LCH_Json *const json = LCH_JsonNumberCreate(number);
+  if (json == NULL) {
     return NULL;
   }
-  *json = tmp;
-
-  return str + n_chars;
+  return json;
 }
 
-static const char *JsonParse(const char *str, LCH_Json **json) {
-  assert(str != NULL);
+static LCH_Json *Parse(LCH_JsonParser *const parser) {
+  assert(parser != NULL);
+  assert(parser->cursor != NULL);
+  assert(parser->end != NULL);
 
-  str += strspn(str, " \r\n\t");  // Skip whitespace
+  TrimLeadingWhitespace(parser);
 
-  if (strncmp(str, "null", strlen("null")) == 0) {
-    return JsonParseNull(str, json);
-  }
-  if (strncmp(str, "true", strlen("true")) == 0) {
-    return JsonParseTrue(str, json);
-  }
-  if (strncmp(str, "false", strlen("false")) == 0) {
-    return JsonParseFalse(str, json);
-  }
-  if (*str == '"') {
-    return JsonParseString(str, json);
-  }
-  if (*str == '{') {
-    return JsonParseObject(str, json);
-  }
-  if (*str == '[') {
-    return JsonParseArray(str, json);
-  }
-  if (isdigit(*str) != 0 || *str == '-') {
-    return JsonParseNumber(str, json);
-  } else {
-    assert(false);
+  if (parser->cursor >= parser->end) {
     LCH_LOG_ERROR(
         "Failed to parse JSON: Expected 'null', 'true', 'false', NUMBER, "
-        "STRING, OBJECT, ARRAY; found '%c'",
-        *str);
-    return NULL;
+        "STRING,"
+        "OBJECT, ARRAY; but reached End-of-Buffer");
   }
+
+  if (CheckToken(parser, "null")) {
+    return ParseNull(parser);
+  }
+
+  if (CheckToken(parser, "true")) {
+    return ParseTrue(parser);
+  }
+
+  if (CheckToken(parser, "false")) {
+    return ParseFalse(parser);
+  }
+
+  if (CheckToken(parser, "\"")) {
+    return ParseString(parser);
+  }
+
+  if (CheckToken(parser, "{")) {
+    return ParseObject(parser);
+  }
+
+  if (CheckToken(parser, "[")) {
+    return ParseArray(parser);
+  }
+
+  if ((isdigit(parser->cursor[0]) != 0) || (parser->cursor[0] == '-')) {
+    return ParseNumber(parser);
+  }
+
+  char *const truncated =
+      LCH_StringTruncate(parser->cursor, parser->end - parser->cursor, 64);
+  LCH_LOG_ERROR(
+      "Failed to parse JSON: Expected 'null', 'true', 'false', NUMBER, STRING,"
+      "OBJECT, ARRAY; but found '%s'",
+      truncated);
+  free(truncated);
+  return NULL;
 }
 
-LCH_Json *LCH_JsonParse(const char *const str) {
+LCH_Json *LCH_JsonParse(const char *const str, const size_t len) {
   assert(str != NULL);
 
-  LCH_Json *json;
-  const char *const ret = JsonParse(str, &json);
-  return (ret == NULL) ? NULL : json;
+  LCH_JsonParser parser = {
+      .cursor = str,
+      .end = str + len,
+  };
+
+  LCH_Json *json = Parse(&parser);
+  if (json == NULL) {
+    return NULL;
+  }
+
+  TrimLeadingWhitespace(&parser);
+
+  if (parser.cursor < parser.end) {
+    char *const truncated =
+        LCH_StringTruncate(parser.cursor, parser.end - parser.cursor, 64);
+    LCH_LOG_ERROR("Failed to parse JSON: Expected End-of-File; but found '%s'",
+                  truncated);
+    free(truncated);
+    LCH_JsonDestroy(json);
+    return NULL;
+  }
+
+  return json;
+}
+
+LCH_Json *LCH_JsonParseFile(const char *const filename) {
+  LCH_Buffer *const raw = LCH_BufferCreate();
+  if (raw == NULL) {
+    return NULL;
+  }
+
+  if (!LCH_BufferReadFile(raw, filename)) {
+    LCH_BufferDestroy(raw);
+    return NULL;
+  }
+
+  const size_t length = LCH_BufferLength(raw);
+  const char *const data = LCH_BufferData(raw);
+
+  LCH_Json *const json = LCH_JsonParse(data, length);
+  LCH_BufferDestroy(raw);
+  if (json == NULL) {
+    return NULL;
+  }
+
+  return json;
 }
 
 /****************************************************************************/
 
-static bool JsonCompose(const LCH_Json *const json, LCH_Buffer *const buffer);
+static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer);
 
-static bool JsonComposeNull(const LCH_Json *const json,
-                            LCH_Buffer *const buffer) {
+static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NULL);
   return LCH_BufferPrintFormat(buffer, "null");
 }
 
-static bool JsonComposeTrue(const LCH_Json *const json,
-                            LCH_Buffer *const buffer) {
+static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_TRUE);
   return LCH_BufferPrintFormat(buffer, "true");
 }
 
-static bool JsonComposeFalse(const LCH_Json *const json,
-                             LCH_Buffer *const buffer) {
+static bool ComposeFalse(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_FALSE);
   return LCH_BufferPrintFormat(buffer, "false");
 }
 
-static bool StringComposeString(const char *const str,
+static bool StringComposeString(const LCH_Buffer *const str,
                                 LCH_Buffer *const buffer) {
   assert(str != NULL);
   assert(buffer != NULL);
@@ -1434,9 +1685,11 @@ static bool StringComposeString(const char *const str,
     return false;
   }
 
-  for (const char *ch = str; *ch != '\0'; ch++) {
+  const size_t length = LCH_BufferLength(str);
+  const char *const data = LCH_BufferData(str);
+  for (size_t i = 0; i < length; i++) {
     const char *control_sequence = NULL;
-    switch (*ch) {
+    switch (data[i]) {
       case '"':
         control_sequence = "\\\"";
         break;
@@ -1459,13 +1712,13 @@ static bool StringComposeString(const char *const str,
         control_sequence = "\\t";
         break;
       default:
-        if (!LCH_BufferAppend(buffer, *ch)) {
+        if (!LCH_BufferAppend(buffer, data[i])) {
           return false;
         }
         continue;
     }
     assert(control_sequence != NULL);
-    if (!LCH_BufferPrintFormat(buffer, control_sequence)) {
+    if (!LCH_BufferPrintFormat(buffer, "%s", control_sequence)) {
       return false;
     }
   }
@@ -1475,8 +1728,8 @@ static bool StringComposeString(const char *const str,
   return true;
 }
 
-static bool JsonComposeString(const LCH_Json *const json,
-                              LCH_Buffer *const buffer) {
+static bool ComposeString(const LCH_Json *const json,
+                          LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_STRING);
@@ -1488,16 +1741,15 @@ static bool JsonComposeString(const LCH_Json *const json,
   return true;
 }
 
-static bool JsonComposeNumber(const LCH_Json *const json,
-                              LCH_Buffer *const buffer) {
+static bool ComposeNumber(const LCH_Json *const json,
+                          LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NUMBER);
   return LCH_BufferPrintFormat(buffer, "%f", json->number);
 }
 
-static bool JsonComposeArray(const LCH_Json *const json,
-                             LCH_Buffer *const buffer) {
+static bool ComposeArray(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_ARRAY);
@@ -1516,7 +1768,7 @@ static bool JsonComposeArray(const LCH_Json *const json,
     }
 
     const LCH_Json *const element = LCH_JsonArrayGet(json, i);
-    if (!JsonCompose(element, buffer)) {
+    if (!Compose(element, buffer)) {
       return false;
     }
   }
@@ -1528,8 +1780,8 @@ static bool JsonComposeArray(const LCH_Json *const json,
   return true;
 }
 
-static bool JsonComposeObject(const LCH_Json *const json,
-                              LCH_Buffer *const buffer) {
+static bool ComposeObject(const LCH_Json *const json,
+                          LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_OBJECT);
@@ -1553,7 +1805,7 @@ static bool JsonComposeObject(const LCH_Json *const json,
       }
     }
 
-    const char *const key = (char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     if (!StringComposeString(key, buffer)) {
       LCH_ListDestroy(keys);
       return false;
@@ -1565,7 +1817,7 @@ static bool JsonComposeObject(const LCH_Json *const json,
     }
 
     const LCH_Json *const element = LCH_JsonObjectGet(json, key);
-    if (!JsonCompose(element, buffer)) {
+    if (!Compose(element, buffer)) {
       LCH_ListDestroy(keys);
       return false;
     }
@@ -1579,41 +1831,39 @@ static bool JsonComposeObject(const LCH_Json *const json,
   return true;
 }
 
-static bool JsonCompose(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
 
   LCH_JsonType type = LCH_JsonGetType(json);
   switch (type) {
     case LCH_JSON_TYPE_NULL:
-      return JsonComposeNull(json, buffer);
+      return ComposeNull(json, buffer);
 
     case LCH_JSON_TYPE_TRUE:
-      return JsonComposeTrue(json, buffer);
+      return ComposeTrue(json, buffer);
 
     case LCH_JSON_TYPE_FALSE:
-      return JsonComposeFalse(json, buffer);
+      return ComposeFalse(json, buffer);
 
     case LCH_JSON_TYPE_STRING:
-      return JsonComposeString(json, buffer);
+      return ComposeString(json, buffer);
 
     case LCH_JSON_TYPE_NUMBER:
-      return JsonComposeNumber(json, buffer);
+      return ComposeNumber(json, buffer);
 
     case LCH_JSON_TYPE_ARRAY:
-      return JsonComposeArray(json, buffer);
+      return ComposeArray(json, buffer);
 
     case LCH_JSON_TYPE_OBJECT:
-      return JsonComposeObject(json, buffer);
+      return ComposeObject(json, buffer);
 
     default:
-      assert(false);
-      LCH_LOG_ERROR("Failed to compose JSON: Illegal type %d", type);
-      return false;
+      abort();  // SHOULD NEVER EVER HAPPEN!
   }
 }
 
-char *LCH_JsonCompose(const LCH_Json *const json) {
+LCH_Buffer *LCH_JsonCompose(const LCH_Json *const json) {
   assert(json != NULL);
 
   LCH_Buffer *const buffer = LCH_BufferCreate();
@@ -1621,13 +1871,28 @@ char *LCH_JsonCompose(const LCH_Json *const json) {
     return NULL;
   }
 
-  if (!JsonCompose(json, buffer)) {
+  if (!Compose(json, buffer)) {
     LCH_BufferDestroy(buffer);
     return NULL;
   }
 
-  char *const str = LCH_BufferToString(buffer);
-  return str;
+  return buffer;
+}
+
+bool LCH_JsonComposeFile(const LCH_Json *const json,
+                         const char *const filename) {
+  LCH_Buffer *const buffer = LCH_JsonCompose(json);
+  if (buffer == NULL) {
+    return false;
+  }
+
+  if (!LCH_BufferWriteFile(buffer, filename)) {
+    LCH_BufferDestroy(buffer);
+    return false;
+  }
+
+  LCH_BufferDestroy(buffer);
+  return true;
 }
 
 /****************************************************************************/
@@ -1635,7 +1900,7 @@ char *LCH_JsonCompose(const LCH_Json *const json) {
 void LCH_JsonDestroy(void *const self) {
   LCH_Json *const json = (LCH_Json *)self;
   if (json != NULL) {
-    free(json->str);
+    LCH_BufferDestroy(json->str);
     LCH_ListDestroy(json->array);
     LCH_DictDestroy(json->object);
   }

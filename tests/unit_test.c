@@ -23,14 +23,14 @@ int main(int argc, char *argv[]) {
                      LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT,
                  LCH_LoggerCallbackDefault);
 
-  SRunner *sr = srunner_create(DictSuite());
-  srunner_add_suite(sr, BufferSuite());
+  SRunner *sr = srunner_create(BufferSuite());
+  srunner_add_suite(sr, DictSuite());
   srunner_add_suite(sr, ListSuite());
+  srunner_add_suite(sr, CSVSuite());
+  srunner_add_suite(sr, JSONSuite());
   srunner_add_suite(sr, UtilsSuite());
   srunner_add_suite(sr, DeltaSuite());
   srunner_add_suite(sr, BlockSuite());
-  srunner_add_suite(sr, CSVSuite());
-  srunner_add_suite(sr, JSONSuite());
   srunner_add_suite(sr, TableSuite());
   srunner_add_suite(sr, InstanceSuite());
 

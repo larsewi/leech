@@ -4,7 +4,6 @@
 #include <errno.h>
 #include <limits.h>
 #include <memory.h>
-#include <openssl/sha.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,20 +40,12 @@ void LCH_InstanceDestroy(void *const _instance) {
 LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   assert(work_dir != NULL);
 
-  char *const path =
-      LCH_StringFormat("%s%c%s", work_dir, LCH_PATH_SEP, "leech.json");
-  if (path == NULL) {
+  char path[PATH_MAX];
+  if (!LCH_PathJoin(path, PATH_MAX, 2, work_dir, "leech.json")) {
     return NULL;
   }
 
-  char *const raw = LCH_FileRead(path, NULL);
-  free(path);
-  if (raw == NULL) {
-    return NULL;
-  }
-
-  LCH_Json *const config = LCH_JsonParse(raw);
-  free(raw);
+  LCH_Json *const config = LCH_JsonParseFile(path);
   if (config == NULL) {
     return NULL;
   }
@@ -69,21 +60,38 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
 
   instance->work_dir = work_dir;
 
-  const char *const version = LCH_JsonObjectGetString(config, "version");
-  assert(version != NULL);
-  if (!LCH_ParseVersion(version, &instance->major, &instance->minor,
-                        &instance->patch)) {
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
+    const LCH_Buffer *const value = LCH_JsonObjectGetString(config, key);
+    if (value == NULL) {
+      LCH_InstanceDestroy(instance);
+      LCH_JsonDestroy(config);
+      return NULL;
+    }
+
+    const char *const version = LCH_BufferData(value);
+    if (!LCH_ParseVersion(version, &instance->major, &instance->minor,
+                          &instance->patch)) {
+      LCH_InstanceDestroy(instance);
+      LCH_JsonDestroy(config);
+      return NULL;
+    }
+  }
+
+  const LCH_Buffer *const key = LCH_BufferStaticFromString("tables");
+  const LCH_Json *const table_defs = LCH_JsonObjectGetObject(config, key);
+  if (table_defs == NULL) {
     LCH_InstanceDestroy(instance);
     LCH_JsonDestroy(config);
     return NULL;
   }
 
-  const LCH_Json *const table_definitions =
-      LCH_JsonObjectGetObject(config, "tables");
-  assert(table_definitions != NULL);
-
-  LCH_List *const table_ids = LCH_JsonObjectGetKeys(table_definitions);
-  const size_t num_tables = LCH_ListLength(table_ids);
+  LCH_List *const table_ids = LCH_JsonObjectGetKeys(table_defs);
+  if (table_ids == NULL) {
+    LCH_InstanceDestroy(instance);
+    LCH_JsonDestroy(config);
+    return NULL;
+  }
 
   instance->tables = LCH_ListCreate();
   if (instance->tables == NULL) {
@@ -92,14 +100,22 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
     return NULL;
   }
 
+  const size_t num_tables = LCH_ListLength(table_ids);
   for (size_t i = 0; i < num_tables; i++) {
-    const char *const table_id = (char *)LCH_ListGet(table_ids, i);
+    const LCH_Buffer *const table_id = (LCH_Buffer *)LCH_ListGet(table_ids, i);
     assert(table_id != NULL);
 
     const LCH_Json *const table_definition =
-        LCH_JsonObjectGetObject(table_definitions, table_id);
+        LCH_JsonObjectGetObject(table_defs, table_id);
+    if (table_definition == NULL) {
+      LCH_ListDestroy(table_ids);
+      LCH_InstanceDestroy(instance);
+      LCH_JsonDestroy(config);
+      return NULL;
+    }
+
     LCH_TableInfo *const table_info =
-        LCH_TableInfoLoad(table_id, table_definition);
+        LCH_TableInfoLoad(LCH_BufferData(table_id), table_definition);
     if (table_info == NULL) {
       LCH_ListDestroy(table_ids);
       LCH_InstanceDestroy(instance);

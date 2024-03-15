@@ -4,95 +4,80 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "buffer.h"
+#include "definitions.h"
 #include "list.h"
 #include "logger.h"
 
 typedef struct LCH_Dict LCH_Dict;
 
 /**
- * Create a dict.
- * The dict is allocated on the heap and must be freed with `LCH_DictDestroy`.
- * @return pointer to dict.
+ * @brief Create a dictionary.
+ * @return Pointer to dictionary or NULL in case of memory errors.
+ * @note Returned dictionary must be freed with LCH_DictDestroy().
  */
 LCH_Dict *LCH_DictCreate(void);
 
 /**
- * Get number of items in a dict.
- * @param[in] dict pointer to dict.
- * @return length of dict.
+ * @brief Get number of entries in dictionary.
+ * @param dict Pointer to dictionary.
+ * @return Number of dictionary entries.
  */
 size_t LCH_DictLength(const LCH_Dict *dict);
 
 /**
- * Check if dict has key.
- * @param[in] dict pointer to dict.
- * @param[in] key key to check.
- * @return true if key is present.
+ * @brief Check for existance of entry with key in dictionary.
+ * @param dict Pointer to dictionary.
+ * @param key Key to check.
+ * @return True if entry with key exists.
  */
-bool LCH_DictHasKey(const LCH_Dict *dict, const char *key);
+bool LCH_DictHasKey(const LCH_Dict *dict, const LCH_Buffer *key);
 
 /**
- * @brief Get list of keys from dict.
- * @param dict pointer to dict.
- * @return list of keys.
- * @note List of keys must be freed with LCH_ListDestroy
+ * @brief Get list of existing keys in dictionary.
+ * @param dict Pointer to dictionary.
+ * @return List of existing keys or NULL in case of memory errors.
+ * @note List must be freed with LCH_ListDestroy().
  */
 LCH_List *LCH_DictGetKeys(const LCH_Dict *dict);
 
 /**
- * Set value if key is present or add key value pair.
- * @param[in] dict pointer to dict.
- * @param[in] key key to set.
- * @param[in] value data pointer.
- * @param[in] destroy data destroy function.
- * @return true if success.
+ * @brief Create/update entry in dictionary.
+ * @param dict Pointer to dictionary.
+ * @param key Key of entry.
+ * @param value Value of entry.
+ * @param destroy Function called to free value upon destruction if not NULL.
+ * @note This function takes ownership of passed value.
+ * @return True on success or false in case of memory errors.
  */
-bool LCH_DictSet(LCH_Dict *dict, const char *key, void *value,
+bool LCH_DictSet(LCH_Dict *dict, const LCH_Buffer *key, void *value,
                  void (*destroy)(void *));
 
-void *LCH_DictRemove(LCH_Dict *dict, const char *key);
-
 /**
- * Get dict value.
- * @param[in] dict pointer to dict.
- * @param[in] key key assosiated with value.
- * @param[out] func function pointer.
- * @return data pointer
+ * @brief Remove entry from dictionary.
+ * @param dict Pointer to dictionary.
+ * @param key Key of entry.
+ * @return Value of entry.
+ * @note This function relieves ownership of returned value and cannot fail.
  */
-void *LCH_DictGet(const LCH_Dict *dict, const char *key);
+void *LCH_DictRemove(LCH_Dict *dict, const LCH_Buffer *key);
 
 /**
- * Destroy dict and contents.
- * @param[in] dict pointer to dict.
+ * @brief Get value of entry with key in dictionary.
+ * @param dict Pointer to dictionary.
+ * @param key Key of entry.
+ * @return Value of entry.
+ * @note This function does not relieve ownership of returned value and cannot
+ *       fail.
+ */
+const void *LCH_DictGet(const LCH_Dict *dict, const LCH_Buffer *key);
+
+/**
+ * @brief Destroy dictionary and all entries.
+ * @param dict Pointer to dictionary.
+ * @note The value of each entry is free'd using their appointed destroy
+ *       function unless destroy function was set to NULL.
  */
 void LCH_DictDestroy(void *dict);
-
-/**
- * Set minus based on key.
- * @param [in] left left operand.
- * @param [in] right right operand.
- * @param [in] duplicate function to duplicate value.
- * @param [in] destroy function to destroy value.
- * @return dict containing entries found in left operand that is not found in
- *         right operand.
- */
-LCH_Dict *LCH_DictSetMinus(const LCH_Dict *left, const LCH_Dict *right,
-                           void *(*duplicate)(const void *),
-                           void (*destroy)(void *));
-
-/**
- * Get set intersection where values are different.
- * @param [in] left left operand.
- * @param [in] right right operand.
- * @param [in] duplicate function to duplicate value.
- * @param [in] destroy function to destroy value.
- * @param [in] compare function to compare values.
- * @return dict containing entries found in both left and right operands, but
- *         where value is different.
- */
-LCH_Dict *LCH_DictSetChangedIntersection(
-    const LCH_Dict *left, const LCH_Dict *right,
-    void *(*duplicate)(const void *), void (*destroy)(void *),
-    int (*compare)(const void *, const void *));
 
 #endif  // _LEECH_DICT

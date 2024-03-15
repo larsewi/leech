@@ -33,6 +33,45 @@ START_TEST(test_LCH_Buffer) {
 }
 END_TEST
 
+START_TEST(test_LCH_BufferTrim) {
+  {
+    LCH_Buffer *const buffer = LCH_BufferFromString("leech");
+    LCH_BufferTrim(buffer, ' ');
+    const char *const actual = LCH_BufferData(buffer);
+    ck_assert_str_eq(actual, "leech");
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *const buffer = LCH_BufferFromString("  leech");
+    LCH_BufferTrim(buffer, ' ');
+    const char *const actual = LCH_BufferData(buffer);
+    ck_assert_str_eq(actual, "leech");
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *const buffer = LCH_BufferFromString("leech  ");
+    LCH_BufferTrim(buffer, ' ');
+    const char *const actual = LCH_BufferData(buffer);
+    ck_assert_str_eq(actual, "leech");
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *const buffer = LCH_BufferFromString("  leech  ");
+    LCH_BufferTrim(buffer, ' ');
+    const char *const actual = LCH_BufferData(buffer);
+    ck_assert_str_eq(actual, "leech");
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *const buffer = LCH_BufferFromString("  ");
+    LCH_BufferTrim(buffer, ' ');
+    const char *const actual = LCH_BufferData(buffer);
+    ck_assert_str_eq(actual, "");
+    LCH_BufferDestroy(buffer);
+  }
+}
+END_TEST
+
 START_TEST(test_LCH_BufferAllocate) {
   LCH_Buffer *buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
@@ -53,10 +92,11 @@ START_TEST(test_LCH_BufferAllocate) {
   const uint32_t first_value = 1234;
   LCH_BufferSet(buffer, first_offset, &first_value, sizeof(uint32_t));
 
-  uint32_t *first_actual = (uint32_t *)LCH_BufferGet(buffer, first_offset);
+  uint32_t *first_actual = (uint32_t *)(LCH_BufferData(buffer) + first_offset);
   ck_assert_int_eq(*first_actual, 1234);
 
-  uint32_t *second_actual = (uint32_t *)LCH_BufferGet(buffer, second_offset);
+  uint32_t *second_actual =
+      (uint32_t *)(LCH_BufferData(buffer) + second_offset);
   ck_assert_int_eq(*second_actual, 4321);
 
   LCH_BufferDestroy(buffer);
@@ -94,11 +134,11 @@ START_TEST(test_LCH_BufferAllocate2) {
   /****************************************************/
 
   offset = 0;
-  const uint32_t *len_ptr = (uint32_t *)LCH_BufferGet(buffer, offset);
+  const uint32_t *len_ptr = (uint32_t *)(LCH_BufferData(buffer) + offset);
   length = ntohl(*len_ptr);
   offset += sizeof(uint32_t);
 
-  char *str = strndup((const char *)LCH_BufferGet(buffer, offset), length);
+  char *str = strndup(LCH_BufferData(buffer) + offset, length);
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "beatles");
   offset += length;
@@ -106,11 +146,11 @@ START_TEST(test_LCH_BufferAllocate2) {
 
   /****************************************************/
 
-  len_ptr = (const uint32_t *)LCH_BufferGet(buffer, offset);
+  len_ptr = (const uint32_t *)(LCH_BufferData(buffer) + offset);
   length = ntohl(*len_ptr);
   offset += sizeof(uint32_t);
 
-  str = strndup((const char *)LCH_BufferGet(buffer, offset), length);
+  str = strndup(LCH_BufferData(buffer) + offset, length);
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "pinkfloyd");
   offset += length;
@@ -157,7 +197,7 @@ START_TEST(test_LCH_BufferHexToBytes) {
 
   const unsigned char data[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
   for (size_t i = 0; i < sizeof(data); i++) {
-    ck_assert_int_eq(*((unsigned char *)LCH_BufferGet(bytes, i)), data[i]);
+    ck_assert_int_eq(*((unsigned char *)(LCH_BufferData(bytes) + i)), data[i]);
   }
 
   LCH_BufferDestroy(hex);
@@ -200,6 +240,11 @@ Suite *BufferSuite(void) {
   {
     TCase *tc = tcase_create("LCH_Buffer*");
     tcase_add_test(tc, test_LCH_Buffer);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_BufferTrim");
+    tcase_add_test(tc, test_LCH_BufferTrim);
     suite_add_tcase(s, tc);
   }
   {
