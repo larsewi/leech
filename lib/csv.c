@@ -15,9 +15,9 @@
 
 typedef struct Parser {
   const char *cursor;     // Current position in buffer
+  const char *const end;  // End of buffer
   size_t row;             // Current row number (used in error messages)
   size_t column;          // Current column number (used in error messages)
-  const char *const end;  // End of buffer
 } Parser;
 
 /**

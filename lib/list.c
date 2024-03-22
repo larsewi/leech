@@ -137,7 +137,7 @@ void LCH_ListSet(LCH_List *const self, const size_t index, void *const value,
 }
 
 size_t LCH_ListIndex(const LCH_List *const self, const void *const value,
-                     LCH_ListElementCompareFn compare) {
+                     LCH_CompareFn compare) {
   assert(self != NULL);
   assert(compare != NULL);
 
@@ -162,7 +162,7 @@ static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
 }
 
 static size_t Partition(LCH_List *const list, const ssize_t low,
-                        const ssize_t high, LCH_ListElementCompareFn compare) {
+                        const ssize_t high, LCH_CompareFn compare) {
   void *pivot = LCH_ListGet(list, high);
   ssize_t i = low;
   for (ssize_t j = low; j < high; j++) {
@@ -175,7 +175,7 @@ static size_t Partition(LCH_List *const list, const ssize_t low,
 }
 
 static void QuickSort(LCH_List *const list, const ssize_t low,
-                      const ssize_t high, LCH_ListElementCompareFn compare) {
+                      const ssize_t high, LCH_CompareFn compare) {
   if (low < high) {
     const ssize_t pivot = Partition(list, low, high, compare);
     QuickSort(list, low, pivot - 1, compare);
@@ -183,7 +183,7 @@ static void QuickSort(LCH_List *const list, const ssize_t low,
   }
 }
 
-void LCH_ListSort(LCH_List *const self, LCH_ListElementCompareFn compare) {
+void LCH_ListSort(LCH_List *const self, LCH_CompareFn compare) {
   assert(self != NULL);
   QuickSort(self, 0, self->length - 1, compare);
 }
@@ -224,8 +224,7 @@ void *LCH_ListRemove(LCH_List *const list, const size_t index) {
   return value;
 }
 
-LCH_List *LCH_ListCopy(const LCH_List *const original,
-                       LCH_ListElementCopyFn copy_fn,
+LCH_List *LCH_ListCopy(const LCH_List *const original, LCH_DuplicateFn copy_fn,
                        void (*destroy_fn)(void *)) {
   assert(original != NULL);
   assert(original->buffer != NULL);

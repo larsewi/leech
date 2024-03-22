@@ -289,8 +289,8 @@ static bool IndicesOfFieldsInHeader(size_t *const indices,
       return false;
     }
 
-    const size_t index = LCH_ListIndex(
-        header, field, (LCH_ListElementCompareFn)LCH_BufferCompare);
+    const size_t index =
+        LCH_ListIndex(header, field, (LCH_CompareFn)LCH_BufferCompare);
     LCH_BufferDestroy(field);
     if (index >= header_len) {
       LCH_LOG_ERROR("Field '%s' not found in table header");

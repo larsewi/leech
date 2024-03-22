@@ -136,7 +136,7 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
 
   const LCH_List *const table_header = (LCH_List *)LCH_ListGet(conn->table, 0);
   const size_t uq_col_idx =
-      LCH_ListIndex(table_header, uq_column, (LCH_ListElementCompareFn)strcmp);
+      LCH_ListIndex(table_header, uq_column, (LCH_CompareFn)strcmp);
 
   if (uq_col_idx >= LCH_ListLength(table_header)) {
     LCH_LOG_ERROR(
