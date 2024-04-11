@@ -16,23 +16,22 @@ extern "C" {
 #endif
 
 static char *EscapeIdentifier(PGconn *const conn,
-                              const char *const identifier) {
-  assert(identifier != NULL);
-
-  const size_t len = strlen(identifier);
-  char *const escaped = PQescapeIdentifier(conn, identifier, len);
+                              const LCH_Buffer *const identifier) {
+  const char *const data = LCH_BufferData(identifier);
+  const size_t length = LCH_BufferLength(identifier);
+  char *const escaped = PQescapeIdentifier(conn, data, length);
   if (escaped == NULL) {
-    LCH_LOG_ERROR("Failed to escape identifier \"%s\" for SQL query: %s",
-                  identifier, PQerrorMessage(conn));
+    LCH_LOG_ERROR("Failed to escape identifier \"%s\" for SQL query: %s", data,
+                  PQerrorMessage(conn));
   }
   return escaped;
 }
 
-static char *EscapeLiteral(PGconn *const conn, const char *const literal) {
-  assert(literal != NULL);
-
-  const size_t len = strlen(literal);
-  char *const escaped = PQescapeLiteral(conn, literal, len);
+static char *EscapeLiteral(PGconn *const conn,
+                           const LCH_Buffer *const literal) {
+  const char *const data = LCH_BufferData(literal);
+  const size_t length = LCH_BufferLength(literal);
+  char *const escaped = PQescapeLiteral(conn, data, length);
   if (escaped == NULL) {
     LCH_LOG_ERROR("Failed to escape literal '%s' for SQL query: %s", literal,
                   PQerrorMessage(conn));
@@ -41,9 +40,6 @@ static char *EscapeLiteral(PGconn *const conn, const char *const literal) {
 }
 
 static bool ExecuteCommand(PGconn *const conn, const char *const query) {
-  assert(conn != NULL);
-  assert(query != NULL);
-
   LCH_LOG_DEBUG("Executing command: %s", query);
   PGresult *const result = PQexec(conn, query);
   if (result == NULL) {
@@ -63,8 +59,6 @@ static bool ExecuteCommand(PGconn *const conn, const char *const query) {
 }
 
 void *LCH_CallbackConnect(const char *const conn_info) {
-  assert(conn_info != NULL);
-
   PGconn *const conn = PQconnectdb(conn_info);
   if (conn == NULL) {
     LCH_LOG_ERROR("Failed to connect to database: Likely out of memory");
@@ -88,27 +82,21 @@ void *LCH_CallbackConnect(const char *const conn_info) {
 
 void LCH_CallbackDisconnect(void *const _conn) {
   PGconn *const conn = (PGconn *)_conn;
-  assert(conn != NULL);
-
   PQfinish(conn);
 }
 
-bool LCH_CallbackCreateTable(
-    void *const _conn, const char *const table_name,
-    const char *const *const primary_column_names,
-    const char *const *const subsidiary_columns_names) {
+bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
+                             const LCH_List *const primary_column_names,
+                             const LCH_List *const subsidiary_columns_names) {
   PGconn *const conn = (PGconn *)_conn;
-  assert(conn != NULL);
-  assert(table_name != NULL);
-  assert(primary_column_names != NULL);
-  assert(subsidiary_columns_names != NULL);
 
   LCH_Buffer *const query_buffer = LCH_BufferCreate();
   if (query_buffer == NULL) {
-    return NULL;
+    return false;
   }
 
-  char *const table_name_escaped = EscapeIdentifier(conn, table_name);
+  char *const table_name_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -122,8 +110,10 @@ bool LCH_CallbackCreateTable(
   }
   PQfreemem(table_name_escaped);
 
-  for (size_t i = 0; primary_column_names[i] != NULL; i++) {
-    const char *const column_name = primary_column_names[i];
+  const size_t num_primary = LCH_ListLength(primary_column_names);
+  for (size_t i = 0; i < num_primary; i++) {
+    const LCH_Buffer *const column_name =
+        (LCH_Buffer *)LCH_ListGet(primary_column_names, i);
     char *const column_name_escaped = EscapeIdentifier(conn, column_name);
     if (column_name_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
@@ -139,8 +129,10 @@ bool LCH_CallbackCreateTable(
     PQfreemem(column_name_escaped);
   }
 
-  for (size_t i = 0; subsidiary_columns_names[i] != NULL; i++) {
-    const char *const column_name = subsidiary_columns_names[i];
+  const size_t num_subsidiary = LCH_ListLength(subsidiary_columns_names);
+  for (size_t i = 0; i < num_subsidiary; i++) {
+    const LCH_Buffer *const column_name =
+        (LCH_Buffer *)LCH_ListGet(subsidiary_columns_names, i);
     char *const column_name_escaped = EscapeIdentifier(conn, column_name);
     if (column_name_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
@@ -156,8 +148,9 @@ bool LCH_CallbackCreateTable(
     PQfreemem(column_name_escaped);
   }
 
-  for (size_t i = 0; primary_column_names[i] != NULL; i++) {
-    const char *const column_name = primary_column_names[i];
+  for (size_t i = 0; i < num_primary; i++) {
+    const LCH_Buffer *const column_name =
+        (LCH_Buffer *)LCH_ListGet(primary_column_names, i);
     char *const column_name_escaped = EscapeIdentifier(conn, column_name);
     if (column_name_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
@@ -188,30 +181,29 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
                                const char *const column,
                                const char *const value) {
   PGconn *const conn = (PGconn *)_conn;
-  assert(conn != NULL);
-  assert(table_name != NULL);
-  assert(column != NULL);
-  assert(value != NULL);
 
   LCH_Buffer *const query_buffer = LCH_BufferCreate();
   if (query_buffer == NULL) {
     return false;
   }
 
-  char *const table_name_escaped = EscapeIdentifier(conn, table_name);
+  char *const table_name_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
   }
 
-  char *const column_escaped = EscapeIdentifier(conn, column);
+  char *const column_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(column));
   if (column_escaped == NULL) {
     PQfreemem(table_name_escaped);
     LCH_BufferDestroy(query_buffer);
     return false;
   }
 
-  char *const value_escaped = EscapeLiteral(conn, value);
+  char *const value_escaped =
+      EscapeLiteral(conn, LCH_BufferStaticFromString(value));
   if (value_escaped == NULL) {
     PQfreemem(column_escaped);
     PQfreemem(table_name_escaped);
@@ -239,12 +231,9 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
   return success;
 }
 
-char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
-                             const char *const *const columns) {
+LCH_List *LCH_CallbackGetTable(void *const _conn, const char *const table_name,
+                               const LCH_List *const columns) {
   PGconn *const conn = (PGconn *)_conn;
-  assert(conn != NULL);
-  assert(table_name != NULL);
-  assert(columns != NULL);
 
   LCH_Buffer *const query_buffer = LCH_BufferCreate();
   if (query_buffer == NULL) {
@@ -256,8 +245,9 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
     return NULL;
   }
 
-  for (size_t i = 0; columns[i] != NULL; i++) {
-    const char *const column = columns[i];
+  const size_t num_columns = LCH_ListLength(columns);
+  for (size_t i = 0; i < num_columns; i++) {
+    const LCH_Buffer *const column = (LCH_Buffer *)LCH_ListGet(columns, i);
     char *const column_escaped = EscapeIdentifier(conn, column);
     if (column_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
@@ -273,7 +263,8 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
     PQfreemem(column_escaped);
   }
 
-  char *const table_name_escaped = EscapeIdentifier(conn, table_name);
+  char *const table_name_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return NULL;
@@ -307,70 +298,87 @@ char ***LCH_CallbackGetTable(void *const _conn, const char *const table_name,
   const int n_cols = PQnfields(result);
   LCH_LOG_DEBUG("Query returned %d rows and %d columns", n_rows, n_cols);
 
-  char ***const table = (char ***)calloc(n_rows + 2, sizeof(char **));
+  LCH_List *const table = LCH_ListCreate();
   if (table == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for table: %s", strerror(errno));
     PQclear(result);
     return NULL;
   }
 
-  char **const header = (char **)calloc(n_cols + 1, sizeof(char *));
-  if (header == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory for table header: %s",
-                  strerror(errno));
-    LCH_StringArrayDestroy(table);
+  LCH_List *const header = LCH_ListCreate();
+  if (table == NULL) {
+    LCH_ListDestroy(table);
     PQclear(result);
     return NULL;
   }
-  table[0] = header;
+
+  if (!LCH_ListAppend(table, header, LCH_ListDestroy)) {
+    LCH_ListDestroy(header);
+    LCH_ListDestroy(table);
+    PQclear(result);
+    return NULL;
+  }
 
   for (int i = 0; i < n_cols; i++) {
     const char *const field_name = PQfname(result, i);
     if (field_name == NULL) {
       LCH_LOG_ERROR("Failed to get field name at index %d", i);
-      LCH_StringArrayDestroy(table);
+      LCH_ListDestroy(table);
       PQclear(result);
       return NULL;
     }
 
-    char *const header_copy = strdup(field_name);
-    if (header_copy == NULL) {
-      LCH_LOG_ERROR("Failed to duplicate string '%s': %s", field_name,
-                    strerror(errno));
-      LCH_StringArrayDestroy(table);
+    LCH_Buffer *const buffer = LCH_BufferFromString(field_name);
+    if (buffer == NULL) {
+      LCH_ListDestroy(table);
       PQclear(result);
       return NULL;
     }
-    header[i] = header_copy;
+
+    if (!LCH_ListAppend(header, buffer, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(buffer);
+      LCH_ListDestroy(table);
+      PQclear(result);
+      return NULL;
+    }
   }
 
   for (int i = 0; i < n_rows; i++) {
-    char **const record = (char **)calloc(n_cols + 1, sizeof(char *));
+    LCH_List *const record = LCH_ListCreate();
     if (record == NULL) {
-      LCH_LOG_ERROR("Failed to allocate memory table record: %s",
-                    strerror(errno));
-      LCH_StringArrayDestroy(table);
+      LCH_ListDestroy(table);
       PQclear(result);
       return NULL;
     }
-    table[i + 1] = record;
+
+    if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
+      LCH_ListDestroy(record);
+      LCH_ListDestroy(table);
+      PQclear(result);
+      return NULL;
+    }
 
     for (int j = 0; j < n_cols; j++) {
       const char *const value = PQgetvalue(result, i, j);
       if (value == NULL) {
         LCH_LOG_ERROR("Failed to get value at index %d:%d", i, j);
-        LCH_StringArrayDestroy(table);
+        LCH_ListDestroy(table);
         PQclear(result);
         return NULL;
       }
 
-      char *const copy = strdup(value);
-      if (copy == NULL) {
-        LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
-        LCH_StringArrayDestroy(table);
+      LCH_Buffer *const buffer = LCH_BufferFromString(value);
+      if (buffer == NULL) {
+        LCH_ListDestroy(table);
         PQclear(result);
+        return NULL;
       }
-      record[j] = copy;
+
+      if (!LCH_ListAppend(record, buffer, LCH_BufferDestroy)) {
+        LCH_BufferDestroy(buffer);
+        LCH_ListDestroy(table);
+        PQclear(result);
+        return NULL;
+      }
     }
   }
 
@@ -403,20 +411,17 @@ bool LCH_CallbackRollbackTransaction(void *const _conn) {
 }
 
 bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
-                              const char *const *const columns,
-                              const char *const *const values) {
+                              const LCH_List *const columns,
+                              const LCH_List *const values) {
   PGconn *conn = (PGconn *)_conn;
-  assert(conn != NULL);
-  assert(table_name != NULL);
-  assert(columns != NULL);
-  assert(values != NULL);
 
   LCH_Buffer *const query_buffer = LCH_BufferCreate();
   if (query_buffer == NULL) {
     return false;
   }
 
-  char *const table_name_escaped = EscapeIdentifier(conn, table_name);
+  char *const table_name_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -430,25 +435,27 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
   }
   PQfreemem(table_name_escaped);
 
-  for (size_t i = 0; columns[i] != NULL; i++) {
-    const char *const column = columns[i];
-    char *const columns_escaped = EscapeIdentifier(conn, column);
-    if (columns_escaped == NULL) {
+  const size_t num_columns = LCH_ListLength(columns);
+  for (size_t i = 0; i < num_columns; i++) {
+    const LCH_Buffer *const column = (LCH_Buffer *)LCH_ListGet(columns, i);
+    char *const column_escaped = EscapeIdentifier(conn, column);
+    if (column_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
       return false;
     }
 
     const char *const format = (i == 0) ? " (%s" : ", %s";
-    if (!LCH_BufferPrintFormat(query_buffer, format, column)) {
-      PQfreemem(columns_escaped);
+    if (!LCH_BufferPrintFormat(query_buffer, format, column_escaped)) {
+      PQfreemem(column_escaped);
       LCH_BufferDestroy(query_buffer);
       return false;
     }
-    PQfreemem(columns_escaped);
+    PQfreemem(column_escaped);
   }
 
-  for (size_t i = 0; values[i] != NULL; i++) {
-    const char *const value = values[i];
+  const size_t num_values = LCH_ListLength(values);
+  for (size_t i = 0; i < num_values; i++) {
+    const LCH_Buffer *const value = (LCH_Buffer *)LCH_ListGet(values, i);
     char *const value_escaped = EscapeLiteral(conn, value);
     if (value_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
@@ -476,20 +483,17 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
 }
 
 bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
-                              const char *const *const primary_columns,
-                              const char *const *const primary_values) {
+                              const LCH_List *const primary_columns,
+                              const LCH_List *const primary_values) {
   PGconn *const conn = (PGconn *)_conn;
-  assert(conn != NULL);
-  assert(table_name != NULL);
-  assert(primary_columns != NULL);
-  assert(primary_values != NULL);
 
   LCH_Buffer *const query_buffer = LCH_BufferCreate();
   if (query_buffer == NULL) {
     return false;
   }
 
-  char *const table_name_escaped = EscapeIdentifier(conn, table_name);
+  char *const table_name_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -503,16 +507,19 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
   }
   PQfreemem(table_name_escaped);
 
-  for (size_t i = 0; primary_columns[i] != NULL && primary_values[i] != NULL;
-       i++) {
-    const char *const column = primary_columns[i];
+  const size_t num_columns = LCH_ListLength(primary_columns);
+  assert(num_columns == LCH_ListLength(primary_values));
+  for (size_t i = 0; i < num_columns; i++) {
+    const LCH_Buffer *const column =
+        (LCH_Buffer *)LCH_ListGet(primary_columns, i);
     char *const column_escaped = EscapeIdentifier(conn, column);
     if (column_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
       return false;
     }
 
-    const char *const value = primary_values[i];
+    const LCH_Buffer *const value =
+        (LCH_Buffer *)LCH_ListGet(primary_values, i);
     char *const value_escaped = EscapeLiteral(conn, value);
     if (value_escaped == NULL) {
       PQfreemem(column_escaped);
@@ -544,23 +551,19 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
 }
 
 bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
-                              const char *const *const primary_columns,
-                              const char *const *const primary_values,
-                              const char *const *const subsidiary_columns,
-                              const char *const *const subsidiary_values) {
+                              const LCH_List *const primary_columns,
+                              const LCH_List *const primary_values,
+                              const LCH_List *const subsidiary_columns,
+                              const LCH_List *const subsidiary_values) {
   PGconn *const conn = (PGconn *)_conn;
-  assert(conn != NULL);
-  assert(primary_columns != NULL);
-  assert(primary_values != NULL);
-  assert(subsidiary_columns != NULL);
-  assert(subsidiary_values != NULL);
 
   LCH_Buffer *const query_buffer = LCH_BufferCreate();
   if (query_buffer == NULL) {
     return false;
   }
 
-  char *const table_name_escaped = EscapeIdentifier(conn, table_name);
+  char *const table_name_escaped =
+      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -573,16 +576,19 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
   }
   PQfreemem(table_name_escaped);
 
-  for (size_t i = 0;
-       subsidiary_columns[i] != NULL && subsidiary_values[i] != NULL; i++) {
-    const char *const column = subsidiary_columns[i];
+  const size_t num_subsidiary = LCH_ListLength(subsidiary_columns);
+  assert(num_subsidiary == LCH_ListLength(subsidiary_values));
+  for (size_t i = 0; i < num_subsidiary; i++) {
+    const LCH_Buffer *const column =
+        (LCH_Buffer *)LCH_ListGet(subsidiary_columns, i);
     char *const column_escaped = EscapeIdentifier(conn, column);
     if (column_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
       return false;
     }
 
-    const char *const value = subsidiary_values[i];
+    const LCH_Buffer *const value =
+        (LCH_Buffer *)LCH_ListGet(subsidiary_values, i);
     char *const value_escaped = EscapeLiteral(conn, value);
     if (value_escaped == NULL) {
       PQfreemem(column_escaped);
@@ -602,16 +608,19 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
     PQfreemem(column_escaped);
   }
 
-  for (size_t i = 0; primary_columns[i] != NULL && primary_values[i] != NULL;
-       i++) {
-    const char *const column = primary_columns[i];
+  const size_t num_primary = LCH_ListLength(primary_columns);
+  assert(num_primary == LCH_ListLength(primary_values));
+  for (size_t i = 0; i < num_primary; i++) {
+    const LCH_Buffer *const column =
+        (LCH_Buffer *)LCH_ListGet(primary_columns, i);
     char *const column_escaped = EscapeIdentifier(conn, column);
     if (column_escaped == NULL) {
       LCH_BufferDestroy(query_buffer);
       return false;
     }
 
-    const char *const value = primary_values[i];
+    const LCH_Buffer *const value =
+        (LCH_Buffer *)LCH_ListGet(primary_values, i);
     char *const value_escaped = EscapeLiteral(conn, value);
     if (value_escaped == NULL) {
       PQfreemem(column_escaped);

@@ -20,26 +20,44 @@ LCH_Json *LCH_BlockCreate(const char *const parent_id,
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetStringDuplicate(block, "version", PACKAGE_VERSION)) {
+  LCH_Buffer *const version = LCH_BufferFromString(PACKAGE_VERSION);
+  if (version == NULL) {
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSetString(block, LCH_BufferStaticFromString("version"),
+                               version)) {
     LCH_LOG_ERROR("Failed to set version field in block");
+    LCH_BufferDestroy(version);
     LCH_JsonDestroy(block);
     return NULL;
   }
 
   const double timestamp = (double)time(NULL);
-  if (!LCH_JsonObjectSetNumber(block, "timestamp", timestamp)) {
+  if (!LCH_JsonObjectSetNumber(block, LCH_BufferStaticFromString("timestamp"),
+                               timestamp)) {
     LCH_LOG_ERROR("Failed to set timestamp field in block");
     LCH_JsonDestroy(block);
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetStringDuplicate(block, "parent", parent_id)) {
-    LCH_LOG_ERROR("Failed to set parent block identifier field in block");
+  LCH_Buffer *const parent = LCH_BufferFromString(parent_id);
+  if (parent == NULL) {
     LCH_JsonDestroy(block);
     return NULL;
   }
 
-  if (!LCH_JsonObjectSet(block, "payload", payload)) {
+  if (!LCH_JsonObjectSetString(block, LCH_BufferStaticFromString("parent"),
+                               parent)) {
+    LCH_LOG_ERROR("Failed to set parent block identifier field in block");
+    LCH_BufferDestroy(parent);
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+
+  if (!LCH_JsonObjectSet(block, LCH_BufferStaticFromString("payload"),
+                         payload)) {
     LCH_LOG_ERROR("Failed to set payload field in block");
     LCH_JsonDestroy(block);
     return NULL;
@@ -52,20 +70,22 @@ bool LCH_BlockStore(const char *const work_dir, const LCH_Json *const block) {
   assert(block != NULL);
   assert(work_dir != NULL);
 
-  char *const json = LCH_JsonCompose(block);
+  LCH_Buffer *const json = LCH_JsonCompose(block);
   if (json == NULL) {
     return false;
   }
 
   LCH_Buffer *const digest = LCH_BufferCreate();
   if (digest == NULL) {
-    free(json);
+    LCH_BufferDestroy(json);
     return false;
   }
 
-  if (!LCH_MessageDigest((unsigned char *)json, strlen(json), digest)) {
+  const size_t length = LCH_BufferLength(json);
+  const unsigned char *const data = (unsigned char *)LCH_BufferData(json);
+  if (!LCH_MessageDigest(data, length, digest)) {
     LCH_BufferDestroy(digest);
-    free(json);
+    LCH_BufferDestroy(json);
     return false;
   }
 
@@ -75,22 +95,23 @@ bool LCH_BlockStore(const char *const work_dir, const LCH_Json *const block) {
   char path[PATH_MAX];
   if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
     free(block_id);
-    free(json);
+    LCH_BufferDestroy(json);
     return false;
   }
 
-  if (!LCH_FileWrite(path, json)) {
-    free(json);
+  if (!LCH_BufferWriteFile(json, path)) {
+    free(block_id);
+    LCH_BufferDestroy(json);
     return false;
   }
+  LCH_BufferDestroy(json);
 
   if (!LCH_HeadSet("HEAD", work_dir, block_id)) {
     free(block_id);
-    free(json);
+    return false;
   }
-
   free(block_id);
-  free(json);
+
   return true;
 }
 
@@ -101,45 +122,33 @@ LCH_Json *LCH_BlockLoad(const char *const work_dir,
     return NULL;
   }
 
-  size_t num_bytes;
-  char *const raw = LCH_FileRead(path, &num_bytes);
-  if (raw == NULL) {
-    LCH_LOG_ERROR("Failed to read block %.7s", block_id);
-    return NULL;
-  }
-  LCH_LOG_DEBUG("Read JSON from block with identifer %.7s", block_id);
-
-  LCH_Json *const block = LCH_JsonParse(raw);
-  free(raw);
+  LCH_Json *const block = LCH_JsonParseFile(path);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to parse block with identifer %.7s", block_id);
     return NULL;
   }
-  LCH_LOG_DEBUG("Parsed JSON from block with identifer %.7s", block_id);
 
+  LCH_LOG_DEBUG("Parsed JSON from block with identifer %.7s", block_id);
   return block;
 }
 
 const char *LCH_BlockGetParentBlockIdentifier(const LCH_Json *const block) {
-  assert(block != NULL);
-
-  const char *const parent_id = LCH_JsonObjectGetString(block, "parent");
-  if (parent_id == NULL) {
+  const LCH_Buffer *const parent =
+      LCH_JsonObjectGetString(block, LCH_BufferStaticFromString("parent"));
+  if (parent == NULL) {
     LCH_LOG_ERROR("Failed to retrieve parent block identifier");
     return NULL;
   }
-  return parent_id;
+  return LCH_BufferData(parent);
 }
 
 bool LCH_BlockIsGenisisBlockIdentifier(const char *const block_id) {
-  assert(block_id != NULL);
   return LCH_StringEqual(block_id, LCH_GENISIS_BLOCK_ID);
 }
 
 const LCH_Json *LCH_BlockGetPayload(const LCH_Json *const block) {
-  assert(block != NULL);
-
-  const LCH_Json *const payload = LCH_JsonObjectGetArray(block, "payload");
+  const LCH_Json *const payload =
+      LCH_JsonObjectGetArray(block, LCH_BufferStaticFromString("payload"));
   if (payload == NULL) {
     LCH_LOG_ERROR("Failed to get payload from block");
     return NULL;
@@ -148,12 +157,11 @@ const LCH_Json *LCH_BlockGetPayload(const LCH_Json *const block) {
 }
 
 LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
-  assert(block != NULL);
-
-  LCH_Json *const payload = LCH_JsonObjectRemoveArray(block, "payload");
-  if (payload == NULL) {
+  LCH_Json *const payload_val =
+      LCH_JsonObjectRemoveArray(block, LCH_BufferStaticFromString("payload"));
+  if (payload_val == NULL) {
     LCH_LOG_ERROR("Failed to remove payload from block");
     return NULL;
   }
-  return payload;
+  return payload_val;
 }

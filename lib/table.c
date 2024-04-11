@@ -15,33 +15,33 @@
 typedef void *(*LCH_CallbackConnect)(const char *conn_info);
 typedef void (*LCH_CallbackDisconnect)(void *conn);
 typedef bool (*LCH_CallbackCreateTable)(void *conn, const char *table_name,
-                                        const char *const *primary_columns,
-                                        const char *const *subsidiary_columns);
+                                        const LCH_List *primary_columns,
+                                        const LCH_List *subsidiary_columns);
 typedef bool (*LCH_CallbackTruncateTable)(void *conn, const char *table_name,
                                           const char *const field,
                                           const char *const value);
-typedef char ***(*LCH_CallbackGetTable)(void *conn, const char *table_name,
-                                        const char *const *columns);
+typedef LCH_List *(*LCH_CallbackGetTable)(void *conn, const char *table_name,
+                                          const LCH_List *columns);
 typedef bool (*LCH_CallbackBeginTransaction)(void *conn);
 typedef bool (*LCH_CallbackCommitTransaction)(void *conn);
 typedef bool (*LCH_CallbackRollbackTransaction)(void *conn);
 typedef bool (*LCH_CallbackInsertRecord)(void *conn, const char *table_name,
-                                         const char *const *columns,
-                                         const char *const *values);
+                                         const LCH_List *columns,
+                                         const LCH_List *values);
 typedef bool (*LCH_CallbackDeleteRecord)(void *conn, const char *table_name,
-                                         const char *const *columns,
-                                         const char *const *values);
+                                         const LCH_List *columns,
+                                         const LCH_List *values);
 typedef bool (*LCH_CallbackUpdateRecord)(void *conn, const char *table_name,
-                                         const char *const *primary_columns,
-                                         const char *const *primary_values,
-                                         const char *const *subsidiary_columns,
-                                         const char *const *subsidiary_values);
+                                         const LCH_List *primary_columns,
+                                         const LCH_List *primary_values,
+                                         const LCH_List *subsidiary_columns,
+                                         const LCH_List *subsidiary_values);
 
 struct LCH_TableInfo {
   char *identifier;
-  char **all_fields;
-  char **primary_fields;
-  char **subsidiary_fields;
+  LCH_List *all_fields;
+  LCH_List *primary_fields;
+  LCH_List *subsidiary_fields;
 
   void *src_dlib_handle;
   char *src_params;
@@ -78,9 +78,9 @@ void LCH_TableInfoDestroy(void *const _info) {
 
   free(info->identifier);
 
-  LCH_StringArrayDestroy(info->all_fields);
-  LCH_StringArrayDestroy(info->primary_fields);
-  LCH_StringArrayDestroy(info->subsidiary_fields);
+  LCH_ListDestroy(info->all_fields);
+  LCH_ListDestroy(info->primary_fields);
+  LCH_ListDestroy(info->subsidiary_fields);
 
   free(info->src_table_name);
   free(info->src_params);
@@ -119,102 +119,130 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     return NULL;
   }
 
-  LCH_List *const all_list = LCH_ListCreate();
-  LCH_List *const primary_list = LCH_ListCreate();
-  LCH_List *const subsidiary_list = LCH_ListCreate();
-  const LCH_Json *const primary_array =
-      LCH_JsonObjectGetArray(definition, "primary_fields");
+  info->all_fields = LCH_ListCreate();
+  if (info->all_fields == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+
+  info->primary_fields = LCH_ListCreate();
+  if (info->primary_fields == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+
+  info->subsidiary_fields = LCH_ListCreate();
+  if (info->subsidiary_fields == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+
+  const LCH_Buffer *key = LCH_BufferStaticFromString("primary_fields");
+  const LCH_Json *const primary_array = LCH_JsonObjectGetArray(definition, key);
+  if (primary_array == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+
+  key = LCH_BufferStaticFromString("subsidiary_fields");
   const LCH_Json *const subsidiary_array =
-      LCH_JsonObjectGetArray(definition, "subsidiary_fields");
-  bool failure = all_list == NULL || primary_list == NULL ||
-                 subsidiary_list == NULL || primary_array == NULL ||
-                 subsidiary_array == NULL;
-
-  for (size_t i = 0; !failure && (i < LCH_JsonArrayLength(primary_array));
-       i++) {
-    const char *const field = LCH_JsonArrayGetString(primary_array, i);
-    if (field == NULL) {
-      failure = true;
-      break;
-    }
-    if (!LCH_ListAppendStringDuplicate(all_list, field)) {
-      failure = true;
-      break;
-    }
-    if (!LCH_ListAppendStringDuplicate(primary_list, field)) {
-      failure = true;
-      break;
-    }
-  }
-
-  for (size_t i = 0; !failure && (i < LCH_JsonArrayLength(subsidiary_array));
-       i++) {
-    const char *const field = LCH_JsonArrayGetString(subsidiary_array, i);
-    if (field == NULL) {
-      failure = true;
-      break;
-    }
-    if (!LCH_ListAppendStringDuplicate(all_list, field)) {
-      failure = true;
-      break;
-    }
-    if (!LCH_ListAppendStringDuplicate(subsidiary_list, field)) {
-      failure = true;
-      break;
-    }
-  }
-
-  if (failure) {
-    LCH_ListDestroy(all_list);
-    LCH_ListDestroy(primary_list);
-    LCH_ListDestroy(subsidiary_list);
+      LCH_JsonObjectGetArray(definition, key);
+  if (subsidiary_array == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  info->all_fields = LCH_StringListToStringArray(all_list);
-  info->primary_fields = LCH_StringListToStringArray(primary_list);
-  info->subsidiary_fields = LCH_StringListToStringArray(subsidiary_list);
-  LCH_ListDestroy(all_list);
-  LCH_ListDestroy(primary_list);
-  LCH_ListDestroy(subsidiary_list);
-  if (info->all_fields == NULL || info->primary_fields == NULL ||
-      info->subsidiary_fields == NULL) {
-    LCH_TableInfoDestroy(info);
-    return NULL;
+  size_t length = LCH_JsonArrayLength(primary_array);
+  for (size_t i = 0; i < length; i++) {
+    const LCH_Buffer *const field = LCH_JsonArrayGetString(primary_array, i);
+    if (field == NULL) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+
+    if (!LCH_ListAppendBufferDuplicate(info->all_fields, field)) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+
+    if (!LCH_ListAppendBufferDuplicate(info->primary_fields, field)) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+  }
+
+  length = LCH_JsonArrayLength(subsidiary_array);
+  for (size_t i = 0; i < length; i++) {
+    const LCH_Buffer *const field = LCH_JsonArrayGetString(subsidiary_array, i);
+    if (field == NULL) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+
+    if (!LCH_ListAppendBufferDuplicate(info->all_fields, field)) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+
+    if (!LCH_ListAppendBufferDuplicate(info->subsidiary_fields, field)) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
   }
 
   LCH_LOG_VERBOSE("Loading callback functions for table '%s'", identifer);
 
   {
-    const LCH_Json *const src = LCH_JsonObjectGetObject(definition, "source");
+    const LCH_Json *const src = LCH_JsonObjectGetObject(
+        definition, LCH_BufferStaticFromString("source"));
     if (src == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    const char *const params = LCH_JsonObjectGetString(src, "params");
-    info->src_params = LCH_StringDuplicate(params);
+    const LCH_Buffer *const params =
+        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("params"));
+    if (params == NULL) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+    info->src_params = LCH_StringDuplicate(LCH_BufferData(params));
     if (info->src_params == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    const char *const schema = LCH_JsonObjectGetString(src, "schema");
-    info->src_schema = LCH_StringDuplicate(schema);
+    const LCH_Buffer *const schema =
+        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("schema"));
+    if (schema == NULL) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+    info->src_schema = LCH_StringDuplicate(LCH_BufferData(schema));
     if (info->src_schema == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    const char *const table_name = LCH_JsonObjectGetString(src, "table_name");
-    info->src_table_name = LCH_StringDuplicate(table_name);
+    const LCH_Buffer *const table_name =
+        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("table_name"));
+    if (table_name == NULL) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+    info->src_table_name = LCH_StringDuplicate(LCH_BufferData(table_name));
     if (info->src_table_name == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    const char *const dlib_path = LCH_JsonObjectGetString(src, "callbacks");
+    const LCH_Buffer *const callbacks =
+        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("callbacks"));
+    if (callbacks == NULL) {
+      LCH_TableInfoDestroy(info);
+      return NULL;
+    }
+    const char *const dlib_path = LCH_BufferData(callbacks);
     if (dlib_path == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
@@ -291,35 +319,52 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     }
   }
 
-  const LCH_Json *const dst =
-      LCH_JsonObjectGetObject(definition, "destination");
+  const LCH_Json *const dst = LCH_JsonObjectGetObject(
+      definition, LCH_BufferStaticFromString("destination"));
   if (dst == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  const char *const params = LCH_JsonObjectGetString(dst, "params");
-  info->dst_params = LCH_StringDuplicate(params);
+  const LCH_Buffer *const params =
+      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("params"));
+  if (params == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+  info->dst_params = LCH_StringDuplicate(LCH_BufferData(params));
   if (info->dst_params == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  const char *const schema = LCH_JsonObjectGetString(dst, "schema");
-  info->dst_schema = LCH_StringDuplicate(schema);
+  const LCH_Buffer *const schema =
+      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("schema"));
+  if (schema == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+  info->dst_schema = LCH_StringDuplicate(LCH_BufferData(schema));
   if (info->dst_schema == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  const char *const table_name = LCH_JsonObjectGetString(dst, "table_name");
-  info->dst_table_name = LCH_StringDuplicate(table_name);
+  const LCH_Buffer *const table_name =
+      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("table_name"));
+  if (table_name == NULL) {
+    LCH_TableInfoDestroy(info);
+    return NULL;
+  }
+  info->dst_table_name = LCH_StringDuplicate(LCH_BufferData(table_name));
   if (info->dst_table_name == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  const char *const dlib_path = LCH_JsonObjectGetString(dst, "callbacks");
+  const LCH_Buffer *const callbacks =
+      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("callbacks"));
+  const char *const dlib_path = LCH_BufferData(callbacks);
   if (dlib_path == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -503,36 +548,26 @@ LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
     return NULL;
   }
 
-  if (!table_info->src_create_table(
-          conn, table_info->src_table_name,
-          (const char *const *)table_info->primary_fields,
-          (const char *const *)table_info->subsidiary_fields)) {
+  if (!table_info->src_create_table(conn, table_info->src_table_name,
+                                    table_info->primary_fields,
+                                    table_info->subsidiary_fields)) {
     LCH_LOG_ERROR("Failed to create table '%s'", table_info->src_table_name);
     table_info->src_disconnect(conn);
     return NULL;
   }
 
-  char ***const str_table =
-      table_info->src_get_table(conn, table_info->src_table_name,
-                                (const char *const *)table_info->all_fields);
-  if (str_table == NULL) {
+  LCH_List *table = table_info->src_get_table(conn, table_info->src_table_name,
+                                              table_info->all_fields);
+  if (table == NULL) {
+    table_info->src_disconnect(conn);
     return NULL;
   }
 
   table_info->src_disconnect(conn);
 
-  LCH_List *const list_table = LCH_StringArrayTableToStringListTable(
-      (const char *const *const *)str_table);
-  LCH_StringArrayTableDestroy(str_table);
-  if (list_table == NULL) {
-    return NULL;
-  }
-
   LCH_Json *const state = LCH_TableToJsonObject(
-      list_table, (const char *const *)table_info->primary_fields,
-      (const char *const *)table_info->subsidiary_fields);
-
-  LCH_ListDestroy(list_table);
+      table, table_info->primary_fields, table_info->subsidiary_fields);
+  LCH_ListDestroy(table);
   return state;
 }
 
@@ -553,13 +588,7 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *const table_info,
     return state;
   }
 
-  char *const json = LCH_FileRead(path, NULL);
-  if (json == NULL) {
-    return NULL;
-  }
-
-  LCH_Json *const state = LCH_JsonParse(json);
-  free(json);
+  LCH_Json *const state = LCH_JsonParseFile(path);
   return state;
 }
 
@@ -572,115 +601,63 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
     return false;
   }
 
-  char *const json = LCH_JsonCompose(state);
-  if (json == NULL) {
-    return false;
-  }
-
-  if (!LCH_FileWrite(path, json)) {
-    free(json);
-    return false;
-  }
-  free(json);
-  return true;
+  return LCH_JsonComposeFile(state, path);
 }
 
-static char **ParseFields(const char *const str) {
-  assert(str != NULL);
-
-  LCH_List *const list = LCH_CSVParseRecord(str);
-  if (list == NULL) {
+static LCH_List *ConcatenateFields(const LCH_List *const left,
+                                   const LCH_List *const right) {
+  LCH_List *const record = LCH_ListCreate();
+  if (record == NULL) {
     return NULL;
   }
 
-  char **fields = LCH_StringListToStringArray(list);
-  LCH_ListDestroy(list);
+  size_t length = LCH_ListLength(left);
+  for (size_t i = 0; i < length; i++) {
+    const LCH_Buffer *const field = (LCH_Buffer *)LCH_ListGet(left, i);
+    if (!LCH_ListAppendBufferDuplicate(record, field)) {
+      LCH_ListDestroy(record);
+      return NULL;
+    }
+  }
+
+  length = LCH_ListLength(right);
+  for (size_t i = 0; i < length; i++) {
+    const LCH_Buffer *const field = (LCH_Buffer *)LCH_ListGet(right, i);
+    if (!LCH_ListAppendBufferDuplicate(record, field)) {
+      LCH_ListDestroy(record);
+      return NULL;
+    }
+  }
+
+  return record;
+}
+
+static LCH_List *ParseConcatenateFields(const LCH_Buffer *const left_csv,
+                                        const LCH_Buffer *const right_csv) {
+  LCH_List *const left_lst =
+      (LCH_BufferEqual(left_csv, LCH_BufferStaticFromString("")))
+          ? LCH_ListCreate()
+          : LCH_CSVParseRecord(LCH_BufferData(left_csv),
+                               LCH_BufferLength(left_csv));
+  if (left_lst == NULL) {
+    return NULL;
+  }
+
+  LCH_List *const right_lst = LCH_CSVParseRecord(LCH_BufferData(right_csv),
+                                                 LCH_BufferLength(right_csv));
+  if (right_lst == NULL) {
+    LCH_ListDestroy(left_lst);
+    return NULL;
+  }
+
+  LCH_List *fields = ConcatenateFields(left_lst, right_lst);
+  LCH_ListDestroy(left_lst);
+  LCH_ListDestroy(right_lst);
   return fields;
-}
-
-static char **ConcatenateFields(const LCH_List *const a,
-                                const LCH_List *const b) {
-  assert(a != NULL);
-  assert(b != NULL);
-
-  LCH_List *const list = LCH_ListCreate();
-  if (list == NULL) {
-    return NULL;
-  }
-
-  size_t length = LCH_ListLength(a);
-  for (size_t i = 0; i < length; i++) {
-    const char *const field = (const char *)LCH_ListGet(a, i);
-    if (!LCH_ListAppendStringDuplicate(list, field)) {
-      LCH_ListDestroy(list);
-      return NULL;
-    }
-  }
-
-  length = LCH_ListLength(b);
-  for (size_t i = 0; i < length; i++) {
-    const char *const field = (const char *)LCH_ListGet(b, i);
-    if (!LCH_ListAppendStringDuplicate(list, field)) {
-      LCH_ListDestroy(list);
-      return NULL;
-    }
-  }
-
-  char **const result = LCH_StringListToStringArray(list);
-  LCH_ListDestroy(list);
-  return result;
-}
-
-static char **ParseConcatenateFields(const char *const str_a,
-                                     const char *const str_b) {
-  assert(str_a != NULL);
-  assert(str_b != NULL);
-
-  LCH_List *const list_a = (LCH_StringEqual(str_a, ""))
-                               ? LCH_ListCreate()
-                               : LCH_CSVParseRecord(str_a);
-  if (list_a == NULL) {
-    return NULL;
-  }
-
-  LCH_List *const list_b = LCH_CSVParseRecord(str_b);
-  if (str_b == NULL) {
-    LCH_ListDestroy(list_a);
-    return NULL;
-  }
-
-  char **fields = ConcatenateFields(list_a, list_b);
-  LCH_ListDestroy(list_a);
-  LCH_ListDestroy(list_b);
-  return fields;
-}
-
-static char **AddHostIdentifier(const char *const field,
-                                const char *const *const str_array) {
-  const size_t length = LCH_StringArrayLength(str_array);
-  char **const result = (char **)calloc(length + 2, sizeof(char *));
-  if (result == NULL) {
-    LCH_LOG_ERROR("Failed to allocate memory: calloc(3): %s", strerror(errno));
-    return NULL;
-  }
-
-  result[0] = LCH_StringDuplicate(field);
-  if (result[0] == NULL) {
-    return NULL;
-  }
-
-  for (size_t i = 0; i < length; i++) {
-    result[i + 1] = LCH_StringDuplicate(str_array[i]);
-    if (result[i + 1] == NULL) {
-      return NULL;
-    }
-  }
-
-  return result;
 }
 
 static bool TablePatchInserts(const LCH_TableInfo *const table_info,
-                              const char *const *const all_fields,
+                              const LCH_List *const all_fields,
                               const char *const host_id,
                               const LCH_Json *const inserts, void *const conn) {
   LCH_List *const keys = LCH_JsonObjectGetKeys(inserts);
@@ -690,42 +667,39 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (const char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    const char *const value = LCH_JsonObjectGetString(inserts, key);
+    const LCH_Buffer *const value = LCH_JsonObjectGetString(inserts, key);
     if (value == NULL) {
       LCH_ListDestroy(keys);
       return false;
     }
 
-    char **values =
-        (LCH_StringArrayLength(
-             (const char *const *)table_info->subsidiary_fields) == 0)
-            ? ParseFields(key)
+    LCH_List *const values =
+        (LCH_ListLength(table_info->subsidiary_fields) == 0)
+            ? LCH_CSVParseRecord(LCH_BufferData(key), LCH_BufferLength(key))
             : ParseConcatenateFields(key, value);
     if (values == NULL) {
       LCH_ListDestroy(keys);
       return false;
     }
 
-    char **tmp = AddHostIdentifier(host_id, (const char *const *)values);
-    LCH_StringArrayDestroy(values);
-    if (tmp == NULL) {
+    if (!LCH_ListInsertBufferDuplicate(values, 0,
+                                       LCH_BufferStaticFromString(host_id))) {
+      LCH_ListDestroy(values);
       LCH_ListDestroy(keys);
-      return false;
+      return NULL;
     }
-    values = tmp;
 
     if (!table_info->dst_insert_record(conn, table_info->dst_table_name,
-                                       (const char *const *)all_fields,
-                                       (const char *const *)values)) {
-      LCH_StringArrayDestroy(values);
+                                       all_fields, values)) {
+      LCH_ListDestroy(values);
       LCH_ListDestroy(keys);
       return false;
     }
 
-    LCH_StringArrayDestroy(values);
+    LCH_ListDestroy(values);
   }
 
   LCH_ListDestroy(keys);
@@ -733,7 +707,7 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
 }
 
 static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
-                              const char *const *const primary_fields,
+                              const LCH_List *const primary_fields,
                               const char *const host_id,
                               const LCH_Json *const deletes, void *const conn) {
   LCH_List *const keys = LCH_JsonObjectGetKeys(deletes);
@@ -743,33 +717,31 @@ static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (const char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    char **primary_values = ParseFields(key);
+    LCH_List *const primary_values =
+        LCH_CSVParseRecord(LCH_BufferData(key), LCH_BufferLength(key));
     if (primary_values == NULL) {
       LCH_ListDestroy(keys);
       return false;
     }
 
-    char **tmp =
-        AddHostIdentifier(host_id, (const char *const *)primary_values);
-    LCH_StringArrayDestroy(primary_values);
-    if (tmp == NULL) {
+    if (!LCH_ListInsertBufferDuplicate(primary_values, 0,
+                                       LCH_BufferStaticFromString(host_id))) {
+      LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
     }
-    primary_values = tmp;
 
     if (!table_info->dst_delete_record(conn, table_info->dst_table_name,
-                                       (const char *const *)primary_fields,
-                                       (const char *const *)primary_values)) {
-      LCH_StringArrayDestroy(primary_values);
+                                       primary_fields, primary_values)) {
+      LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
     }
 
-    LCH_StringArrayDestroy(primary_values);
+    LCH_ListDestroy(primary_values);
   }
 
   LCH_ListDestroy(keys);
@@ -777,7 +749,7 @@ static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
 }
 
 static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
-                              const char *const *const primary_fields,
+                              const LCH_List *primary_fields,
                               const char *const host_value,
                               const LCH_Json *const updates, void *const conn) {
   LCH_List *const keys = LCH_JsonObjectGetKeys(updates);
@@ -787,51 +759,49 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
 
   const size_t num_keys = LCH_ListLength(keys);
   for (size_t i = 0; i < num_keys; i++) {
-    const char *const key = (const char *)LCH_ListGet(keys, i);
+    const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     assert(key != NULL);
 
-    char **primary_values = ParseFields(key);
+    LCH_List *primary_values =
+        LCH_CSVParseRecord(LCH_BufferData(key), LCH_BufferLength(key));
     if (primary_values == NULL) {
       LCH_ListDestroy(keys);
       return false;
     }
 
-    char **tmp =
-        AddHostIdentifier(host_value, (const char *const *)primary_values);
-    LCH_StringArrayDestroy(primary_values);
-    if (tmp == NULL) {
+    if (!LCH_ListInsertBufferDuplicate(
+            primary_values, 0, LCH_BufferStaticFromString(host_value))) {
+      LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
     }
-    primary_values = tmp;
 
-    const char *const value = LCH_JsonObjectGetString(updates, key);
+    const LCH_Buffer *const value = LCH_JsonObjectGetString(updates, key);
     if (value == NULL) {
+      LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
     }
 
-    char **subsidiary_values = ParseFields(value);
+    LCH_List *subsidiary_values =
+        LCH_CSVParseRecord(LCH_BufferData(value), LCH_BufferLength(value));
     if (subsidiary_values == NULL) {
-      LCH_StringArrayDestroy(primary_values);
+      LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
     }
 
     if (!table_info->dst_update_record(
-            conn, table_info->dst_table_name,
-            (const char *const *)primary_fields,
-            (const char *const *)primary_values,
-            (const char *const *)table_info->subsidiary_fields,
-            (const char *const *)subsidiary_values)) {
-      LCH_StringArrayDestroy(subsidiary_values);
-      LCH_StringArrayDestroy(primary_values);
+            conn, table_info->dst_table_name, primary_fields, primary_values,
+            table_info->subsidiary_fields, subsidiary_values)) {
+      LCH_ListDestroy(subsidiary_values);
+      LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
     }
 
-    LCH_StringArrayDestroy(subsidiary_values);
-    LCH_StringArrayDestroy(primary_values);
+    LCH_ListDestroy(subsidiary_values);
+    LCH_ListDestroy(primary_values);
   }
 
   LCH_ListDestroy(keys);
@@ -858,26 +828,34 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
     return false;
   }
 
-  char **primary_fields =
-      AddHostIdentifier(field, (const char *const *)table_info->primary_fields);
+  LCH_List *const primary_fields =
+      LCH_ListCopy(table_info->primary_fields,
+                   (LCH_DuplicateFn)LCH_BufferDuplicate, LCH_BufferDestroy);
   if (primary_fields == NULL) {
     table_info->dst_disconnect(conn);
     return false;
   }
 
-  if (!table_info->dst_create_table(
-          conn, table_info->dst_table_name, (const char *const *)primary_fields,
-          (const char *const *)table_info->subsidiary_fields)) {
+  const LCH_Buffer *const buffer = LCH_BufferStaticFromString(field);
+  if (!LCH_ListInsertBufferDuplicate(primary_fields, 0, buffer)) {
+    table_info->dst_disconnect(conn);
+    LCH_ListDestroy(primary_fields);
+    return false;
+  }
+
+  if (!table_info->dst_create_table(conn, table_info->dst_table_name,
+                                    primary_fields,
+                                    table_info->subsidiary_fields)) {
     LCH_LOG_ERROR("Failed to create table '%s'", table_info->dst_table_name);
     table_info->dst_disconnect(conn);
-    LCH_StringArrayDestroy(primary_fields);
+    LCH_ListDestroy(primary_fields);
     return false;
   }
 
   if (!table_info->dst_begin_tx(conn)) {
     LCH_LOG_ERROR("Failed to begin transaction");
     table_info->dst_disconnect(conn);
-    LCH_StringArrayDestroy(primary_fields);
+    LCH_ListDestroy(primary_fields);
     return false;
   }
 
@@ -888,57 +866,62 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
                                         value)) {
       LCH_LOG_ERROR("Failed to truncate table");
       table_info->dst_disconnect(conn);
-      LCH_StringArrayDestroy(primary_fields);
+      LCH_ListDestroy(primary_fields);
       return false;
     }
   }
 
-  if (!TablePatchDeletes(table_info, (const char *const *)primary_fields, value,
-                         deletes, conn)) {
+  if (!TablePatchDeletes(table_info, primary_fields, value, deletes, conn)) {
     LCH_LOG_INFO("Performing rollback of transactions for table '%s'",
                  table_info->dst_table_name);
     if (!table_info->dst_rollback_tx(conn)) {
       LCH_LOG_ERROR("Failed to rollback transactions");
     }
     table_info->dst_disconnect(conn);
-    LCH_StringArrayDestroy(primary_fields);
+    LCH_ListDestroy(primary_fields);
     return false;
   }
 
-  if (!TablePatchUpdates(table_info, (const char *const *)primary_fields, value,
-                         updates, conn)) {
+  if (!TablePatchUpdates(table_info, primary_fields, value, updates, conn)) {
     LCH_LOG_INFO("Performing rollback of transactions for table '%s'",
                  table_info->dst_table_name);
     if (!table_info->dst_rollback_tx(conn)) {
       LCH_LOG_ERROR("Failed to rollback transactions");
     }
     table_info->dst_disconnect(conn);
-    LCH_StringArrayDestroy(primary_fields);
+    LCH_ListDestroy(primary_fields);
     return false;
   }
 
-  LCH_StringArrayDestroy(primary_fields);
+  LCH_ListDestroy(primary_fields);
 
-  char **const all_fields =
-      AddHostIdentifier(field, (const char *const *)table_info->all_fields);
+  LCH_List *const all_fields =
+      LCH_ListCopy(table_info->all_fields, (LCH_DuplicateFn)LCH_BufferDuplicate,
+                   LCH_BufferDestroy);
   if (all_fields == NULL) {
     table_info->dst_disconnect(conn);
     return false;
   }
 
-  if (!TablePatchInserts(table_info, (const char *const *)all_fields, value,
-                         inserts, conn)) {
+  if (!LCH_ListInsertBufferDuplicate(all_fields, 0,
+                                     LCH_BufferStaticFromString(field))) {
+    table_info->dst_disconnect(conn);
+    LCH_ListDestroy(all_fields);
+    return false;
+  }
+
+  if (!TablePatchInserts(table_info, all_fields, value, inserts, conn)) {
     LCH_LOG_INFO("Performing rollback of transactions for table '%s'",
                  table_info->dst_table_name);
     if (!table_info->dst_rollback_tx(conn)) {
       LCH_LOG_ERROR("Failed to rollback transactions");
     }
     table_info->dst_disconnect(conn);
-    LCH_StringArrayDestroy(all_fields);
+    LCH_ListDestroy(all_fields);
     return false;
   }
 
-  LCH_StringArrayDestroy(all_fields);
+  LCH_ListDestroy(all_fields);
 
   if (!table_info->dst_commit_tx(conn)) {
     LCH_LOG_ERROR("Failed to commit transaction");

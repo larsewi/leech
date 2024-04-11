@@ -64,9 +64,14 @@ static bool Commit(const LCH_Instance *const instance) {
       return false;
     }
 
-    const size_t num_inserts = LCH_DeltaGetNumInserts(delta);
-    const size_t num_deletes = LCH_DeltaGetNumDeletes(delta);
-    const size_t num_updates = LCH_DeltaGetNumUpdates(delta);
+    size_t num_inserts, num_deletes, num_updates;
+    if (!LCH_DeltaGetNumOperations(delta, &num_inserts, &num_deletes,
+                                   &num_updates)) {
+      LCH_JsonDestroy(new_state);
+      LCH_JsonDestroy(deltas);
+      return false;
+    }
+
     LCH_LOG_VERBOSE(
         "Computed delta for table '%s' including; %zu insertions, %zu "
         "deletions, and %zu updates.",
@@ -198,19 +203,28 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
     return NULL;
   }
 
+  LCH_Buffer *const key = LCH_BufferFromString("id");
+  if (key == NULL) {
+    LCH_JsonDestroy(child_payload);
+    LCH_JsonDestroy(parent);
+    return NULL;
+  }
+
   const size_t num_parent_deltas = LCH_JsonArrayLength(parent_payload);
   while (LCH_JsonArrayLength(child_payload) > 0) {
     LCH_Json *const child_delta = LCH_JsonArrayRemoveObject(child_payload, 0);
     if (child_delta == NULL) {
+      LCH_BufferDestroy(key);
       LCH_JsonDestroy(child_payload);
       LCH_JsonDestroy(parent);
       return NULL;
     }
 
-    const char *const child_table_id =
-        LCH_JsonObjectGetString(child_delta, "id");
+    const LCH_Buffer *const child_table_id =
+        LCH_JsonObjectGetString(child_delta, key);
     if (child_table_id == NULL) {
       LCH_JsonDestroy(child_delta);
+      LCH_BufferDestroy(key);
       LCH_JsonDestroy(child_payload);
       LCH_JsonDestroy(parent);
       return NULL;
@@ -223,21 +237,23 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
       parent_delta = LCH_JsonArrayGetObject(parent_payload, i);
       if (parent_delta == NULL) {
         LCH_JsonDestroy(child_delta);
+        LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
         LCH_JsonDestroy(parent);
         return NULL;
       }
 
-      const char *const parent_table_id =
-          LCH_JsonObjectGetString(parent_delta, "id");
+      const LCH_Buffer *const parent_table_id =
+          LCH_JsonObjectGetString(parent_delta, key);
       if (parent_table_id == NULL) {
         LCH_JsonDestroy(child_delta);
+        LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
         LCH_JsonDestroy(parent);
         return NULL;
       }
 
-      if (LCH_StringEqual(parent_table_id, child_table_id)) {
+      if (LCH_BufferEqual(parent_table_id, child_table_id)) {
         found = true;
         break;
       }
@@ -250,6 +266,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
             "table '%s'",
             child_table_id);
         LCH_JsonDestroy(child_delta);
+        LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
         LCH_JsonDestroy(parent);
         return NULL;
@@ -261,13 +278,16 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
             "payload",
             child_table_id);
         LCH_JsonDestroy(child_delta);
+        LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
         LCH_JsonDestroy(parent);
         return NULL;
       }
     }
+    LCH_JsonDestroy(child_delta);
   }
 
+  LCH_BufferDestroy(key);
   LCH_JsonDestroy(child_payload);
   LCH_Json *const merged = MergeBlocks(instance, final_id, parent);
   return merged;
@@ -301,16 +321,16 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
-  LCH_Json *block = CreateEmptyBlock(block_id);
+  LCH_Json *const empty = CreateEmptyBlock(block_id);
   free(block_id);
-  if (block == NULL) {
+  if (empty == NULL) {
     LCH_LOG_ERROR("Failed to create empty block");
     LCH_JsonDestroy(patch);
     LCH_InstanceDestroy(instance);
     return NULL;
   }
 
-  block = MergeBlocks(instance, final_id, block);
+  LCH_Json *const block = MergeBlocks(instance, final_id, empty);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to generate patch file");
     LCH_JsonDestroy(patch);
@@ -326,14 +346,15 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
-  char *buffer = LCH_JsonCompose(patch);
+  LCH_Buffer *buffer = LCH_JsonCompose(patch);
   LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
     return NULL;
   }
-  *buf_len = strlen(buffer);
-  return buffer;
+  *buf_len = LCH_BufferLength(buffer);
+  char *const data = LCH_BufferToString(buffer);
+  return data;
 }
 
 char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
@@ -400,7 +421,12 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
       return NULL;
     }
 
-    const size_t num_inserts = LCH_DeltaGetNumInserts(delta);
+    size_t num_inserts;
+    if (!LCH_DeltaGetNumOperations(delta, &num_inserts, NULL, NULL)) {
+      LCH_JsonDestroy(deltas);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
 
     LCH_LOG_VERBOSE(
         "Computed rebase delta for table '%s' including; %zu insertions",
@@ -446,14 +472,16 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
     return NULL;
   }
 
-  char *buffer = LCH_JsonCompose(patch);
+  LCH_Buffer *const buffer = LCH_JsonCompose(patch);
   LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
     return NULL;
   }
-  *buf_len = strlen(buffer);
-  return buffer;
+
+  *buf_len = LCH_BufferLength(buffer);
+  char *const data = LCH_BufferToString(buffer);
+  return data;
 }
 
 static bool Patch(const LCH_Instance *const instance, const char *const field,
@@ -467,19 +495,20 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
-  LCH_Json *const patch = LCH_JsonParse(buffer);
+  LCH_Json *const patch = LCH_JsonParse(buffer, size);
   if (patch == NULL) {
     LCH_LOG_ERROR("Failed to parse patch");
     return false;
   }
 
-  if (!LCH_PatchUpdateLastseen(patch, work_dir, value)) {
+  if (!LCH_PatchUpdateLastKnown(patch, work_dir, value)) {
     LCH_LOG_ERROR("Failed to update lastseen");
     LCH_JsonDestroy(patch);
     return false;
   }
 
-  const LCH_Json *const blocks = LCH_JsonObjectGetArray(patch, "blocks");
+  const LCH_Json *const blocks =
+      LCH_JsonObjectGetArray(patch, LCH_BufferStaticFromString("blocks"));
   if (blocks == NULL) {
     LCH_LOG_ERROR("Failed to extract blocks from patch");
     LCH_JsonDestroy(patch);
@@ -497,7 +526,8 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
       return false;
     }
 
-    const LCH_Json *const payload = LCH_JsonObjectGetArray(block, "payload");
+    const LCH_Json *const payload =
+        LCH_JsonObjectGetArray(block, LCH_BufferStaticFromString("payload"));
     if (payload == NULL) {
       LCH_LOG_ERROR("Failed to extract payload");
       LCH_JsonDestroy(patch);
@@ -515,19 +545,23 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
         return false;
       }
 
-      const char *const type = LCH_JsonObjectGetString(delta, "type");
-      if (type == NULL) {
+      const LCH_Buffer *type_buf =
+          LCH_JsonObjectGetString(delta, LCH_BufferStaticFromString("type"));
+      if (type_buf == NULL) {
         LCH_LOG_ERROR("Failed to extract type from delta");
         LCH_JsonDestroy(patch);
         return false;
       }
+      const char *const type = LCH_BufferData(type_buf);
 
-      const char *const table_id = LCH_JsonObjectGetString(delta, "id");
-      if (table_id == NULL) {
+      const LCH_Buffer *const table_id_buf =
+          LCH_JsonObjectGetString(delta, LCH_BufferStaticFromString("id"));
+      if (table_id_buf == NULL) {
         LCH_LOG_ERROR("Failed to extract table ID from delta");
         LCH_JsonDestroy(patch);
         return false;
       }
+      const char *const table_id = LCH_BufferData(table_id_buf);
 
       const LCH_TableInfo *const table_info =
           LCH_InstanceGetTable(instance, table_id);
@@ -539,30 +573,26 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
         continue;
       }
 
-      const LCH_Json *const inserts = LCH_JsonObjectGet(delta, "inserts");
-      if (table_id == NULL) {
-        LCH_LOG_ERROR("Failed to extract insert operations from delta");
+      const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
+      if (inserts == NULL) {
         LCH_JsonDestroy(patch);
         return false;
       }
 
-      const LCH_Json *const deletes = LCH_JsonObjectGet(delta, "deletes");
-      if (table_id == NULL) {
-        LCH_LOG_ERROR("Failed to extract delete operations from delta");
+      const LCH_Json *const deletes = LCH_DeltaGetDeletes(delta);
+      if (deletes == NULL) {
         LCH_JsonDestroy(patch);
         return false;
       }
 
-      const LCH_Json *const updates = LCH_JsonObjectGet(delta, "updates");
-      if (table_id == NULL) {
-        LCH_LOG_ERROR("Failed to extract update operations from delta");
+      const LCH_Json *const updates = LCH_DeltaGetUpdates(delta);
+      if (updates == NULL) {
         LCH_JsonDestroy(patch);
         return false;
       }
 
       if (!LCH_TablePatch(table_info, type, field, value, inserts, deletes,
                           updates)) {
-        LCH_LOG_ERROR("Failed to patch table '%s'", table_id);
         LCH_JsonDestroy(patch);
         return false;
       }

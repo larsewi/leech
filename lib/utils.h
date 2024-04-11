@@ -7,6 +7,7 @@
 #include "dict.h"
 #include "json.h"
 #include "leech.h"
+#include "list.h"
 
 void *LCH_Allocate(size_t size);
 
@@ -63,8 +64,8 @@ char *LCH_FileRead(const char *path, size_t *length);
 bool LCH_FileWrite(const char *path, const char *str);
 
 LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
-                                const char *const *primary_fields,
-                                const char *const *subsidiary_fields);
+                                const LCH_List *primary_fields,
+                                const LCH_List *subsidiary_fields);
 
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
@@ -99,30 +100,36 @@ void LCH_StringArrayTableDestroy(void *table);
  * @param list One dimentional list of strings.
  * @return One dimentional array of strings.
  */
-char **LCH_StringListToStringArray(const LCH_List *list);
+char **LCH_RecordToStringArray(const LCH_List *list);
 
 /**
  * @brief Create a NULL-terminated string table from list.
  * @param list Two dimentional list of strings.
  * @return Two dimentional array of strings.
  */
-char ***LCH_StringListTableToStringArrayTable(const LCH_List *list);
+char ***LCH_TableToStringArrayTable(const LCH_List *list);
 
 /**
  * @brief Create a list from NULL-terminated string array.
  * @param str_array One dimentional array of strings.
  * @return One dimentional list of strings.
  */
-LCH_List *LCH_StringArrayToStringList(const char *const *str_array);
+LCH_List *LCH_StringArrayToRecord(const char *const *str_array);
 
 /**
  * @brief Create a list from NULL-terminated string table.
  * @param str_array Two dimentional array of strings.
  * @return Two dimentional list of strings.
  */
-LCH_List *LCH_StringArrayTableToStringListTable(
-    const char *const *const *str_table);
+LCH_List *LCH_StringArrayTableToTable(const char *const *const *str_table);
 
 bool LCH_CreateParentDirectories(const char *filename);
+
+bool LCH_ListInsertBufferDuplicate(LCH_List *list, size_t index,
+                                   const LCH_Buffer *buffer);
+
+bool LCH_ListAppendBufferDuplicate(LCH_List *list, const LCH_Buffer *buffer);
+
+char *LCH_StringTruncate(const char *str, size_t len, size_t max);
 
 #endif  // _LEECH_UTILS

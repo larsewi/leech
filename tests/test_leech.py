@@ -130,7 +130,7 @@ def test_leech_csv_delta(tmp_path):
         f"--workdir={tmp_path}",
         "patch",
         "--field=host_id",
-        "--value='SHA=123'",
+        "--value=SHA=123",
         f"--file={patchfile}",
     ]
     assert execute(command, True) == 0
@@ -270,7 +270,7 @@ def test_leech_psql_delta(tmp_path):
         f"--workdir={tmp_path}",
         "patch",
         "--field=host_id",
-        "--value='SHA=123'",
+        "--value=SHA=123",
         f"--file={patchfile}",
     ]
     assert execute(command, True) == 0
@@ -590,3 +590,142 @@ def test_leech_psql_rebase(tmp_path):
 
     cur.close()
     conn.close()
+
+
+def test_leech_csv_binary(tmp_path):
+    ##########################################################################
+    # Create config
+    ##########################################################################
+
+    bin_path = os.path.join("bin", "leech")
+    leech_conf_path = os.path.join(tmp_path, "leech.json")
+    table_src_path = os.path.join(tmp_path, "beatles.src.csv")
+    table_dst_path = os.path.join(tmp_path, "beatles.dst.csv")
+
+    config = {
+        "version": "0.1.0",
+        "tables": {
+            "BTL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": table_src_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": table_dst_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+            }
+        },
+    }
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Create table and commit
+    ##########################################################################
+
+    with open(table_src_path, "wb") as f:
+        f.write(
+            b"first_name,last_name,born\r\n"
+            + b'"\x00\x01\x02\x03","\x04\x05\x06\x07","\x08\x09\x0A\x0B"\r\n'
+            + b'"\x0C\x0D\x0E\x0F","\x10\x11\x12\x13","\x14\x15\x16\x17"\r\n'
+            + b'"\x18\x19\x1A\x1B","\x1C\x1D\x1E\x1F","\x20\x21\x22\x22\x23"\r\n'
+            + b'"\x24\x25\x26\x27","\x28\x29\x2A\x2B","\x2C\x2D\x2E\x2F"\r\n'
+        )
+    print(f"Created table '{table_src_path}' with content:")
+    with open(table_src_path, "rb") as f:
+        print(f.read())
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create delta patch file
+    ##########################################################################
+
+    lastknown = "0000000000000000000000000000000000000000"
+    patchfile = os.path.join(tmp_path, "patchfile")
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "diff",
+        f"--block={lastknown}",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value=SHA=123",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Modify table and commit
+    ##########################################################################
+
+    with open(table_src_path, "wb") as f:
+        f.write(
+            b"first_name,last_name,born\r\n"
+            + b'"\x00\x01\x02\x03","\x04\x05\x06\x07","\x08\x09\x0A\x0B"\r\n'
+            + b'"\x0C\x0D\x0E\x0F","\x10\x11\x12\x13","\x14\x15\x16\x17"\r\n'
+            + b'"\x18\x19\x1A\x1B","\x1C\x1D\x1E\x1F","\x30\x31\x32\x33"\r\n'
+            + b'"\x34\x35\x36\x37","\x38\x39\x3A\x3B","\x3C\x3D\x3E\x3F"\r\n'
+        )
+    print(f"Created table '{table_src_path}' with content:")
+    with open(table_src_path, "rb") as f:
+        print(f.read())
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create delta patch file
+    ##########################################################################
+
+    with open(os.path.join(tmp_path, "SHA=123"), "r") as f:
+        lastknown = f.read().strip()
+    patchfile = os.path.join(tmp_path, "patchfile")
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "diff",
+        f"--block={lastknown}",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value=SHA=123",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0

@@ -130,9 +130,11 @@ size_t LCH_BufferLength(const LCH_Buffer *const self) {
   return self->length;
 }
 
-const void *LCH_BufferGet(const LCH_Buffer *const self, const size_t offset) {
-  assert(self->length >= offset);
-  return self->buffer + offset;
+const char *LCH_BufferData(const LCH_Buffer *const buffer) {
+  assert(buffer != NULL);
+  assert(buffer->buffer != NULL);
+
+  return buffer->buffer;
 }
 
 bool LCH_BufferAllocate(LCH_Buffer *const self, const size_t size,
@@ -194,7 +196,7 @@ bool LCH_BufferHexToBytes(LCH_Buffer *const bytes,
   }
 
   for (size_t i = 0; i < num_bytes; i++) {
-    if (sscanf((const char *)LCH_BufferGet(hex, i * 2), "%2hhx",
+    if (sscanf(hex->buffer + (i * 2), "%2hhx",
                bytes->buffer + (bytes->length + i)) != 1) {
       bytes->buffer[bytes->length] = '\0';
       return false;
@@ -210,6 +212,10 @@ bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *const in) {
   LCH_Buffer *hex = LCH_BufferCreate();
   for (size_t i = 0; i < 4; i++) {
     if (!isxdigit(in[i])) {
+      LCH_LOG_ERROR(
+          "Failed to convert unicode escape sequence to UTF8:\n"
+          "%.4s\n%*s^ Not a hexadecimal number!",
+          in, i);
       LCH_BufferDestroy(hex);
       return false;
     }
@@ -226,7 +232,7 @@ bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *const in) {
   }
   LCH_BufferDestroy(hex);
 
-  uint16_t *host = (uint16_t *)LCH_BufferGet(bytes, 0);
+  uint16_t *host = (uint16_t *)LCH_BufferData(bytes);
   assert(host != NULL);
   uint16_t code_point = htons(*host);
   LCH_BufferDestroy(bytes);
@@ -262,6 +268,34 @@ char *LCH_BufferToString(LCH_Buffer *const self) {
   return str;
 }
 
+LCH_Buffer *LCH_BufferFromString(const char *const str) {
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
+    return NULL;
+  }
+
+  const size_t len = strlen(str);
+  if (!EnsureCapacity(buffer, len)) {
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  for (size_t i = 0; i < len; i++) {
+    buffer->buffer[buffer->length++] = str[i];
+  }
+  buffer->buffer[buffer->length] = '\0';
+
+  return buffer;
+}
+
+const LCH_Buffer *LCH_BufferStaticFromString(const char *const str) {
+  static LCH_Buffer buffer;
+  buffer.buffer = (char *)str;
+  buffer.length = strlen(str);
+  buffer.capacity = 0;
+  return &buffer;
+}
+
 bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
   assert(buffer != NULL);
   assert(filename != NULL);
@@ -272,7 +306,7 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
     return false;
   }
 
-  const int fd = open(filename, O_WRONLY | O_CREAT, (mode_t)0600);
+  const int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, (mode_t)0600);
   if (fd == -1) {
     LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", filename,
                   strerror(errno));
@@ -332,4 +366,89 @@ bool LCH_BufferReadFile(LCH_Buffer *const buffer, const char *const filename) {
   LCH_LOG_DEBUG("Read %zu bytes from file '%s'", buffer->length, filename);
 
   return true;
+}
+
+void LCH_BufferTrim(LCH_Buffer *const buffer, const char ch) {
+  assert(buffer != NULL);
+  assert(buffer->buffer != NULL);
+
+  size_t start = 0;
+  while (start < buffer->length && buffer->buffer[start] == ch) {
+    start += 1;
+  }
+
+  size_t end = buffer->length;
+  while (end > start && buffer->buffer[end - 1] == ch) {
+    end -= 1;
+  }
+
+  buffer->length = end - start;
+  memmove(buffer->buffer, buffer->buffer + start, buffer->length);
+  buffer->buffer[buffer->length] = '\0';
+}
+
+bool LCH_BufferAppendBuffer(LCH_Buffer *const self,
+                            const LCH_Buffer *const other) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(other != NULL);
+  assert(other->buffer != NULL);
+
+  const size_t other_length = other->length;
+  if (!EnsureCapacity(self, other_length)) {
+    return false;
+  }
+
+  for (size_t i = 0; i < other_length; i++) {
+    self->buffer[self->length + i] = other->buffer[i];
+  }
+  self->length += other_length;
+  self->buffer[self->length] = '\0';
+
+  return true;
+}
+
+bool LCH_BufferEqual(const LCH_Buffer *const self,
+                     const LCH_Buffer *const other) {
+  assert(self != NULL);
+  assert(other != NULL);
+
+  const bool equal = LCH_BufferCompare(self, other) == 0;
+  return equal;
+}
+
+int LCH_BufferCompare(const LCH_Buffer *self, const LCH_Buffer *other) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+  assert(other != NULL);
+  assert(other->buffer != NULL);
+
+  if (self->length < other->length) {
+    return -1;
+  }
+  if (self->length > other->length) {
+    return 1;
+  }
+
+  assert(self->length == other->length);
+  const int ret = memcmp(self->buffer, other->buffer, self->length);
+  if (ret < 0) {
+    return -1;
+  }
+  if (ret > 0) {
+    return 1;
+  }
+  return 0;
+}
+
+LCH_Buffer *LCH_BufferDuplicate(const LCH_Buffer *const original) {
+  LCH_Buffer *const duplicate = LCH_BufferCreateWithCapacity(original->length);
+  if (duplicate == NULL) {
+    return NULL;
+  }
+
+  memcpy(duplicate->buffer, original->buffer,
+         original->length + 1 /* NULL-byte */);
+  duplicate->length = original->length;
+  return duplicate;
 }

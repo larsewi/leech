@@ -11,7 +11,7 @@
 #include "../lib/utils.h"
 
 START_TEST(test_LCH_BlockCreate) {
-  LCH_Json *const payload = LCH_JsonParse(
+  const char *const csv =
       "["
       "  {"
       "    \"type\": \"delta\","
@@ -26,22 +26,26 @@ START_TEST(test_LCH_BlockCreate) {
       "    },"
       "    \"id\": \"beatles\""
       "  }"
-      "]");
+      "]";
+  LCH_Json *const payload = LCH_JsonParse(csv, strlen(csv));
 
-  const char *const head = ".";
+  const char *const head = "I'm the parent";
   LCH_Json *const block = LCH_BlockCreate(head, payload);
 
-  ck_assert(LCH_JsonObjectHasKey(block, "timestamp"));
+  ck_assert(
+      LCH_JsonObjectHasKey(block, LCH_BufferStaticFromString("timestamp")));
   LCH_LOG_INFO("timestamp: %f",
-               LCH_JsonGetNumber(LCH_JsonObjectGet(block, "timestamp")));
+               LCH_JsonNumberGet(LCH_JsonObjectGet(
+                   block, LCH_BufferStaticFromString("timestamp"))));
 
-  ck_assert(LCH_JsonObjectHasKey(block, "parent"));
-  ck_assert_str_eq(LCH_JsonStringGetString(LCH_JsonObjectGet(block, "parent")),
+  ck_assert(LCH_JsonObjectHasKey(block, LCH_BufferStaticFromString("parent")));
+  ck_assert_str_eq(LCH_BufferData(LCH_JsonObjectGetString(
+                       block, LCH_BufferStaticFromString("parent"))),
                    head);
-  LCH_LOG_INFO("parent: %s",
-               LCH_JsonStringGetString(LCH_JsonObjectGet(block, "parent")));
+  LCH_LOG_INFO("parent: %s", LCH_JsonStringGet(LCH_JsonObjectGet(
+                                 block, LCH_BufferStaticFromString("parent"))));
 
-  ck_assert(LCH_JsonObjectHasKey(block, "payload"));
+  ck_assert(LCH_JsonObjectHasKey(block, LCH_BufferStaticFromString("payload")));
 
   LCH_JsonDestroy(block);
 }
