@@ -39,6 +39,9 @@ AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
 # Automake conditionals.
 AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
+# Config constants.
+AC_DEFINE([LCH_DEFAULT_MAX_CHAIN_LENGTH], 2048, [Default max chain length used in block garbage collector])
+
 # pkg-check modules.
 PKG_CHECK_MODULES([CHECK], [check])
 PKG_CHECK_MODULES([PSQL], [libpq])

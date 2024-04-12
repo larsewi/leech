@@ -729,3 +729,46 @@ def test_leech_csv_binary(tmp_path):
         f"--file={patchfile}",
     ]
     assert execute(command, True) == 0
+
+
+def test_leech_garbage_collect(tmp_path):
+    ##########################################################################
+    # Create config
+    ##########################################################################
+
+    bin_path = os.path.join("bin", "leech")
+    leech_conf_path = os.path.join(tmp_path, "leech.json")
+    table_src_path = os.path.join(tmp_path, "beatles.src.csv")
+    table_dst_path = os.path.join(tmp_path, "beatles.dst.csv")
+
+    config = {
+        "version": "0.1.0",
+        "max_chain_length": 3,
+        "tables": {
+            "BTL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": table_src_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": table_dst_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+            }
+        },
+    }
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    for _ in range(5):
+        command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+        assert execute(command, True) == 0
