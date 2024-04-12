@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "buffer.h"
 #include "csv.h"
@@ -270,6 +271,16 @@ bool LCH_FileWrite(const char *const path, const char *const str) {
   }
 
   fclose(file);
+  return true;
+}
+
+/******************************************************************************/
+
+bool LCH_FileDelete(const char *const filename) {
+  if (unlink(filename) != 0) {
+    LCH_LOG_ERROR("Failed to delete file '%s': %s", filename, strerror(errno));
+    return false;
+  }
   return true;
 }
 

@@ -63,6 +63,13 @@ char *LCH_FileRead(const char *path, size_t *length);
  */
 bool LCH_FileWrite(const char *path, const char *str);
 
+/**
+ * @brief Delete file.
+ * @param filename File to delte.
+ * @return True on success, otherwise false.
+ */
+bool LCH_FileDelete(const char *filename);
+
 LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
                                 const LCH_List *primary_fields,
                                 const LCH_List *subsidiary_fields);
