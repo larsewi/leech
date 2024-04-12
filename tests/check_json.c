@@ -413,6 +413,47 @@ START_TEST(test_LCH_JsonObjectGetObject) {
 }
 END_TEST
 
+START_TEST(test_LCH_JsonObjectGetNumber) {
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(buffer);
+
+  LCH_Json *const children[] = {
+      LCH_JsonNullCreate(),         LCH_JsonTrueCreate(),
+      LCH_JsonFalseCreate(),        LCH_JsonStringCreate(buffer),
+      LCH_JsonNumberCreate(1337.0), LCH_JsonArrayCreate(),
+      LCH_JsonObjectCreate(),
+  };
+
+  LCH_Json *const parent = LCH_JsonObjectCreate();
+  ck_assert_ptr_nonnull(parent);
+
+  const char *const keys[] = {"null",   "true",  "false", "string",
+                              "number", "array", "object"};
+
+  const size_t num_children = sizeof(children) / sizeof(LCH_Json *);
+  ck_assert_int_eq(num_children, sizeof(keys) / sizeof(char *));
+
+  for (size_t i = 0; i < num_children; i++) {
+    ck_assert_ptr_nonnull(children[i]);
+    const LCH_Buffer *const key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert(LCH_JsonObjectSet(parent, key, children[i]));
+
+    double number = 42.0;
+    if (i == 4) {
+      ck_assert(LCH_JsonObjectGetNumber(parent, key, &number));
+      ck_assert_double_eq(number, 1337.0);
+    } else {
+      ck_assert(!LCH_JsonObjectGetNumber(parent, key, &number));
+      ck_assert_double_eq(number, 42.0);
+    }
+  }
+  ck_assert_ptr_null(
+      LCH_JsonObjectGetObject(parent, LCH_BufferStaticFromString("bogus")));
+
+  LCH_JsonDestroy(parent);
+}
+END_TEST
+
 START_TEST(test_LCH_JsonArrayGetObject) {
   LCH_Buffer *const buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
@@ -937,6 +978,11 @@ Suite *JSONSuite(void) {
   {
     TCase *tc = tcase_create("LCH_JsonObjectGetObject");
     tcase_add_test(tc, test_LCH_JsonObjectGetObject);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_JsonObjectGetNumber");
+    tcase_add_test(tc, test_LCH_JsonObjectGetNumber);
     suite_add_tcase(s, tc);
   }
   {

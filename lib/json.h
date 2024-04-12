@@ -335,6 +335,19 @@ const LCH_Json *LCH_JsonObjectGetObject(const LCH_Json *json,
                                         const LCH_Buffer *key);
 
 /**
+ * @brief Get JSON number from child element in JSON object.
+ * @param json Object to get element from.
+ * @param key Key of element to get.
+ * @param number Pointer to double in which the number should be stored.
+ * @return True on success, otherwise false.
+ * @note In case of failure, the number parameter remains untouched.
+ * @warning This function makes the assumption that the passed JSON element is
+ *          of type object.
+ */
+bool LCH_JsonObjectGetNumber(const LCH_Json *json, const LCH_Buffer *key,
+                             double *number);
+
+/**
  * @brief Get JSON object from child element in JSON array.
  * @param json Array to get element from.
  * @param index Index of element to get.
