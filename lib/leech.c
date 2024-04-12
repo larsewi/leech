@@ -450,7 +450,7 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
-  LCH_Buffer *buffer = LCH_JsonCompose(patch);
+  LCH_Buffer *buffer = LCH_JsonCompose(patch, false);
   LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
@@ -576,7 +576,7 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
     return NULL;
   }
 
-  LCH_Buffer *const buffer = LCH_JsonCompose(patch);
+  LCH_Buffer *const buffer = LCH_JsonCompose(patch, false);
   LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");

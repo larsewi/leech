@@ -41,6 +41,7 @@ AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 
 # Config constants.
 AC_DEFINE([LCH_DEFAULT_MAX_CHAIN_LENGTH], 2048, [Default max chain length used in block garbage collector])
+AC_DEFINE([LCH_JSON_PRETTY_INDENT_SIZE], 2, [Indent size used when composing pretty JSON])
 
 # pkg-check modules.
 PKG_CHECK_MODULES([CHECK], [check])

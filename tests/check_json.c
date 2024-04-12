@@ -757,7 +757,7 @@ START_TEST(test_LCH_JsonComposeString) {
     LCH_Json *const json = LCH_JsonStringCreate(str);
     ck_assert_ptr_nonnull(json);
 
-    LCH_Buffer *const actual = LCH_JsonCompose(json);
+    LCH_Buffer *const actual = LCH_JsonCompose(json, false);
     ck_assert_ptr_nonnull(actual);
 
     ck_assert_str_eq(LCH_BufferData(actual), expected[i]);
@@ -778,7 +778,7 @@ START_TEST(test_LCH_JsonComposeObject) {
     LCH_Json *const json = LCH_JsonObjectCreate();
     ck_assert_ptr_nonnull(json);
 
-    LCH_Buffer *const actual = LCH_JsonCompose(json);
+    LCH_Buffer *const actual = LCH_JsonCompose(json, false);
     ck_assert_ptr_nonnull(json);
 
     ck_assert_str_eq(LCH_BufferData(actual), "{}");
@@ -800,7 +800,7 @@ START_TEST(test_LCH_JsonComposeObject) {
 
     ck_assert(LCH_JsonObjectSet(parent, key, child));
 
-    LCH_Buffer *const actual = LCH_JsonCompose(parent);
+    LCH_Buffer *const actual = LCH_JsonCompose(parent, false);
     ck_assert_ptr_nonnull(parent);
 
     ck_assert_str_eq(LCH_BufferData(actual), "{\"foo\":\"bar\"}");
@@ -822,7 +822,7 @@ START_TEST(test_LCH_JsonComposeObject) {
 
     ck_assert(LCH_JsonObjectSet(parent, key, child));
 
-    LCH_Buffer *const actual = LCH_JsonCompose(parent);
+    LCH_Buffer *const actual = LCH_JsonCompose(parent, false);
     ck_assert_ptr_nonnull(parent);
 
     ck_assert_str_eq(LCH_BufferData(actual), "{\"foo\":\"bar\\\"baz\\\"\"}");
@@ -844,7 +844,7 @@ START_TEST(test_LCH_JsonComposeObject) {
 
     ck_assert(LCH_JsonObjectSet(parent, key, child));
 
-    LCH_Buffer *const actual = LCH_JsonCompose(parent);
+    LCH_Buffer *const actual = LCH_JsonCompose(parent, false);
     ck_assert_ptr_nonnull(parent);
 
     ck_assert_str_eq(LCH_BufferData(actual), "{\"foo\\\"bar\\\"\":\"baz\"}");

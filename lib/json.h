@@ -609,7 +609,7 @@ LCH_Json *LCH_JsonParseFile(const char *filename);
  * @note Unlike other JSON composers, the returned buffer can contain non ASCII
  *       characters.
  */
-LCH_Buffer *LCH_JsonCompose(const LCH_Json *json);
+LCH_Buffer *LCH_JsonCompose(const LCH_Json *json, bool pretty);
 
 /**
  * @brief Compose JSON element into JSON formatted file.
@@ -619,7 +619,8 @@ LCH_Buffer *LCH_JsonCompose(const LCH_Json *json);
  * @note Unlike other JSON composers, the returned buffer can contain non ASCII
  *       characters.
  */
-bool LCH_JsonComposeFile(const LCH_Json *json, const char *filename);
+bool LCH_JsonComposeFile(const LCH_Json *json, const char *filename,
+                         bool pretty);
 
 /****************************************************************************/
 

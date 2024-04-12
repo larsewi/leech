@@ -70,7 +70,7 @@ bool LCH_BlockStore(const char *const work_dir, const LCH_Json *const block) {
   assert(block != NULL);
   assert(work_dir != NULL);
 
-  LCH_Buffer *const json = LCH_JsonCompose(block);
+  LCH_Buffer *const json = LCH_JsonCompose(block, false);
   if (json == NULL) {
     return false;
   }

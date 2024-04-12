@@ -601,7 +601,7 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
     return false;
   }
 
-  return LCH_JsonComposeFile(state, path);
+  return LCH_JsonComposeFile(state, path, false);
 }
 
 static LCH_List *ConcatenateFields(const LCH_List *const left,
