@@ -477,6 +477,29 @@ const LCH_Json *LCH_JsonObjectGetObject(const LCH_Json *const json,
   return child;
 }
 
+bool LCH_JsonObjectGetNumber(const LCH_Json *const json,
+                             const LCH_Buffer *const key,
+                             double *const number) {
+  assert(LCH_JsonIsObject(json));
+
+  const LCH_Json *const child = LCH_JsonObjectGet(json, key);
+  if (child == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonIsNumber(child)) {
+    const char *const type = LCH_JsonGetTypeAsString(child);
+    LCH_LOG_ERROR(
+        "Failed to get value from JSON object with key \"%s\": "
+        "Expected type number, but found type %s.",
+        LCH_BufferData(key), type);
+    return false;
+  }
+
+  *number = LCH_JsonNumberGet(child);
+  return true;
+}
+
 const LCH_Json *LCH_JsonArrayGetObject(const LCH_Json *const json,
                                        const size_t index) {
   assert(json != NULL);

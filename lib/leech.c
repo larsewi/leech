@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <string.h>
 
 #include "block.h"
@@ -14,6 +15,99 @@
 #include "patch.h"
 #include "table.h"
 #include "utils.h"
+
+static bool CollectGarbage(const LCH_Instance *const instance) {
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+  const size_t max_chain_length = LCH_InstaceGetMaxChainLength(instance);
+
+  char *block_id = LCH_HeadGet("HEAD", work_dir);
+  if (block_id == NULL) {
+    free(block_id);
+    return false;
+  }
+
+  // Traverse all the blocks that we want to keep
+  char path[PATH_MAX];
+  for (size_t i = 0; i < max_chain_length; i++) {
+    if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+      return false;
+    }
+
+    if (!LCH_FileExists(path)) {
+      LCH_LOG_DEBUG(
+          "Block with identifier %s does not exist: "
+          "End-of-Chain reached at index %zu",
+          block_id, i);
+      LCH_LOG_VERBOSE("Garbage collector deleted 0 blocks", i);
+      free(block_id);
+      return true;
+    }
+
+    LCH_Json *const block = LCH_BlockLoad(work_dir, block_id);
+    free(block_id);
+    if (block == NULL) {
+      return false;
+    }
+
+    const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+    if (parent_id == NULL) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    block_id = LCH_StringDuplicate(parent_id);
+    LCH_JsonDestroy(block);
+    if (block_id == NULL) {
+      return false;
+    }
+  }
+
+  // Now start deleting blocks
+
+  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    return NULL;
+  }
+
+  size_t i = 0;
+  while (LCH_FileExists(path)) {
+    LCH_Json *const block = LCH_BlockLoad(work_dir, block_id);
+    if (block == NULL) {
+      free(block_id);
+      return false;
+    }
+
+    LCH_LOG_DEBUG("Deleting block with identifier %.7s (path='%s')", block_id,
+                  path);
+    free(block_id);
+    if (!LCH_FileDelete(path)) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+    if (parent_id == NULL) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    block_id = LCH_StringDuplicate(parent_id);
+    LCH_JsonDestroy(block);
+    if (block_id == NULL) {
+      return false;
+    }
+
+    if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+      free(block_id);
+      return false;
+    }
+
+    i += 1;
+  }
+
+  free(block_id);
+  LCH_LOG_VERBOSE("Garbage collector deleted %zu block(s)", i);
+  return true;
+}
 
 static bool Commit(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
@@ -145,12 +239,22 @@ bool LCH_Commit(const char *const work_dir) {
     return false;
   }
 
-  const bool success = Commit(instance);
-  if (!success) {
-    LCH_LOG_ERROR("Failed to commit");
+  if (!Commit(instance)) {
+    LCH_LOG_ERROR("Failed to commit state changes");
+    LCH_InstanceDestroy(instance);
+    return false;
   }
+
+  if (!CollectGarbage(instance)) {
+    LCH_LOG_ERROR(
+        "Failed to collect garbage: "
+        "NB. there may be unreachable blocks");
+    LCH_InstanceDestroy(instance);
+    return false;
+  }
+
   LCH_InstanceDestroy(instance);
-  return success;
+  return true;
 }
 
 static LCH_Json *CreateEmptyBlock(const char *const parent_id) {

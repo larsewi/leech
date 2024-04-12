@@ -28,6 +28,7 @@ struct LCH_Instance {
   size_t major;
   size_t minor;
   size_t patch;
+  size_t max_chain_length;
   LCH_List *tables;
 };
 
@@ -70,12 +71,36 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
     }
 
     const char *const version = LCH_BufferData(value);
+    LCH_LOG_DEBUG("config[\"version\"] = \"%s\"", version);
+
     if (!LCH_ParseVersion(version, &instance->major, &instance->minor,
                           &instance->patch)) {
       LCH_InstanceDestroy(instance);
       LCH_JsonDestroy(config);
       return NULL;
     }
+  }
+
+  {
+    const LCH_Buffer *const key =
+        LCH_BufferStaticFromString("max_chain_length");
+    if (LCH_JsonObjectHasKey(config, key)) {
+      double number;
+      if (!LCH_JsonObjectGetNumber(config, key, &number)) {
+        LCH_InstanceDestroy(instance);
+        LCH_JsonDestroy(config);
+        return NULL;
+      }
+      if (!LCH_DoubleToSize(number, &(instance->max_chain_length))) {
+        LCH_InstanceDestroy(instance);
+        LCH_JsonDestroy(config);
+        return NULL;
+      }
+    } else {
+      instance->max_chain_length = LCH_DEFAULT_MAX_CHAIN_LENGTH;
+    }
+    LCH_LOG_DEBUG("config[\"max_chain_length\"] = \"%zu\"",
+                  instance->max_chain_length);
   }
 
   const LCH_Buffer *const key = LCH_BufferStaticFromString("tables");
@@ -164,4 +189,9 @@ const LCH_List *LCH_InstanceGetTables(const LCH_Instance *const self) {
 const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
   assert(self != NULL);
   return self->work_dir;
+}
+
+size_t LCH_InstaceGetMaxChainLength(const LCH_Instance *instance) {
+  assert(instance != NULL);
+  return instance->max_chain_length;
 }

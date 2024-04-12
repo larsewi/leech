@@ -42,4 +42,6 @@ const LCH_List *LCH_InstanceGetTables(const LCH_Instance *instance);
  */
 const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *instance);
 
+size_t LCH_InstaceGetMaxChainLength(const LCH_Instance *instance);
+
 #endif  // _LEECH_INSTANCE_H

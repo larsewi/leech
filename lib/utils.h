@@ -63,6 +63,13 @@ char *LCH_FileRead(const char *path, size_t *length);
  */
 bool LCH_FileWrite(const char *path, const char *str);
 
+/**
+ * @brief Delete file.
+ * @param filename File to delte.
+ * @return True on success, otherwise false.
+ */
+bool LCH_FileDelete(const char *filename);
+
 LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
                                 const LCH_List *primary_fields,
                                 const LCH_List *subsidiary_fields);
@@ -131,5 +138,14 @@ bool LCH_ListInsertBufferDuplicate(LCH_List *list, size_t index,
 bool LCH_ListAppendBufferDuplicate(LCH_List *list, const LCH_Buffer *buffer);
 
 char *LCH_StringTruncate(const char *str, size_t len, size_t max);
+
+/**
+ * @brief Safily cast double to size_t.
+ * @param number value to cast from
+ * @param size value to cast to
+ * @return True on success, false if value is out of bounds.
+ * @note The size parameter remains untouched on error.
+ */
+bool LCH_DoubleToSize(double number, size_t *size);
 
 #endif  // _LEECH_UTILS
