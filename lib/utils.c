@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <libgen.h>
+#include <math.h>
 #include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -785,4 +786,25 @@ char *LCH_StringTruncate(const char *const str, const size_t len,
   }
 
   return LCH_BufferToString(buffer);
+}
+
+bool LCH_DoubleToSize(const double number, size_t *const size) {
+  assert(size != NULL);
+
+  const char *const msg = "Failed to cast double to size_t";
+  if (isfinite(number) == 0) {
+    LCH_LOG_ERROR("%s: Number is not finite", msg, SIZE_MAX);
+    return false;
+  }
+  if (number > SIZE_MAX) {
+    LCH_LOG_ERROR("%s: Out of bounds for size_t (%g > %zu)", msg, number,
+                  SIZE_MAX);
+    return false;
+  }
+  if (number < 0) {
+    LCH_LOG_ERROR("%s: Out of bound for size_t (%g < 0)", msg, number);
+    return false;
+  }
+  *size = number;
+  return true;
 }

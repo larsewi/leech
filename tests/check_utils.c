@@ -1,4 +1,5 @@
 #include <check.h>
+#include <float.h>
 #include <limits.h>
 
 #include "../lib/definitions.h"
@@ -249,6 +250,50 @@ START_TEST(test_LCH_StringTruncate) {
 }
 END_TEST
 
+START_TEST(test_LCH_DoubleToSize) {
+  {
+    size_t size = 1337;
+    ck_assert(LCH_DoubleToSize(0.0, &size));
+    ck_assert_int_eq(size, 0);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(LCH_DoubleToSize(0.0001, &size));
+    ck_assert_int_eq(size, 0);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(LCH_DoubleToSize(0.9999, &size));
+    ck_assert_int_eq(size, 0);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(!LCH_DoubleToSize(DBL_MAX, &size));
+    ck_assert_int_eq(size, 1337);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(!LCH_DoubleToSize(-1.0, &size));
+    ck_assert_int_eq(size, 1337);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(!LCH_DoubleToSize(0.0 / 0.0, &size));
+    ck_assert_int_eq(size, 1337);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(!LCH_DoubleToSize(1.0 / 0.0, &size));
+    ck_assert_int_eq(size, 1337);
+  }
+  {
+    size_t size = 1337;
+    ck_assert(!LCH_DoubleToSize(-1.0 / 0.0, &size));
+    ck_assert_int_eq(size, 1337);
+  }
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -309,6 +354,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_StringTruncate");
     tcase_add_test(tc, test_LCH_StringTruncate);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_DoubleToSize");
+    tcase_add_test(tc, test_LCH_DoubleToSize);
     suite_add_tcase(s, tc);
   }
   return s;

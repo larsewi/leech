@@ -132,4 +132,13 @@ bool LCH_ListAppendBufferDuplicate(LCH_List *list, const LCH_Buffer *buffer);
 
 char *LCH_StringTruncate(const char *str, size_t len, size_t max);
 
+/**
+ * @brief Safily cast double to size_t.
+ * @param number value to cast from
+ * @param size value to cast to
+ * @return True on success, false if value is out of bounds.
+ * @note The size parameter remains untouched on error.
+ */
+bool LCH_DoubleToSize(double number, size_t *size);
+
 #endif  // _LEECH_UTILS
