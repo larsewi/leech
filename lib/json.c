@@ -1676,27 +1676,37 @@ LCH_Json *LCH_JsonParseFile(const char *const filename) {
 
 /****************************************************************************/
 
-static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer);
+static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer,
+                    bool pretty, size_t indent);
 
 static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NULL);
-  return LCH_BufferPrintFormat(buffer, "null");
+  if (!LCH_BufferPrintFormat(buffer, "null")) {
+    return false;
+  }
+  return true;
 }
 
 static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_TRUE);
-  return LCH_BufferPrintFormat(buffer, "true");
+  if (!LCH_BufferPrintFormat(buffer, "true")) {
+    return false;
+  }
+  return true;
 }
 
 static bool ComposeFalse(const LCH_Json *const json, LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_FALSE);
-  return LCH_BufferPrintFormat(buffer, "false");
+  if (!LCH_BufferPrintFormat(buffer, "false")) {
+    return false;
+  }
+  return true;
 }
 
 static bool StringComposeString(const LCH_Buffer *const str,
@@ -1769,10 +1779,15 @@ static bool ComposeNumber(const LCH_Json *const json,
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NUMBER);
-  return LCH_BufferPrintFormat(buffer, "%f", json->number);
+
+  if (!LCH_BufferPrintFormat(buffer, "%f", json->number)) {
+    return false;
+  }
+  return true;
 }
 
-static bool ComposeArray(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeArray(const LCH_Json *const json, LCH_Buffer *const buffer,
+                         const bool pretty, const size_t indent) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_ARRAY);
@@ -1790,21 +1805,34 @@ static bool ComposeArray(const LCH_Json *const json, LCH_Buffer *const buffer) {
       }
     }
 
+    if (pretty) {
+      if (!LCH_BufferPrintFormat(buffer, "\n%*s",
+                                 indent + LCH_JSON_PRETTY_INDENT_SIZE, "")) {
+        return false;
+      }
+    }
+
     const LCH_Json *const element = LCH_JsonArrayGet(json, i);
-    if (!Compose(element, buffer)) {
+    if (!Compose(element, buffer, pretty,
+                 indent + LCH_JSON_PRETTY_INDENT_SIZE)) {
       return false;
     }
   }
 
-  if (!LCH_BufferAppend(buffer, ']')) {
-    return false;
+  if (pretty) {
+    if (!LCH_BufferPrintFormat(buffer, "\n%*s]", indent, "")) {
+      return false;
+    }
+  } else {
+    if (!LCH_BufferAppend(buffer, ']')) {
+      return false;
+    }
   }
-
   return true;
 }
 
-static bool ComposeObject(const LCH_Json *const json,
-                          LCH_Buffer *const buffer) {
+static bool ComposeObject(const LCH_Json *const json, LCH_Buffer *const buffer,
+                          const bool pretty, const size_t indent) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_OBJECT);
@@ -1828,33 +1856,55 @@ static bool ComposeObject(const LCH_Json *const json,
       }
     }
 
+    if (pretty) {
+      if (!LCH_BufferPrintFormat(buffer, "\n%*s",
+                                 indent + LCH_JSON_PRETTY_INDENT_SIZE, "")) {
+        LCH_ListDestroy(keys);
+        return false;
+      }
+    }
+
     const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
     if (!StringComposeString(key, buffer)) {
       LCH_ListDestroy(keys);
       return false;
     }
 
-    if (!LCH_BufferAppend(buffer, ':')) {
-      LCH_ListDestroy(keys);
-      return false;
+    if (pretty) {
+      if (!LCH_BufferPrintFormat(buffer, ": ")) {
+        LCH_ListDestroy(keys);
+        return false;
+      }
+    } else {
+      if (!LCH_BufferAppend(buffer, ':')) {
+        LCH_ListDestroy(keys);
+        return false;
+      }
     }
 
     const LCH_Json *const element = LCH_JsonObjectGet(json, key);
-    if (!Compose(element, buffer)) {
+    if (!Compose(element, buffer, pretty,
+                 indent + LCH_JSON_PRETTY_INDENT_SIZE)) {
       LCH_ListDestroy(keys);
       return false;
     }
   }
   LCH_ListDestroy(keys);
 
-  if (!LCH_BufferAppend(buffer, '}')) {
-    return false;
+  if (pretty) {
+    if (!LCH_BufferPrintFormat(buffer, "\n%*s}", indent, "")) {
+      return false;
+    }
+  } else {
+    if (!LCH_BufferAppend(buffer, '}')) {
+      return false;
+    }
   }
-
   return true;
 }
 
-static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer,
+                    const bool pretty, const size_t indent) {
   assert(json != NULL);
   assert(buffer != NULL);
 
@@ -1876,17 +1926,17 @@ static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer) {
       return ComposeNumber(json, buffer);
 
     case LCH_JSON_TYPE_ARRAY:
-      return ComposeArray(json, buffer);
+      return ComposeArray(json, buffer, pretty, indent);
 
     case LCH_JSON_TYPE_OBJECT:
-      return ComposeObject(json, buffer);
+      return ComposeObject(json, buffer, pretty, indent);
 
     default:
       abort();  // SHOULD NEVER EVER HAPPEN!
   }
 }
 
-LCH_Buffer *LCH_JsonCompose(const LCH_Json *const json) {
+LCH_Buffer *LCH_JsonCompose(const LCH_Json *const json, const bool pretty) {
   assert(json != NULL);
 
   LCH_Buffer *const buffer = LCH_BufferCreate();
@@ -1894,17 +1944,21 @@ LCH_Buffer *LCH_JsonCompose(const LCH_Json *const json) {
     return NULL;
   }
 
-  if (!Compose(json, buffer)) {
+  if (!Compose(json, buffer, pretty, 0)) {
     LCH_BufferDestroy(buffer);
     return NULL;
   }
 
+  if (pretty && !LCH_BufferAppend(buffer, '\n')) {
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
   return buffer;
 }
 
-bool LCH_JsonComposeFile(const LCH_Json *const json,
-                         const char *const filename) {
-  LCH_Buffer *const buffer = LCH_JsonCompose(json);
+bool LCH_JsonComposeFile(const LCH_Json *const json, const char *const filename,
+                         const bool pretty) {
+  LCH_Buffer *const buffer = LCH_JsonCompose(json, pretty);
   if (buffer == NULL) {
     return false;
   }

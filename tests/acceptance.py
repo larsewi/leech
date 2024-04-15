@@ -16,6 +16,7 @@ PSQL_PARAMS = "dbname=leech"
 
 LEECH_CONFIG = {
     "version": "0.1.0",
+    "pretty_print": True,
     "tables": {
         "CLD": {
             "primary_fields": ["name"],

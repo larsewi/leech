@@ -593,7 +593,7 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *const table_info,
 }
 
 bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
-                            const char *const work_dir,
+                            const char *const work_dir, const bool pretty_print,
                             const LCH_Json *const state) {
   char path[PATH_MAX];
   if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
@@ -601,7 +601,7 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
     return false;
   }
 
-  return LCH_JsonComposeFile(state, path);
+  return LCH_JsonComposeFile(state, path, pretty_print);
 }
 
 static LCH_List *ConcatenateFields(const LCH_List *const left,

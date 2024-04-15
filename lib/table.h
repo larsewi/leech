@@ -21,7 +21,8 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,
                                     const char *work_dir);
 
 bool LCH_TableStoreNewState(const LCH_TableInfo *table_info,
-                            const char *work_dir, const LCH_Json *new_state);
+                            const char *work_dir, bool pretty_print,
+                            const LCH_Json *new_state);
 
 bool LCH_TablePatch(const LCH_TableInfo *table_info, const char *type,
                     const char *field, const char *value,

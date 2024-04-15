@@ -18,7 +18,7 @@
 
 static bool CollectGarbage(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const size_t max_chain_length = LCH_InstaceGetMaxChainLength(instance);
+  const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);
 
   char *block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
@@ -111,7 +111,9 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
 
 static bool Commit(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+  const bool pretty_print = LCH_InstancePrettyPrint(instance);
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
+
   size_t n_tables = LCH_ListLength(table_defs);
   size_t tot_inserts = 0, tot_deletes = 0, tot_updates = 0;
 
@@ -184,7 +186,8 @@ static bool Commit(const LCH_Instance *const instance) {
     /************************************************************************/
 
     if (num_inserts > 0 || num_deletes > 0 || num_updates > 0) {
-      if (!LCH_TableStoreNewState(table_def, work_dir, new_state)) {
+      if (!LCH_TableStoreNewState(table_def, work_dir, pretty_print,
+                                  new_state)) {
         LCH_LOG_ERROR("Failed to store new state for table '%s'.", table_id);
         LCH_JsonDestroy(new_state);
         LCH_JsonDestroy(deltas);
@@ -215,7 +218,7 @@ static bool Commit(const LCH_Instance *const instance) {
     return false;
   }
 
-  if (!LCH_BlockStore(work_dir, block)) {
+  if (!LCH_BlockStore(instance, block)) {
     LCH_LOG_ERROR("Failed to store block.");
     LCH_JsonDestroy(block);
     return false;
@@ -408,6 +411,8 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
+  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+
   char *const block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
     LCH_LOG_ERROR(
@@ -450,7 +455,7 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     return NULL;
   }
 
-  LCH_Buffer *buffer = LCH_JsonCompose(patch);
+  LCH_Buffer *buffer = LCH_JsonCompose(patch, pretty_print);
   LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
@@ -470,6 +475,8 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");
     return NULL;
   }
+
+  const bool pretty_print = LCH_InstancePrettyPrint(instance);
 
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
   size_t n_tables = LCH_ListLength(table_defs);
@@ -576,7 +583,7 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
     return NULL;
   }
 
-  LCH_Buffer *const buffer = LCH_JsonCompose(patch);
+  LCH_Buffer *const buffer = LCH_JsonCompose(patch, pretty_print);
   LCH_JsonDestroy(patch);
   if (buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
