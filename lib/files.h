@@ -8,11 +8,11 @@ bool LCH_FileSize(FILE *file, size_t *size);
 
 bool LCH_FileExists(const char *path);
 
-bool LCH_IsRegularFile(const char *path);
+bool LCH_FileIsRegular(const char *path);
 
-bool LCH_IsDirectory(const char *path);
+bool LCH_FileIsDirectory(const char *path);
 
-bool LCH_PathJoin(char *path, size_t path_max, size_t n_items, ...);
+bool LCH_FilePathJoin(char *path, size_t path_max, size_t n_items, ...);
 
 /**
  * @brief Delete file.
@@ -21,6 +21,6 @@ bool LCH_PathJoin(char *path, size_t path_max, size_t n_items, ...);
  */
 bool LCH_FileDelete(const char *filename);
 
-bool LCH_CreateParentDirectories(const char *filename);
+bool LCH_FileCreateParentDirectories(const char *filename);
 
 #endif  // _LEECH_FILES_H

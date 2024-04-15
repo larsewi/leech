@@ -52,8 +52,8 @@ END_TEST
 
 START_TEST(test_LCH_PathJoin) {
   char path[PATH_MAX];
-  ck_assert(
-      LCH_PathJoin(path, sizeof(path), 3, ".leech", "snapshots", "beatles"));
+  ck_assert(LCH_FilePathJoin(path, sizeof(path), 3, ".leech", "snapshots",
+                             "beatles"));
   ck_assert_str_eq(path, ".leech/snapshots/beatles");
 }
 END_TEST

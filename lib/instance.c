@@ -44,7 +44,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   assert(work_dir != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, PATH_MAX, 2, work_dir, "leech.json")) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, "leech.json")) {
     return NULL;
   }
 

@@ -579,8 +579,8 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *const table_info,
   assert(table_info->identifier != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
-                    table_info->identifier)) {
+  if (!LCH_FilePathJoin(path, sizeof(path), 3, work_dir, "snapshot",
+                        table_info->identifier)) {
     return NULL;
   }
 
@@ -597,8 +597,8 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
                             const char *const work_dir, const bool pretty_print,
                             const LCH_Json *const state) {
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
-                    self->identifier)) {
+  if (!LCH_FilePathJoin(path, sizeof(path), 3, work_dir, "snapshot",
+                        self->identifier)) {
     return false;
   }
 

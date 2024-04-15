@@ -434,7 +434,7 @@ char *LCH_StringFormat(const char *const format, ...) {
   return str;
 }
 
-bool LCH_CreateParentDirectories(const char *const filename) {
+bool LCH_FileCreateParentDirectories(const char *const filename) {
   assert(filename != NULL);
 
   char fcopy[strlen(filename) + 1];

@@ -54,7 +54,7 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
   assert(primary_columns != NULL);
   assert(subsidiary_columns != NULL);
 
-  if (LCH_IsRegularFile(conn->filename)) {
+  if (LCH_FileIsRegular(conn->filename)) {
     LCH_LOG_DEBUG("Skipped creating CSV file '%s': Table \"%s\" already exists",
                   conn->filename, table_name);
     return true;

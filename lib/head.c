@@ -11,7 +11,7 @@ char *LCH_HeadGet(const char *const name, const char *const work_dir) {
   assert(work_dir != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, PATH_MAX, 2, work_dir, name)) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, name)) {
     return NULL;
   }
 
@@ -49,7 +49,7 @@ bool LCH_HeadSet(const char *const name, const char *const work_dir,
   assert(block_id != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, PATH_MAX, 2, work_dir, name)) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, name)) {
     return false;
   }
 

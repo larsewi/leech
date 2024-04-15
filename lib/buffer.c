@@ -301,7 +301,7 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
   assert(buffer != NULL);
   assert(filename != NULL);
 
-  if (!LCH_CreateParentDirectories(filename)) {
+  if (!LCH_FileCreateParentDirectories(filename)) {
     return false;
   }
 

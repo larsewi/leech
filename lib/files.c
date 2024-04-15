@@ -45,7 +45,7 @@ bool LCH_FileExists(const char *const path) {
 
 /******************************************************************************/
 
-bool LCH_IsRegularFile(const char *const path) {
+bool LCH_FileIsRegular(const char *const path) {
   struct stat sb;
   memset(&sb, 0, sizeof(struct stat));
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
@@ -53,7 +53,7 @@ bool LCH_IsRegularFile(const char *const path) {
 
 /******************************************************************************/
 
-bool LCH_IsDirectory(const char *const path) {
+bool LCH_FileIsDirectory(const char *const path) {
   struct stat sb;
   memset(&sb, 0, sizeof(struct stat));
   return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
@@ -61,8 +61,8 @@ bool LCH_IsDirectory(const char *const path) {
 
 /******************************************************************************/
 
-bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
-                  ...) {
+bool LCH_FilePathJoin(char *path, const size_t path_max, const size_t n_items,
+                      ...) {
   assert(path_max >= 1);
 
   va_list ap;
