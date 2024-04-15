@@ -1,5 +1,5 @@
-#ifndef _LEECH_UTILS
-#define _LEECH_UTILS
+#ifndef _LEECH_UTILS_H
+#define _LEECH_UTILS_H
 
 #include <stdio.h>
 
@@ -148,4 +148,4 @@ char *LCH_StringTruncate(const char *str, size_t len, size_t max);
  */
 bool LCH_DoubleToSize(double number, size_t *size);
 
-#endif  // _LEECH_UTILS
+#endif  // _LEECH_UTILS_H
