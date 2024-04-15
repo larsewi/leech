@@ -1,7 +1,7 @@
 #include <check.h>
-#include <stdbool.h>
 
-#include "../lib/json.c"
+#include "../lib/json.h"
+#include "../lib/string_lib.h"
 
 START_TEST(test_LCH_JsonXXXXXCreate) {
   LCH_Buffer *const buffer = LCH_BufferCreate();
@@ -691,7 +691,6 @@ START_TEST(test_LCH_JsonParse) {
         "mount_units,mount_unit_show_items[dev-hugepages][LimitSIGPENDINGSoft]["
         "0]\":\"0,LimitSIGPENDINGSoft,\\\"source=function,function="
         "buildlinearray\\\"\"}";
-    LCH_LOG_WARNING(str);
     LCH_Json *const json = LCH_JsonParse(str, strlen(str));
     ck_assert_ptr_nonnull(json);
     ck_assert(LCH_JsonIsObject(json));
@@ -701,7 +700,6 @@ START_TEST(test_LCH_JsonParse) {
     const char *const str =
         "{\"default,mount_units,mount_unit_show_items[run-snapd-ns][UID][1]\":"
         "\"0,[not set],\\\"source=function,function=buildlinearray\\\"\"}";
-    LCH_LOG_WARNING(str);
     LCH_Json *const json = LCH_JsonParse(str, strlen(str));
     ck_assert_ptr_nonnull(json);
     ck_assert(LCH_JsonIsObject(json));
@@ -962,19 +960,19 @@ START_TEST(test_LCH_JsonCompose) {
       "{\n"
       "  \"version\": \"" PACKAGE_VERSION
       "\",\n"
+      "  \"max_chain_length\": 64.000000,\n"
       "  \"compression\": false,\n"
       "  \"tables\": {\n"
       "    \"BTL\": {\n"
-      "      \"subsidiary_fields\": null,\n"
       "      \"primary_fields\": [\n"
       "        \"first_name\",\n"
       "        \"last_name\",\n"
       "        \"born\"\n"
-      "      ]\n"
+      "      ],\n"
+      "      \"subsidiary_fields\": null\n"
       "    }\n"
       "  },\n"
-      "  \"pretty_json\": true,\n"
-      "  \"max_chain_length\": 64.000000\n"
+      "  \"pretty_json\": true\n"
       "}\n";
 
   ck_assert_str_eq(LCH_BufferData(actual), expected);

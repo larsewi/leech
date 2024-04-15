@@ -1,8 +1,6 @@
 #include <check.h>
 #include <string.h>
 
-#include "../lib/definitions.h"
-#include "../lib/leech.h"
 #include "../lib/list.h"
 
 START_TEST(test_LCH_List) {

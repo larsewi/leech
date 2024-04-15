@@ -2,10 +2,7 @@
 #include <limits.h>
 
 #include "../lib/csv.h"
-#include "../lib/definitions.h"
 #include "../lib/delta.c"
-#include "../lib/leech.h"
-#include "../lib/table.h"
 #include "../lib/utils.h"
 
 START_TEST(test_LCH_Delta) {

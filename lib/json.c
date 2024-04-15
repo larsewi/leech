@@ -3,10 +3,12 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
 
+#include "dict.h"
 #include "logger.h"
-#include "utils.h"
+#include "string_lib.h"
 
 struct LCH_Json {
   LCH_JsonType type;

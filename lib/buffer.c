@@ -9,10 +9,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "files.h"
 #include "logger.h"
-#include "utils.h"
-
-#define INITIAL_CAPACITY 1028
 
 struct LCH_Buffer {
   size_t length;
@@ -60,7 +58,7 @@ static LCH_Buffer *LCH_BufferCreateWithCapacity(size_t capacity) {
 }
 
 LCH_Buffer *LCH_BufferCreate(void) {
-  return LCH_BufferCreateWithCapacity(INITIAL_CAPACITY);
+  return LCH_BufferCreateWithCapacity(LCH_BUFFER_SIZE);
 }
 
 bool LCH_BufferAppend(LCH_Buffer *const self, const char byte) {
@@ -300,9 +298,7 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
   assert(buffer != NULL);
   assert(filename != NULL);
 
-  if (!LCH_CreateParentDirectories(filename)) {
-    LCH_LOG_ERROR("Failed to create parent directories for file '%s'",
-                  filename);
+  if (!LCH_FileCreateParentDirectories(filename)) {
     return false;
   }
 

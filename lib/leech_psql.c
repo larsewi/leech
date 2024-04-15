@@ -1,15 +1,13 @@
 #include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "buffer.h"
-#include "definitions.h"
 #include "libpq-fe.h"
+#include "list.h"
 #include "logger.h"
-#include "utils.h"
 
 #ifdef __cplusplus
 extern "C" {

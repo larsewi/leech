@@ -3,23 +3,12 @@
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
-#include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
-#include "block.h"
-#include "buffer.h"
-#include "csv.h"
-#include "definitions.h"
-#include "delta.h"
-#include "dict.h"
-#include "head.h"
-#include "leech.h"
+#include "files.h"
 #include "list.h"
+#include "logger.h"
+#include "string_lib.h"
 #include "table.h"
 #include "utils.h"
 
@@ -43,7 +32,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   assert(work_dir != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, PATH_MAX, 2, work_dir, "leech.json")) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, "leech.json")) {
     return NULL;
   }
 
@@ -74,8 +63,8 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
     const char *const version = LCH_BufferData(value);
     LCH_LOG_DEBUG("config[\"version\"] = \"%s\"", version);
 
-    if (!LCH_ParseVersion(version, &instance->major, &instance->minor,
-                          &instance->patch)) {
+    if (!LCH_StringParseVersion(version, &instance->major, &instance->minor,
+                                &instance->patch)) {
       LCH_InstanceDestroy(instance);
       LCH_JsonDestroy(config);
       return NULL;

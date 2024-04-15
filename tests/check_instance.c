@@ -1,7 +1,6 @@
 #include <check.h>
 
-#include "../lib/instance.c"
-#include "../lib/list.h"
+#include "../lib/instance.h"
 
 START_TEST(test_LCH_InstanceLoad) { ck_assert(true); }
 END_TEST

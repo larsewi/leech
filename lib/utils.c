@@ -1,288 +1,14 @@
 #include "utils.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
-#include <libgen.h>
 #include <math.h>
-#include <stdarg.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include "buffer.h"
 #include "csv.h"
-#include "definitions.h"
 #include "list.h"
+#include "logger.h"
 #include "sha1.h"
-
-char *LCH_StringDuplicate(const char *const str) {
-  if (str == NULL) {
-    return NULL;
-  }
-
-  char *const dup = strdup(str);
-  if (dup == NULL) {
-    LCH_LOG_ERROR("strdup(3): Failed to allocate memory: %s", strerror(errno));
-    return NULL;
-  }
-  return dup;
-}
-
-void *LCH_Allocate(const size_t size) {
-  void *ptr = malloc(size);
-  if (ptr == NULL) {
-    LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
-    return NULL;
-  }
-  ptr = memset(ptr, 0, size);
-  return ptr;
-}
-
-bool LCH_StringEqual(const char *const str1, const char *const str2) {
-  assert(str1 != NULL);
-  assert(str2 != NULL);
-  return strcmp(str1, str2) == 0;
-}
-
-/******************************************************************************/
-
-LCH_List *LCH_StringSplit(const char *str, const char *del) {
-  assert(str != NULL);
-  assert(del != NULL);
-
-  LCH_List *const list = LCH_ListCreate();
-
-  const char *start = str;
-  const char *end = strpbrk(str, del);
-
-  while (end != NULL) {
-    char *tmp = strndup(start, end - start);
-    if (tmp == NULL) {
-      LCH_LOG_ERROR("strndup(): Failed to allocate memory: %s",
-                    strerror(errno));
-      return NULL;
-    }
-    LCH_ListAppend(list, tmp, free);
-    start = end + 1;
-    end = strpbrk(start, del);
-  }
-
-  char *tmp = LCH_StringDuplicate(start);
-  if (tmp == NULL) {
-    return NULL;
-  }
-  LCH_ListAppend(list, tmp, free);
-  return list;
-}
-
-/******************************************************************************/
-
-char *LCH_StringJoin(const LCH_List *const list, const char *const del) {
-  LCH_Buffer *const buffer = LCH_BufferCreate();
-
-  const size_t len = LCH_ListLength(list);
-  for (size_t i = 0; i < len; i++) {
-    if (i > 0) {
-      if (!LCH_BufferPrintFormat(buffer, "%s", del)) {
-        LCH_BufferDestroy(buffer);
-        return NULL;
-      }
-    }
-
-    const char *const str = (const char *)LCH_ListGet(list, i);
-    if (!LCH_BufferPrintFormat(buffer, "%s", str)) {
-      LCH_BufferDestroy(buffer);
-      return NULL;
-    }
-  }
-
-  char *const result = LCH_BufferToString(buffer);
-  return result;
-}
-
-/******************************************************************************/
-
-bool LCH_StringStartsWith(const char *const self, const char *const substr) {
-  assert(self != NULL);
-  assert(substr != NULL);
-
-  size_t length = strlen(substr);
-  for (size_t i = 0; i < length; i++) {
-    if (self[i] != substr[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/******************************************************************************/
-
-char *LCH_StringStrip(char *str, const char *charset) {
-  assert(str != NULL);
-
-  size_t start = 0, end = 0, cursor = 0;
-  while (str[cursor] != '\0') {
-    if (strchr(charset, str[cursor]) != NULL) {
-      if (start == cursor) {
-        ++start;
-      }
-    } else {
-      end = cursor + 1;
-    }
-    ++cursor;
-  }
-
-  str = (char *)memmove(str, (str + start), end - start);
-  str[end - start] = '\0';
-  return str;
-}
-
-/******************************************************************************/
-
-bool LCH_FileSize(FILE *file, size_t *size) {
-  if (fseek(file, 0, SEEK_END) != 0) {
-    LCH_LOG_ERROR("Failed to seek to end of file: %s", strerror(errno));
-    return false;
-  }
-
-  long pos = ftell(file);
-  if (pos < 0) {
-    LCH_LOG_ERROR("Failed to obtain the current file position indicator: %s",
-                  strerror(errno));
-    return false;
-  }
-  *size = (size_t)pos;
-
-  if (fseek(file, 0, SEEK_SET) != 0) {
-    LCH_LOG_ERROR("Failed to seek to start of file: %s", strerror(errno));
-    return false;
-  }
-
-  return true;
-}
-
-/******************************************************************************/
-
-bool LCH_FileExists(const char *const path) {
-  struct stat sb;
-  memset(&sb, 0, sizeof(struct stat));
-  return stat(path, &sb) == 0;
-}
-
-/******************************************************************************/
-
-bool LCH_IsRegularFile(const char *const path) {
-  struct stat sb;
-  memset(&sb, 0, sizeof(struct stat));
-  return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
-}
-
-/******************************************************************************/
-
-bool LCH_IsDirectory(const char *const path) {
-  struct stat sb;
-  memset(&sb, 0, sizeof(struct stat));
-  return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
-}
-
-/******************************************************************************/
-
-bool LCH_PathJoin(char *path, const size_t path_max, const size_t n_items,
-                  ...) {
-  assert(path_max >= 1);
-
-  va_list ap;
-  va_start(ap, n_items);
-
-  size_t used = 0;
-  bool truncated = false;
-  for (size_t i = 0; i < n_items; i++) {
-    if (i > 0) {
-      if (path_max - used < 2) {
-        truncated = true;
-        break;
-      }
-      path[used++] = LCH_PATH_SEP;
-    }
-
-    char *const sub = va_arg(ap, char *);
-    const size_t sub_len = strlen(sub);
-    for (size_t j = 0; j < sub_len; j++) {
-      if (path_max - used < 2) {
-        truncated = true;
-        break;
-      }
-      path[used++] = sub[j];
-    }
-  }
-
-  va_end(ap);
-  path[used] = '\0';
-
-  if (truncated) {
-    LCH_LOG_ERROR("Failed to join paths: Truncation error.");
-    return false;
-  }
-  return true;
-}
-
-/******************************************************************************/
-
-char *LCH_FileRead(const char *const path, size_t *const length) {
-  LCH_Buffer *const buffer = LCH_BufferCreate();
-  if (buffer == NULL) {
-    return NULL;
-  }
-
-  if (!LCH_BufferReadFile(buffer, path)) {
-    LCH_BufferDestroy(buffer);
-    return NULL;
-  }
-
-  if (length != NULL) {
-    *length = LCH_BufferLength(buffer);
-  }
-
-  char *str = LCH_BufferToString(buffer);
-  assert(str != NULL);
-  return str;
-}
-
-/******************************************************************************/
-
-bool LCH_FileWrite(const char *const path, const char *const str) {
-  if (!LCH_CreateParentDirectories(path)) {
-    LCH_LOG_ERROR("Failed to create parent directories for file '%s'", path);
-    return false;
-  }
-
-  FILE *file = fopen(path, "w");
-  if (file == NULL) {
-    LCH_LOG_ERROR("Failed to open file '%s' for writing: %s", path,
-                  strerror(errno));
-    return false;
-  }
-
-  if (fputs(str, file) == EOF) {
-    LCH_LOG_ERROR("Failed to write to file '%s'.", path);
-    fclose(file);
-    return false;
-  }
-
-  fclose(file);
-  return true;
-}
-
-/******************************************************************************/
-
-bool LCH_FileDelete(const char *const filename) {
-  if (unlink(filename) != 0) {
-    LCH_LOG_ERROR("Failed to delete file '%s': %s", filename, strerror(errno));
-    return false;
-  }
-  return true;
-}
 
 /******************************************************************************/
 
@@ -313,6 +39,8 @@ static bool IndicesOfFieldsInHeader(size_t *const indices,
   return true;
 }
 
+/******************************************************************************/
+
 static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
                                          const size_t num_indices,
                                          const LCH_List *const record) {
@@ -334,6 +62,8 @@ static LCH_List *FieldsInRecordAtIndices(const size_t *const indices,
 
   return fields;
 }
+
+/******************************************************************************/
 
 LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
                                 const LCH_List *const primary_fields,
@@ -420,6 +150,8 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *const table,
   return object;
 }
 
+/******************************************************************************/
+
 bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
                        LCH_Buffer *const digest_hex) {
   SHA1Context ctx;
@@ -460,296 +192,7 @@ bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
   return true;
 }
 
-bool LCH_ParseNumber(const char *const str, long *const number) {
-  assert(str != NULL);
-  assert(number != NULL);
-
-  char *endptr;
-  errno = 0;  // To distinguish success/failure after call
-  const long value = strtol(str, &endptr, 10);
-
-  if (errno != 0) {
-    LCH_LOG_ERROR("Failed to parse number '%s': %s", str, strerror(errno));
-    return false;
-  }
-
-  if (endptr == str) {
-    LCH_LOG_ERROR("Failed to parse number '%s': No digits were found", str);
-    return false;
-  }
-
-  if (*endptr != '\0') {
-    LCH_LOG_WARNING(
-        "Found trailing characters '%s' after parsing number '%ld' from string "
-        "'%s'",
-        endptr, value, str);
-  }
-
-  *number = value;
-  return true;
-}
-
-bool LCH_ParseVersion(const char *const str, size_t *const v_major,
-                      size_t *const v_minor, size_t *const v_patch) {
-  assert(str != NULL);
-  assert(v_major != NULL);
-  assert(v_minor != NULL);
-  assert(v_patch != NULL);
-
-  LCH_List *const list = LCH_StringSplit(str, ".");
-  const size_t length = LCH_ListLength(list);
-
-  static const char *const error_messages[] = {
-      "Missing major version number",
-      "Missing minor version number",
-      "Missing patch version number",
-      "Too many version numbers",
-  };
-  if (length < 3 || length > 3) {
-    LCH_LOG_ERROR("Failed to parse version '%s': %s",
-                  error_messages[LCH_MIN(length, 3)]);
-    LCH_ListDestroy(list);
-    return false;
-  }
-
-  long val;
-  const char *sub = (char *)LCH_ListGet(list, 0);
-  if (!LCH_ParseNumber(sub, &val)) {
-    LCH_ListDestroy(list);
-    return false;
-  }
-  if (val < 0) {
-    LCH_LOG_ERROR("Failed to parse version '%s': Bad major version number %ld",
-                  str, val);
-    LCH_ListDestroy(list);
-    return false;
-  }
-  *v_major = (size_t)val;
-
-  sub = (char *)LCH_ListGet(list, 1);
-  if (!LCH_ParseNumber(sub, &val)) {
-    LCH_ListDestroy(list);
-    return false;
-  }
-  if (val < 0) {
-    LCH_LOG_ERROR("Failed to parse version '%s': Bad major version number %ld",
-                  str, val);
-    LCH_ListDestroy(list);
-    return false;
-  }
-  *v_minor = (size_t)val;
-
-  sub = (char *)LCH_ListGet(list, 2);
-  if (!LCH_ParseNumber(sub, &val)) {
-    LCH_ListDestroy(list);
-    return false;
-  }
-  if (val < 0) {
-    LCH_LOG_ERROR("Failed to parse version '%s': Bad major version number %ld",
-                  str, val);
-    LCH_ListDestroy(list);
-    return false;
-  }
-
-  LCH_ListDestroy(list);
-  *v_patch = (size_t)val;
-  return true;
-}
-
-char *LCH_StringFormat(const char *const format, ...) {
-  assert(format != NULL);
-
-  va_list ap;
-  va_start(ap, format);
-  const int length = vsnprintf(NULL, 0, format, ap);
-  assert(length >= 0);
-  va_end(ap);
-
-  char *const str = (char *)malloc((size_t)length + 1);
-  if (str == NULL) {
-    LCH_LOG_ERROR("malloc(3): Failed to allocate memory: %s", strerror(errno));
-    return NULL;
-  }
-
-  va_start(ap, format);
-  const int ret = vsnprintf(str, (size_t)length + 1, format, ap);
-  LCH_UNUSED(ret);
-  va_end(ap);
-  assert(ret == length);
-
-  return str;
-}
-
-void LCH_StringArrayDestroy(void *const _str_array) {
-  char **const str_array = (char **)_str_array;
-  for (size_t i = 0; str_array[i] != NULL; i++) {
-    free(str_array[i]);
-  }
-  free(str_array);
-}
-
-size_t LCH_StringArrayLength(const char *const *const str_array) {
-  assert(str_array != NULL);
-
-  size_t length = 0;
-  while (str_array[length] != NULL) {
-    length += 1;
-  }
-  return length;
-}
-
-void LCH_StringArrayTableDestroy(void *const _table) {
-  char ***const table = (char ***)_table;
-  for (size_t i = 0; table[i] != NULL; i++) {
-    LCH_StringArrayDestroy(table[i]);
-  }
-  free(table);
-}
-
-char **LCH_RecordToStringArray(const LCH_List *const list) {
-  assert(list != NULL);
-
-  const size_t length = LCH_ListLength(list);
-  char **const str_array = (char **)calloc(length + 1, sizeof(char *));
-  if (str_array == NULL) {
-    LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s", strerror(errno));
-    return NULL;
-  }
-
-  for (size_t i = 0; i < length; i++) {
-    const LCH_Buffer *const buffer = (LCH_Buffer *)LCH_ListGet(list, i);
-
-    const size_t length = LCH_BufferLength(buffer);
-    str_array[i] = (char *)calloc(length + 1, sizeof(char));
-    if (str_array[i] == NULL) {
-      LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s",
-                    strerror(errno));
-      LCH_StringArrayDestroy(str_array);
-      return NULL;
-    }
-
-    const char *const data = LCH_BufferData(buffer);
-    memcpy(str_array[i], data, length);
-  }
-
-  return str_array;
-}
-
-char ***LCH_TableToStringArrayTable(const LCH_List *const table) {
-  assert(table != NULL);
-
-  const size_t length = LCH_ListLength(table);
-  char ***const str_table = (char ***)calloc(length + 1, sizeof(char **));
-  if (str_table == NULL) {
-    LCH_LOG_ERROR("calloc(3): Failed to allocate memory: %s", strerror(errno));
-    return NULL;
-  }
-
-  for (size_t i = 0; i < length; i++) {
-    LCH_List *const record = (LCH_List *)LCH_ListGet(table, i);
-    assert(record != NULL);
-
-    str_table[i] = LCH_RecordToStringArray(record);
-    if (str_table == NULL) {
-      LCH_StringArrayTableDestroy(str_table);
-      return NULL;
-    }
-  }
-
-  return str_table;
-}
-
-LCH_List *LCH_StringArrayToRecord(const char *const *const str_array) {
-  assert(str_array != NULL);
-
-  LCH_List *const list = LCH_ListCreate();
-  if (list == NULL) {
-    return NULL;
-  }
-
-  for (size_t i = 0; str_array[i] != NULL; i++) {
-    LCH_Buffer *const buffer = LCH_BufferFromString(str_array[i]);
-    if (buffer == NULL) {
-      LCH_ListDestroy(list);
-      return NULL;
-    }
-
-    if (!LCH_ListAppend(list, buffer, LCH_BufferDestroy)) {
-      LCH_BufferDestroy(buffer);
-      LCH_ListDestroy(list);
-      return NULL;
-    }
-  }
-
-  return list;
-}
-
-LCH_List *LCH_StringArrayTableToTable(
-    const char *const *const *const str_table) {
-  assert(str_table != NULL);
-
-  LCH_List *const table = LCH_ListCreate();
-  if (table == NULL) {
-    return NULL;
-  }
-
-  for (size_t i = 0; str_table[i] != NULL; i++) {
-    const char *const *const str_array = str_table[i];
-    LCH_List *const record = LCH_StringArrayToRecord(str_array);
-    if (record == NULL) {
-      LCH_ListDestroy(table);
-      return NULL;
-    }
-
-    if (!LCH_ListAppend(table, record, LCH_ListDestroy)) {
-      LCH_ListDestroy(table);
-      return NULL;
-    }
-  }
-
-  return table;
-}
-
-bool LCH_CreateParentDirectories(const char *const filename) {
-  assert(filename != NULL);
-
-  char fcopy[strlen(filename) + 1];
-  strcpy(fcopy, filename);
-  char *parent = dirname(fcopy);
-
-  LCH_List *const dirs = LCH_ListCreate();
-  struct stat sb;
-
-  while (stat(parent, &sb) == -1) {
-    char *const dir = LCH_StringDuplicate(parent);
-    if (dir == NULL) {
-      LCH_ListDestroy(dirs);
-      return false;
-    }
-
-    if (!LCH_ListAppend(dirs, dir, free)) {
-      free(dir);
-      LCH_ListDestroy(dirs);
-      return false;
-    }
-
-    parent = dirname(parent);
-  }
-
-  const size_t num_dirs = LCH_ListLength(dirs);
-  for (size_t i = num_dirs; i > 0; i--) {
-    char *const dir = (char *)LCH_ListGet(dirs, i - 1);
-    if (mkdir(dir, (mode_t)0700) == -1) {
-      LCH_LOG_ERROR("Failed to create parent directory '%s' for file '%s': %s",
-                    dir, filename, strerror(errno));
-      LCH_ListDestroy(dirs);
-      return false;
-    }
-    LCH_LOG_VERBOSE("Created directory '%s' with mode %o", dir, (mode_t)0700);
-  }
-  LCH_ListDestroy(dirs);
-  return true;
-}
+/******************************************************************************/
 
 bool LCH_ListInsertBufferDuplicate(LCH_List *const list, const size_t index,
                                    const LCH_Buffer *const buffer) {
@@ -765,6 +208,8 @@ bool LCH_ListInsertBufferDuplicate(LCH_List *const list, const size_t index,
   return true;
 }
 
+/******************************************************************************/
+
 bool LCH_ListAppendBufferDuplicate(LCH_List *const list,
                                    const LCH_Buffer *const buffer) {
   LCH_Buffer *const duplicate = LCH_BufferDuplicate(buffer);
@@ -775,29 +220,7 @@ bool LCH_ListAppendBufferDuplicate(LCH_List *const list,
   return LCH_ListAppend(list, duplicate, LCH_BufferDestroy);
 }
 
-char *LCH_StringTruncate(const char *const str, const size_t len,
-                         const size_t max) {
-  assert(max >= 3);  // We need at least Bytes for ...
-
-  LCH_Buffer *const buffer = LCH_BufferCreate();
-  for (size_t i = 0; i < max; i++) {
-    if ((i < len) && (str[i] == '\0')) {
-      return LCH_BufferToString(buffer);
-    }
-    if (!LCH_BufferAppend(buffer, str[i])) {
-      LCH_BufferDestroy(buffer);
-      return NULL;
-    }
-  }
-
-  LCH_BufferChop(buffer, max - 3);
-  if (!LCH_BufferPrintFormat(buffer, "...")) {
-    LCH_BufferDestroy(buffer);
-    return NULL;
-  }
-
-  return LCH_BufferToString(buffer);
-}
+/******************************************************************************/
 
 bool LCH_DoubleToSize(const double number, size_t *const size) {
   assert(size != NULL);

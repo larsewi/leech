@@ -3,11 +3,8 @@
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "logger.h"
-
-#define INITIAL_CAPACITY 32
 
 typedef struct ListElement {
   void *value;
@@ -68,7 +65,7 @@ static LCH_List *LCH_ListCreateWithCapacity(const size_t capacity) {
 }
 
 LCH_List *LCH_ListCreate() {
-  return LCH_ListCreateWithCapacity(INITIAL_CAPACITY);
+  return LCH_ListCreateWithCapacity(LCH_LIST_CAPACITY);
 }
 
 size_t LCH_ListLength(const LCH_List *const self) {

@@ -7,9 +7,10 @@
 #include <string.h>
 
 #include "csv.h"
-#include "definitions.h"
-#include "json.h"
+#include "files.h"
 #include "list.h"
+#include "logger.h"
+#include "string_lib.h"
 #include "utils.h"
 
 typedef void *(*LCH_CallbackConnect)(const char *conn_info);
@@ -107,9 +108,9 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   assert(definition != NULL);
   assert(LCH_JsonGetType(definition) == LCH_JSON_TYPE_OBJECT);
 
-  LCH_TableInfo *const info =
-      (LCH_TableInfo *)LCH_Allocate(sizeof(LCH_TableInfo));
+  LCH_TableInfo *const info = (LCH_TableInfo *)malloc(sizeof(LCH_TableInfo));
   if (info == NULL) {
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
 
@@ -578,8 +579,8 @@ LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *const table_info,
   assert(table_info->identifier != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
-                    table_info->identifier)) {
+  if (!LCH_FilePathJoin(path, sizeof(path), 3, work_dir, "snapshot",
+                        table_info->identifier)) {
     return NULL;
   }
 
@@ -596,8 +597,8 @@ bool LCH_TableStoreNewState(const LCH_TableInfo *const self,
                             const char *const work_dir, const bool pretty_print,
                             const LCH_Json *const state) {
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, sizeof(path), 3, work_dir, "snapshot",
-                    self->identifier)) {
+  if (!LCH_FilePathJoin(path, sizeof(path), 3, work_dir, "snapshot",
+                        self->identifier)) {
     return false;
   }
 

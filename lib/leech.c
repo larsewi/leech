@@ -8,13 +8,14 @@
 #include "block.h"
 #include "definitions.h"
 #include "delta.h"
+#include "files.h"
 #include "head.h"
 #include "instance.h"
 #include "json.h"
 #include "logger.h"
 #include "patch.h"
+#include "string_lib.h"
 #include "table.h"
-#include "utils.h"
 
 static bool CollectGarbage(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
@@ -29,7 +30,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
   // Traverse all the blocks that we want to keep
   char path[PATH_MAX];
   for (size_t i = 0; i < max_chain_length; i++) {
-    if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
       return false;
     }
 
@@ -64,7 +65,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
 
   // Now start deleting blocks
 
-  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
     return NULL;
   }
 
@@ -96,7 +97,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
       return false;
     }
 
-    if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
       free(block_id);
       return false;
     }

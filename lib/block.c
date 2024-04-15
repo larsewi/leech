@@ -2,12 +2,12 @@
 
 #include <assert.h>
 #include <limits.h>
-#include <string.h>
 #include <time.h>
 
-#include "definitions.h"
+#include "files.h"
 #include "head.h"
 #include "logger.h"
+#include "string_lib.h"
 #include "utils.h"
 
 LCH_Json *LCH_BlockCreate(const char *const parent_id,
@@ -96,7 +96,7 @@ bool LCH_BlockStore(const LCH_Instance *const instance,
   assert(block_id != NULL);
 
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
     free(block_id);
     LCH_BufferDestroy(json);
     return false;
@@ -121,7 +121,7 @@ bool LCH_BlockStore(const LCH_Instance *const instance,
 LCH_Json *LCH_BlockLoad(const char *const work_dir,
                         const char *const block_id) {
   char path[PATH_MAX];
-  if (!LCH_PathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+  if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
     return NULL;
   }
 

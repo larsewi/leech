@@ -1,8 +1,5 @@
 #include <check.h>
 
-#include "../lib/definitions.h"
-#include "../lib/json.h"
-#include "../lib/leech.h"
 #include "../lib/table.c"
 
 START_TEST(test_LCH_TableInfoLoad) { ck_assert(true); }
