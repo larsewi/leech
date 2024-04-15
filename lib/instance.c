@@ -21,6 +21,7 @@
 #include "head.h"
 #include "leech.h"
 #include "list.h"
+#include "string_lib.h"
 #include "table.h"
 #include "utils.h"
 

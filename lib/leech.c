@@ -14,6 +14,7 @@
 #include "json.h"
 #include "logger.h"
 #include "patch.h"
+#include "string_lib.h"
 #include "table.h"
 #include "utils.h"
 

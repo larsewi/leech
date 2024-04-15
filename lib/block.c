@@ -9,6 +9,7 @@
 #include "files.h"
 #include "head.h"
 #include "logger.h"
+#include "string_lib.h"
 #include "utils.h"
 
 LCH_Json *LCH_BlockCreate(const char *const parent_id,

@@ -16,6 +16,7 @@ libleech_la_SOURCES = leech.c \
         block.h block.c \
         buffer.h buffer.c \
         files.h files.c \
+        string_lib.h string_lib.c \
         csv.h csv.c \
         json.h json.c \
         logger.h logger.c \

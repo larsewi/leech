@@ -11,6 +11,7 @@
 #include "files.h"
 #include "json.h"
 #include "list.h"
+#include "string_lib.h"
 #include "utils.h"
 
 typedef void *(*LCH_CallbackConnect)(const char *conn_info);

@@ -5,6 +5,7 @@
 
 #include "definitions.h"
 #include "files.h"
+#include "string_lib.h"
 #include "utils.h"
 
 char *LCH_HeadGet(const char *const name, const char *const work_dir) {

@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "logger.h"
+#include "string_lib.h"
 #include "utils.h"
 
 struct LCH_Json {

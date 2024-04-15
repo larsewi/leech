@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <libgen.h>
 #include <memory.h>
 #include <stdarg.h>
 #include <string.h>
@@ -9,7 +10,9 @@
 #include <unistd.h>
 
 #include "definitions.h"
+#include "list.h"
 #include "logger.h"
+#include "string_lib.h"
 
 /******************************************************************************/
 
@@ -107,5 +110,46 @@ bool LCH_FileDelete(const char *const filename) {
     LCH_LOG_ERROR("Failed to delete file '%s': %s", filename, strerror(errno));
     return false;
   }
+  return true;
+}
+
+bool LCH_FileCreateParentDirectories(const char *const filename) {
+  assert(filename != NULL);
+
+  char fcopy[strlen(filename) + 1];
+  strcpy(fcopy, filename);
+  char *parent = dirname(fcopy);
+
+  LCH_List *const dirs = LCH_ListCreate();
+  struct stat sb;
+
+  while (stat(parent, &sb) == -1) {
+    char *const dir = LCH_StringDuplicate(parent);
+    if (dir == NULL) {
+      LCH_ListDestroy(dirs);
+      return false;
+    }
+
+    if (!LCH_ListAppend(dirs, dir, free)) {
+      free(dir);
+      LCH_ListDestroy(dirs);
+      return false;
+    }
+
+    parent = dirname(parent);
+  }
+
+  const size_t num_dirs = LCH_ListLength(dirs);
+  for (size_t i = num_dirs; i > 0; i--) {
+    char *const dir = (char *)LCH_ListGet(dirs, i - 1);
+    if (mkdir(dir, (mode_t)0700) == -1) {
+      LCH_LOG_ERROR("Failed to create parent directory '%s' for file '%s': %s",
+                    dir, filename, strerror(errno));
+      LCH_ListDestroy(dirs);
+      return false;
+    }
+    LCH_LOG_VERBOSE("Created directory '%s' with mode %o", dir, (mode_t)0700);
+  }
+  LCH_ListDestroy(dirs);
   return true;
 }
