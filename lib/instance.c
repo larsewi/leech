@@ -112,7 +112,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
       if (pretty_print == NULL) {
         LCH_InstanceDestroy(instance);
         LCH_JsonDestroy(config);
-        return false;
+        return NULL;
       }
       if (LCH_JsonIsTrue(pretty_print)) {
         instance->pretty_print = true;
@@ -122,6 +122,9 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
             "Illegal value for config[\"pretty_print\"]: "
             "Expected type true or false, found %s",
             type);
+        LCH_InstanceDestroy(instance);
+        LCH_JsonDestroy(config);
+        return NULL;
       }
     }
     LCH_LOG_DEBUG("config[\"pretty_print\"] = %s",

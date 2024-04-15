@@ -66,11 +66,14 @@ LCH_Json *LCH_BlockCreate(const char *const parent_id,
   return block;
 }
 
-bool LCH_BlockStore(const char *const work_dir, const LCH_Json *const block) {
+bool LCH_BlockStore(const LCH_Instance *const instance,
+                    const LCH_Json *const block) {
   assert(block != NULL);
-  assert(work_dir != NULL);
 
-  LCH_Buffer *const json = LCH_JsonCompose(block, false);
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+
+  LCH_Buffer *const json = LCH_JsonCompose(block, pretty_print);
   if (json == NULL) {
     return false;
   }
