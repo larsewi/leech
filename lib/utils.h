@@ -86,50 +86,6 @@ char *LCH_StringDuplicate(const char *str);
 
 char *LCH_StringFormat(const char *format, ...);
 
-/**
- * @brief Destroy NULL-terminated string array.
- * @param array One dimentional array of strings.
- */
-void LCH_StringArrayDestroy(void *array);
-
-size_t LCH_StringArrayLength(const char *const *str_array);
-
-char **LCH_StringArrayInsert(const char *const *str_array, size_t position);
-
-/**
- * @brief Destroy NULL-terminated string table.
- * @param table Two dimentional array of strings.
- */
-void LCH_StringArrayTableDestroy(void *table);
-
-/**
- * @brief Create a NULL-terminated string array from list.
- * @param list One dimentional list of strings.
- * @return One dimentional array of strings.
- */
-char **LCH_RecordToStringArray(const LCH_List *list);
-
-/**
- * @brief Create a NULL-terminated string table from list.
- * @param list Two dimentional list of strings.
- * @return Two dimentional array of strings.
- */
-char ***LCH_TableToStringArrayTable(const LCH_List *list);
-
-/**
- * @brief Create a list from NULL-terminated string array.
- * @param str_array One dimentional array of strings.
- * @return One dimentional list of strings.
- */
-LCH_List *LCH_StringArrayToRecord(const char *const *str_array);
-
-/**
- * @brief Create a list from NULL-terminated string table.
- * @param str_array Two dimentional array of strings.
- * @return Two dimentional list of strings.
- */
-LCH_List *LCH_StringArrayTableToTable(const char *const *const *str_table);
-
 bool LCH_CreateParentDirectories(const char *filename);
 
 bool LCH_ListInsertBufferDuplicate(LCH_List *list, size_t index,
