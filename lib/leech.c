@@ -16,7 +16,6 @@
 #include "patch.h"
 #include "string_lib.h"
 #include "table.h"
-#include "utils.h"
 
 static bool CollectGarbage(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);

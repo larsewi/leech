@@ -1,6 +1,7 @@
 #ifndef _LEECH_TABLE_H
 #define _LEECH_TABLE_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "json.h"

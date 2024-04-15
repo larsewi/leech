@@ -1,9 +1,8 @@
 #include "delta.h"
 
 #include <assert.h>
-#include <string.h>
 
-#include "utils.h"
+#include "logger.h"
 
 LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
                           const LCH_Json *const new_state,

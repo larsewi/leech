@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "buffer.h"
 #include "csv.h"
-#include "definitions.h"
 #include "files.h"
 #include "list.h"
 #include "logger.h"

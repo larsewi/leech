@@ -2,10 +2,8 @@
 
 #include <assert.h>
 #include <limits.h>
-#include <string.h>
 #include <time.h>
 
-#include "definitions.h"
 #include "files.h"
 #include "head.h"
 #include "logger.h"

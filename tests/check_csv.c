@@ -1,11 +1,8 @@
 #include <check.h>
-#include <string.h>
-#include <unistd.h>
 
 #include "../lib/buffer.h"
 #include "../lib/csv.h"
 #include "../lib/files.h"
-#include "../lib/utils.h"
 
 START_TEST(test_LCH_CSVParseField) {
   {  // Simple field

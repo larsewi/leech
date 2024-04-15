@@ -1,12 +1,11 @@
 #ifndef _LEECH_UTILS_H
 #define _LEECH_UTILS_H
 
+#include <stdbool.h>
 #include <stdio.h>
 
 #include "buffer.h"
-#include "dict.h"
 #include "json.h"
-#include "leech.h"
 #include "list.h"
 
 LCH_Json *LCH_TableToJsonObject(const LCH_List *table,

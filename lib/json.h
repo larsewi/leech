@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "dict.h"
+#include "buffer.h"
 #include "list.h"
 
 typedef struct LCH_Json LCH_Json;

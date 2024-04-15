@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <errno.h>
 #include <libgen.h>
-#include <memory.h>
 #include <stdarg.h>
 #include <string.h>
 #include <sys/stat.h>

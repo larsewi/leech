@@ -1,19 +1,13 @@
 #include "utils.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
 #include <errno.h>
-#include <libgen.h>
 #include <math.h>
-#include <stdarg.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #include "buffer.h"
 #include "csv.h"
-#include "definitions.h"
 #include "list.h"
+#include "logger.h"
 #include "sha1.h"
 
 /******************************************************************************/

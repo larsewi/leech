@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../lib/utils.h"
+#include "../lib/buffer.h"
+#include "../lib/logger.h"
 #include "common.h"
 
 enum OPTION_VALUE {

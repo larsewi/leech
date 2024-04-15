@@ -1,11 +1,9 @@
-#include <assert.h>
-#include <ctype.h>
-#include <errno.h>
-#include <string.h>
+#include "csv.h"
 
-#include "files.h"
+#include <assert.h>
+#include <errno.h>
+
 #include "logger.h"
-#include "utils.h"
 
 /**
  * Character values allowed in non-escaped fields

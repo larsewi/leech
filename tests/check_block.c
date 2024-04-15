@@ -1,14 +1,7 @@
 #include <check.h>
-#include <limits.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #include "../lib/block.h"
-#include "../lib/definitions.h"
-#include "../lib/leech.h"
-#include "../lib/utils.h"
+#include "../lib/logger.h"
 
 START_TEST(test_LCH_BlockCreate) {
   const char *const csv =

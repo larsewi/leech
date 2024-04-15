@@ -3,24 +3,11 @@
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
-#include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
-#include "block.h"
-#include "buffer.h"
-#include "csv.h"
-#include "definitions.h"
-#include "delta.h"
-#include "dict.h"
 #include "files.h"
-#include "head.h"
-#include "leech.h"
 #include "list.h"
+#include "logger.h"
 #include "string_lib.h"
 #include "table.h"
 #include "utils.h"

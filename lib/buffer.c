@@ -11,7 +11,6 @@
 
 #include "files.h"
 #include "logger.h"
-#include "utils.h"
 
 #define INITIAL_CAPACITY 1028
 

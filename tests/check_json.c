@@ -1,7 +1,7 @@
 #include <check.h>
-#include <stdbool.h>
 
-#include "../lib/json.c"
+#include "../lib/json.h"
+#include "../lib/string_lib.h"
 
 START_TEST(test_LCH_JsonXXXXXCreate) {
   LCH_Buffer *const buffer = LCH_BufferCreate();
@@ -691,7 +691,6 @@ START_TEST(test_LCH_JsonParse) {
         "mount_units,mount_unit_show_items[dev-hugepages][LimitSIGPENDINGSoft]["
         "0]\":\"0,LimitSIGPENDINGSoft,\\\"source=function,function="
         "buildlinearray\\\"\"}";
-    LCH_LOG_WARNING(str);
     LCH_Json *const json = LCH_JsonParse(str, strlen(str));
     ck_assert_ptr_nonnull(json);
     ck_assert(LCH_JsonIsObject(json));
@@ -701,7 +700,6 @@ START_TEST(test_LCH_JsonParse) {
     const char *const str =
         "{\"default,mount_units,mount_unit_show_items[run-snapd-ns][UID][1]\":"
         "\"0,[not set],\\\"source=function,function=buildlinearray\\\"\"}";
-    LCH_LOG_WARNING(str);
     LCH_Json *const json = LCH_JsonParse(str, strlen(str));
     ck_assert_ptr_nonnull(json);
     ck_assert(LCH_JsonIsObject(json));

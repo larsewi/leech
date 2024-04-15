@@ -1,8 +1,10 @@
 #ifndef _LEECH_LIST_H
 #define _LEECH_LIST_H
 
+#include <stdbool.h>
+#include <stdlib.h>
+
 #include "definitions.h"
-#include "leech.h"
 
 typedef struct LCH_List LCH_List;
 

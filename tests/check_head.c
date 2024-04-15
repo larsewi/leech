@@ -2,7 +2,6 @@
 #include <check.h>
 #include <sys/stat.h>
 
-#include "../lib/definitions.h"
 #include "../lib/head.c"
 
 #define NEW_HASH "1234567890123456789012345678901234567890"

@@ -5,7 +5,6 @@
 #include <stdlib.h>
 
 #include "buffer.h"
-#include "definitions.h"
 #include "list.h"
 #include "logger.h"
 

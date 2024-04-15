@@ -1,12 +1,5 @@
 #include <check.h>
-#include <float.h>
-#include <limits.h>
 
-#include "../lib/definitions.h"
-#include "../lib/dict.h"
-#include "../lib/files.h"
-#include "../lib/json.h"
-#include "../lib/leech.h"
 #include "../lib/string_lib.h"
 
 START_TEST(test_LCH_StringEqual) {
