@@ -50,39 +50,31 @@ START_TEST(test_LCH_SplitString) {
 }
 END_TEST
 
-START_TEST(test_LCH_FilePathJoin) {
-  char path[PATH_MAX];
-  ck_assert(LCH_FilePathJoin(path, sizeof(path), 3, ".leech", "snapshots",
-                             "beatles"));
-  ck_assert_str_eq(path, ".leech/snapshots/beatles");
-}
-END_TEST
-
-START_TEST(test_LCH_ParseNumber) {
+START_TEST(test_LCH_StringParseNumber) {
   long value;
-  ck_assert(LCH_ParseNumber("123", &value));
+  ck_assert(LCH_StringParseNumber("123", &value));
   ck_assert_int_eq(value, 123);
 
-  ck_assert(LCH_ParseNumber("321abc", &value));
+  ck_assert(LCH_StringParseNumber("321abc", &value));
   ck_assert_int_eq(value, 321);
 
-  ck_assert(!LCH_ParseNumber("abc321", &value));
+  ck_assert(!LCH_StringParseNumber("abc321", &value));
 }
 END_TEST
 
-START_TEST(test_LCH_ParseVersion) {
+START_TEST(test_LCH_StringParseVersion) {
   size_t v_major, v_minor, v_patch;
-  ck_assert(LCH_ParseVersion("1.2.3", &v_major, &v_minor, &v_patch));
+  ck_assert(LCH_StringParseVersion("1.2.3", &v_major, &v_minor, &v_patch));
   ck_assert_int_eq(v_major, 1);
   ck_assert_int_eq(v_minor, 2);
   ck_assert_int_eq(v_patch, 3);
 
-  ck_assert(!LCH_ParseVersion("1.2.", &v_major, &v_minor, &v_patch));
-  ck_assert(!LCH_ParseVersion("1.2", &v_major, &v_minor, &v_patch));
-  ck_assert(!LCH_ParseVersion("1.", &v_major, &v_minor, &v_patch));
-  ck_assert(!LCH_ParseVersion("1", &v_major, &v_minor, &v_patch));
-  ck_assert(!LCH_ParseVersion("", &v_major, &v_minor, &v_patch));
-  ck_assert(!LCH_ParseVersion("a.b.c", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_StringParseVersion("1.2.", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_StringParseVersion("1.2", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_StringParseVersion("1.", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_StringParseVersion("1", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_StringParseVersion("", &v_major, &v_minor, &v_patch));
+  ck_assert(!LCH_StringParseVersion("a.b.c", &v_major, &v_minor, &v_patch));
 }
 END_TEST
 
@@ -125,18 +117,13 @@ Suite *StringLibSuite(void) {
     suite_add_tcase(s, tc);
   }
   {
-    TCase *tc = tcase_create("LCH_PathJoin");
-    tcase_add_test(tc, test_LCH_FilePathJoin);
+    TCase *tc = tcase_create("LCH_StringParseNumber");
+    tcase_add_test(tc, test_LCH_StringParseNumber);
     suite_add_tcase(s, tc);
   }
   {
-    TCase *tc = tcase_create("LCH_ParseNumber");
-    tcase_add_test(tc, test_LCH_ParseNumber);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_ParseVersion");
-    tcase_add_test(tc, test_LCH_ParseVersion);
+    TCase *tc = tcase_create("LCH_StringParseVersion");
+    tcase_add_test(tc, test_LCH_StringParseVersion);
     suite_add_tcase(s, tc);
   }
   {

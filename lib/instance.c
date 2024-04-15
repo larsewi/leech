@@ -76,8 +76,8 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
     const char *const version = LCH_BufferData(value);
     LCH_LOG_DEBUG("config[\"version\"] = \"%s\"", version);
 
-    if (!LCH_ParseVersion(version, &instance->major, &instance->minor,
-                          &instance->patch)) {
+    if (!LCH_StringParseVersion(version, &instance->major, &instance->minor,
+                                &instance->patch)) {
       LCH_InstanceDestroy(instance);
       LCH_JsonDestroy(config);
       return NULL;

@@ -33,9 +33,9 @@ char *LCH_StringDuplicate(const char *str);
 
 char *LCH_StringFormat(const char *format, ...);
 
-bool LCH_ParseNumber(const char *str, long *number);
+bool LCH_StringParseNumber(const char *str, long *number);
 
-bool LCH_ParseVersion(const char *str, size_t *major, size_t *minor,
-                      size_t *patch);
+bool LCH_StringParseVersion(const char *str, size_t *major, size_t *minor,
+                            size_t *patch);
 
 #endif  // _LEECH_STRING_LIB_H
