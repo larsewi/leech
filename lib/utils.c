@@ -42,6 +42,9 @@ LCH_List *LCH_StringSplit(const char *str, const char *del) {
   assert(del != NULL);
 
   LCH_List *const list = LCH_ListCreate();
+  if (list == NULL) {
+    return NULL;
+  }
 
   const char *start = str;
   const char *end = strpbrk(str, del);
@@ -49,20 +52,33 @@ LCH_List *LCH_StringSplit(const char *str, const char *del) {
   while (end != NULL) {
     char *tmp = strndup(start, end - start);
     if (tmp == NULL) {
-      LCH_LOG_ERROR("strndup(): Failed to allocate memory: %s",
+      LCH_LOG_ERROR("strndup(3): Failed to allocate memory: %s",
                     strerror(errno));
       return NULL;
     }
-    LCH_ListAppend(list, tmp, free);
+
+    if (!LCH_ListAppend(list, tmp, free)) {
+      free(tmp);
+      LCH_ListDestroy(list);
+      return NULL;
+    }
+
     start = end + 1;
     end = strpbrk(start, del);
   }
 
   char *tmp = LCH_StringDuplicate(start);
   if (tmp == NULL) {
+    LCH_ListDestroy(list);
     return NULL;
   }
-  LCH_ListAppend(list, tmp, free);
+
+  if (!LCH_ListAppend(list, tmp, free)) {
+    free(tmp);
+    LCH_ListDestroy(list);
+    return NULL;
+  }
+
   return list;
 }
 
