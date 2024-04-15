@@ -5,6 +5,7 @@
 
 #include "csv.h"
 #include "definitions.h"
+#include "files.h"
 #include "list.h"
 #include "logger.h"
 #include "utils.h"

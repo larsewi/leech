@@ -4,6 +4,7 @@
 
 #include "../lib/definitions.h"
 #include "../lib/dict.h"
+#include "../lib/files.h"
 #include "../lib/json.h"
 #include "../lib/leech.h"
 #include "../lib/utils.c"
@@ -54,23 +55,6 @@ START_TEST(test_LCH_PathJoin) {
   ck_assert(
       LCH_PathJoin(path, sizeof(path), 3, ".leech", "snapshots", "beatles"));
   ck_assert_str_eq(path, ".leech/snapshots/beatles");
-}
-END_TEST
-
-START_TEST(test_LCH_ReadWriteTextFile) {
-  char path[] = "testfile";
-
-  char expected[] = "Hello World!";
-  ck_assert(LCH_FileWrite(path, expected));
-  ck_assert(LCH_FileExists(path));
-
-  size_t size;
-  char *actual = LCH_FileRead("testfile", &size);
-  ck_assert_str_eq(expected, actual);
-  ck_assert_int_eq(size, strlen(expected));
-  free(actual);
-  remove(path);
-  ck_assert(!LCH_FileExists(path));
 }
 END_TEST
 
@@ -319,11 +303,6 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_PathJoin");
     tcase_add_test(tc, test_LCH_PathJoin);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_ReadWriteTextFile");
-    tcase_add_test(tc, test_LCH_ReadWriteTextFile);
     suite_add_tcase(s, tc);
   }
   {

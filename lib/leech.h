@@ -26,7 +26,7 @@ char *LCH_Diff(const char *work_dir, const char *block_id, size_t *buf_len);
 
 char *LCH_Rebase(const char *work_dir, size_t *buf_len);
 
-bool LCH_Patch(const char *work_dir, const char *patch, const char *uid_field,
-               const char *uid_value, size_t size);
+bool LCH_Patch(const char *work_dir, const char *uid_field,
+               const char *uid_value, const char *patch, size_t size);
 
 #endif  // _LEECH_LEECH_H

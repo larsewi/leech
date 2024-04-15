@@ -4,6 +4,7 @@
 
 #include "../lib/buffer.h"
 #include "../lib/csv.h"
+#include "../lib/files.h"
 #include "../lib/utils.h"
 
 START_TEST(test_LCH_CSVParseField) {
@@ -626,7 +627,8 @@ START_TEST(test_LCH_CSVParseFile) {
   }
 
   LCH_ListDestroy(table);
-  unlink(filename);
+  if (!LCH_FileDelete(filename))
+    ;
 }
 END_TEST
 
@@ -816,12 +818,18 @@ START_TEST(test_LCH_CSVComposeFile) {
       "\"\xf0\xf1\xf2\xf3\",\"\xf4\xf5\xf6\xf7\","
       "\"\xf8\xf9\xfa\xfb\",\"\xfc\xfd\xfe\xff\"";
 
-  size_t actual_size;
-  char *const actual = LCH_FileRead(filename, &actual_size);
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(buffer);
+  ck_assert(LCH_BufferReadFile(buffer, filename));
+
+  const char *const actual = LCH_BufferData(buffer);
+  const size_t actual_size = LCH_BufferLength(buffer);
+
   ck_assert_ptr_nonnull(actual);
   ck_assert_mem_eq(actual, expected, actual_size);
-  free(actual);
-  unlink(filename);
+  LCH_BufferDestroy(buffer);
+
+  ck_assert(LCH_FileDelete(filename));
 }
 END_TEST
 

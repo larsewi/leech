@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <time.h>
 
+#include "files.h"
 #include "head.h"
 
 LCH_Json *LCH_PatchCreate(const char *const lastknown) {

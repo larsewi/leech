@@ -80,20 +80,26 @@ int Patch(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  size_t size;
-  char *const buffer = LCH_FileRead(patch_file, &size);
+  LCH_Buffer *const buffer = LCH_BufferCreate();
   if (buffer == NULL) {
-    LCH_LOG_ERROR("Failed to load patch file '%s'.", patch_file);
     return EXIT_FAILURE;
   }
+
+  if (!LCH_BufferReadFile(buffer, patch_file)) {
+    LCH_BufferDestroy(buffer);
+    return EXIT_FAILURE;
+  }
+
+  const char *const data = LCH_BufferData(buffer);
+  const size_t size = LCH_BufferLength(buffer);
   LCH_LOG_DEBUG("Loaded patch file '%s' %zu Bytes.", patch_file, size);
 
-  if (!LCH_Patch(work_dir, uid_field, uid_value, buffer, size)) {
+  if (!LCH_Patch(work_dir, uid_field, uid_value, data, size)) {
     LCH_LOG_ERROR("Failed to apply patch from file '%s'.", patch_file);
-    free(buffer);
+    LCH_BufferDestroy(buffer);
     return EXIT_FAILURE;
   }
 
-  free(buffer);
+  LCH_BufferDestroy(buffer);
   return EXIT_SUCCESS;
 }

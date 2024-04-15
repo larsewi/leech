@@ -17,6 +17,7 @@
 #include "definitions.h"
 #include "delta.h"
 #include "dict.h"
+#include "files.h"
 #include "head.h"
 #include "leech.h"
 #include "list.h"

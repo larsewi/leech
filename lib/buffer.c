@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "files.h"
 #include "logger.h"
 #include "utils.h"
 
@@ -301,8 +302,6 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
   assert(filename != NULL);
 
   if (!LCH_CreateParentDirectories(filename)) {
-    LCH_LOG_ERROR("Failed to create parent directories for file '%s'",
-                  filename);
     return false;
   }
 

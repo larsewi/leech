@@ -15,6 +15,7 @@ leech_psql_la_CFLAGS = @PSQL_CFLAGS@
 libleech_la_SOURCES = leech.c \
         block.h block.c \
         buffer.h buffer.c \
+        files.h files.c \
         csv.h csv.c \
         json.h json.c \
         logger.h logger.c \

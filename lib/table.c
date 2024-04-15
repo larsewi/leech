@@ -8,6 +8,7 @@
 
 #include "csv.h"
 #include "definitions.h"
+#include "files.h"
 #include "json.h"
 #include "list.h"
 #include "utils.h"

@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 
+#include "files.h"
 #include "logger.h"
 #include "utils.h"
 
@@ -304,19 +305,26 @@ LCH_List *LCH_CSVParseTable(const char *str, const size_t size) {
 }
 
 LCH_List *LCH_CSVParseFile(const char *const path) {
-  size_t size = 0;
-  char *csv = LCH_FileRead(path, &size);
-  if (csv == NULL) {
+  LCH_Buffer *const buffer = LCH_BufferCreate();
+  if (buffer == NULL) {
     return NULL;
   }
+
+  if (!LCH_BufferReadFile(buffer, path)) {
+    LCH_BufferDestroy(buffer);
+    return NULL;
+  }
+
+  const char *const csv = LCH_BufferData(buffer);
+  const size_t size = LCH_BufferLength(buffer);
 
   LCH_List *table = LCH_CSVParseTable(csv, size);
   if (table == NULL) {
-    free(csv);
+    LCH_BufferDestroy(buffer);
     return NULL;
   }
 
-  free(csv);
+  LCH_BufferDestroy(buffer);
   return table;
 }
 

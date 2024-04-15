@@ -4,6 +4,7 @@
 #include <limits.h>
 
 #include "definitions.h"
+#include "files.h"
 #include "utils.h"
 
 char *LCH_HeadGet(const char *const name, const char *const work_dir) {
@@ -15,12 +16,24 @@ char *LCH_HeadGet(const char *const name, const char *const work_dir) {
   }
 
   if (LCH_FileExists(path)) {
-    char *const block_id = LCH_FileRead(path, NULL);
+    LCH_Buffer *const buffer = LCH_BufferCreate();
+    if (buffer == NULL) {
+      return NULL;
+    }
+
+    if (!LCH_BufferReadFile(buffer, path)) {
+      LCH_BufferDestroy(buffer);
+      return NULL;
+    }
+
+    char *const block_id = LCH_BufferToString(buffer);
     if (block_id == NULL) {
       return NULL;
     }
+
     LCH_StringStrip(block_id, " \t\r\n");
     LCH_LOG_DEBUG("Loaded head %.7s", block_id);
+
     return block_id;
   }
 
@@ -40,10 +53,18 @@ bool LCH_HeadSet(const char *const name, const char *const work_dir,
     return false;
   }
 
-  if (!LCH_FileWrite(path, block_id)) {
+  LCH_Buffer *const buffer = LCH_BufferFromString(block_id);
+  if (buffer == NULL) {
     return false;
   }
 
+  if (!LCH_BufferWriteFile(buffer, path)) {
+    LCH_BufferDestroy(buffer);
+    return false;
+  }
+
+  LCH_BufferDestroy(buffer);
   LCH_LOG_DEBUG("Moved head to %s in '%s'", block_id, path);
+
   return true;
 }

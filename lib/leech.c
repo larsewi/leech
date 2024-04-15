@@ -8,6 +8,7 @@
 #include "block.h"
 #include "definitions.h"
 #include "delta.h"
+#include "files.h"
 #include "head.h"
 #include "instance.h"
 #include "json.h"
