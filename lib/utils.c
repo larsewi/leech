@@ -29,16 +29,6 @@ char *LCH_StringDuplicate(const char *const str) {
   return dup;
 }
 
-void *LCH_Allocate(const size_t size) {
-  void *ptr = malloc(size);
-  if (ptr == NULL) {
-    LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
-    return NULL;
-  }
-  ptr = memset(ptr, 0, size);
-  return ptr;
-}
-
 bool LCH_StringEqual(const char *const str1, const char *const str2) {
   assert(str1 != NULL);
   assert(str2 != NULL);

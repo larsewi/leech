@@ -108,9 +108,9 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   assert(definition != NULL);
   assert(LCH_JsonGetType(definition) == LCH_JSON_TYPE_OBJECT);
 
-  LCH_TableInfo *const info =
-      (LCH_TableInfo *)LCH_Allocate(sizeof(LCH_TableInfo));
+  LCH_TableInfo *const info = (LCH_TableInfo *)malloc(sizeof(LCH_TableInfo));
   if (info == NULL) {
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
     return NULL;
   }
 

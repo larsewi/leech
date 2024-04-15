@@ -9,8 +9,6 @@
 #include "leech.h"
 #include "list.h"
 
-void *LCH_Allocate(size_t size);
-
 /**
  * Check if two strings are equivalent.
  * @param first first string to check.
