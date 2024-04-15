@@ -44,4 +44,6 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *instance);
 
 size_t LCH_InstaceGetMaxChainLength(const LCH_Instance *instance);
 
+bool LCH_InstancePrettyPrint(const LCH_Instance *instance);
+
 #endif  // _LEECH_INSTANCE_H

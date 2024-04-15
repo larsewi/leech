@@ -29,6 +29,7 @@ struct LCH_Instance {
   size_t minor;
   size_t patch;
   size_t max_chain_length;
+  bool pretty_print;
   LCH_List *tables;
 };
 
@@ -101,6 +102,30 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
     }
     LCH_LOG_DEBUG("config[\"max_chain_length\"] = \"%zu\"",
                   instance->max_chain_length);
+  }
+
+  {
+    instance->pretty_print = false;  // False by default
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("pretty_print");
+    if (LCH_JsonObjectHasKey(config, key)) {
+      const LCH_Json *const pretty_print = LCH_JsonObjectGet(config, key);
+      if (pretty_print == NULL) {
+        LCH_InstanceDestroy(instance);
+        LCH_JsonDestroy(config);
+        return false;
+      }
+      if (LCH_JsonIsTrue(pretty_print)) {
+        instance->pretty_print = true;
+      } else if (!LCH_JsonIsFalse(pretty_print)) {
+        const char *const type = LCH_JsonGetTypeAsString(pretty_print);
+        LCH_LOG_ERROR(
+            "Illegal value for config[\"pretty_print\"]: "
+            "Expected type true or false, found %s",
+            type);
+      }
+    }
+    LCH_LOG_DEBUG("config[\"pretty_print\"] = %s",
+                  (instance->pretty_print) ? "true" : "false");
   }
 
   const LCH_Buffer *const key = LCH_BufferStaticFromString("tables");
@@ -194,4 +219,9 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
 size_t LCH_InstaceGetMaxChainLength(const LCH_Instance *instance) {
   assert(instance != NULL);
   return instance->max_chain_length;
+}
+
+bool LCH_InstancePrettyPrint(const LCH_Instance *const instance) {
+  assert(instance != NULL);
+  return instance->pretty_print;
 }
