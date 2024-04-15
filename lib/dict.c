@@ -4,9 +4,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define INITIAL_CAPACITY 64
-#define LOAD_FACTOR 0.75f
-
 typedef struct DictElement {
   LCH_Buffer *key;
   void *value;
@@ -29,7 +26,7 @@ LCH_Dict *LCH_DictCreate() {
   }
 
   self->length = self->in_use = 0;
-  self->capacity = INITIAL_CAPACITY;
+  self->capacity = LCH_DICT_CAPACITY;
   self->buffer = (DictElement **)calloc(self->capacity, sizeof(DictElement *));
 
   if (self->buffer == NULL) {
@@ -81,7 +78,7 @@ static size_t ComputeIndex(const LCH_Dict *const dict,
 }
 
 static bool EnsureCapacity(LCH_Dict *const dict) {
-  if (dict->in_use < (dict->capacity * LOAD_FACTOR)) {
+  if (dict->in_use < (dict->capacity * LCH_DICT_LOAD_FACTOR)) {
     return true;
   }
 

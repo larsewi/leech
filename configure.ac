@@ -42,6 +42,10 @@ AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
 # Config constants.
 AC_DEFINE([LCH_DEFAULT_MAX_CHAIN_LENGTH], 2048, [Default max chain length used in block garbage collector])
 AC_DEFINE([LCH_JSON_PRETTY_INDENT_SIZE], 2, [Indent size used when composing pretty JSON])
+AC_DEFINE([LCH_BUFFER_SIZE], 1024, [Initial buffer size allocated by leech])
+AC_DEFINE([LCH_DICT_CAPACITY], 256, [Initial dictionary capacity allocated by leech])
+AC_DEFINE([LCH_DICT_LOAD_FACTOR], 0.75f, [Initial dictionary capacity allocated by leech])
+AC_DEFINE([LCH_LIST_CAPACITY], 256, [Initial list capacity allocated by leech])
 
 # pkg-check modules.
 PKG_CHECK_MODULES([CHECK], [check])

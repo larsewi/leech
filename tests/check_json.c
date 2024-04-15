@@ -960,19 +960,19 @@ START_TEST(test_LCH_JsonCompose) {
       "{\n"
       "  \"version\": \"" PACKAGE_VERSION
       "\",\n"
+      "  \"max_chain_length\": 64.000000,\n"
       "  \"compression\": false,\n"
       "  \"tables\": {\n"
       "    \"BTL\": {\n"
-      "      \"subsidiary_fields\": null,\n"
       "      \"primary_fields\": [\n"
       "        \"first_name\",\n"
       "        \"last_name\",\n"
       "        \"born\"\n"
-      "      ]\n"
+      "      ],\n"
+      "      \"subsidiary_fields\": null\n"
       "    }\n"
       "  },\n"
-      "  \"pretty_json\": true,\n"
-      "  \"max_chain_length\": 64.000000\n"
+      "  \"pretty_json\": true\n"
       "}\n";
 
   ck_assert_str_eq(LCH_BufferData(actual), expected);

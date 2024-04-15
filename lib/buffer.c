@@ -12,8 +12,6 @@
 #include "files.h"
 #include "logger.h"
 
-#define INITIAL_CAPACITY 1028
-
 struct LCH_Buffer {
   size_t length;
   size_t capacity;
@@ -60,7 +58,7 @@ static LCH_Buffer *LCH_BufferCreateWithCapacity(size_t capacity) {
 }
 
 LCH_Buffer *LCH_BufferCreate(void) {
-  return LCH_BufferCreateWithCapacity(INITIAL_CAPACITY);
+  return LCH_BufferCreateWithCapacity(LCH_BUFFER_SIZE);
 }
 
 bool LCH_BufferAppend(LCH_Buffer *const self, const char byte) {
