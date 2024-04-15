@@ -15,7 +15,7 @@
 Dependencies:
 ```
 sudo apt-get install autoconf automake build-essential libtool-bin check \
-clang-format pkg-config
+clang-format pkg-config libpq-dev
 ```
 
 ### On macOS:
