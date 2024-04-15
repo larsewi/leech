@@ -216,7 +216,7 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
   return self->work_dir;
 }
 
-size_t LCH_InstaceGetMaxChainLength(const LCH_Instance *instance) {
+size_t LCH_InstanceGetMaxChainLength(const LCH_Instance *const instance) {
   assert(instance != NULL);
   return instance->max_chain_length;
 }

@@ -18,7 +18,7 @@
 
 static bool CollectGarbage(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const size_t max_chain_length = LCH_InstaceGetMaxChainLength(instance);
+  const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);
 
   char *block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
