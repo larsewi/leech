@@ -805,7 +805,7 @@ def test_leech_churn(tmp_path):
                     "schema": "leech",
                     "table_name": "beatles",
                     "callbacks": "lib/.libs/leech_csv.so",
-                }
+                },
             },
             "PFL": {
                 "primary_fields": ["first_name", "last_name"],
@@ -821,8 +821,8 @@ def test_leech_churn(tmp_path):
                     "schema": "leech",
                     "table_name": "pinkfloyd",
                     "callbacks": "lib/.libs/leech_csv.so",
-                }
-            }
+                },
+            },
         },
     }
     with open(leech_conf_path, "w") as f:
