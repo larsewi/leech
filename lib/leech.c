@@ -50,7 +50,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
       return false;
     }
 
-    const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+    const char *const parent_id = LCH_BlockGetParentId(block);
     if (parent_id == NULL) {
       LCH_JsonDestroy(block);
       return false;
@@ -85,7 +85,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
       return false;
     }
 
-    const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+    const char *const parent_id = LCH_BlockGetParentId(block);
     if (parent_id == NULL) {
       LCH_JsonDestroy(block);
       return false;
@@ -282,7 +282,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   assert(instance != NULL);
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const char *const parent_id = LCH_BlockGetParentBlockIdentifier(child);
+  const char *const parent_id = LCH_BlockGetParentId(child);
 
   if (LCH_StringEqual(parent_id, final_id)) {
     // Base case reached. Recursion ends here.
