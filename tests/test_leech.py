@@ -772,3 +772,284 @@ def test_leech_garbage_collect(tmp_path):
     for _ in range(5):
         command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
         assert execute(command, True) == 0
+
+
+def test_leech_churn(tmp_path):
+    pass
+    ##########################################################################
+    # Create config
+    ##########################################################################
+
+    bin_path = os.path.join("bin", "leech")
+    leech_conf_path = os.path.join(tmp_path, "leech.json")
+    btl_src_path = os.path.join(tmp_path, "beatles.src.csv")
+    btl_dst_path = os.path.join(tmp_path, "beatles.dst.csv")
+    pfl_src_path = os.path.join(tmp_path, "pinkfloyd.src.csv")
+    pfl_dst_path = os.path.join(tmp_path, "pinkfloyd.dst.csv")
+
+    config = {
+        "version": "0.1.0",
+        "pretty_print": True,
+        "tables": {
+            "BTL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": btl_src_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": btl_dst_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                }
+            },
+            "PFL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": pfl_src_path,
+                    "schema": "leech",
+                    "table_name": "pinkfloyd",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": pfl_dst_path,
+                    "schema": "leech",
+                    "table_name": "pinkfloyd",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                }
+            }
+        },
+    }
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Create tables and commit
+    ##########################################################################
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["Paul", "McCartney", "1942"],
+        ["Ringo", "Starr", "1940"],
+        ["John", "Lennon", "1940"],
+        ["George", "Harrison", "1943"],
+    ]
+    with open(btl_src_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(table)
+    print(f"Created table '{btl_src_path}' with content:")
+    with open(btl_src_path, "r") as f:
+        print(f.read())
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["Nick", "Mason", "1944"],
+        ["Roger", "Waters", "1943"],
+        ["Richard", "Wright", "1943"],
+        ["Syd", "Barret", "1946"],
+        ["David", "Gilmour", "1946"],
+    ]
+    with open(pfl_src_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(table)
+    print(f"Created table '{pfl_src_path}' with content:")
+    with open(pfl_src_path, "r") as f:
+        print(f.read())
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create delta patch file
+    ##########################################################################
+
+    lastknown = "0000000000000000000000000000000000000000"
+    patchfile = os.path.join(tmp_path, "patchfile")
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "diff",
+        f"--block={lastknown}",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value=SHA=123",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Temporarily remove pinkfloyd from config
+    ##########################################################################
+
+    pfl = config["tables"].pop("PFL")
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Modify table (with one insert, delete and update) followed by a commit
+    ##########################################################################
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["Paul", "McCartney", "1943"],
+        ["John", "Lennon", "1940"],
+        ["George", "Harrison", "1943"],
+        ["Janis", "Joplin", "1943"],
+    ]
+    with open(btl_src_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(table)
+    print(f"Modified table '{btl_src_path}' with content:")
+    with open(btl_src_path, "r") as f:
+        print(f.read())
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["Nick", "Mason", "1944"],
+        ["Roger", "Waters", "1944"],
+        ["Richard", "Wright", "1942"],
+        ["Syd", "Barret", "1946"],
+        ["Eric Patrick", "Clapton", "1945"],
+    ]
+    with open(pfl_src_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(table)
+    print(f"Modified table '{pfl_src_path}' with content:")
+    with open(pfl_src_path, "r") as f:
+        print(f.read())
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create delta patch file
+    ##########################################################################
+
+    with open(os.path.join(tmp_path, "SHA=123"), "r") as f:
+        lastknown = f.read().strip()
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "diff",
+        f"--block={lastknown}",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value=SHA=123",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Put pinkfloyd back into config
+    ##########################################################################
+
+    config["tables"]["PFL"] = pfl
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Modify table (with one insert, delete and update) followed by a commit
+    ##########################################################################
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["James Marshall", "Hendrix", "1942"],
+        ["John", "Lennon", "1941"],
+        ["George", "Harrison", "1943"],
+        ["Janis", "Joplin", "1943"],
+    ]
+    with open(btl_src_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(table)
+    print(f"Modified table '{btl_src_path}' with content:")
+    with open(btl_src_path, "r") as f:
+        print(f.read())
+
+    table = [
+        ["first_name", "last_name", "born"],
+        ["Nick", "Mason", "1944"],
+        ["Kieth", "Richards", "1943"],
+        ["Richard", "Wright", "1943"],
+        ["Syd", "Barret", "1946"],
+        ["Eric Patrick", "Clapton", "1945"],
+    ]
+    with open(pfl_src_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerows(table)
+    print(f"Modified table '{pfl_src_path}' with content:")
+    with open(pfl_src_path, "r") as f:
+        print(f.read())
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Create delta patch file
+    ##########################################################################
+
+    with open(os.path.join(tmp_path, "SHA=123"), "r") as f:
+        lastknown = f.read().strip()
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "diff",
+        f"--block={lastknown}",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value=SHA=123",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
