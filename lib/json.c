@@ -638,6 +638,22 @@ bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const element) {
   return success;
 }
 
+bool LCH_JsonArrayAppendString(const LCH_Json *const json,
+                               LCH_Buffer *const value) {
+  LCH_Json *const element = LCH_JsonStringCreate(value);
+  if (element == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonArrayAppend(json, element)) {
+    // We want to leave the value untouched on failure.
+    free(element);
+    return false;
+  }
+
+  return true;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonObjectRemove(const LCH_Json *const json,
