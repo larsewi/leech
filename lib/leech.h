@@ -26,6 +26,9 @@ char *LCH_Diff(const char *work_dir, const char *block_id, size_t *buf_len);
 
 char *LCH_Rebase(const char *work_dir, size_t *buf_len);
 
+LCH_Buffer *LCH_History(const char *work_dir, const LCH_List *primary_fields,
+                        double from, double to);
+
 bool LCH_Patch(const char *work_dir, const char *uid_field,
                const char *uid_value, const char *patch, size_t size);
 
