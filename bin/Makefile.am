@@ -3,7 +3,7 @@ AM_CPPFLAGS = -include config.h
 
 noinst_PROGRAMS = leech
 
-leech_SOURCES = leech.c \
+leech_SOURCES = main.c \
     common.c common.h \
     commit.c commit.h \
     diff.c diff.h \
