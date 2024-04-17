@@ -39,8 +39,6 @@ void *LCH_ListGet(const LCH_List *list, size_t index);
  */
 bool LCH_ListAppend(LCH_List *list, void *value, void (*destroy)(void *));
 
-bool LCH_ListAppendStringDuplicate(LCH_List *list, const char *str);
-
 /**
  * Destroy list and contents.
  * @param[in] list pointer to list.

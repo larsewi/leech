@@ -100,20 +100,6 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   return true;
 }
 
-bool LCH_ListAppendStringDuplicate(LCH_List *const list,
-                                   const char *const str) {
-  assert(list != NULL);
-  assert(str != NULL);
-
-  char *const dup = strdup(str);
-  if (dup == NULL) {
-    LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
-    return false;
-  }
-
-  return LCH_ListAppend(list, dup, free);
-}
-
 void *LCH_ListGet(const LCH_List *const self, const size_t index) {
   assert(self != NULL);
   assert(self->buffer != NULL);
