@@ -168,3 +168,12 @@ LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
   }
   return payload_val;
 }
+
+bool LCH_BlockGetTimestamp(const LCH_Json *const block,
+                           double *const timestamp) {
+  const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
+  if (!LCH_JsonObjectGetNumber(block, key, timestamp)) {
+    return false;
+  }
+  return true;
+}
