@@ -1,5 +1,3 @@
-#include "../lib/leech.h"
-
 #include <assert.h>
 #include <errno.h>
 #include <getopt.h>
@@ -8,9 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "../lib/leech.h"
 #include "commit.h"
 #include "common.h"
 #include "diff.h"
+#include "history.h"
 #include "libpq-fe.h"
 #include "patch.h"
 #include "rebase.h"
@@ -50,6 +50,7 @@ static const struct command COMMANDS[] = {
     {"diff", "merge changes in tables", Diff},
     {"rebase", "rebase to current table state", Rebase},
     {"patch", "apply changes to tables", Patch},
+    {"history", "get history of a specific record", History},
     {NULL, NULL, NULL},
 };
 

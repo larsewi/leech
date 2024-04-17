@@ -577,7 +577,8 @@ bool LCH_JsonObjectSetString(const LCH_Json *const json,
   }
 
   if (!LCH_JsonObjectSet(json, key, value)) {
-    LCH_JsonDestroy(value);
+    // We want to leave the value untouched on failure.
+    free(value);
     return false;
   }
 

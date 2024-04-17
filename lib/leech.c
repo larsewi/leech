@@ -630,7 +630,7 @@ static bool HistoryAppendRecord(const LCH_Json *const history,
     }
 
     const LCH_Buffer *const key = LCH_BufferStaticFromString("operation");
-    if (LCH_JsonObjectSetString(record, key, value)) {
+    if (!LCH_JsonObjectSetString(record, key, value)) {
       LCH_BufferDestroy(value);
       LCH_JsonDestroy(record);
       return false;
@@ -680,6 +680,12 @@ static bool HistoryAppendRecord(const LCH_Json *const history,
     return false;
   }
 
+  LCH_Buffer *const str_repr = LCH_JsonCompose(record, true);
+  if (str_repr != NULL) {
+    LCH_LOG_DEBUG("Found entry: %s", LCH_BufferData(str_repr));
+    LCH_BufferDestroy(str_repr);
+  }
+
   return true;
 }
 
@@ -689,6 +695,17 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
                               const char *const block_id, const double from,
                               const double to) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+
+  char path[PATH_MAX];
+  if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    return false;
+  }
+
+  if (!LCH_FileExists(path)) {
+    LCH_LOG_VERBOSE("Reached End-of-Chain with block identifier '%s'",
+                    block_id);
+    return true;
+  }
 
   LCH_Json *const block = LCH_BlockLoad(work_dir, block_id);
   if (block == NULL) {
@@ -725,68 +742,77 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
     return true;
   }
 
-  const LCH_Json *const delta = LCH_BlockGetPayload(block);
-  if (delta == NULL) {
+  const LCH_Json *const payload = LCH_BlockGetPayload(block);
+  if (payload == NULL) {
     LCH_JsonDestroy(block);
     return false;
   }
 
-  const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
-  if (inserts == NULL) {
-    LCH_JsonDestroy(block);
-    return false;
-  }
-
-  const LCH_Json *const updates = LCH_DeltaGetUpdates(delta);
-  if (updates == NULL) {
-    LCH_JsonDestroy(block);
-    return false;
-  }
-
-  const LCH_Json *const deletes = LCH_DeltaGetDeletes(delta);
-  if (deletes == NULL) {
-    LCH_JsonDestroy(block);
-    return false;
-  }
-
-  if (LCH_JsonObjectHasKey(inserts, primary_key)) {
-    const LCH_Buffer *const subsidiary_value =
-        LCH_JsonObjectGetString(inserts, primary_key);
-    if (subsidiary_value == NULL) {
+  const size_t num_deltas = LCH_JsonArrayLength(payload);
+  for (size_t i = 0; i < num_deltas; i++) {
+    const LCH_Json *const delta = LCH_JsonArrayGetObject(payload, i);
+    if (delta == NULL) {
       LCH_JsonDestroy(block);
       return false;
     }
 
-    if (!HistoryAppendRecord(history, block_id, timestamp, "insert",
-                             subsidiary_value)) {
-      LCH_JsonDestroy(block);
-      return false;
-    }
-  } else if (LCH_JsonObjectHasKey(deletes, primary_key)) {
-    const LCH_Buffer *const subsidiary_value =
-        LCH_JsonObjectGetString(deletes, primary_key);
-    if (subsidiary_value == NULL) {
+    const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
+    if (inserts == NULL) {
       LCH_JsonDestroy(block);
       return false;
     }
 
-    if (!HistoryAppendRecord(history, block_id, timestamp, "delete",
-                             subsidiary_value)) {
-      LCH_JsonDestroy(block);
-      return false;
-    }
-  } else if (LCH_JsonObjectHasKey(updates, primary_key)) {
-    const LCH_Buffer *const subsidiary_value =
-        LCH_JsonObjectGetString(updates, primary_key);
-    if (subsidiary_value == NULL) {
+    const LCH_Json *const updates = LCH_DeltaGetUpdates(delta);
+    if (updates == NULL) {
       LCH_JsonDestroy(block);
       return false;
     }
 
-    if (!HistoryAppendRecord(history, block_id, timestamp, "update",
-                             subsidiary_value)) {
+    const LCH_Json *const deletes = LCH_DeltaGetDeletes(delta);
+    if (deletes == NULL) {
       LCH_JsonDestroy(block);
       return false;
+    }
+
+    if (LCH_JsonObjectHasKey(inserts, primary_key)) {
+      const LCH_Buffer *const subsidiary_value =
+          LCH_JsonObjectGetString(inserts, primary_key);
+      if (subsidiary_value == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!HistoryAppendRecord(history, block_id, timestamp, "insert",
+                               subsidiary_value)) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+    } else if (LCH_JsonObjectHasKey(deletes, primary_key)) {
+      const LCH_Buffer *const subsidiary_value =
+          LCH_JsonObjectGetString(deletes, primary_key);
+      if (subsidiary_value == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!HistoryAppendRecord(history, block_id, timestamp, "delete",
+                               subsidiary_value)) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+    } else if (LCH_JsonObjectHasKey(updates, primary_key)) {
+      const LCH_Buffer *const subsidiary_value =
+          LCH_JsonObjectGetString(updates, primary_key);
+      if (subsidiary_value == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!HistoryAppendRecord(history, block_id, timestamp, "update",
+                               subsidiary_value)) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
     }
   }
 
@@ -885,7 +911,7 @@ LCH_Buffer *LCH_History(const char *const work_dir,
   }
 
   LCH_Buffer *primary = NULL;
-  if (LCH_CSVComposeRecord(&primary, primary_fields)) {
+  if (!LCH_CSVComposeRecord(&primary, primary_fields)) {
     LCH_JsonDestroy(response);
     LCH_InstanceDestroy(instance);
     return NULL;
@@ -894,14 +920,24 @@ LCH_Buffer *LCH_History(const char *const work_dir,
   if (!HistoryFindRecord(instance, history, primary, block_id, from, to)) {
     LCH_BufferDestroy(primary);
     free(block_id);
+    LCH_BufferDestroy(response);
     LCH_InstanceDestroy(instance);
     return NULL;
   }
 
   LCH_BufferDestroy(primary);
   free(block_id);
+
+  const bool pretty = LCH_InstancePrettyPrint(instance);
+  LCH_Buffer *const buffer = LCH_JsonCompose(response, pretty);
+  LCH_JsonDestroy(response);
+  if (buffer == NULL) {
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
   LCH_InstanceDestroy(instance);
-  return NULL;
+  return buffer;
 }
 
 static bool Patch(const LCH_Instance *const instance, const char *const field,
