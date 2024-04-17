@@ -270,6 +270,17 @@ START_TEST(test_LCH_JsonArrayAppendString) {
 }
 END_TEST
 
+START_TEST(test_LCH_JsonArrayAppendStringDuplicate) {
+  LCH_Json *const json = LCH_JsonArrayCreate();
+  ck_assert_ptr_nonnull(json);
+  LCH_Buffer *const str = LCH_BufferCreate();
+  ck_assert_ptr_nonnull(str);
+  ck_assert(LCH_JsonArrayAppendStringDuplicate(json, str));
+  LCH_BufferDestroy(str);
+  LCH_JsonDestroy(json);
+}
+END_TEST
+
 START_TEST(test_LCH_JsonNumberGet) {
   LCH_Json *const json = LCH_JsonNumberCreate(1337.0);
   ck_assert_ptr_nonnull(json);
@@ -1081,6 +1092,11 @@ Suite *JSONSuite(void) {
   {
     TCase *tc = tcase_create("LCH_JsonArrayAppendString");
     tcase_add_test(tc, test_LCH_JsonArrayAppendString);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_JsonArrayAppendStringDuplicate");
+    tcase_add_test(tc, test_LCH_JsonArrayAppendStringDuplicate);
     suite_add_tcase(s, tc);
   }
   {

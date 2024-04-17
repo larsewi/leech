@@ -654,6 +654,21 @@ bool LCH_JsonArrayAppendString(const LCH_Json *const json,
   return true;
 }
 
+bool LCH_JsonArrayAppendStringDuplicate(const LCH_Json *const json,
+                                        const LCH_Buffer *const value) {
+  LCH_Buffer *const duplicate = LCH_BufferDuplicate(value);
+  if (duplicate == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonArrayAppendString(json, duplicate)) {
+    LCH_BufferDestroy(duplicate);
+    return false;
+  }
+
+  return true;
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonObjectRemove(const LCH_Json *const json,
