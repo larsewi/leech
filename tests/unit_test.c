@@ -19,12 +19,6 @@ Suite *FilesSuite(void);
 Suite *StringLibSuite(void);
 
 int main(int argc, char *argv[]) {
-  LCH_LoggerInit(LCH_LOGGER_MESSAGE_TYPE_VERBOSE_BIT |
-                     LCH_LOGGER_MESSAGE_TYPE_INFO_BIT |
-                     LCH_LOGGER_MESSAGE_TYPE_WARNING_BIT |
-                     LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT,
-                 LCH_LoggerCallbackDefault);
-
   SRunner *sr = srunner_create(BufferSuite());
   srunner_add_suite(sr, DictSuite());
   srunner_add_suite(sr, ListSuite());

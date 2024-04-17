@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "buffer.h"
+#include "list.h"
+
 /****************************************************************************/
 /*  Debug Messenger                                                         */
 /****************************************************************************/
@@ -16,9 +19,9 @@
 
 typedef void (*LCH_LoggerCallbackFn)(unsigned char, const char *);
 
-void LCH_LoggerInit(unsigned char severity, LCH_LoggerCallbackFn callback);
+void LCH_LoggerSeveritySet(unsigned char severity);
 
-void LCH_LoggerCallbackDefault(unsigned char severity, const char *message);
+void LCH_LoggerCallbackSet(LCH_LoggerCallbackFn callback);
 
 bool LCH_Commit(const char *work_dir);
 

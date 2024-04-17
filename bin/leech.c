@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  LCH_LoggerInit(severity, LCH_LoggerCallbackDefault);
+  LCH_LoggerSeveritySet(severity);
 
   if (optind >= argc) {
     fprintf(stderr, "Missing command ...");
