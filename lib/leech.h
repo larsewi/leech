@@ -25,9 +25,9 @@ void LCH_LoggerCallbackSet(LCH_LoggerCallbackFn callback);
 
 bool LCH_Commit(const char *work_dir);
 
-char *LCH_Diff(const char *work_dir, const char *block_id, size_t *buf_len);
+LCH_Buffer *LCH_Diff(const char *work_dir, const char *block_id);
 
-char *LCH_Rebase(const char *work_dir, size_t *buf_len);
+LCH_Buffer *LCH_Rebase(const char *work_dir);
 
 LCH_Buffer *LCH_History(const char *work_dir, const LCH_List *primary_fields,
                         double from, double to);

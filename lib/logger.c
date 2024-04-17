@@ -30,7 +30,10 @@ struct Logger {
 
 static void LoggerCallbackDefault(unsigned char severity, const char *message);
 
-static struct Logger LOGGER = {.severity = LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT | LCH_LOGGER_MESSAGE_TYPE_WARNING_BIT | LCH_LOGGER_MESSAGE_TYPE_INFO_BIT, .messageCallback = LoggerCallbackDefault};
+static struct Logger LOGGER = {.severity = LCH_LOGGER_MESSAGE_TYPE_ERROR_BIT |
+                                           LCH_LOGGER_MESSAGE_TYPE_WARNING_BIT |
+                                           LCH_LOGGER_MESSAGE_TYPE_INFO_BIT,
+                               .messageCallback = LoggerCallbackDefault};
 
 void LCH_LoggerSeveritySet(const unsigned char severity) {
   LOGGER.severity = severity;
@@ -58,7 +61,8 @@ void LCH_LoggerLogMessage(unsigned char severity, const char *format, ...) {
   LOGGER.messageCallback(severity, message);
 }
 
-static void LoggerCallbackDefault(const unsigned char severity, const char *const message) {
+static void LoggerCallbackDefault(const unsigned char severity,
+                                  const char *const message) {
   assert(message != NULL);
   switch (severity) {
     case LCH_LOGGER_MESSAGE_TYPE_DEBUG_BIT:

@@ -92,10 +92,10 @@ int Patch(const char *const work_dir, int argc, char *argv[]) {
   }
 
   const char *const data = LCH_BufferData(buffer);
-  const size_t size = LCH_BufferLength(buffer);
-  LCH_LOG_DEBUG("Loaded patch file '%s' %zu Bytes.", patch_file, size);
+  const size_t length = LCH_BufferLength(buffer);
+  LCH_LOG_DEBUG("Loaded patch file '%s' %zu Bytes.", patch_file, length);
 
-  if (!LCH_Patch(work_dir, uid_field, uid_value, data, size)) {
+  if (!LCH_Patch(work_dir, uid_field, uid_value, data, length)) {
     LCH_LOG_ERROR("Failed to apply patch from file '%s'.", patch_file);
     LCH_BufferDestroy(buffer);
     return EXIT_FAILURE;

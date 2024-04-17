@@ -402,8 +402,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   return merged;
 }
 
-char *LCH_Diff(const char *const work_dir, const char *const final_id,
-               size_t *const buf_len) {
+LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
   assert(work_dir != NULL);
   assert(final_id != NULL);
 
@@ -463,15 +462,10 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     LCH_LOG_ERROR("Failed to compose patch into JSON");
     return NULL;
   }
-  *buf_len = LCH_BufferLength(buffer);
-  char *const data = LCH_BufferToString(buffer);
-  return data;
+  return buffer;
 }
 
-char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
-  assert(work_dir != NULL);
-  assert(buf_len != NULL);
-
+LCH_Buffer *LCH_Rebase(const char *const work_dir) {
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");
@@ -592,9 +586,7 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
     return NULL;
   }
 
-  *buf_len = LCH_BufferLength(buffer);
-  char *const data = LCH_BufferToString(buffer);
-  return data;
+  return buffer;
 }
 
 static bool HistoryAppendRecord(const LCH_Json *const history,
@@ -915,12 +907,6 @@ LCH_Buffer *LCH_History(const char *const work_dir,
 static bool Patch(const LCH_Instance *const instance, const char *const field,
                   const char *const value, const char *const buffer,
                   const size_t size) {
-  assert(instance != NULL);
-  assert(buffer != NULL);
-
-  LCH_UNUSED(field);
-  LCH_UNUSED(size);
-
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
   LCH_Json *const patch = LCH_JsonParse(buffer, size);
@@ -1034,11 +1020,6 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
 bool LCH_Patch(const char *const work_dir, const char *const field,
                const char *const value, const char *const patch,
                const size_t size) {
-  assert(work_dir != NULL);
-  assert(field != NULL);
-  assert(value != NULL);
-  assert(patch != NULL);
-
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");
