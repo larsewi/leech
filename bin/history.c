@@ -11,7 +11,8 @@
 #include "common.h"
 
 enum OPTION_VALUE {
-  OPTION_PRIMARY = 1,
+  OPTION_TABLE = 1,
+  OPTION_PRIMARY,
   OPTION_FROM,
   OPTION_TO,
   OPTION_FILE,
@@ -24,6 +25,7 @@ struct arguments {
 };
 
 static const struct option OPTIONS[] = {
+    {"table", required_argument, NULL, OPTION_TABLE},
     {"primary", required_argument, NULL, OPTION_PRIMARY},
     {"from", optional_argument, NULL, OPTION_FROM},
     {"to", optional_argument, NULL, OPTION_TO},
@@ -33,6 +35,7 @@ static const struct option OPTIONS[] = {
 };
 
 static const char *const DESCRIPTIONS[] = {
+    "table identifier"
     "primary fields",
     "timestamp from (default 0)",
     "timestamp to (default now)",
@@ -52,6 +55,7 @@ static void PrintHelp(void) {
 int History(const char *const work_dir, int argc, char *argv[]) {
   assert(work_dir != NULL);
 
+  const char *table_id = NULL;
   const char *primary = NULL;
   const char *filename = NULL;
   double from = 0.0;
@@ -60,6 +64,9 @@ int History(const char *const work_dir, int argc, char *argv[]) {
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {
     switch (opt) {
+      case OPTION_TABLE:
+        table_id = optarg;
+        break;
       case OPTION_PRIMARY:
         primary = optarg;
         break;
@@ -88,14 +95,19 @@ int History(const char *const work_dir, int argc, char *argv[]) {
     }
   }
 
+  if (table_id == NULL) {
+    fprintf(stderr, "Missing required argument --table\n");
+    return EXIT_FAILURE;
+  }
+
   if (primary == NULL) {
     fprintf(stderr, "Missing required argument --primary\n");
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
   }
 
   if (filename == NULL) {
     fprintf(stderr, "Missing required argument --file\n");
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
   }
 
   LCH_List *const primary_fields = LCH_CSVParseRecord(primary, strlen(primary));
@@ -103,9 +115,11 @@ int History(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  LCH_Buffer *const history = LCH_History(work_dir, primary_fields, from, to);
+  LCH_Buffer *const history =
+      LCH_History(work_dir, table_id, primary_fields, from, to);
   if (history == NULL) {
-    fprintf(stderr, "LCH_History\n");
+    fprintf(stderr, "Failed to get history from record '%s' in table '%s'\n",
+            primary, table_id);
     LCH_ListDestroy(primary_fields);
     return EXIT_FAILURE;
   }

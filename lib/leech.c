@@ -589,7 +589,10 @@ LCH_Buffer *LCH_Rebase(const char *const work_dir) {
   return buffer;
 }
 
-static bool HistoryAppendRecord(const LCH_Json *const history,
+static bool HistoryAppendRecord(
+                                const LCH_Instance *const instance,
+                                const char *const table_id,
+                                const LCH_Json *const history,
                                 const char *const block_id,
                                 const double timestamp,
                                 const char *const operation,
@@ -647,19 +650,27 @@ static bool HistoryAppendRecord(const LCH_Json *const history,
       return false;
     }
 
-    LCH_Json *const value = LCH_JsonArrayCreate();
-    if (value == NULL) {
+    const LCH_TableInfo *const table_info = LCH_InstanceGetTable(instance, table_id);
+    const LCH_List *const subsidiary_names = LCH_TableInfoGetSubsidiaryFields(table_info);
+
+    const size_t num_fields = LCH_ListLength(subsidiary_fields);
+    assert(num_fields == LCH_ListLength(subsidiary_names));
+
+    LCH_Json *const subsidiary = LCH_JsonObjectCreate();
+    if (subsidiary == NULL) {
       LCH_ListDestroy(subsidiary_fields);
       LCH_JsonDestroy(record);
       return false;
     }
 
-    const size_t num_fields = LCH_ListLength(subsidiary_fields);
     for (size_t i = 0; i < num_fields; i++) {
+      const LCH_Buffer *const name =
+          (LCH_Buffer *)LCH_ListGet(subsidiary_names, i);
       const LCH_Buffer *const field =
           (LCH_Buffer *)LCH_ListGet(subsidiary_fields, i);
-      if (!LCH_JsonArrayAppendStringDuplicate(value, field)) {
-        LCH_JsonDestroy(value);
+
+      if (!LCH_JsonObjectSetStringDuplicate(subsidiary, name, field)) {
+        LCH_JsonDestroy(subsidiary);
         LCH_ListDestroy(subsidiary_fields);
         LCH_JsonDestroy(record);
         return false;
@@ -668,8 +679,8 @@ static bool HistoryAppendRecord(const LCH_Json *const history,
     LCH_ListDestroy(subsidiary_fields);
 
     const LCH_Buffer *const key = LCH_BufferStaticFromString("subsidiary");
-    if (!LCH_JsonObjectSet(record, key, value)) {
-      LCH_JsonDestroy(value);
+    if (!LCH_JsonObjectSet(record, key, subsidiary)) {
+      LCH_JsonDestroy(subsidiary);
       LCH_JsonDestroy(record);
       return false;
     }
@@ -691,6 +702,7 @@ static bool HistoryAppendRecord(const LCH_Json *const history,
 
 static bool HistoryFindRecord(const LCH_Instance *const instance,
                               const LCH_Json *const history,
+                              const char *const table_id,
                               const LCH_Buffer *const primary_key,
                               const char *const block_id, const double from,
                               const double to) {
@@ -732,7 +744,7 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
 
   if (timestamp >= to) {
     // Continue without recording history (yet)
-    if (!HistoryFindRecord(instance, history, primary_key, parent_id, from,
+    if (!HistoryFindRecord(instance, history, table_id, primary_key, parent_id, from,
                            to)) {
       LCH_JsonDestroy(block);
       return false;
@@ -754,6 +766,19 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
     if (delta == NULL) {
       LCH_JsonDestroy(block);
       return false;
+    }
+
+    { // Skip tables that does not match table identifier
+      const LCH_Buffer *const key = LCH_BufferStaticFromString("id");
+      const LCH_Buffer *const tid = LCH_JsonObjectGetString(delta, key);
+      if (tid == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!LCH_StringEqual(LCH_BufferData(tid), table_id)) {
+        continue;
+      }
     }
 
     const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
@@ -782,7 +807,7 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
         return false;
       }
 
-      if (!HistoryAppendRecord(history, block_id, timestamp, "insert",
+      if (!HistoryAppendRecord(instance, table_id, history, block_id, timestamp, "insert",
                                subsidiary_value)) {
         LCH_JsonDestroy(block);
         return false;
@@ -795,7 +820,7 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
         return false;
       }
 
-      if (!HistoryAppendRecord(history, block_id, timestamp, "delete",
+      if (!HistoryAppendRecord(instance, table_id, history, block_id, timestamp, "delete",
                                subsidiary_value)) {
         LCH_JsonDestroy(block);
         return false;
@@ -808,7 +833,7 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
         return false;
       }
 
-      if (!HistoryAppendRecord(history, block_id, timestamp, "update",
+      if (!HistoryAppendRecord(instance, table_id, history, block_id, timestamp, "update",
                                subsidiary_value)) {
         LCH_JsonDestroy(block);
         return false;
@@ -816,7 +841,7 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
     }
   }
 
-  if (!HistoryFindRecord(instance, history, primary_key, parent_id, from, to)) {
+  if (!HistoryFindRecord(instance, history, table_id, primary_key, parent_id, from, to)) {
     LCH_JsonDestroy(block);
     return false;
   }
@@ -825,7 +850,7 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
   return true;
 }
 
-LCH_Buffer *LCH_History(const char *const work_dir,
+LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
                         const LCH_List *const primary_fields, const double from,
                         const double to) {
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
@@ -857,7 +882,11 @@ LCH_Buffer *LCH_History(const char *const work_dir,
   }
 
   {
-    LCH_Json *const primary = LCH_JsonArrayCreate();
+    const LCH_TableInfo *const table_info =
+        LCH_InstanceGetTable(instance, table_id);
+    const LCH_List *const primary_names = LCH_TableInfoGetPrimaryFields(table_info);
+
+    LCH_Json *const primary = LCH_JsonObjectCreate();
     if (primary == NULL) {
       LCH_JsonDestroy(response);
       LCH_InstanceDestroy(instance);
@@ -865,10 +894,15 @@ LCH_Buffer *LCH_History(const char *const work_dir,
     }
 
     const size_t num_fields = LCH_ListLength(primary_fields);
+    assert(num_fields == LCH_ListLength(primary_names));
+
     for (size_t i = 0; i < num_fields; i++) {
+      const LCH_Buffer *const name =
+          (LCH_Buffer *)LCH_ListGet(primary_names, i);
       const LCH_Buffer *const field =
           (LCH_Buffer *)LCH_ListGet(primary_fields, i);
-      if (!LCH_JsonArrayAppendStringDuplicate(primary, field)) {
+
+      if (!LCH_JsonObjectSetStringDuplicate(primary, name, field)) {
         LCH_JsonDestroy(primary);
         LCH_JsonDestroy(response);
         LCH_InstanceDestroy(instance);
@@ -903,6 +937,23 @@ LCH_Buffer *LCH_History(const char *const work_dir,
     }
   }
 
+  {
+    LCH_Buffer *const value = LCH_BufferFromString(table_id);
+    if (value == NULL) {
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("table_id");
+    if (!LCH_JsonObjectSetString(response, key, value)) {
+      LCH_BufferDestroy(value);
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
   char *block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
     LCH_JsonDestroy(response);
@@ -917,7 +968,7 @@ LCH_Buffer *LCH_History(const char *const work_dir,
     return NULL;
   }
 
-  if (!HistoryFindRecord(instance, history, primary, block_id, from, to)) {
+  if (!HistoryFindRecord(instance, history, table_id, primary, block_id, from, to)) {
     LCH_BufferDestroy(primary);
     free(block_id);
     LCH_BufferDestroy(response);
