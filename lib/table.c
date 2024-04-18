@@ -933,3 +933,21 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
   table_info->dst_disconnect(conn);
   return true;
 }
+
+const LCH_List *LCH_TableInfoGetPrimaryFields(
+    const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->primary_fields;
+}
+
+const LCH_List *LCH_TableInfoGetSubsidiaryFields(
+    const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->subsidiary_fields;
+}
+
+const LCH_List *LCH_TableInfoGetAllFields(
+    const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->all_fields;
+}

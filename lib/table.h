@@ -30,4 +30,11 @@ bool LCH_TablePatch(const LCH_TableInfo *table_info, const char *type,
                     const LCH_Json *inserts, const LCH_Json *deletes,
                     const LCH_Json *updates);
 
+const LCH_List *LCH_TableInfoGetPrimaryFields(const LCH_TableInfo *table_info);
+
+const LCH_List *LCH_TableInfoGetSubsidiaryFields(
+    const LCH_TableInfo *table_info);
+
+const LCH_List *LCH_TableInfoGetAllFields(const LCH_TableInfo *table_info);
+
 #endif  // _LEECH_TABLE_H
