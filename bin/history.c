@@ -124,6 +124,8 @@ int History(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
+  LCH_ListDestroy(primary_fields);
+
   if (!LCH_BufferWriteFile(history, filename)) {
     LCH_BufferDestroy(history);
     return EXIT_FAILURE;
