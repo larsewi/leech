@@ -1054,6 +1054,7 @@ def test_leech_churn(tmp_path):
     ]
     assert execute(command, True) == 0
 
+
 def test_leech_history(tmp_path):
     ##########################################################################
     # Create config
@@ -1138,7 +1139,15 @@ def test_leech_history(tmp_path):
         time.sleep(1)
 
     history_path = os.path.join(tmp_path, "history.json")
-    command = [bin_path, "--debug", f"--workdir={tmp_path}", "history", "--table=BTL", "--primary=Paul,McCartney", f"--file={history_path}"]
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "history",
+        "--table=BTL",
+        "--primary=Paul,McCartney",
+        f"--file={history_path}",
+    ]
     assert execute(command, True) == 0
 
     with open(history_path, "r") as f:
@@ -1150,7 +1159,17 @@ def test_leech_history(tmp_path):
     ts_from = history["history"][3]["timestamp"]
     ts_to = history["history"][0]["timestamp"]
 
-    command = [bin_path, "--debug", f"--workdir={tmp_path}", "history", "--table=BTL", "--primary=Paul,McCartney", f"--file={history_path}", f"--from={ts_from}", f"--to={ts_to}"]
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "history",
+        "--table=BTL",
+        "--primary=Paul,McCartney",
+        f"--file={history_path}",
+        f"--from={ts_from}",
+        f"--to={ts_to}",
+    ]
     assert execute(command, True) == 0
 
     with open(history_path, "r") as f:

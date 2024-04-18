@@ -20,7 +20,7 @@ jobs:
     - name: Bootstrap project
       run: ./bootstrap.sh
     - name: Configure project with gcc compiler
-      run: ./configure CC=gcc --enable-debug
+      run: ./configure CC=gcc --enable-debug=yes --with-csv-module=yes --with-psql-module=yes
     - name: Compile project
       run: make
     - name: Run tests

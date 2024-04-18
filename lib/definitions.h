@@ -19,7 +19,4 @@
 #define LCH_PATH_SEP '/'
 #endif  // _WIN32
 
-typedef int (*LCH_CompareFn)(const void *, const void *);
-typedef void *(*LCH_DuplicateFn)(const void *);
-
 #endif  // _LEECH_DEFINITIONS_H

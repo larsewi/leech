@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "buffer.h"
+#include "definitions.h"
 #include "logger.h"
 
 /******************************************************************************/

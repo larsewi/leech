@@ -10,6 +10,7 @@
 #include "logger.h"
 #include "string_lib.h"
 #include "utils.h"
+#include "definitions.h"
 
 #ifdef __cplusplus
 extern "C" {

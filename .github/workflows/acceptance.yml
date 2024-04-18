@@ -24,7 +24,7 @@ jobs:
     - name: Bootstrap project
       run: ./bootstrap.sh
     - name: Configure project
-      run: ./configure --enable-debug
+      run: ./configure --enable-debug=yes --with-csv-module=yes --with-psql-module=yes
     - name: Compile project
       run: make
     - name: Run acceptance tests

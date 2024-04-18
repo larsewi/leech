@@ -114,6 +114,8 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     return NULL;
   }
 
+  memset(info, 0, sizeof(LCH_TableInfo));
+
   info->identifier = LCH_StringDuplicate(identifer);
   if (info->identifier == NULL) {
     LCH_TableInfoDestroy(info);

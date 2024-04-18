@@ -1,6 +1,7 @@
 #include <check.h>
 #include <stdio.h>
 
+#include "../lib/definitions.h"
 #include "../lib/dict.h"
 
 START_TEST(test_LCH_Dict) {
