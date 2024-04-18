@@ -73,30 +73,17 @@ int Diff(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_SUCCESS;
   }
 
-  size_t size;
-  char *patch = LCH_Diff(work_dir, block_id, &size);
+  LCH_Buffer *patch = LCH_Diff(work_dir, block_id);
   if (patch == NULL) {
     fprintf(stderr, "LCH_Diff\n");
     return EXIT_FAILURE;
   }
 
-  FILE *file = fopen(patch_file, "wb");
-  if (file == NULL) {
-    fprintf(stderr, "Failed to open file '%s' for binary writing: %s\n",
-            patch_file, strerror(errno));
-    free(patch);
+  if (!LCH_BufferWriteFile(patch, patch_file)) {
+    LCH_BufferDestroy(patch);
     return EXIT_FAILURE;
   }
 
-  if (fwrite(patch, 1, size, file) != size) {
-    fprintf(stderr, "Failed to write to file '%s': %s\n", patch_file,
-            strerror(errno));
-    fclose(file);
-    free(patch);
-    return EXIT_FAILURE;
-  }
-
-  fclose(file);
-  free(patch);
+  LCH_BufferDestroy(patch);
   return EXIT_SUCCESS;
 }

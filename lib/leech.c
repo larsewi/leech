@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "block.h"
+#include "csv.h"
 #include "definitions.h"
 #include "delta.h"
 #include "files.h"
@@ -50,7 +51,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
       return false;
     }
 
-    const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+    const char *const parent_id = LCH_BlockGetParentId(block);
     if (parent_id == NULL) {
       LCH_JsonDestroy(block);
       return false;
@@ -85,7 +86,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
       return false;
     }
 
-    const char *const parent_id = LCH_BlockGetParentBlockIdentifier(block);
+    const char *const parent_id = LCH_BlockGetParentId(block);
     if (parent_id == NULL) {
       LCH_JsonDestroy(block);
       return false;
@@ -282,7 +283,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   assert(instance != NULL);
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const char *const parent_id = LCH_BlockGetParentBlockIdentifier(child);
+  const char *const parent_id = LCH_BlockGetParentId(child);
 
   if (LCH_StringEqual(parent_id, final_id)) {
     // Base case reached. Recursion ends here.
@@ -401,8 +402,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   return merged;
 }
 
-char *LCH_Diff(const char *const work_dir, const char *const final_id,
-               size_t *const buf_len) {
+LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
   assert(work_dir != NULL);
   assert(final_id != NULL);
 
@@ -462,15 +462,10 @@ char *LCH_Diff(const char *const work_dir, const char *const final_id,
     LCH_LOG_ERROR("Failed to compose patch into JSON");
     return NULL;
   }
-  *buf_len = LCH_BufferLength(buffer);
-  char *const data = LCH_BufferToString(buffer);
-  return data;
+  return buffer;
 }
 
-char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
-  assert(work_dir != NULL);
-  assert(buf_len != NULL);
-
+LCH_Buffer *LCH_Rebase(const char *const work_dir) {
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");
@@ -591,20 +586,414 @@ char *LCH_Rebase(const char *const work_dir, size_t *const buf_len) {
     return NULL;
   }
 
-  *buf_len = LCH_BufferLength(buffer);
-  char *const data = LCH_BufferToString(buffer);
-  return data;
+  return buffer;
+}
+
+static bool HistoryAppendRecord(
+                                const LCH_Instance *const instance,
+                                const char *const table_id,
+                                const LCH_Json *const history,
+                                const char *const block_id,
+                                const double timestamp,
+                                const char *const operation,
+                                const LCH_Buffer *const subsidiary_value) {
+  LCH_Json *const record = LCH_JsonObjectCreate();
+  if (record == NULL) {
+    return false;
+  }
+
+  {
+    LCH_Buffer *const value = LCH_BufferFromString(block_id);
+    if (value == NULL) {
+      LCH_JsonDestroy(record);
+      return false;
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("block_id");
+    if (!LCH_JsonObjectSetString(record, key, value)) {
+      LCH_BufferDestroy(value);
+      LCH_JsonDestroy(record);
+      return false;
+    }
+  }
+
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
+    if (!LCH_JsonObjectSetNumber(record, key, timestamp)) {
+      LCH_JsonDestroy(record);
+      return false;
+    }
+  }
+
+  {
+    LCH_Buffer *const value = LCH_BufferFromString(operation);
+    if (value == NULL) {
+      LCH_JsonDestroy(record);
+      return false;
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("operation");
+    if (!LCH_JsonObjectSetString(record, key, value)) {
+      LCH_BufferDestroy(value);
+      LCH_JsonDestroy(record);
+      return false;
+    }
+  }
+
+  {
+    const char *const data = LCH_BufferData(subsidiary_value);
+    const size_t length = LCH_BufferLength(subsidiary_value);
+
+    LCH_List *const subsidiary_fields = LCH_CSVParseRecord(data, length);
+    if (subsidiary_fields == NULL) {
+      LCH_JsonDestroy(record);
+      return false;
+    }
+
+    const LCH_TableInfo *const table_info = LCH_InstanceGetTable(instance, table_id);
+    const LCH_List *const subsidiary_names = LCH_TableInfoGetSubsidiaryFields(table_info);
+
+    const size_t num_fields = LCH_ListLength(subsidiary_fields);
+    assert(num_fields == LCH_ListLength(subsidiary_names));
+
+    LCH_Json *const subsidiary = LCH_JsonObjectCreate();
+    if (subsidiary == NULL) {
+      LCH_ListDestroy(subsidiary_fields);
+      LCH_JsonDestroy(record);
+      return false;
+    }
+
+    for (size_t i = 0; i < num_fields; i++) {
+      const LCH_Buffer *const name =
+          (LCH_Buffer *)LCH_ListGet(subsidiary_names, i);
+      const LCH_Buffer *const field =
+          (LCH_Buffer *)LCH_ListGet(subsidiary_fields, i);
+
+      if (!LCH_JsonObjectSetStringDuplicate(subsidiary, name, field)) {
+        LCH_JsonDestroy(subsidiary);
+        LCH_ListDestroy(subsidiary_fields);
+        LCH_JsonDestroy(record);
+        return false;
+      }
+    }
+    LCH_ListDestroy(subsidiary_fields);
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("subsidiary");
+    if (!LCH_JsonObjectSet(record, key, subsidiary)) {
+      LCH_JsonDestroy(subsidiary);
+      LCH_JsonDestroy(record);
+      return false;
+    }
+  }
+
+  if (!LCH_JsonArrayAppend(history, record)) {
+    LCH_JsonDestroy(record);
+    return false;
+  }
+
+  LCH_Buffer *const str_repr = LCH_JsonCompose(record, true);
+  if (str_repr != NULL) {
+    LCH_LOG_DEBUG("Found entry: %s", LCH_BufferData(str_repr));
+    LCH_BufferDestroy(str_repr);
+  }
+
+  return true;
+}
+
+static bool HistoryFindRecord(const LCH_Instance *const instance,
+                              const LCH_Json *const history,
+                              const char *const table_id,
+                              const LCH_Buffer *const primary_key,
+                              const char *const block_id, const double from,
+                              const double to) {
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+
+  char path[PATH_MAX];
+  if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+    return false;
+  }
+
+  if (!LCH_FileExists(path)) {
+    LCH_LOG_VERBOSE("Reached End-of-Chain with block identifier '%s'",
+                    block_id);
+    return true;
+  }
+
+  LCH_Json *const block = LCH_BlockLoad(work_dir, block_id);
+  if (block == NULL) {
+    return false;
+  }
+
+  const char *const parent_id = LCH_BlockGetParentId(block);
+  if (parent_id == NULL) {
+    LCH_JsonDestroy(block);
+    return false;
+  }
+
+  double timestamp;
+  if (!LCH_BlockGetTimestamp(block, &timestamp)) {
+    LCH_JsonDestroy(block);
+    return false;
+  }
+
+  if (timestamp < from) {
+    // Base case reached, stop recording history
+    LCH_JsonDestroy(block);
+    return true;
+  }
+
+  if (timestamp >= to) {
+    // Continue without recording history (yet)
+    if (!HistoryFindRecord(instance, history, table_id, primary_key, parent_id, from,
+                           to)) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    LCH_JsonDestroy(block);
+    return true;
+  }
+
+  const LCH_Json *const payload = LCH_BlockGetPayload(block);
+  if (payload == NULL) {
+    LCH_JsonDestroy(block);
+    return false;
+  }
+
+  const size_t num_deltas = LCH_JsonArrayLength(payload);
+  for (size_t i = 0; i < num_deltas; i++) {
+    const LCH_Json *const delta = LCH_JsonArrayGetObject(payload, i);
+    if (delta == NULL) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    { // Skip tables that does not match table identifier
+      const LCH_Buffer *const key = LCH_BufferStaticFromString("id");
+      const LCH_Buffer *const tid = LCH_JsonObjectGetString(delta, key);
+      if (tid == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!LCH_StringEqual(LCH_BufferData(tid), table_id)) {
+        continue;
+      }
+    }
+
+    const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
+    if (inserts == NULL) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    const LCH_Json *const updates = LCH_DeltaGetUpdates(delta);
+    if (updates == NULL) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    const LCH_Json *const deletes = LCH_DeltaGetDeletes(delta);
+    if (deletes == NULL) {
+      LCH_JsonDestroy(block);
+      return false;
+    }
+
+    if (LCH_JsonObjectHasKey(inserts, primary_key)) {
+      const LCH_Buffer *const subsidiary_value =
+          LCH_JsonObjectGetString(inserts, primary_key);
+      if (subsidiary_value == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!HistoryAppendRecord(instance, table_id, history, block_id, timestamp, "insert",
+                               subsidiary_value)) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+    } else if (LCH_JsonObjectHasKey(deletes, primary_key)) {
+      const LCH_Buffer *const subsidiary_value =
+          LCH_JsonObjectGetString(deletes, primary_key);
+      if (subsidiary_value == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!HistoryAppendRecord(instance, table_id, history, block_id, timestamp, "delete",
+                               subsidiary_value)) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+    } else if (LCH_JsonObjectHasKey(updates, primary_key)) {
+      const LCH_Buffer *const subsidiary_value =
+          LCH_JsonObjectGetString(updates, primary_key);
+      if (subsidiary_value == NULL) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+
+      if (!HistoryAppendRecord(instance, table_id, history, block_id, timestamp, "update",
+                               subsidiary_value)) {
+        LCH_JsonDestroy(block);
+        return false;
+      }
+    }
+  }
+
+  if (!HistoryFindRecord(instance, history, table_id, primary_key, parent_id, from, to)) {
+    LCH_JsonDestroy(block);
+    return false;
+  }
+
+  LCH_JsonDestroy(block);
+  return true;
+}
+
+LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
+                        const LCH_List *const primary_fields, const double from,
+                        const double to) {
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    return NULL;
+  }
+
+  LCH_Json *const response = LCH_JsonObjectCreate();
+  if (response == NULL) {
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  LCH_Json *const history = LCH_JsonArrayCreate();
+  if (history == NULL) {
+    LCH_JsonDestroy(response);
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("history");
+    if (!LCH_JsonObjectSet(response, key, history)) {
+      LCH_JsonDestroy(history);
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
+  {
+    const LCH_TableInfo *const table_info =
+        LCH_InstanceGetTable(instance, table_id);
+    const LCH_List *const primary_names = LCH_TableInfoGetPrimaryFields(table_info);
+
+    LCH_Json *const primary = LCH_JsonObjectCreate();
+    if (primary == NULL) {
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+
+    const size_t num_fields = LCH_ListLength(primary_fields);
+    assert(num_fields == LCH_ListLength(primary_names));
+
+    for (size_t i = 0; i < num_fields; i++) {
+      const LCH_Buffer *const name =
+          (LCH_Buffer *)LCH_ListGet(primary_names, i);
+      const LCH_Buffer *const field =
+          (LCH_Buffer *)LCH_ListGet(primary_fields, i);
+
+      if (!LCH_JsonObjectSetStringDuplicate(primary, name, field)) {
+        LCH_JsonDestroy(primary);
+        LCH_JsonDestroy(response);
+        LCH_InstanceDestroy(instance);
+        return NULL;
+      }
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("primary");
+    if (!LCH_JsonObjectSet(response, key, primary)) {
+      LCH_JsonDestroy(primary);
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("from");
+    if (!LCH_JsonObjectSetNumber(response, key, from)) {
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("to");
+    if (!LCH_JsonObjectSetNumber(response, key, to)) {
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
+  {
+    LCH_Buffer *const value = LCH_BufferFromString(table_id);
+    if (value == NULL) {
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("table_id");
+    if (!LCH_JsonObjectSetString(response, key, value)) {
+      LCH_BufferDestroy(value);
+      LCH_JsonDestroy(response);
+      LCH_InstanceDestroy(instance);
+      return NULL;
+    }
+  }
+
+  char *block_id = LCH_HeadGet("HEAD", work_dir);
+  if (block_id == NULL) {
+    LCH_JsonDestroy(response);
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  LCH_Buffer *primary = NULL;
+  if (!LCH_CSVComposeRecord(&primary, primary_fields)) {
+    LCH_JsonDestroy(response);
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  if (!HistoryFindRecord(instance, history, table_id, primary, block_id, from, to)) {
+    LCH_BufferDestroy(primary);
+    free(block_id);
+    LCH_BufferDestroy(response);
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  LCH_BufferDestroy(primary);
+  free(block_id);
+
+  const bool pretty = LCH_InstancePrettyPrint(instance);
+  LCH_Buffer *const buffer = LCH_JsonCompose(response, pretty);
+  LCH_JsonDestroy(response);
+  if (buffer == NULL) {
+    LCH_InstanceDestroy(instance);
+    return NULL;
+  }
+
+  LCH_InstanceDestroy(instance);
+  return buffer;
 }
 
 static bool Patch(const LCH_Instance *const instance, const char *const field,
                   const char *const value, const char *const buffer,
                   const size_t size) {
-  assert(instance != NULL);
-  assert(buffer != NULL);
-
-  LCH_UNUSED(field);
-  LCH_UNUSED(size);
-
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
   LCH_Json *const patch = LCH_JsonParse(buffer, size);
@@ -718,11 +1107,6 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
 bool LCH_Patch(const char *const work_dir, const char *const field,
                const char *const value, const char *const patch,
                const size_t size) {
-  assert(work_dir != NULL);
-  assert(field != NULL);
-  assert(value != NULL);
-  assert(patch != NULL);
-
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");

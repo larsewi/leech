@@ -577,7 +577,8 @@ bool LCH_JsonObjectSetString(const LCH_Json *const json,
   }
 
   if (!LCH_JsonObjectSet(json, key, value)) {
-    LCH_JsonDestroy(value);
+    // We want to leave the value untouched on failure.
+    free(value);
     return false;
   }
 
@@ -636,6 +637,37 @@ bool LCH_JsonArrayAppend(const LCH_Json *const json, LCH_Json *const element) {
 
   const bool success = LCH_ListAppend(json->array, element, LCH_JsonDestroy);
   return success;
+}
+
+bool LCH_JsonArrayAppendString(const LCH_Json *const json,
+                               LCH_Buffer *const value) {
+  LCH_Json *const element = LCH_JsonStringCreate(value);
+  if (element == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonArrayAppend(json, element)) {
+    // We want to leave the value untouched on failure.
+    free(element);
+    return false;
+  }
+
+  return true;
+}
+
+bool LCH_JsonArrayAppendStringDuplicate(const LCH_Json *const json,
+                                        const LCH_Buffer *const value) {
+  LCH_Buffer *const duplicate = LCH_BufferDuplicate(value);
+  if (duplicate == NULL) {
+    return false;
+  }
+
+  if (!LCH_JsonArrayAppendString(json, duplicate)) {
+    LCH_BufferDestroy(duplicate);
+    return false;
+  }
+
+  return true;
 }
 
 /****************************************************************************/

@@ -3,6 +3,7 @@ import os
 import json
 import csv
 import psycopg2
+import time
 
 
 def execute(cmd, memcheck=False):
@@ -775,7 +776,6 @@ def test_leech_garbage_collect(tmp_path):
 
 
 def test_leech_churn(tmp_path):
-    pass
     ##########################################################################
     # Create config
     ##########################################################################
@@ -805,7 +805,7 @@ def test_leech_churn(tmp_path):
                     "schema": "leech",
                     "table_name": "beatles",
                     "callbacks": "lib/.libs/leech_csv.so",
-                }
+                },
             },
             "PFL": {
                 "primary_fields": ["first_name", "last_name"],
@@ -821,8 +821,8 @@ def test_leech_churn(tmp_path):
                     "schema": "leech",
                     "table_name": "pinkfloyd",
                     "callbacks": "lib/.libs/leech_csv.so",
-                }
-            }
+                },
+            },
         },
     }
     with open(leech_conf_path, "w") as f:
@@ -1053,3 +1053,108 @@ def test_leech_churn(tmp_path):
         f"--file={patchfile}",
     ]
     assert execute(command, True) == 0
+
+def test_leech_history(tmp_path):
+    ##########################################################################
+    # Create config
+    ##########################################################################
+
+    bin_path = os.path.join("bin", "leech")
+    leech_conf_path = os.path.join(tmp_path, "leech.json")
+    btl_src_path = os.path.join(tmp_path, "beatles.src.csv")
+    btl_dst_path = os.path.join(tmp_path, "beatles.dst.csv")
+    pfl_src_path = os.path.join(tmp_path, "pinkfloyd.src.csv")
+    pfl_dst_path = os.path.join(tmp_path, "pinkfloyd.dst.csv")
+
+    config = {
+        "version": "0.1.0",
+        "pretty_print": True,
+        "tables": {
+            "BTL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": btl_src_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": btl_dst_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+            },
+            "PFL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": pfl_src_path,
+                    "schema": "leech",
+                    "table_name": "pinkfloyd",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": pfl_dst_path,
+                    "schema": "leech",
+                    "table_name": "pinkfloyd",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+            },
+        },
+    }
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Create tables and commit 5 times
+    ##########################################################################
+
+    for born in range(1942, 1947):
+        table = [
+            ["first_name", "last_name", "born"],
+            ["Paul", "McCartney", f"{born}"],
+            ["Ringo", "Starr", "1940"],
+            ["John", "Lennon", "1940"],
+            ["George", "Harrison", "1943"],
+        ]
+
+        for path in (btl_src_path, pfl_src_path):
+            with open(path, "w", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerows(table)
+            print(f"Created table '{path}' with content:")
+            with open(path, "r") as f:
+                print(f.read())
+
+        command = [bin_path, "--debug", f"--workdir={tmp_path}", "commit"]
+        assert execute(command, True) == 0
+
+        # Make sure the timestamp changes in the blocks
+        time.sleep(1)
+
+    history_path = os.path.join(tmp_path, "history.json")
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "history", "--table=BTL", "--primary=Paul,McCartney", f"--file={history_path}"]
+    assert execute(command, True) == 0
+
+    with open(history_path, "r") as f:
+        history = json.load(f)
+
+    assert history["table_id"] == "BTL"
+    assert len(history["history"]) == 5
+
+    ts_from = history["history"][3]["timestamp"]
+    ts_to = history["history"][0]["timestamp"]
+
+    command = [bin_path, "--debug", f"--workdir={tmp_path}", "history", "--table=BTL", "--primary=Paul,McCartney", f"--file={history_path}", f"--from={ts_from}", f"--to={ts_to}"]
+    assert execute(command, True) == 0
+
+    with open(history_path, "r") as f:
+        history = json.load(f)
+
+    assert len(history["history"]) == 3
+    assert history["history"][1]["subsidiary"]["born"] == "1944"

@@ -430,6 +430,28 @@ bool LCH_JsonObjectSetNumber(const LCH_Json *json, const LCH_Buffer *key,
  */
 bool LCH_JsonArrayAppend(const LCH_Json *json, LCH_Json *value);
 
+/**
+ * @brief Append string element to JSON array.
+ * @param json JSON array to append element to.
+ * @param value String value of entry.
+ * @return True on success, false in case of memory errors.
+ * @note This function takes ownership of passed value argument.
+ * @warning This function assumes the passed JSON element is of type array.
+ */
+bool LCH_JsonArrayAppendString(const LCH_Json *json, LCH_Buffer *value);
+
+/**
+ * @brief Append string element to JSON array.
+ * @param json JSON array to append element to.
+ * @param value String value of entry.
+ * @return True on success, false in case of memory errors.
+ * @note This function does not take ownership of passed value argument, but
+ *       creates a duplicate.
+ * @warning This function assumes the passed JSON element is of type array.
+ */
+bool LCH_JsonArrayAppendStringDuplicate(const LCH_Json *json,
+                                        const LCH_Buffer *value);
+
 /****************************************************************************/
 
 /**

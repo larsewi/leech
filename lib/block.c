@@ -135,7 +135,7 @@ LCH_Json *LCH_BlockLoad(const char *const work_dir,
   return block;
 }
 
-const char *LCH_BlockGetParentBlockIdentifier(const LCH_Json *const block) {
+const char *LCH_BlockGetParentId(const LCH_Json *const block) {
   const LCH_Buffer *const parent =
       LCH_JsonObjectGetString(block, LCH_BufferStaticFromString("parent"));
   if (parent == NULL) {
@@ -145,7 +145,7 @@ const char *LCH_BlockGetParentBlockIdentifier(const LCH_Json *const block) {
   return LCH_BufferData(parent);
 }
 
-bool LCH_BlockIsGenisisBlockIdentifier(const char *const block_id) {
+bool LCH_BlockIsGenisisId(const char *const block_id) {
   return LCH_StringEqual(block_id, LCH_GENISIS_BLOCK_ID);
 }
 
@@ -167,4 +167,13 @@ LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
     return NULL;
   }
   return payload_val;
+}
+
+bool LCH_BlockGetTimestamp(const LCH_Json *const block,
+                           double *const timestamp) {
+  const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
+  if (!LCH_JsonObjectGetNumber(block, key, timestamp)) {
+    return false;
+  }
+  return true;
 }

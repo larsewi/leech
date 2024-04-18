@@ -56,30 +56,17 @@ int Rebase(const char *const work_dir, int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  size_t size;
-  char *patch = LCH_Rebase(work_dir, &size);
+  LCH_Buffer *const patch = LCH_Rebase(work_dir);
   if (patch == NULL) {
     fprintf(stderr, "LCH_Rebase\n");
     return EXIT_FAILURE;
   }
 
-  FILE *file = fopen(patch_file, "wb");
-  if (file == NULL) {
-    fprintf(stderr, "Failed to open file '%s' for binary writing: %s\n",
-            patch_file, strerror(errno));
-    free(patch);
+  if (!LCH_BufferWriteFile(patch, patch_file)) {
+    LCH_BufferDestroy(patch);
     return EXIT_FAILURE;
   }
 
-  if (fwrite(patch, 1, size, file) != size) {
-    fprintf(stderr, "Failed to write to file '%s': %s\n", patch_file,
-            strerror(errno));
-    fclose(file);
-    free(patch);
-    return EXIT_FAILURE;
-  }
-
-  fclose(file);
-  free(patch);
+  LCH_BufferDestroy(patch);
   return EXIT_SUCCESS;
 }

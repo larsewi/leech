@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <string.h>
+#include <sys/types.h>
 
 #include "logger.h"
 
@@ -98,20 +99,6 @@ bool LCH_ListAppend(LCH_List *const self, void *const value,
   self->buffer[index] = item;
   self->length += 1;
   return true;
-}
-
-bool LCH_ListAppendStringDuplicate(LCH_List *const list,
-                                   const char *const str) {
-  assert(list != NULL);
-  assert(str != NULL);
-
-  char *const dup = strdup(str);
-  if (dup == NULL) {
-    LCH_LOG_ERROR("Failed to duplicate string: %s", strerror(errno));
-    return false;
-  }
-
-  return LCH_ListAppend(list, dup, free);
 }
 
 void *LCH_ListGet(const LCH_List *const self, const size_t index) {

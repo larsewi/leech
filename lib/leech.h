@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "buffer.h"
+#include "list.h"
+
 /****************************************************************************/
 /*  Debug Messenger                                                         */
 /****************************************************************************/
@@ -16,15 +19,18 @@
 
 typedef void (*LCH_LoggerCallbackFn)(unsigned char, const char *);
 
-void LCH_LoggerInit(unsigned char severity, LCH_LoggerCallbackFn callback);
+void LCH_LoggerSeveritySet(unsigned char severity);
 
-void LCH_LoggerCallbackDefault(unsigned char severity, const char *message);
+void LCH_LoggerCallbackSet(LCH_LoggerCallbackFn callback);
 
 bool LCH_Commit(const char *work_dir);
 
-char *LCH_Diff(const char *work_dir, const char *block_id, size_t *buf_len);
+LCH_Buffer *LCH_Diff(const char *work_dir, const char *block_id);
 
-char *LCH_Rebase(const char *work_dir, size_t *buf_len);
+LCH_Buffer *LCH_Rebase(const char *work_dir);
+
+LCH_Buffer *LCH_History(const char *work_dir, const char *table_id,
+                        const LCH_List *primary_fields, double from, double to);
 
 bool LCH_Patch(const char *work_dir, const char *uid_field,
                const char *uid_value, const char *patch, size_t size);
