@@ -4,6 +4,8 @@ AM_CPPFLAGS = -include config.h
 
 check_PROGRAMS = unit_test
 
+EXTRA_DIST = leak_test
+
 unit_test_SOURCES = unit_test.c \
     check_block.c \
     check_buffer.c \
