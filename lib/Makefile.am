@@ -28,5 +28,6 @@ libleech_la_SOURCES = leech.c \
         list.h list.c \
         table.h table.c \
         utils.h utils.c \
-        sha1.h sha1.c
+        sha1.h sha1.c \
+        definitions.h
 libleech_la_LDFLAGS = -ldl -lm
