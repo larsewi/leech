@@ -5,12 +5,12 @@
 
 #include "buffer.h"
 #include "csv.h"
+#include "definitions.h"
 #include "files.h"
 #include "list.h"
 #include "logger.h"
 #include "string_lib.h"
 #include "utils.h"
-#include "definitions.h"
 
 #ifdef __cplusplus
 extern "C" {

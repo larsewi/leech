@@ -6,10 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "definitions.h"
 #include "dict.h"
 #include "logger.h"
 #include "string_lib.h"
-#include "definitions.h"
 
 struct LCH_Json {
   LCH_JsonType type;
@@ -1280,7 +1280,7 @@ static LCH_Json *ParseNull(LCH_JsonParser *const parser) {
   assert(success);
 #ifdef NDEBUG
   LCH_UNUSED(success);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonNullCreate();
   if (json == NULL) {
@@ -1298,7 +1298,7 @@ static LCH_Json *ParseTrue(LCH_JsonParser *const parser) {
   assert(success);
 #ifdef NDEBUG
   LCH_UNUSED(success);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonTrueCreate();
   if (json == NULL) {
@@ -1316,7 +1316,7 @@ static LCH_Json *ParseFalse(LCH_JsonParser *const parser) {
   assert(success);
 #ifdef NDEBUG
   LCH_UNUSED(success);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonFalseCreate();
   if (json == NULL) {
@@ -1334,7 +1334,7 @@ static LCH_Buffer *BufferParseString(LCH_JsonParser *const parser) {
   assert(success);
 #ifdef NDEBUG
   LCH_UNUSED(success);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   LCH_Buffer *const str = LCH_BufferCreate();
   if (str == NULL) {
@@ -1487,7 +1487,7 @@ static LCH_Json *ParseObject(LCH_JsonParser *const parser) {
   assert(success);
 #ifdef NDEBUG
   LCH_UNUSED(success);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   TrimLeadingWhitespace(parser);
 
@@ -1555,7 +1555,7 @@ static LCH_Json *ParseArray(LCH_JsonParser *const parser) {
   assert(success);
 #ifdef NDEBUG
   LCH_UNUSED(success);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   TrimLeadingWhitespace(parser);
 
@@ -1739,7 +1739,7 @@ static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
 
 #ifdef NDEBUG
   LCH_UNUSED(json);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "null")) {
     return false;
@@ -1754,7 +1754,7 @@ static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
 
 #ifdef NDEBUG
   LCH_UNUSED(json);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "true")) {
     return false;
@@ -1769,7 +1769,7 @@ static bool ComposeFalse(const LCH_Json *const json, LCH_Buffer *const buffer) {
 
 #ifdef NDEBUG
   LCH_UNUSED(json);
-#endif // NDEBUG
+#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "false")) {
     return false;
