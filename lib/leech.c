@@ -18,6 +18,8 @@
 #include "string_lib.h"
 #include "table.h"
 
+const char *LCH_Version(void) { return PACKAGE_VERSION; }
+
 static bool CollectGarbage(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
   const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);

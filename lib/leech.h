@@ -189,6 +189,8 @@ void LCH_LoggerCallbackSet(LCH_LoggerCallbackFn callback);
 /*  Main Interface                                                          */
 /****************************************************************************/
 
+const char *LCH_Version(void);
+
 bool LCH_Commit(const char *work_dir);
 
 LCH_Buffer *LCH_Diff(const char *work_dir, const char *block_id);
