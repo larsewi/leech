@@ -35,9 +35,13 @@ AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strndup mkdir rmdir
 # Configure arguments.
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
               [debug=$enableval], [debug=no])
+AC_ARG_WITH([psql-module], AS_HELP_STRING([--with-psql-module], [build PostgreSQL module]))
+AC_ARG_WITH([csv-module], AS_HELP_STRING([--with-csv-module], [build CSV module]))
 
 # Automake conditionals.
-AM_CONDITIONAL([NDEBUG], [test x"$debug" = x"no"])
+AM_CONDITIONAL([NDEBUG], [test "x$debug" = "xno"])
+AM_CONDITIONAL([PSQL_MODULE], [test "x$with_psql_module" = "xyes"])
+AM_CONDITIONAL([CSV_MODULE], [test "x$with_csv_module" = "xyes"])
 
 # Config constants.
 AC_DEFINE([LCH_DEFAULT_MAX_CHAIN_LENGTH], 2048, [Default max chain length used in block garbage collector])
@@ -49,7 +53,23 @@ AC_DEFINE([LCH_LIST_CAPACITY], 256, [Initial list capacity allocated by leech])
 
 # pkg-check modules.
 PKG_CHECK_MODULES([CHECK], [check])
-PKG_CHECK_MODULES([PSQL], [libpq])
+AS_IF([test "x$with_psql_module" = "xyes"],
+        [PKG_CHECK_MODULES([PSQL], [libpq],
+                [AC_DEFINE([HAVE_LIBPQ], [1],
+                        [Define to 1 if you have the <libpq-fe.h> header file.]
+                )
+        ])
+])
+
+AC_MSG_CHECKING([for debug option])
+if test x"$debug" = x"yes"
+then
+    AC_MSG_RESULT(yes)
+    CFLAGS="$CFLAGS -g3 -O0"
+else
+    AC_MSG_RESULT(no)
+    CFLAGS="$CFLAGS -O2 -DNDEBUG"
+fi
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
 AC_OUTPUT

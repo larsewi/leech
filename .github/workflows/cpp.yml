@@ -19,9 +19,15 @@ jobs:
       run: sudo apt -y install check libtool-bin valgrind
     - name: Bootstrap project
       run: ./bootstrap.sh
-    - name: Configure project with g++ compiler
-      run: ./configure CC=g++ --enable-debug
-    - name: Compile project
+    - name: Configure project with g++ compiler (all options enabled)
+      run: ./configure CC=g++ --enable-debug=yes --with-psql-module=no --with-csv-module=no
+    - name: Compile project (all options enabled)
       run: make
-    - name: Run tests
+    - name: Run tests (all options enabled)
+      run: make check
+    - name: Configure project with g++ compiler (all options disabled)
+      run: ./configure CC=g++ --enable-debug=yes --with-psql-module=no --with-csv-module=no
+    - name: Compile project (all options disabled)
+      run: make
+    - name: Run tests (all options disabled)
       run: make check

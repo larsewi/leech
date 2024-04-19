@@ -11,9 +11,12 @@
 #include "common.h"
 #include "diff.h"
 #include "history.h"
-#include "libpq-fe.h"
 #include "patch.h"
 #include "rebase.h"
+
+#ifdef HAVE_LIBPQ
+#include "libpq-fe.h"
+#endif  // HAVE_LIBPQ
 
 enum OPTION_VALUE {
   OPTION_WORKDIR = 1,
@@ -95,7 +98,9 @@ int main(int argc, char *argv[]) {
    * doesn't find any references to it. Adding a reference to one of the symbols
    * here, seems to fix the issue.
    */
+#ifdef HAVE_LIBPQ
   PQlibVersion();
+#endif  // HAVE_LIBPQ
 
   int opt;
   while ((opt = getopt_long(argc, argv, "+", OPTIONS, NULL)) != -1) {

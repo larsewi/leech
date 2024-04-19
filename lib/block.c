@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <time.h>
 
+#include "definitions.h"
 #include "files.h"
 #include "head.h"
 #include "logger.h"

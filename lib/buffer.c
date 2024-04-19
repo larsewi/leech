@@ -11,6 +11,7 @@
 
 #include "files.h"
 #include "logger.h"
+#include "definitions.h"
 
 struct LCH_Buffer {
   size_t length;
@@ -108,6 +109,9 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   va_start(ap, format);
   const int ret = vsnprintf(self->buffer + self->length,
                             self->capacity - self->length, format, ap);
+#ifdef NDEBUG
+  LCH_UNUSED(ret);
+#endif // NDEBUG
   assert(length >= 0);
   va_end(ap);
   if (length < 0) {
