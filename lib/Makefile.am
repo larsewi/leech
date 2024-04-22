@@ -5,12 +5,12 @@ include_HEADERS = $(top_builddir)/lib/leech.h
 lib_LTLIBRARIES = libleech.la
 
 pkglib_LTLIBRARIES =
-if CSV_MODULE
+if BUILD_CSV_MODULE
         pkglib_LTLIBRARIES += leech_csv.la
         leech_csv_la_SOURCES = leech_csv.c
         leech_csv_la_LDFLAGS = -avoid-version -module -shared -export-dynamic
 endif
-if PSQL_MODULE
+if BUILD_PSQL_MODULE
         pkglib_LTLIBRARIES += leech_psql.la
         leech_psql_la_SOURCES = leech_psql.c
         leech_psql_la_LDFLAGS = -avoid-version -module -shared -export-dynamic

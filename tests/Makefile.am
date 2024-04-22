@@ -1,11 +1,10 @@
-TESTS = unit_test leak_test
-
 AM_CFLAGS = -Wall -Wextra -Werror
 AM_CPPFLAGS = -include config.h
 
-check_PROGRAMS = unit_test
-
+if USE_CHECK
+TESTS = unit_test leak_test
 EXTRA_DIST = leak_test
+check_PROGRAMS = unit_test
 
 unit_test_SOURCES = unit_test.c \
     check_block.c \
@@ -21,3 +20,4 @@ unit_test_SOURCES = unit_test.c \
     check_instance.c
 unit_test_CFLAGS = @CHECK_CFLAGS@
 unit_test_LDADD = @CHECK_LIBS@ $(top_builddir)/lib/libleech.la
+endif

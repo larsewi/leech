@@ -35,13 +35,15 @@ AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strndup mkdir rmdir
 # Configure arguments.
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
               [debug=$enableval], [debug=no])
+AC_ARG_WITH([check], AS_HELP_STRING([--with-check], [use check test framework]))
 AC_ARG_WITH([psql-module], AS_HELP_STRING([--with-psql-module], [build PostgreSQL module]))
 AC_ARG_WITH([csv-module], AS_HELP_STRING([--with-csv-module], [build CSV module]))
 
 # Automake conditionals.
 AM_CONDITIONAL([NDEBUG], [test "x$debug" = "xno"])
-AM_CONDITIONAL([PSQL_MODULE], [test "x$with_psql_module" = "xyes"])
-AM_CONDITIONAL([CSV_MODULE], [test "x$with_csv_module" = "xyes"])
+AM_CONDITIONAL([USE_CHECK], [test "x$with_check" = "xyes"])
+AM_CONDITIONAL([BUILD_PSQL_MODULE], [test "x$with_psql_module" = "xyes"])
+AM_CONDITIONAL([BUILD_CSV_MODULE], [test "x$with_csv_module" = "xyes"])
 
 # Config constants.
 AC_DEFINE([LCH_DEFAULT_MAX_CHAIN_LENGTH], 2048, [Default max chain length used in block garbage collector])
@@ -52,7 +54,7 @@ AC_DEFINE([LCH_DICT_LOAD_FACTOR], 0.75f, [Initial dictionary capacity allocated 
 AC_DEFINE([LCH_LIST_CAPACITY], 256, [Initial list capacity allocated by leech])
 
 # pkg-check modules.
-PKG_CHECK_MODULES([CHECK], [check])
+AS_IF([test "x$with_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check])])
 AS_IF([test "x$with_psql_module" = "xyes"],
         [PKG_CHECK_MODULES([PSQL], [libpq],
                 [AC_DEFINE([HAVE_LIBPQ], [1],

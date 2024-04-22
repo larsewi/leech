@@ -16,7 +16,7 @@ jobs:
     - name: Update apt repositories
       run: sudo apt -y update
     - name: Install dependencies
-      run: sudo apt -y install check libtool-bin valgrind postgresql python3-pytest python3-psycopg2
+      run: sudo apt -y install libtool-bin valgrind postgresql python3-pytest python3-psycopg2
     - name: Start PostgreSQL server
       run: sudo systemctl start postgresql.service
     - name: Create PostgreSQL user
