@@ -1358,81 +1358,74 @@ static LCH_Buffer *BufferParseString(LCH_JsonParser *const parser) {
             return NULL;
           }
           break;
-
         case '\\':
           if (!LCH_BufferAppend(str, '\\')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
+        /* This could modify binary strings
         case '/':
           if (!LCH_BufferAppend(str, '/')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'b':
           if (!LCH_BufferAppend(str, '\b')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'f':
           if (!LCH_BufferAppend(str, '\f')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'n':
           if (!LCH_BufferAppend(str, '\n')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'r':
           if (!LCH_BufferAppend(str, '\r')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 't':
           if (!LCH_BufferAppend(str, '\t')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
-          /* Cannot have this is we want to support binary data in strings */
-          // case 'u':
-          //   if (parser->cursor + 6 > parser->end) {
-          //     LCH_LOG_ERROR(
-          //         "Failed to parse JSON: "
-          //         "Expected uncode control sequence after '\\u', "
-          //         "but reached End-of-Buffer");
-          //     LCH_BufferDestroy(str);
-          //     return NULL;
-          //   }
-          //   if (!LCH_BufferUnicodeToUTF8(str, parser->cursor + 2)) {
-          //     LCH_BufferDestroy(str);
-          //     return NULL;
-          //   }
-          //   parser->cursor += 4;
-          //   break;
-
+        case 'u':
+          if (parser->cursor + 6 > parser->end) {
+            LCH_LOG_ERROR(
+                "Failed to parse JSON: "
+                "Expected uncode control sequence after '\\u', "
+                "but reached End-of-Buffer");
+            LCH_BufferDestroy(str);
+            return NULL;
+          }
+          if (!LCH_BufferUnicodeToUTF8(str, parser->cursor + 2)) {
+            LCH_BufferDestroy(str);
+            return NULL;
+          }
+          parser->cursor += 4;
+          break;
+        */
         default:
-          /* Same reason as above */
-          // LCH_LOG_ERROR(
-          //     "Failed to parse JSON string: "
-          //     "Illegal control character '\\%c'",
-          //     parser->cursor[0]);
-          // LCH_BufferDestroy(str);
-          // return NULL;
+          /* Same reason as above
+          LCH_LOG_ERROR(
+              "Failed to parse JSON string: "
+              "Illegal control character '\\%c'",
+              parser->cursor[0]);
+          LCH_BufferDestroy(str);
+          return NULL;
+          */
           if (!LCH_BufferAppend(str, parser->cursor[1])) {
             LCH_BufferDestroy(str);
             return NULL;
@@ -1797,6 +1790,7 @@ static bool StringComposeString(const LCH_Buffer *const str,
       case '\\':
         control_sequence = "\\\\";
         break;
+      /* This could modify binary strings!
       case '\b':
         control_sequence = "\\b";
         break;
@@ -1812,6 +1806,7 @@ static bool StringComposeString(const LCH_Buffer *const str,
       case '\t':
         control_sequence = "\\t";
         break;
+      */
       default:
         if (!LCH_BufferAppend(buffer, data[i])) {
           return false;
