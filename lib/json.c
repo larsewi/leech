@@ -1851,6 +1851,24 @@ static bool ComposeNumber(const LCH_Json *const json,
   if (!LCH_BufferPrintFormat(buffer, "%f", json->number)) {
     return false;
   }
+
+  // Remove trailing zeroes
+  size_t length = LCH_BufferLength(buffer);
+  for (size_t i = 1; i < length; i++) {
+    const char *const data = LCH_BufferData(buffer);
+    if (data[length - i] != '0') {
+      break;
+    }
+    LCH_BufferChop(buffer, length - i);
+  }
+
+  // Remove trailing dot
+  length = LCH_BufferLength(buffer);
+  const char *const data = LCH_BufferData(buffer);
+  if (data[length - 1] == '.') {
+    LCH_BufferChop(buffer, length - 1);
+  }
+
   return true;
 }
 
