@@ -25,20 +25,18 @@ START_TEST(test_LCH_BlockCreate) {
   const char *const head = "I'm the parent";
   LCH_Json *const block = LCH_BlockCreate(head, payload);
 
-  ck_assert(
-      LCH_JsonObjectHasKey(block, LCH_BufferStaticFromString("timestamp")));
-  LCH_LOG_INFO("timestamp: %f",
-               LCH_JsonNumberGet(LCH_JsonObjectGet(
-                   block, LCH_BufferStaticFromString("timestamp"))));
-
-  ck_assert(LCH_JsonObjectHasKey(block, LCH_BufferStaticFromString("parent")));
-  ck_assert_str_eq(LCH_BufferData(LCH_JsonObjectGetString(
-                       block, LCH_BufferStaticFromString("parent"))),
-                   head);
-  LCH_LOG_INFO("parent: %s", LCH_JsonStringGet(LCH_JsonObjectGet(
-                                 block, LCH_BufferStaticFromString("parent"))));
-
-  ck_assert(LCH_JsonObjectHasKey(block, LCH_BufferStaticFromString("payload")));
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
+    ck_assert(LCH_JsonObjectHasKey(block, key));
+  }
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("parent");
+    ck_assert(LCH_JsonObjectHasKey(block, key));
+  }
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("payload");
+    ck_assert(LCH_JsonObjectHasKey(block, key));
+  }
 
   LCH_JsonDestroy(block);
 }

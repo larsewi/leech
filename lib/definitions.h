@@ -2,6 +2,7 @@
 #define _LEECH_DEFINITIONS_H
 
 #define LCH_PATCH_VERSION 1
+#define LCH_BLOCK_VERSION 1
 
 #define LCH_KIBIBYTE(n) (n * 1024UL)
 #define LCH_MEBIBYTE(n) (n * 1024UL * 1024UL)

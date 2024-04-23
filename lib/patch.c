@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <time.h>
 
+#include "definitions.h"
 #include "files.h"
 #include "head.h"
-#include "definitions.h"
 
 LCH_Json *LCH_PatchCreate(const char *const lastknown) {
   LCH_Json *const patch = LCH_JsonObjectCreate();
