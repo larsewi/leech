@@ -14,7 +14,12 @@
 #define LCH_MIN(a, b) ((a < b) ? a : b)
 #define LCH_MAX(a, b) ((a > b) ? a : b)
 
-#define LCH_UNUSED(x) (void)x
+#define LCH_UNUSED __attribute__((unused))
+#ifdef NDEBUG
+#define LCH_NDEBUG_UNUSED __attribute__((unused))
+#else
+#define LCH_NDEBUG_UNUSED
+#endif
 
 #ifdef _WIN32
 #define LCH_PATH_SEP '\\'

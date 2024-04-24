@@ -245,8 +245,8 @@ char *LCH_StringFormat(const char *const format, ...) {
   }
 
   va_start(ap, format);
-  const int ret = vsnprintf(str, (size_t)length + 1, format, ap);
-  LCH_UNUSED(ret);
+  LCH_NDEBUG_UNUSED const int ret =
+      vsnprintf(str, (size_t)length + 1, format, ap);
   va_end(ap);
   assert(ret == length);
 

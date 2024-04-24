@@ -1276,11 +1276,8 @@ static LCH_Json *ParseNull(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "null");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "null");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonNullCreate();
   if (json == NULL) {
@@ -1294,11 +1291,8 @@ static LCH_Json *ParseTrue(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "true");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "true");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonTrueCreate();
   if (json == NULL) {
@@ -1312,11 +1306,8 @@ static LCH_Json *ParseFalse(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "false");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "false");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonFalseCreate();
   if (json == NULL) {
@@ -1330,11 +1321,8 @@ static LCH_Buffer *BufferParseString(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "\"");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "\"");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Buffer *const str = LCH_BufferCreate();
   if (str == NULL) {
@@ -1476,11 +1464,8 @@ static LCH_Json *ParseObject(LCH_JsonParser *const parser) {
     return NULL;
   }
 
-  bool success = ParseToken(parser, "{");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "{");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   TrimLeadingWhitespace(parser);
 
@@ -1544,11 +1529,8 @@ static LCH_Json *ParseArray(LCH_JsonParser *const parser) {
     return NULL;
   }
 
-  const bool success = ParseToken(parser, "[");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "[");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   TrimLeadingWhitespace(parser);
 
@@ -1725,14 +1707,11 @@ LCH_Json *LCH_JsonParseFile(const char *const filename) {
 static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer,
                     bool pretty, size_t indent);
 
-static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeNull(LCH_NDEBUG_UNUSED const LCH_Json *const json,
+                        LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NULL);
-
-#ifdef NDEBUG
-  LCH_UNUSED(json);
-#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "null")) {
     return false;
@@ -1740,14 +1719,11 @@ static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
   return true;
 }
 
-static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeTrue(LCH_NDEBUG_UNUSED const LCH_Json *const json,
+                        LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_TRUE);
-
-#ifdef NDEBUG
-  LCH_UNUSED(json);
-#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "true")) {
     return false;
@@ -1755,14 +1731,11 @@ static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
   return true;
 }
 
-static bool ComposeFalse(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeFalse(LCH_NDEBUG_UNUSED const LCH_Json *const json,
+                         LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_FALSE);
-
-#ifdef NDEBUG
-  LCH_UNUSED(json);
-#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "false")) {
     return false;
