@@ -6,6 +6,45 @@
 #include "definitions.h"
 #include "files.h"
 #include "head.h"
+#include "logger.h"
+#include "utils.h"
+
+bool LCH_PatchGetVersion(const LCH_Json *const patch, size_t *const version) {
+  double value;
+  const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
+  if (!LCH_JsonObjectGetNumber(patch, key, &value)) {
+    return false;
+  }
+
+  if (!LCH_DoubleToSize(value, version)) {
+    return false;
+  }
+
+  return true;
+}
+
+LCH_Json *LCH_PatchParse(const char *const raw_buffer,
+                         const size_t raw_length) {
+  LCH_Json *const patch = LCH_JsonParse(raw_buffer, raw_length);
+  if (patch == NULL) {
+    return NULL;
+  }
+
+  size_t version;
+  if (!LCH_PatchGetVersion(patch, &version)) {
+    LCH_JsonDestroy(patch);
+    return NULL;
+  }
+
+  if (version > LCH_PATCH_VERSION) {
+    LCH_LOG_ERROR("Unsupported patch version %zu", version);
+    LCH_JsonDestroy(patch);
+    return NULL;
+  }
+  LCH_LOG_DEBUG("Patch version number is %zu", version);
+
+  return patch;
+}
 
 LCH_Json *LCH_PatchCreate(const char *const lastknown) {
   LCH_Json *const patch = LCH_JsonObjectCreate();
