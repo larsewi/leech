@@ -17,7 +17,8 @@ unit_test_SOURCES = unit_test.c \
     check_list.c \
     check_table.c \
     check_utils.c \
-    check_instance.c
+    check_instance.c \
+    check_patch.c
 unit_test_CFLAGS = @CHECK_CFLAGS@
 unit_test_LDADD = @CHECK_LIBS@ $(top_builddir)/lib/libleech.la
 endif
