@@ -163,7 +163,7 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
 }
 
 LCH_List *LCH_CallbackGetTable(void *const _conn, const char *const table_name,
-                               const LCH_List *const columns) {
+                               LCH_UNUSED const LCH_List *const columns) {
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->filename != NULL);
@@ -178,7 +178,6 @@ LCH_List *LCH_CallbackGetTable(void *const _conn, const char *const table_name,
    * TODO: Extract only the fields listed in the columns parameter, and in the
    * same order as they appear (see ticket CFE-4339).
    */
-  LCH_UNUSED(columns);
 
   return table;
 }
@@ -230,15 +229,13 @@ bool LCH_CallbackRollbackTransaction(void *const _conn) {
   return true;
 }
 
-bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
-                              const LCH_List *const columns,
+bool LCH_CallbackInsertRecord(void *const _conn,
+                              LCH_UNUSED const char *const table_name,
+                              LCH_UNUSED const LCH_List *const columns,
                               const LCH_List *const values) {
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->table != NULL);
-
-  LCH_UNUSED(table_name);  // Intended for database systems.
-  LCH_UNUSED(columns);     // Intended for database systems.
 
   LCH_List *const record = LCH_ListCopy(
       values, (LCH_DuplicateFn)LCH_BufferDuplicate, LCH_BufferDestroy);
@@ -262,15 +259,13 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
   return true;
 }
 
-bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
-                              const LCH_List *const primary_columns,
+bool LCH_CallbackDeleteRecord(void *const _conn,
+                              LCH_UNUSED const char *const table_name,
+                              LCH_UNUSED const LCH_List *const primary_columns,
                               const LCH_List *const primary_values) {
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->table != NULL);
-
-  LCH_UNUSED(table_name);       // Intended for database systems.
-  LCH_UNUSED(primary_columns);  // Intended for database systems.
 
   const size_t num_records = LCH_ListLength(conn->table);
   assert(num_records > 0);
@@ -311,18 +306,15 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
   return false;
 }
 
-bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
-                              const LCH_List *const primary_columns,
-                              const LCH_List *const primary_values,
-                              const LCH_List *const subsidiary_columns,
-                              const LCH_List *const subsidiary_values) {
+bool LCH_CallbackUpdateRecord(
+    void *const _conn, LCH_UNUSED const char *const table_name,
+    LCH_UNUSED const LCH_List *const primary_columns,
+    const LCH_List *const primary_values,
+    LCH_UNUSED const LCH_List *const subsidiary_columns,
+    const LCH_List *const subsidiary_values) {
   CSVconn *const conn = (CSVconn *)_conn;
   assert(conn != NULL);
   assert(conn->table != NULL);
-
-  LCH_UNUSED(table_name);          // Intended for database systems.
-  LCH_UNUSED(primary_columns);     // Intended for database systems.
-  LCH_UNUSED(subsidiary_columns);  // Intended for database systems.
 
   const size_t num_records = LCH_ListLength(conn->table);
   assert(num_records > 0);

@@ -21,26 +21,22 @@ LCH_Json *LCH_BlockCreate(const char *const parent_id,
     return NULL;
   }
 
-  LCH_Buffer *const version = LCH_BufferFromString(PACKAGE_VERSION);
-  if (version == NULL) {
-    LCH_JsonDestroy(block);
-    return NULL;
+  {
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
+    if (!LCH_JsonObjectSetNumber(block, key, (double)LCH_BLOCK_VERSION)) {
+      LCH_JsonDestroy(block);
+      return NULL;
+    }
   }
 
-  if (!LCH_JsonObjectSetString(block, LCH_BufferStaticFromString("version"),
-                               version)) {
-    LCH_LOG_ERROR("Failed to set version field in block");
-    LCH_BufferDestroy(version);
-    LCH_JsonDestroy(block);
-    return NULL;
-  }
-
-  const double timestamp = (double)time(NULL);
-  if (!LCH_JsonObjectSetNumber(block, LCH_BufferStaticFromString("timestamp"),
-                               timestamp)) {
-    LCH_LOG_ERROR("Failed to set timestamp field in block");
-    LCH_JsonDestroy(block);
-    return NULL;
+  {
+    const time_t timestamp = time(NULL);
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
+    if (!LCH_JsonObjectSetNumber(block, key, (double)timestamp)) {
+      LCH_LOG_ERROR("Failed to set timestamp field in block");
+      LCH_JsonDestroy(block);
+      return NULL;
+    }
   }
 
   LCH_Buffer *const parent = LCH_BufferFromString(parent_id);
@@ -119,6 +115,20 @@ bool LCH_BlockStore(const LCH_Instance *const instance,
   return true;
 }
 
+bool LCH_BlockGetVersion(const LCH_Json *const block, size_t *const version) {
+  double value;
+  const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
+  if (!LCH_JsonObjectGetNumber(block, key, &value)) {
+    return false;
+  }
+
+  if (!LCH_DoubleToSize(value, version)) {
+    return false;
+  }
+
+  return true;
+}
+
 LCH_Json *LCH_BlockLoad(const char *const work_dir,
                         const char *const block_id) {
   char path[PATH_MAX];
@@ -131,8 +141,20 @@ LCH_Json *LCH_BlockLoad(const char *const work_dir,
     LCH_LOG_ERROR("Failed to parse block with identifer %.7s", block_id);
     return NULL;
   }
+  LCH_LOG_DEBUG("Parsed block with identifer %.7s", block_id);
 
-  LCH_LOG_DEBUG("Parsed JSON from block with identifer %.7s", block_id);
+  size_t version;
+  if (!LCH_BlockGetVersion(block, &version)) {
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+
+  if (version > LCH_PATCH_VERSION) {
+    LCH_LOG_ERROR("Unsupported block version %zu", version);
+    LCH_JsonDestroy(block);
+    return NULL;
+  }
+  LCH_LOG_DEBUG("Block version number is %zu", version);
   return block;
 }
 

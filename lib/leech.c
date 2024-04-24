@@ -1002,9 +1002,9 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
                   const size_t size) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
 
-  LCH_Json *const patch = LCH_JsonParse(buffer, size);
+  LCH_Json *const patch = LCH_PatchParse(buffer, size);
   if (patch == NULL) {
-    LCH_LOG_ERROR("Failed to parse patch");
+    LCH_LOG_ERROR("Failed to interpret patch");
     return false;
   }
 

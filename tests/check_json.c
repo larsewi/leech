@@ -798,23 +798,44 @@ START_TEST(test_LCH_JsonComposeFalse) {
 END_TEST
 
 START_TEST(test_LCH_JsonComposeNumber) {
-  LCH_Json *const json = LCH_JsonNumberCreate(123.0);
-  ck_assert_ptr_nonnull(json);
   {
-    LCH_Buffer *const actual = LCH_JsonCompose(json, false);
-    ck_assert_ptr_nonnull(actual);
+    LCH_Json *const json = LCH_JsonNumberCreate(123.0);
+    ck_assert_ptr_nonnull(json);
+    {
+      LCH_Buffer *const actual = LCH_JsonCompose(json, false);
+      ck_assert_ptr_nonnull(actual);
 
-    ck_assert_str_eq(LCH_BufferData(actual), "123.000000");
-    LCH_BufferDestroy(actual);
+      ck_assert_str_eq(LCH_BufferData(actual), "123");
+      LCH_BufferDestroy(actual);
+    }
+    {
+      LCH_Buffer *const actual = LCH_JsonCompose(json, true);
+      ck_assert_ptr_nonnull(actual);
+
+      ck_assert_str_eq(LCH_BufferData(actual), "123\n");
+      LCH_BufferDestroy(actual);
+    }
+    LCH_JsonDestroy(json);
   }
   {
-    LCH_Buffer *const actual = LCH_JsonCompose(json, true);
-    ck_assert_ptr_nonnull(actual);
+    LCH_Json *const json = LCH_JsonNumberCreate(123.456);
+    ck_assert_ptr_nonnull(json);
+    {
+      LCH_Buffer *const actual = LCH_JsonCompose(json, false);
+      ck_assert_ptr_nonnull(actual);
 
-    ck_assert_str_eq(LCH_BufferData(actual), "123.000000\n");
-    LCH_BufferDestroy(actual);
+      ck_assert_str_eq(LCH_BufferData(actual), "123.456");
+      LCH_BufferDestroy(actual);
+    }
+    {
+      LCH_Buffer *const actual = LCH_JsonCompose(json, true);
+      ck_assert_ptr_nonnull(actual);
+
+      ck_assert_str_eq(LCH_BufferData(actual), "123.456\n");
+      LCH_BufferDestroy(actual);
+    }
+    LCH_JsonDestroy(json);
   }
-  LCH_JsonDestroy(json);
 }
 END_TEST
 
@@ -981,7 +1002,7 @@ START_TEST(test_LCH_JsonCompose) {
       "{\n"
       "  \"version\": \"" PACKAGE_VERSION
       "\",\n"
-      "  \"max_chain_length\": 64.000000,\n"
+      "  \"max_chain_length\": 64,\n"
       "  \"compression\": false,\n"
       "  \"tables\": {\n"
       "    \"BTL\": {\n"

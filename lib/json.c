@@ -1276,11 +1276,8 @@ static LCH_Json *ParseNull(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "null");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "null");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonNullCreate();
   if (json == NULL) {
@@ -1294,11 +1291,8 @@ static LCH_Json *ParseTrue(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "true");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "true");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonTrueCreate();
   if (json == NULL) {
@@ -1312,11 +1306,8 @@ static LCH_Json *ParseFalse(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "false");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "false");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Json *const json = LCH_JsonFalseCreate();
   if (json == NULL) {
@@ -1330,11 +1321,8 @@ static LCH_Buffer *BufferParseString(LCH_JsonParser *const parser) {
   assert(parser->cursor != NULL);
   assert(parser->end != NULL);
 
-  const bool success = ParseToken(parser, "\"");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "\"");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   LCH_Buffer *const str = LCH_BufferCreate();
   if (str == NULL) {
@@ -1358,81 +1346,74 @@ static LCH_Buffer *BufferParseString(LCH_JsonParser *const parser) {
             return NULL;
           }
           break;
-
         case '\\':
           if (!LCH_BufferAppend(str, '\\')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
+        /* This could modify binary strings
         case '/':
           if (!LCH_BufferAppend(str, '/')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'b':
           if (!LCH_BufferAppend(str, '\b')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'f':
           if (!LCH_BufferAppend(str, '\f')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'n':
           if (!LCH_BufferAppend(str, '\n')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 'r':
           if (!LCH_BufferAppend(str, '\r')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
         case 't':
           if (!LCH_BufferAppend(str, '\t')) {
             LCH_BufferDestroy(str);
             return NULL;
           }
           break;
-
-          /* Cannot have this is we want to support binary data in strings */
-          // case 'u':
-          //   if (parser->cursor + 6 > parser->end) {
-          //     LCH_LOG_ERROR(
-          //         "Failed to parse JSON: "
-          //         "Expected uncode control sequence after '\\u', "
-          //         "but reached End-of-Buffer");
-          //     LCH_BufferDestroy(str);
-          //     return NULL;
-          //   }
-          //   if (!LCH_BufferUnicodeToUTF8(str, parser->cursor + 2)) {
-          //     LCH_BufferDestroy(str);
-          //     return NULL;
-          //   }
-          //   parser->cursor += 4;
-          //   break;
-
+        case 'u':
+          if (parser->cursor + 6 > parser->end) {
+            LCH_LOG_ERROR(
+                "Failed to parse JSON: "
+                "Expected uncode control sequence after '\\u', "
+                "but reached End-of-Buffer");
+            LCH_BufferDestroy(str);
+            return NULL;
+          }
+          if (!LCH_BufferUnicodeToUTF8(str, parser->cursor + 2)) {
+            LCH_BufferDestroy(str);
+            return NULL;
+          }
+          parser->cursor += 4;
+          break;
+        */
         default:
-          /* Same reason as above */
-          // LCH_LOG_ERROR(
-          //     "Failed to parse JSON string: "
-          //     "Illegal control character '\\%c'",
-          //     parser->cursor[0]);
-          // LCH_BufferDestroy(str);
-          // return NULL;
+          /* Same reason as above
+          LCH_LOG_ERROR(
+              "Failed to parse JSON string: "
+              "Illegal control character '\\%c'",
+              parser->cursor[0]);
+          LCH_BufferDestroy(str);
+          return NULL;
+          */
           if (!LCH_BufferAppend(str, parser->cursor[1])) {
             LCH_BufferDestroy(str);
             return NULL;
@@ -1483,11 +1464,8 @@ static LCH_Json *ParseObject(LCH_JsonParser *const parser) {
     return NULL;
   }
 
-  bool success = ParseToken(parser, "{");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "{");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   TrimLeadingWhitespace(parser);
 
@@ -1551,11 +1529,8 @@ static LCH_Json *ParseArray(LCH_JsonParser *const parser) {
     return NULL;
   }
 
-  const bool success = ParseToken(parser, "[");
+  LCH_NDEBUG_UNUSED const bool success = ParseToken(parser, "[");
   assert(success);
-#ifdef NDEBUG
-  LCH_UNUSED(success);
-#endif  // NDEBUG
 
   TrimLeadingWhitespace(parser);
 
@@ -1732,14 +1707,11 @@ LCH_Json *LCH_JsonParseFile(const char *const filename) {
 static bool Compose(const LCH_Json *const json, LCH_Buffer *const buffer,
                     bool pretty, size_t indent);
 
-static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeNull(LCH_NDEBUG_UNUSED const LCH_Json *const json,
+                        LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_NULL);
-
-#ifdef NDEBUG
-  LCH_UNUSED(json);
-#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "null")) {
     return false;
@@ -1747,14 +1719,11 @@ static bool ComposeNull(const LCH_Json *const json, LCH_Buffer *const buffer) {
   return true;
 }
 
-static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeTrue(LCH_NDEBUG_UNUSED const LCH_Json *const json,
+                        LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_TRUE);
-
-#ifdef NDEBUG
-  LCH_UNUSED(json);
-#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "true")) {
     return false;
@@ -1762,14 +1731,11 @@ static bool ComposeTrue(const LCH_Json *const json, LCH_Buffer *const buffer) {
   return true;
 }
 
-static bool ComposeFalse(const LCH_Json *const json, LCH_Buffer *const buffer) {
+static bool ComposeFalse(LCH_NDEBUG_UNUSED const LCH_Json *const json,
+                         LCH_Buffer *const buffer) {
   assert(json != NULL);
   assert(buffer != NULL);
   assert(LCH_JsonGetType(json) == LCH_JSON_TYPE_FALSE);
-
-#ifdef NDEBUG
-  LCH_UNUSED(json);
-#endif  // NDEBUG
 
   if (!LCH_BufferPrintFormat(buffer, "false")) {
     return false;
@@ -1797,6 +1763,7 @@ static bool StringComposeString(const LCH_Buffer *const str,
       case '\\':
         control_sequence = "\\\\";
         break;
+      /* This could modify binary strings!
       case '\b':
         control_sequence = "\\b";
         break;
@@ -1812,6 +1779,7 @@ static bool StringComposeString(const LCH_Buffer *const str,
       case '\t':
         control_sequence = "\\t";
         break;
+      */
       default:
         if (!LCH_BufferAppend(buffer, data[i])) {
           return false;
@@ -1851,6 +1819,24 @@ static bool ComposeNumber(const LCH_Json *const json,
   if (!LCH_BufferPrintFormat(buffer, "%f", json->number)) {
     return false;
   }
+
+  // Remove trailing zeroes
+  size_t length = LCH_BufferLength(buffer);
+  for (size_t i = 1; i < length; i++) {
+    const char *const data = LCH_BufferData(buffer);
+    if (data[length - i] != '0') {
+      break;
+    }
+    LCH_BufferChop(buffer, length - i);
+  }
+
+  // Remove trailing dot
+  length = LCH_BufferLength(buffer);
+  const char *const data = LCH_BufferData(buffer);
+  if (data[length - 1] == '.') {
+    LCH_BufferChop(buffer, length - 1);
+  }
+
   return true;
 }
 

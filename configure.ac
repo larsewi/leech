@@ -67,10 +67,9 @@ AC_MSG_CHECKING([for debug option])
 if test x"$debug" = x"yes"
 then
     AC_MSG_RESULT(yes)
-    CFLAGS="$CFLAGS -g3 -O0"
 else
     AC_MSG_RESULT(no)
-    CFLAGS="$CFLAGS -O2 -DNDEBUG"
+    CFLAGS="$CFLAGS -DNDEBUG"
 fi
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
