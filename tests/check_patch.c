@@ -25,12 +25,13 @@ START_TEST(test_LCH_PatchParse) {
                                     LCH_PATCH_VERSION));
 
     const size_t raw_length = LCH_BufferLength(buffer);
-    const char *const raw_buffer = LCH_BufferToString(buffer);
+    char *const raw_buffer = LCH_BufferToString(buffer);
 
     LCH_Json *const patch = LCH_PatchParse(raw_buffer, raw_length);
     ck_assert_ptr_nonnull(patch);
 
     LCH_JsonDestroy(patch);
+    free(raw_buffer);
   }
   {
     LCH_Buffer *const buffer = LCH_BufferCreate();
@@ -39,10 +40,11 @@ START_TEST(test_LCH_PatchParse) {
                                     LCH_PATCH_VERSION + 1));
 
     const size_t raw_length = LCH_BufferLength(buffer);
-    const char *const raw_buffer = LCH_BufferToString(buffer);
+    char *const raw_buffer = LCH_BufferToString(buffer);
 
     LCH_Json *const patch = LCH_PatchParse(raw_buffer, raw_length);
     ck_assert_ptr_null(patch);
+    free(raw_buffer);
   }
 }
 END_TEST
