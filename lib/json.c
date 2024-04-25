@@ -1498,6 +1498,7 @@ static LCH_Json *ParseObject(LCH_JsonParser *const parser) {
     if (value == NULL) {
       LCH_BufferDestroy(key);
       LCH_JsonDestroy(object);
+      return NULL;
     }
 
     if (!LCH_JsonObjectSet(object, key, value)) {
