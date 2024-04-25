@@ -1,7 +1,9 @@
 #include "leech.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
+#include <libgen.h>
 #include <limits.h>
 #include <string.h>
 
@@ -9,6 +11,7 @@
 #include "csv.h"
 #include "definitions.h"
 #include "delta.h"
+#include "dict.h"
 #include "files.h"
 #include "head.h"
 #include "instance.h"
@@ -1125,4 +1128,168 @@ bool LCH_Patch(const char *const work_dir, const char *const field,
     LCH_LOG_ERROR("Failed to apply patch");
   }
   return success;
+}
+
+static bool Purge(const LCH_Instance *const instance) {
+  const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+  const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);
+
+  char *const head = LCH_HeadGet("HEAD", work_dir);
+  if (head == NULL) {
+    return false;
+  }
+
+  // We'll use the dict as a map
+  LCH_Dict *const whitelist = LCH_DictCreate();
+  if (whitelist == NULL) {
+    free(head);
+    return false;
+  }
+
+  LCH_Json *child = NULL;
+  LCH_Json *parent = NULL;
+  const char *child_id = NULL;
+  const char *parent_id = head;
+
+  char path[PATH_MAX];
+  for (size_t i = 0; i < max_chain_length; i++) {
+    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", parent_id)) {
+      LCH_JsonDestroy(child);
+      LCH_JsonDestroy(parent);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+
+    if (!LCH_FileExists(path)) {
+      LCH_LOG_DEBUG("End-of-Chain reached at index %zu", i);
+      break;
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString(parent_id);
+    if (!LCH_DictSet(whitelist, key, NULL, NULL)) {
+      LCH_JsonDestroy(child);
+      LCH_JsonDestroy(parent);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+    if (child_id == NULL) {
+      LCH_LOG_DEBUG("Whitelisted block %.7s, head of chain (index %zu)",
+                    parent_id, i);
+    } else {
+      LCH_LOG_DEBUG("Whitelisted block %.7s, parent of %.7s (index %zu)",
+                    parent_id, child_id, i);
+    }
+
+    LCH_Json *const block = LCH_BlockLoad(work_dir, parent_id);
+    if (block == NULL) {
+      LCH_JsonDestroy(parent);
+      LCH_JsonDestroy(child);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+
+    LCH_JsonDestroy(child);
+    child = parent;
+    parent = block;
+
+    child_id = parent_id;
+    parent_id = LCH_BlockGetParentId(parent);
+    if (parent_id == NULL) {
+      LCH_JsonDestroy(parent);
+      LCH_JsonDestroy(child);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+  }
+
+  LCH_JsonDestroy(parent);
+  LCH_JsonDestroy(child);
+  free(head);
+
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, "blocks")) {
+    LCH_DictDestroy(whitelist);
+    return false;
+  }
+
+  LCH_List *const files = LCH_FileListDirectory(path, true);
+  if (files == NULL) {
+    LCH_DictDestroy(whitelist);
+    return false;
+  }
+
+  size_t num_deleted = 0;
+  size_t num_blocks = 0;
+  const size_t num_files = LCH_ListLength(files);
+  for (size_t i = 0; i < num_files; i++) {
+    const char *const filename = (char *)LCH_ListGet(files, i);
+    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", filename)) {
+      LCH_ListDestroy(files);
+      LCH_DictDestroy(whitelist);
+      return false;
+    }
+
+    bool is_block_id = true;
+    for (const char *ch = filename; *ch != '\0'; ch++) {
+      if (isxdigit(*ch) == 0) {
+        is_block_id = false;
+        break;
+      }
+    }
+    if (!is_block_id) {
+      LCH_LOG_DEBUG(
+          "Skipping deletion of file '%s': "
+          "Basename contains an invalid block identifier '%s'",
+          path, filename);
+      continue;
+    }
+
+    if (!LCH_FileIsRegular(path)) {
+      LCH_LOG_DEBUG("Skipping deletion of file '%s': Not a regular file", path);
+      continue;
+    }
+
+    // By now we're pretty certain that it is indeed a block.
+    num_blocks += 1;
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString(filename);
+    if (LCH_DictHasKey(whitelist, key)) {
+      LCH_LOG_DEBUG("Skipping deletion of file '%s': Block is whitelisted",
+                    path);
+      continue;
+    }
+
+    if (!LCH_FileDelete(path)) {
+      LCH_ListDestroy(files);
+      LCH_DictDestroy(whitelist);
+      return false;
+    }
+    LCH_LOG_VERBOSE("Deleted file '%s'", path);
+    num_deleted += 1;
+  }
+
+  LCH_LOG_INFO("Purged %zu out of %zu blocks", num_deleted, num_blocks);
+
+  LCH_ListDestroy(files);
+  LCH_DictDestroy(whitelist);
+  return true;
+}
+
+bool LCH_Purge(const char *const work_dir) {
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to load instance from configuration file");
+    return false;
+  }
+
+  if (!Purge(instance)) {
+    LCH_InstanceDestroy(instance);
+    return false;
+  }
+
+  LCH_InstanceDestroy(instance);
+  return true;
 }
