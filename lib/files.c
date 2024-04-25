@@ -1,6 +1,7 @@
 #include "files.h"
 
 #include <assert.h>
+#include <dirent.h>
 #include <errno.h>
 #include <libgen.h>
 #include <stdarg.h>
@@ -9,7 +10,6 @@
 #include <unistd.h>
 
 #include "definitions.h"
-#include "list.h"
 #include "logger.h"
 #include "string_lib.h"
 
@@ -151,4 +151,50 @@ bool LCH_FileCreateParentDirectories(const char *const filename) {
   }
   LCH_ListDestroy(dirs);
   return true;
+}
+
+LCH_List *LCH_FileListDirectory(const char *const path,
+                                const bool filter_hidden) {
+  LCH_List *const filenames = LCH_ListCreate();
+  if (filenames == NULL) {
+    return NULL;
+  }
+
+  DIR *dir = opendir(path);
+  if (dir == NULL) {
+    LCH_LOG_ERROR("Failed to open directory '%s': %s", path, strerror(errno));
+    LCH_ListDestroy(filenames);
+    return NULL;
+  }
+
+  errno = 0;  // Only way to distinguish between error or end-of-directory
+  struct dirent *entry = NULL;
+  while ((entry = readdir(dir)) != NULL) {
+    if (filter_hidden && LCH_StringStartsWith(entry->d_name, ".")) {
+      continue;
+    }
+
+    char *const filename = LCH_StringDuplicate(entry->d_name);
+    if (filename == NULL) {
+      LCH_ListDestroy(filenames);
+      closedir(dir);
+      return NULL;
+    }
+
+    if (!LCH_ListAppend(filenames, filename, free)) {
+      LCH_ListDestroy(filenames);
+      closedir(dir);
+      return NULL;
+    }
+  }
+
+  if (errno != 0) {
+    LCH_LOG_ERROR("Failed to read directory '%s': %s", path, strerror(errno));
+    LCH_ListDestroy(filenames);
+    closedir(dir);
+    return NULL;
+  }
+
+  closedir(dir);
+  return filenames;
 }
