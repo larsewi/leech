@@ -203,4 +203,6 @@ LCH_Buffer *LCH_History(const char *work_dir, const char *table_id,
 bool LCH_Patch(const char *work_dir, const char *uid_field,
                const char *uid_value, const char *patch, size_t size);
 
+bool LCH_Purge(const char *work_dir);
+
 #endif  // _LEECH_LEECH_H

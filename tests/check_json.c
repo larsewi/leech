@@ -942,9 +942,9 @@ START_TEST(test_LCH_JsonCompose) {
   ck_assert(LCH_JsonObjectSetString(
       config, LCH_BufferStaticFromString("version"), version));
 
-  const double max_chain_length = 64.0;
+  const double chain_length = 64.0;
   ck_assert(LCH_JsonObjectSetNumber(
-      config, LCH_BufferStaticFromString("max_chain_length"), 64.0));
+      config, LCH_BufferStaticFromString("chain_length"), 64.0));
 
   LCH_Json *const pretty_json = LCH_JsonTrueCreate();
   ck_assert_ptr_nonnull(pretty_json);
@@ -1002,7 +1002,6 @@ START_TEST(test_LCH_JsonCompose) {
       "{\n"
       "  \"version\": \"" PACKAGE_VERSION
       "\",\n"
-      "  \"max_chain_length\": 64,\n"
       "  \"compression\": false,\n"
       "  \"tables\": {\n"
       "    \"BTL\": {\n"
@@ -1014,6 +1013,7 @@ START_TEST(test_LCH_JsonCompose) {
       "      \"subsidiary_fields\": null\n"
       "    }\n"
       "  },\n"
+      "  \"chain_length\": 64,\n"
       "  \"pretty_json\": true\n"
       "}\n";
 

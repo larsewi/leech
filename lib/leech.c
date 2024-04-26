@@ -1,7 +1,9 @@
 #include "leech.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
+#include <libgen.h>
 #include <limits.h>
 #include <string.h>
 
@@ -9,6 +11,7 @@
 #include "csv.h"
 #include "definitions.h"
 #include "delta.h"
+#include "dict.h"
 #include "files.h"
 #include "head.h"
 #include "instance.h"
@@ -20,102 +23,173 @@
 
 const char *LCH_Version(void) { return PACKAGE_VERSION; }
 
-static bool CollectGarbage(const LCH_Instance *const instance) {
+static bool Purge(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);
+  const size_t chain_length = LCH_InstanceGetPrefferedChainLength(instance);
 
-  char *block_id = LCH_HeadGet("HEAD", work_dir);
-  if (block_id == NULL) {
-    free(block_id);
+  char *const head = LCH_HeadGet("HEAD", work_dir);
+  if (head == NULL) {
     return false;
   }
 
-  // Traverse all the blocks that we want to keep
+  // We'll use the dict as a map
+  LCH_Dict *const whitelist = LCH_DictCreate();
+  if (whitelist == NULL) {
+    free(head);
+    return false;
+  }
+
+  LCH_Json *child = NULL;
+  LCH_Json *parent = NULL;
+  const char *child_id = NULL;
+  const char *parent_id = head;
+
   char path[PATH_MAX];
-  for (size_t i = 0; i < max_chain_length; i++) {
-    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
+  for (size_t i = 0; i < chain_length; i++) {
+    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", parent_id)) {
+      LCH_JsonDestroy(child);
+      LCH_JsonDestroy(parent);
+      LCH_DictDestroy(whitelist);
+      free(head);
       return false;
     }
 
     if (!LCH_FileExists(path)) {
+      LCH_LOG_DEBUG("End-of-Chain reached at index %zu", i);
+      break;
+    }
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString(parent_id);
+    if (!LCH_DictSet(whitelist, key, NULL, NULL)) {
+      LCH_JsonDestroy(child);
+      LCH_JsonDestroy(parent);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+    if (child_id == NULL) {
+      LCH_LOG_DEBUG("Whitelisted block %.7s, head of chain (index %zu)",
+                    parent_id, i);
+    } else {
+      LCH_LOG_DEBUG("Whitelisted block %.7s, parent of %.7s (index %zu)",
+                    parent_id, child_id, i);
+    }
+
+    LCH_Json *const block = LCH_BlockLoad(work_dir, parent_id);
+    if (block == NULL) {
+      LCH_JsonDestroy(parent);
+      LCH_JsonDestroy(child);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+
+    LCH_JsonDestroy(child);
+    child = parent;
+    parent = block;
+
+    child_id = parent_id;
+    parent_id = LCH_BlockGetParentId(parent);
+    if (parent_id == NULL) {
+      LCH_JsonDestroy(parent);
+      LCH_JsonDestroy(child);
+      LCH_DictDestroy(whitelist);
+      free(head);
+      return false;
+    }
+  }
+
+  LCH_JsonDestroy(parent);
+  LCH_JsonDestroy(child);
+  free(head);
+
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, "blocks")) {
+    LCH_DictDestroy(whitelist);
+    return false;
+  }
+
+  LCH_List *const files = LCH_FileListDirectory(path, true);
+  if (files == NULL) {
+    LCH_DictDestroy(whitelist);
+    return false;
+  }
+
+  size_t num_deleted = 0;
+  size_t num_blocks = 0;
+  const size_t num_files = LCH_ListLength(files);
+  for (size_t i = 0; i < num_files; i++) {
+    const char *const filename = (char *)LCH_ListGet(files, i);
+    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", filename)) {
+      LCH_ListDestroy(files);
+      LCH_DictDestroy(whitelist);
+      return false;
+    }
+
+    bool is_block_id = true;
+    for (const char *ch = filename; *ch != '\0'; ch++) {
+      if (isxdigit(*ch) == 0) {
+        is_block_id = false;
+        break;
+      }
+    }
+    if (!is_block_id) {
       LCH_LOG_DEBUG(
-          "Block with identifier %s does not exist: "
-          "End-of-Chain reached at index %zu",
-          block_id, i);
-      LCH_LOG_VERBOSE("Garbage collector deleted 0 blocks", i);
-      free(block_id);
-      return true;
+          "Skipping deletion of file '%s': "
+          "Basename contains an invalid block identifier '%s'",
+          path, filename);
+      continue;
     }
 
-    LCH_Json *const block = LCH_BlockLoad(work_dir, block_id);
-    free(block_id);
-    if (block == NULL) {
-      return false;
+    if (!LCH_FileIsRegular(path)) {
+      LCH_LOG_DEBUG("Skipping deletion of file '%s': Not a regular file", path);
+      continue;
     }
 
-    const char *const parent_id = LCH_BlockGetParentId(block);
-    if (parent_id == NULL) {
-      LCH_JsonDestroy(block);
-      return false;
+    // By now we're pretty certain that it is indeed a block.
+    num_blocks += 1;
+
+    const LCH_Buffer *const key = LCH_BufferStaticFromString(filename);
+    if (LCH_DictHasKey(whitelist, key)) {
+      LCH_LOG_DEBUG("Skipping deletion of file '%s': Block is whitelisted",
+                    path);
+      continue;
     }
 
-    block_id = LCH_StringDuplicate(parent_id);
-    LCH_JsonDestroy(block);
-    if (block_id == NULL) {
-      return false;
-    }
-  }
-
-  // Now start deleting blocks
-
-  if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
-    return NULL;
-  }
-
-  size_t i = 0;
-  while (LCH_FileExists(path)) {
-    LCH_Json *const block = LCH_BlockLoad(work_dir, block_id);
-    if (block == NULL) {
-      free(block_id);
-      return false;
-    }
-
-    LCH_LOG_DEBUG("Deleting block with identifier %.7s (path='%s')", block_id,
-                  path);
-    free(block_id);
     if (!LCH_FileDelete(path)) {
-      LCH_JsonDestroy(block);
+      LCH_ListDestroy(files);
+      LCH_DictDestroy(whitelist);
       return false;
     }
-
-    const char *const parent_id = LCH_BlockGetParentId(block);
-    if (parent_id == NULL) {
-      LCH_JsonDestroy(block);
-      return false;
-    }
-
-    block_id = LCH_StringDuplicate(parent_id);
-    LCH_JsonDestroy(block);
-    if (block_id == NULL) {
-      return false;
-    }
-
-    if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
-      free(block_id);
-      return false;
-    }
-
-    i += 1;
+    LCH_LOG_VERBOSE("Deleted file '%s'", path);
+    num_deleted += 1;
   }
 
-  free(block_id);
-  LCH_LOG_VERBOSE("Garbage collector deleted %zu block(s)", i);
+  LCH_LOG_INFO("Purged %zu out of %zu blocks", num_deleted, num_blocks);
+
+  LCH_ListDestroy(files);
+  LCH_DictDestroy(whitelist);
+  return true;
+}
+
+bool LCH_Purge(const char *const work_dir) {
+  LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
+  if (instance == NULL) {
+    LCH_LOG_ERROR("Failed to load instance from configuration file");
+    return false;
+  }
+
+  if (!Purge(instance)) {
+    LCH_InstanceDestroy(instance);
+    return false;
+  }
+
+  LCH_InstanceDestroy(instance);
   return true;
 }
 
 static bool Commit(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
 
   size_t n_tables = LCH_ListLength(table_defs);
@@ -252,12 +326,12 @@ bool LCH_Commit(const char *const work_dir) {
     return false;
   }
 
-  if (!CollectGarbage(instance)) {
-    LCH_LOG_ERROR(
-        "Failed to collect garbage: "
-        "NB. there may be unreachable blocks");
-    LCH_InstanceDestroy(instance);
-    return false;
+  if (LCH_InstanceShouldAutoPurge(instance)) {
+    LCH_LOG_DEBUG("Auto purge is enabled; purging blocks");
+    if (!Purge(instance)) {
+      LCH_InstanceDestroy(instance);
+      return false;
+    }
   }
 
   LCH_InstanceDestroy(instance);
@@ -414,7 +488,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
     return NULL;
   }
 
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
 
   char *const block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
@@ -474,7 +548,7 @@ LCH_Buffer *LCH_Rebase(const char *const work_dir) {
     return NULL;
   }
 
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
 
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
   size_t n_tables = LCH_ListLength(table_defs);
@@ -985,7 +1059,7 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
   LCH_BufferDestroy(primary);
   free(block_id);
 
-  const bool pretty = LCH_InstancePrettyPrint(instance);
+  const bool pretty = LCH_InstanceShouldPrettyPrint(instance);
   LCH_Buffer *const buffer = LCH_JsonCompose(response, pretty);
   LCH_JsonDestroy(response);
   if (buffer == NULL) {

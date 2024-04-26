@@ -68,7 +68,7 @@ bool LCH_BlockStore(const LCH_Instance *const instance,
   assert(block != NULL);
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
 
   LCH_Buffer *const json = LCH_JsonCompose(block, pretty_print);
   if (json == NULL) {
