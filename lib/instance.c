@@ -229,3 +229,8 @@ bool LCH_InstanceShouldPrettyPrint(const LCH_Instance *const instance) {
   assert(instance != NULL);
   return instance->pretty_print;
 }
+
+bool LCH_InstanceShouldAutoPurge(const LCH_Instance *const instance) {
+  assert(instance != NULL);
+  return instance->auto_purge;
+}
