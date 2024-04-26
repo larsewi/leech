@@ -12,6 +12,7 @@
 #include "diff.h"
 #include "history.h"
 #include "patch.h"
+#include "purge.h"
 #include "rebase.h"
 
 #ifdef HAVE_LIBPQ
@@ -54,6 +55,7 @@ static const struct command COMMANDS[] = {
     {"rebase", "rebase to current table state", Rebase},
     {"patch", "apply changes to tables", Patch},
     {"history", "get history of a specific record", History},
+    {"purge", "delete old/unreachable blocks", Purge},
     {NULL, NULL, NULL},
 };
 
