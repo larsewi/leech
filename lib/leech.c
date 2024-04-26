@@ -25,7 +25,7 @@ const char *LCH_Version(void) { return PACKAGE_VERSION; }
 
 static bool CollectGarbage(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);
+  const size_t chain_length = LCH_InstanceGetPrefferedChainLength(instance);
 
   char *block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
@@ -35,7 +35,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
 
   // Traverse all the blocks that we want to keep
   char path[PATH_MAX];
-  for (size_t i = 0; i < max_chain_length; i++) {
+  for (size_t i = 0; i < chain_length; i++) {
     if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", block_id)) {
       return false;
     }
@@ -1132,7 +1132,7 @@ bool LCH_Patch(const char *const work_dir, const char *const field,
 
 static bool Purge(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const size_t max_chain_length = LCH_InstanceGetMaxChainLength(instance);
+  const size_t chain_length = LCH_InstanceGetPrefferedChainLength(instance);
 
   char *const head = LCH_HeadGet("HEAD", work_dir);
   if (head == NULL) {
@@ -1152,7 +1152,7 @@ static bool Purge(const LCH_Instance *const instance) {
   const char *parent_id = head;
 
   char path[PATH_MAX];
-  for (size_t i = 0; i < max_chain_length; i++) {
+  for (size_t i = 0; i < chain_length; i++) {
     if (!LCH_FilePathJoin(path, PATH_MAX, 3, work_dir, "blocks", parent_id)) {
       LCH_JsonDestroy(child);
       LCH_JsonDestroy(parent);

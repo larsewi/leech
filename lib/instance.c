@@ -17,7 +17,7 @@ struct LCH_Instance {
   size_t major;
   size_t minor;
   size_t patch;
-  size_t max_chain_length;
+  size_t chain_length;
   bool pretty_print;
   bool auto_purge;
   LCH_List *tables;
@@ -73,8 +73,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   }
 
   {
-    const LCH_Buffer *const key =
-        LCH_BufferStaticFromString("max_chain_length");
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("chain_length");
     if (LCH_JsonObjectHasKey(config, key)) {
       double number;
       if (!LCH_JsonObjectGetNumber(config, key, &number)) {
@@ -82,29 +81,28 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
         LCH_JsonDestroy(config);
         return NULL;
       }
-      if (!LCH_DoubleToSize(number, &(instance->max_chain_length))) {
+      if (!LCH_DoubleToSize(number, &(instance->chain_length))) {
         LCH_InstanceDestroy(instance);
         LCH_JsonDestroy(config);
         return NULL;
       }
     } else {
-      instance->max_chain_length = LCH_DEFAULT_MAX_CHAIN_LENGTH;
+      instance->chain_length = LCH_DEFAULT_PREFERED_CHAIN_LENGTH;
     }
-    LCH_LOG_DEBUG("config[\"max_chain_length\"] = \"%zu\"",
-                  instance->max_chain_length);
+    LCH_LOG_DEBUG("config[\"chain_length\"] = %zu", instance->chain_length);
   }
 
   {
     instance->auto_purge = false;
-    const LCH_Buffer *const key =
-        LCH_BufferStaticFromString("auto_purge");
+    const LCH_Buffer *const key = LCH_BufferStaticFromString("auto_purge");
     if (LCH_JsonObjectHasKey(config, key)) {
       const LCH_Json *const json = LCH_JsonObjectGet(config, key);
       if (LCH_JsonIsTrue(json)) {
         instance->auto_purge = true;
       }
     }
-    LCH_LOG_DEBUG("config[\"auto_purge\"] = %s", (instance->auto_purge) ? "true" : "false");
+    LCH_LOG_DEBUG("config[\"auto_purge\"] = %s",
+                  (instance->auto_purge) ? "true" : "false");
   }
 
   {
@@ -222,9 +220,9 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
   return self->work_dir;
 }
 
-size_t LCH_InstanceGetMaxChainLength(const LCH_Instance *const instance) {
+size_t LCH_InstanceGetPrefferedChainLength(const LCH_Instance *const instance) {
   assert(instance != NULL);
-  return instance->max_chain_length;
+  return instance->chain_length;
 }
 
 bool LCH_InstancePrettyPrint(const LCH_Instance *const instance) {

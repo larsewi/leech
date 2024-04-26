@@ -744,7 +744,7 @@ def test_leech_garbage_collect(tmp_path):
 
     config = {
         "version": "0.1.0",
-        "max_chain_length": 3,
+        "chain_length": 3,
         "tables": {
             "BTL": {
                 "primary_fields": ["first_name", "last_name"],

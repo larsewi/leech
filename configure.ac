@@ -46,7 +46,7 @@ AM_CONDITIONAL([BUILD_PSQL_MODULE], [test "x$with_psql_module" = "xyes"])
 AM_CONDITIONAL([BUILD_CSV_MODULE], [test "x$with_csv_module" = "xyes"])
 
 # Config constants.
-AC_DEFINE([LCH_DEFAULT_MAX_CHAIN_LENGTH], 2048, [Default max chain length used in block garbage collector])
+AC_DEFINE([LCH_DEFAULT_PREFERED_CHAIN_LENGTH], 2048, [Default prefered chain length used in block garbage collector])
 AC_DEFINE([LCH_JSON_PRETTY_INDENT_SIZE], 2, [Indent size used when composing pretty JSON])
 AC_DEFINE([LCH_BUFFER_SIZE], 1024, [Initial buffer size allocated by leech])
 AC_DEFINE([LCH_DICT_CAPACITY], 256, [Initial dictionary capacity allocated by leech])
