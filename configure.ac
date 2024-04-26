@@ -2,8 +2,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.71])
-AC_INIT([leech], [0.1.5], [https://github.com/larsewi/leech/issues], [leech],
+AC_PREREQ([2.63])
+AC_INIT([leech], [0.1.6], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 AC_CONFIG_HEADERS([config.h])
