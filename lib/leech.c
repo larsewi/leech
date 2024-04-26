@@ -118,7 +118,7 @@ static bool CollectGarbage(const LCH_Instance *const instance) {
 
 static bool Commit(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
 
   size_t n_tables = LCH_ListLength(table_defs);
@@ -417,7 +417,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
     return NULL;
   }
 
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
 
   char *const block_id = LCH_HeadGet("HEAD", work_dir);
   if (block_id == NULL) {
@@ -477,7 +477,7 @@ LCH_Buffer *LCH_Rebase(const char *const work_dir) {
     return NULL;
   }
 
-  const bool pretty_print = LCH_InstancePrettyPrint(instance);
+  const bool pretty_print = LCH_InstanceShouldPrettyPrint(instance);
 
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
   size_t n_tables = LCH_ListLength(table_defs);
@@ -988,7 +988,7 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
   LCH_BufferDestroy(primary);
   free(block_id);
 
-  const bool pretty = LCH_InstancePrettyPrint(instance);
+  const bool pretty = LCH_InstanceShouldPrettyPrint(instance);
   LCH_Buffer *const buffer = LCH_JsonCompose(response, pretty);
   LCH_JsonDestroy(response);
   if (buffer == NULL) {

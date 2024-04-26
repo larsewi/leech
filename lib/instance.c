@@ -225,7 +225,7 @@ size_t LCH_InstanceGetPrefferedChainLength(const LCH_Instance *const instance) {
   return instance->chain_length;
 }
 
-bool LCH_InstancePrettyPrint(const LCH_Instance *const instance) {
+bool LCH_InstanceShouldPrettyPrint(const LCH_Instance *const instance) {
   assert(instance != NULL);
   return instance->pretty_print;
 }
