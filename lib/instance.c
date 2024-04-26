@@ -19,6 +19,7 @@ struct LCH_Instance {
   size_t patch;
   size_t max_chain_length;
   bool pretty_print;
+  bool auto_purge;
   LCH_List *tables;
 };
 
@@ -91,6 +92,19 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
     }
     LCH_LOG_DEBUG("config[\"max_chain_length\"] = \"%zu\"",
                   instance->max_chain_length);
+  }
+
+  {
+    instance->auto_purge = false;
+    const LCH_Buffer *const key =
+        LCH_BufferStaticFromString("auto_purge");
+    if (LCH_JsonObjectHasKey(config, key)) {
+      const LCH_Json *const json = LCH_JsonObjectGet(config, key);
+      if (LCH_JsonIsTrue(json)) {
+        instance->auto_purge = true;
+      }
+    }
+    LCH_LOG_DEBUG("config[\"auto_purge\"] = %s", (instance->auto_purge) ? "true" : "false");
   }
 
   {
