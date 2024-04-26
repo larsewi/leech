@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.71])
-AC_INIT([leech], [0.1.3], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.1.4], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 AC_CONFIG_HEADERS([config.h])
@@ -15,6 +15,10 @@ AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_INSTALL
 AM_PROG_AR
+AC_PROG_AWK
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
 
 LT_INIT([dlopen])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
@@ -26,11 +30,19 @@ AC_CHECK_HEADERS([arpa/inet.h unistd.h stdint.h fcntl.h])
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
+AC_TYPE_MODE_T
+AC_TYPE_UINT8_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+
+# Checks for libraries.
+AC_CHECK_LIB([dl], [dlopen])
+AC_CHECK_LIB([m], [floor])
 
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strndup mkdir rmdir])
+AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strpbrk strtol strndup mkdir rmdir])
 
 # Configure arguments.
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
@@ -73,4 +85,5 @@ else
 fi
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
+AC_CONFIG_SUBDIRS([libltdl])
 AC_OUTPUT
