@@ -3,11 +3,25 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([leech], [0.1.6], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.1.7], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
+
+AC_DEFINE([LCH_DEFAULT_PREFERED_CHAIN_LENGTH], 2048,
+          [Default prefered chain length used when puring blocks])
+AC_DEFINE([LCH_JSON_PRETTY_INDENT_SIZE], 2,
+          [Indent size used when composing pretty JSON])
+AC_DEFINE([LCH_BUFFER_SIZE], 1024,
+          [Initial buffer size allocated by leech])
+AC_DEFINE([LCH_LIST_CAPACITY], 256,
+          [Initial list capacity allocated by leech])
+AC_DEFINE([LCH_DICT_CAPACITY], 256,
+          [Initial dictionary capacity allocated by leech])
+AC_DEFINE([LCH_DICT_LOAD_FACTOR], 0.75f,
+          [Initial dictionary capacity allocated by leech])
+
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CC
@@ -23,10 +37,10 @@ LT_INIT([dlopen])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 # Checks for header files.
+AC_CHECK_HEADER_STDBOOL
 AC_CHECK_HEADERS([arpa/inet.h unistd.h stdint.h fcntl.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_TYPE_MODE_T
@@ -43,37 +57,10 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strpbrk strtol strndup mkdir rmdir])
 
-# Configure arguments.
+# Enable debugging
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging]),
               [debug=$enableval], [debug=no])
-AC_ARG_WITH([check], AS_HELP_STRING([--with-check], [use check test framework]))
-AC_ARG_WITH([psql-module], AS_HELP_STRING([--with-psql-module], [build PostgreSQL module]))
-AC_ARG_WITH([csv-module], AS_HELP_STRING([--with-csv-module], [build CSV module]))
-
-# Automake conditionals.
 AM_CONDITIONAL([NDEBUG], [test "x$debug" = "xno"])
-AM_CONDITIONAL([USE_CHECK], [test "x$with_check" = "xyes"])
-AM_CONDITIONAL([BUILD_PSQL_MODULE], [test "x$with_psql_module" = "xyes"])
-AM_CONDITIONAL([BUILD_CSV_MODULE], [test "x$with_csv_module" = "xyes"])
-
-# Config constants.
-AC_DEFINE([LCH_DEFAULT_PREFERED_CHAIN_LENGTH], 2048, [Default prefered chain length used in block garbage collector])
-AC_DEFINE([LCH_JSON_PRETTY_INDENT_SIZE], 2, [Indent size used when composing pretty JSON])
-AC_DEFINE([LCH_BUFFER_SIZE], 1024, [Initial buffer size allocated by leech])
-AC_DEFINE([LCH_DICT_CAPACITY], 256, [Initial dictionary capacity allocated by leech])
-AC_DEFINE([LCH_DICT_LOAD_FACTOR], 0.75f, [Initial dictionary capacity allocated by leech])
-AC_DEFINE([LCH_LIST_CAPACITY], 256, [Initial list capacity allocated by leech])
-
-# pkg-check modules.
-AS_IF([test "x$with_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check])])
-AS_IF([test "x$with_psql_module" = "xyes"],
-        [PKG_CHECK_MODULES([PSQL], [libpq],
-                [AC_DEFINE([HAVE_LIBPQ], [1],
-                        [Define to 1 if you have the <libpq-fe.h> header file.]
-                )
-        ])
-])
-
 AC_MSG_CHECKING([for debug option])
 if test x"$debug" = x"yes"
 then
@@ -82,6 +69,28 @@ else
     AC_MSG_RESULT(no)
     CFLAGS="$CFLAGS -DNDEBUG"
 fi
+
+# Compile with check test framework
+AC_ARG_WITH([check], AS_HELP_STRING([--with-check], [use check test framework]))
+AM_CONDITIONAL([USE_CHECK], [test "x$with_check" = "xyes"])
+AS_IF([test "x$with_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check])])
+
+# Compile CSV module
+AC_ARG_WITH([csv-module], AS_HELP_STRING([--with-csv-module],
+            [build CSV module (not intended for production)]))
+AM_CONDITIONAL([BUILD_CSV_MODULE], [test "x$with_csv_module" = "xyes"])
+
+# Compile PostgreSQL module
+AC_ARG_WITH([psql-module], AS_HELP_STRING([--with-psql-module],
+            [build PostgreSQL module (not intended for production)]))
+AM_CONDITIONAL([BUILD_PSQL_MODULE], [test "x$with_psql_module" = "xyes"])
+AS_IF([test "x$with_psql_module" = "xyes"],
+        [PKG_CHECK_MODULES([PSQL], [libpq],
+                [AC_DEFINE([HAVE_LIBPQ], [1],
+                        [Define to 1 if you have the <libpq-fe.h> header file.]
+                )
+        ])
+])
 
 AC_CONFIG_FILES([Makefile lib/Makefile bin/Makefile tests/Makefile])
 AC_OUTPUT
