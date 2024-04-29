@@ -1,7 +1,7 @@
 AM_CFLAGS = -Wall -Wextra -Werror
 AM_CPPFLAGS = -include config.h
 
-if USE_CHECK
+if WITH_CHECK
 TESTS = unit_test leak_test
 EXTRA_DIST = leak_test
 check_PROGRAMS = unit_test

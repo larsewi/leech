@@ -24,7 +24,12 @@ jobs:
     - name: Bootstrap project
       run: ./bootstrap.sh
     - name: Configure project
-      run: ./configure --enable-debug=yes --with-csv-module=yes --with-psql-module=yes
+      run: >
+        ./configure
+        --enable-debug
+        --with-test-binary
+        --with-csv-module
+        --with-psql-module
     - name: Compile project
       run: make
     - name: Run pytest

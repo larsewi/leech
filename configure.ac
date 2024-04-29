@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([leech], [0.1.7], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.1.8], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 
@@ -71,9 +71,13 @@ else
 fi
 
 # Compile with check test framework
-AC_ARG_WITH([check], AS_HELP_STRING([--with-check], [use check test framework]))
-AM_CONDITIONAL([USE_CHECK], [test "x$with_check" = "xyes"])
-AS_IF([test "x$with_check" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check])])
+AC_ARG_WITH([check], AS_HELP_STRING([--with-check-framework], [use check framework]))
+AM_CONDITIONAL([WITH_CHECK], [test "x$with_check_framework" = "xyes"])
+AS_IF([test "x$with_check_framework" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check])])
+
+# Compile test binary
+AC_ARG_WITH([test-binary], AS_HELP_STRING([--with-test-binary], [compile test binary (not intended for production)]))
+AM_CONDITIONAL([BUILD_TEST_BINARY], [test "x$with_test_binary" = "xyes"])
 
 # Compile CSV module
 AC_ARG_WITH([csv-module], AS_HELP_STRING([--with-csv-module],
