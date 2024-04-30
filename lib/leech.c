@@ -304,7 +304,7 @@ static bool Commit(const LCH_Instance *const instance) {
   LCH_JsonDestroy(block);
 
   LCH_LOG_INFO(
-      "Created commit with %zu inserts, %zu deletes and %zu updates over %zu "
+      "Created block with %zu inserts, %zu deletes and %zu updates over %zu "
       "tables",
       tot_inserts, tot_deletes, tot_updates, n_tables);
 
@@ -552,7 +552,7 @@ LCH_Buffer *LCH_Rebase(const char *const work_dir) {
 
   const LCH_List *const table_defs = LCH_InstanceGetTables(instance);
   size_t n_tables = LCH_ListLength(table_defs);
-  size_t tot_inserts;
+  size_t tot_inserts = 0;
 
   LCH_Json *const deltas = LCH_JsonArrayCreate();
   if (deltas == NULL) {
@@ -640,6 +640,11 @@ LCH_Buffer *LCH_Rebase(const char *const work_dir) {
     LCH_JsonDestroy(deltas);
     return NULL;
   }
+
+  LCH_LOG_INFO(
+      "Created block with %zu inserts, %zu deletes and %zu updates over %zu "
+      "tables",
+      tot_inserts, 0, 0, n_tables);
 
   LCH_Json *const patch = LCH_PatchCreate(parent_id);
   free(parent_id);

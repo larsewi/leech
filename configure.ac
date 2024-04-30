@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([leech], [0.1.8], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.1.9], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 
@@ -71,7 +71,7 @@ else
 fi
 
 # Compile with check test framework
-AC_ARG_WITH([check], AS_HELP_STRING([--with-check-framework], [use check framework]))
+AC_ARG_WITH([check-framework], AS_HELP_STRING([--with-check-framework], [use check framework]))
 AM_CONDITIONAL([WITH_CHECK], [test "x$with_check_framework" = "xyes"])
 AS_IF([test "x$with_check_framework" = "xyes"], [PKG_CHECK_MODULES([CHECK], [check])])
 
