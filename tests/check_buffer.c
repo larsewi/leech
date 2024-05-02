@@ -1,5 +1,10 @@
-#include <arpa/inet.h>
 #include <check.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else  // _WIN32
+#include <arpa/inet.h>
+#endif  // _WIN32
 
 #include "../lib/buffer.h"
 
