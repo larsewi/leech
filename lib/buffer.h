@@ -37,20 +37,6 @@ void LCH_BufferSet(LCH_Buffer *buffer, size_t offset, const void *value,
  */
 bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
 
-/**
- * @brief Converts hexadecimal string representation into bytes
- * @param bytes Byte buffer
- * @param hex Hexadecimal buffer
- * @return True on success, false on error
- */
-bool LCH_BufferHexToBytes(LCH_Buffer *bytes, const LCH_Buffer *hex);
-
-/**
- * @warning Makes the assumption that the input string is at least four bytes
- *          long (excluding the termination null-byte).
- */
-bool LCH_BufferUnicodeToUTF8(LCH_Buffer *const buffer, const char *in);
-
 const LCH_Buffer *LCH_BufferStaticFromString(const char *str);
 
 void LCH_BufferTrim(LCH_Buffer *buffer, char ch);

@@ -189,55 +189,6 @@ START_TEST(test_LCH_BufferBytesToHex) {
 }
 END_TEST
 
-START_TEST(test_LCH_BufferHexToBytes) {
-  LCH_Buffer *hex = LCH_BufferCreate();
-  ck_assert_ptr_nonnull(hex);
-  ck_assert(LCH_BufferPrintFormat(hex, "0123456789abcdef"));
-
-  LCH_Buffer *bytes = LCH_BufferCreate();
-  ck_assert_ptr_nonnull(bytes);
-  ck_assert(LCH_BufferHexToBytes(bytes, hex));
-
-  const unsigned char data[] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
-  for (size_t i = 0; i < sizeof(data); i++) {
-    ck_assert_int_eq(*((unsigned char *)(LCH_BufferData(bytes) + i)), data[i]);
-  }
-
-  LCH_BufferDestroy(hex);
-  LCH_BufferDestroy(bytes);
-}
-END_TEST
-
-START_TEST(test_LCH_BufferUnicodeToUTF8) {
-  const char *code_points = "0041";
-  LCH_Buffer *buffer = LCH_BufferCreate();
-  ck_assert_ptr_nonnull(buffer);
-  ck_assert(LCH_BufferUnicodeToUTF8(buffer, code_points));
-  char *str = LCH_BufferToString(buffer);
-  ck_assert_ptr_nonnull(str);
-  ck_assert_str_eq(str, "A");
-  free(str);
-
-  code_points = "0100";
-  buffer = LCH_BufferCreate();
-  ck_assert_ptr_nonnull(buffer);
-  ck_assert(LCH_BufferUnicodeToUTF8(buffer, code_points));
-  str = LCH_BufferToString(buffer);
-  ck_assert_ptr_nonnull(str);
-  ck_assert_str_eq(str, "Ā");
-  free(str);
-
-  code_points = "0101";
-  buffer = LCH_BufferCreate();
-  ck_assert_ptr_nonnull(buffer);
-  ck_assert(LCH_BufferUnicodeToUTF8(buffer, code_points));
-  str = LCH_BufferToString(buffer);
-  ck_assert_ptr_nonnull(str);
-  ck_assert_str_eq(str, "ā");
-  free(str);
-}
-END_TEST
-
 Suite *BufferSuite(void) {
   Suite *s = suite_create("buffer.c");
   {
@@ -263,16 +214,6 @@ Suite *BufferSuite(void) {
   {
     TCase *tc = tcase_create("LCH_BufferBytesToHex");
     tcase_add_test(tc, test_LCH_BufferBytesToHex);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_BufferHexToBytes");
-    tcase_add_test(tc, test_LCH_BufferHexToBytes);
-    suite_add_tcase(s, tc);
-  }
-  {
-    TCase *tc = tcase_create("LCH_BufferUnicodeToUTF8");
-    tcase_add_test(tc, test_LCH_BufferUnicodeToUTF8);
     suite_add_tcase(s, tc);
   }
   return s;
