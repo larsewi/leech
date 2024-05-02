@@ -1,13 +1,19 @@
 #include "buffer.h"
 
-#include <arpa/inet.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else  // _WIN32
+#include <arpa/inet.h>
+#endif  // _WIN32
 
 #include "definitions.h"
 #include "files.h"
