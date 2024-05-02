@@ -9,6 +9,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+#include <direct.h>
+#endif  // _WIN32
+
 #include "definitions.h"
 #include "logger.h"
 #include "string_lib.h"
@@ -141,7 +145,13 @@ bool LCH_FileCreateParentDirectories(const char *const filename) {
   const size_t num_dirs = LCH_ListLength(dirs);
   for (size_t i = num_dirs; i > 0; i--) {
     char *const dir = (char *)LCH_ListGet(dirs, i - 1);
-    if (mkdir(dir, (mode_t)0700) == -1) {
+    int ret =
+#ifdef _WIN32
+        _mkdir(dir);
+#else   // _WIN32
+        mkdir(dir, (mode_t)0700);
+#endif  // _WIN32
+    if (ret == -1) {
       LCH_LOG_ERROR("Failed to create parent directory '%s' for file '%s': %s",
                     dir, filename, strerror(errno));
       LCH_ListDestroy(dirs);
