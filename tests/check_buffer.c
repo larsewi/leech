@@ -7,6 +7,7 @@
 #endif  // _WIN32
 
 #include "../lib/buffer.h"
+#include "../lib/string_lib.h"
 
 START_TEST(test_LCH_Buffer) {
   LCH_Buffer *buffer = LCH_BufferCreate();
@@ -141,7 +142,7 @@ START_TEST(test_LCH_BufferAllocate2) {
   length = ntohl(*len_ptr);
   offset += sizeof(uint32_t);
 
-  char *str = strndup(LCH_BufferData(buffer) + offset, length);
+  char *str = LCH_StringNDuplicate(LCH_BufferData(buffer) + offset, length);
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "beatles");
   offset += length;
@@ -153,7 +154,7 @@ START_TEST(test_LCH_BufferAllocate2) {
   length = ntohl(*len_ptr);
   offset += sizeof(uint32_t);
 
-  str = strndup(LCH_BufferData(buffer) + offset, length);
+  str = LCH_StringNDuplicate(LCH_BufferData(buffer) + offset, length);
   ck_assert_ptr_nonnull(str);
   ck_assert_str_eq(str, "pinkfloyd");
   offset += length;
