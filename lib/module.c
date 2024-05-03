@@ -5,8 +5,7 @@
 #if HAVE_DLFCN_H
 #include <dlfcn.h>
 #elif defined(_WIN32)
-#include <errhandlingapi.h>
-#include <libloaderapi.h>
+#include <windows.h>
 #endif
 
 #include "logger.h"
