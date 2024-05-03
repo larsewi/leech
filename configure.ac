@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([leech], [0.1.15], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.1.16], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 
@@ -33,7 +33,7 @@ AC_PROG_AWK
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
-LT_INIT([dlopen])
+LT_INIT([dlopen win32-dll])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 
 # Checks for header files.
