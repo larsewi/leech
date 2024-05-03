@@ -1,7 +1,6 @@
 #include "table.h"
 
 #include <assert.h>
-#include <dlfcn.h>
 #include <errno.h>
 #include <limits.h>
 #include <string.h>
@@ -10,6 +9,7 @@
 #include "files.h"
 #include "list.h"
 #include "logger.h"
+#include "module.h"
 #include "string_lib.h"
 #include "utils.h"
 
@@ -86,18 +86,12 @@ void LCH_TableInfoDestroy(void *const _info) {
   free(info->src_table_name);
   free(info->src_params);
   free(info->src_schema);
-
-  if (info->src_dlib_handle != NULL && dlclose(info->src_dlib_handle) == -1) {
-    LCH_LOG_ERROR("Failed to release reference to dynamic library");
-  }
+  LCH_ModuleDestroy(info->src_dlib_handle);
 
   free(info->dst_table_name);
   free(info->dst_params);
   free(info->dst_schema);
-
-  if (info->dst_dlib_handle != NULL && dlclose(info->dst_dlib_handle) == -1) {
-    LCH_LOG_ERROR("Failed to release reference to dynamic library");
-  }
+  LCH_ModuleDestroy(info->dst_dlib_handle);
 
   free(info);
 }
@@ -251,72 +245,36 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       return NULL;
     }
 
-    LCH_LOG_DEBUG("Loading dynamic shared library '%s' for source callbacks",
-                  dlib_path);
-    info->src_dlib_handle = dlopen(dlib_path, RTLD_NOW);
+    info->src_dlib_handle = LCH_ModuleLoad(dlib_path);
     if (info->src_dlib_handle == NULL) {
-      LCH_LOG_ERROR("Failed to load dynamic shared library '%s': %s", dlib_path,
-                    dlerror());
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    const char *symbol = "LCH_CallbackConnect";
-    LCH_LOG_DEBUG(
-        "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-        symbol, dlib_path);
-    info->src_connect =
-        (LCH_CallbackConnect)dlsym(info->src_dlib_handle, symbol);
+    info->src_connect = (LCH_CallbackConnect)LCH_ModuleGetSymbol(
+        info->src_dlib_handle, "LCH_CallbackConnect");
     if (info->src_connect == NULL) {
-      LCH_LOG_ERROR(
-          "Failed to obtain address of symbol '%s' in dynamic shared library "
-          "'%s': %s",
-          symbol, dlib_path, dlerror());
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    symbol = "LCH_CallbackDisconnect";
-    LCH_LOG_DEBUG(
-        "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-        symbol, dlib_path);
-    info->src_disconnect =
-        (LCH_CallbackDisconnect)dlsym(info->src_dlib_handle, symbol);
+    info->src_disconnect = (LCH_CallbackDisconnect)LCH_ModuleGetSymbol(
+        info->src_dlib_handle, "LCH_CallbackDisconnect");
     if (info->src_disconnect == NULL) {
-      LCH_LOG_ERROR(
-          "Failed to obtain address of symbol '%s' in dynamic shared library "
-          "'%s': %s",
-          symbol, dlib_path, dlerror());
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    symbol = "LCH_CallbackCreateTable";
-    LCH_LOG_DEBUG(
-        "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-        symbol, dlib_path);
-    info->src_create_table =
-        (LCH_CallbackCreateTable)dlsym(info->src_dlib_handle, symbol);
+    info->src_create_table = (LCH_CallbackCreateTable)LCH_ModuleGetSymbol(
+        info->src_dlib_handle, "LCH_CallbackCreateTable");
     if (info->src_create_table == NULL) {
-      LCH_LOG_ERROR(
-          "Failed to obtain address of symbol '%s' in dynamic shared library "
-          "'%s': %s",
-          symbol, dlib_path, dlerror());
       LCH_TableInfoDestroy(info);
       return NULL;
     }
 
-    symbol = "LCH_CallbackGetTable";
-    LCH_LOG_DEBUG(
-        "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-        symbol, dlib_path);
-    info->src_get_table =
-        (LCH_CallbackGetTable)dlsym(info->src_dlib_handle, symbol);
+    info->src_get_table = (LCH_CallbackGetTable)LCH_ModuleGetSymbol(
+        info->src_dlib_handle, "LCH_CallbackGetTable");
     if (info->src_create_table == NULL) {
-      LCH_LOG_ERROR(
-          "Failed to obtain address of symbol '%s' in dynamic shared library "
-          "'%s': %s",
-          symbol, dlib_path, dlerror());
       LCH_TableInfoDestroy(info);
       return NULL;
     }
@@ -373,163 +331,78 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     return NULL;
   }
 
-  LCH_LOG_DEBUG("Loading dynamic shared library '%s' for destination callbacks",
-                dlib_path);
-  info->dst_dlib_handle = dlopen(dlib_path, RTLD_NOW);
+  info->dst_dlib_handle = LCH_ModuleLoad(dlib_path);
   if (info->dst_dlib_handle == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to load dynamic shared library '%s' for destination callbacks: "
-        "%s",
-        dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  const char *symbol = "LCH_CallbackConnect";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_connect = (LCH_CallbackConnect)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_connect = (LCH_CallbackConnect)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackConnect");
   if (info->dst_connect == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackDisconnect";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_disconnect =
-      (LCH_CallbackDisconnect)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_disconnect = (LCH_CallbackDisconnect)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackDisconnect");
   if (info->dst_disconnect == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackCreateTable";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_create_table =
-      (LCH_CallbackCreateTable)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_create_table = (LCH_CallbackCreateTable)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackCreateTable");
   if (info->dst_create_table == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackTruncateTable";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_truncate_table =
-      (LCH_CallbackTruncateTable)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_truncate_table = (LCH_CallbackTruncateTable)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackTruncateTable");
   if (info->dst_truncate_table == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackBeginTransaction";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_begin_tx =
-      (LCH_CallbackBeginTransaction)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_begin_tx = (LCH_CallbackBeginTransaction)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackBeginTransaction");
   if (info->dst_begin_tx == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackCommitTransaction";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_commit_tx =
-      (LCH_CallbackCommitTransaction)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_commit_tx = (LCH_CallbackCommitTransaction)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackCommitTransaction");
   if (info->dst_commit_tx == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackRollbackTransaction";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_rollback_tx =
-      (LCH_CallbackRollbackTransaction)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_rollback_tx = (LCH_CallbackRollbackTransaction)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackRollbackTransaction");
   if (info->dst_rollback_tx == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackInsertRecord";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_insert_record =
-      (LCH_CallbackInsertRecord)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_insert_record = (LCH_CallbackInsertRecord)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackInsertRecord");
   if (info->dst_insert_record == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackDeleteRecord";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_delete_record =
-      (LCH_CallbackDeleteRecord)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_delete_record = (LCH_CallbackDeleteRecord)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackDeleteRecord");
   if (info->dst_delete_record == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  symbol = "LCH_CallbackUpdateRecord";
-  LCH_LOG_DEBUG(
-      "Obtaining address of symbol '%s' from dynamic shared library '%s'",
-      symbol, dlib_path);
-  info->dst_update_record =
-      (LCH_CallbackUpdateRecord)dlsym(info->dst_dlib_handle, symbol);
+  info->dst_update_record = (LCH_CallbackUpdateRecord)LCH_ModuleGetSymbol(
+      info->dst_dlib_handle, "LCH_CallbackUpdateRecord");
   if (info->dst_update_record == NULL) {
-    LCH_LOG_ERROR(
-        "Failed to obtain address of symbol '%s' in dynamic shared library "
-        "'%s': %s",
-        symbol, dlib_path, dlerror());
     LCH_TableInfoDestroy(info);
     return NULL;
   }

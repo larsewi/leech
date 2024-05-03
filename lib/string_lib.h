@@ -31,6 +31,8 @@ char *LCH_StringTruncate(const char *str, size_t len, size_t max);
 
 char *LCH_StringDuplicate(const char *str);
 
+char *LCH_StringNDuplicate(const char *str, size_t n);
+
 char *LCH_StringFormat(const char *format, ...);
 
 bool LCH_StringParseNumber(const char *str, long *number);

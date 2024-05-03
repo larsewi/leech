@@ -33,10 +33,8 @@ LCH_List *LCH_StringSplit(const char *str, const char *del) {
   const char *end = strpbrk(str, del);
 
   while (end != NULL) {
-    char *tmp = strndup(start, end - start);
+    char *tmp = LCH_StringNDuplicate(start, end - start);
     if (tmp == NULL) {
-      LCH_LOG_ERROR("strndup(3): Failed to allocate memory: %s",
-                    strerror(errno));
       return NULL;
     }
 
@@ -291,5 +289,28 @@ char *LCH_StringDuplicate(const char *const str) {
     LCH_LOG_ERROR("strdup(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
+  return dup;
+}
+
+char *LCH_StringNDuplicate(const char *const str, const size_t n) {
+  if (str == NULL) {
+    return NULL;
+  }
+
+#if HAVE_STRNDUP
+  char *const dup = strndup(str, n);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("strndup(3): Failed to allocate memory: %s", strerror(errno));
+    return NULL;
+  }
+#else   // HAVE_STRNDUP
+  char *const dup = malloc(n + 1);
+  if (dup == NULL) {
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memory: %s", strerror(errno));
+    return NULL;
+  }
+  memcpy(dup, str, n);
+  dup[n] = '\0';
+#endif  // HAVE_STRNDUP
   return dup;
 }

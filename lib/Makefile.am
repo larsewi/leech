@@ -36,5 +36,6 @@ libleech_la_SOURCES = leech.c \
         table.h table.c \
         utils.h utils.c \
         sha1.h sha1.c \
+        module.h module.c \
         definitions.h
 libleech_la_LDFLAGS = -ldl -lm
