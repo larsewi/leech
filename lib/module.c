@@ -4,11 +4,10 @@
 
 #if HAVE_DLFCN_H
 #include <dlfcn.h>
-#endif  // HAVE_DLFCN_H
-
-#if _WIN32
+#elif defined(_WIN32)
+#include <errhandlingapi.h>
 #include <libloaderapi.h>
-#endif  // _WIN32
+#endif
 
 #include "logger.h"
 
