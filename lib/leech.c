@@ -127,7 +127,7 @@ static bool Purge(const LCH_Instance *const instance) {
 
     bool is_block_id = true;
     for (const char *ch = filename; *ch != '\0'; ch++) {
-      if (isxdigit(*ch) == 0) {
+      if (isxdigit((int)(*ch)) == 0) {
         is_block_id = false;
         break;
       }
