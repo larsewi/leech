@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <string.h>
 #include <sys/types.h>
 
@@ -148,29 +149,34 @@ static void Swap(LCH_List *const list, const ssize_t a, const ssize_t b) {
 
 static size_t Partition(LCH_List *const list, const ssize_t low,
                         const ssize_t high, LCH_CompareFn compare) {
-  void *pivot = LCH_ListGet(list, high);
+  assert(high >= 0);
+  void *pivot = LCH_ListGet(list, (size_t)high);
   ssize_t i = low;
   for (ssize_t j = low; j < high; j++) {
-    if (compare(LCH_ListGet(list, j), pivot) <= 0) {
+    assert(j >= 0);
+    if (compare(LCH_ListGet(list, (size_t)j), pivot) <= 0) {
       Swap(list, i++, j);
     }
   }
   Swap(list, i, high);
-  return i;
+  assert(i >= 0);
+  return (size_t)i;
 }
 
 static void QuickSort(LCH_List *const list, const ssize_t low,
                       const ssize_t high, LCH_CompareFn compare) {
   if (low < high) {
-    const ssize_t pivot = Partition(list, low, high, compare);
-    QuickSort(list, low, pivot - 1, compare);
-    QuickSort(list, pivot + 1, high, compare);
+    const size_t pivot = Partition(list, low, high, compare);
+    assert(pivot + 1 <= SSIZE_MAX);
+    QuickSort(list, low, (ssize_t)pivot - 1, compare);
+    QuickSort(list, (ssize_t)pivot + 1, high, compare);
   }
 }
 
 void LCH_ListSort(LCH_List *const self, LCH_CompareFn compare) {
   assert(self != NULL);
-  QuickSort(self, 0, self->length - 1, compare);
+  assert(self->length <= SSIZE_MAX);
+  QuickSort(self, 0, (ssize_t)self->length - 1, compare);
 }
 
 void LCH_ListDestroy(void *const self) {

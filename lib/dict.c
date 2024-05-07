@@ -51,7 +51,7 @@ static size_t HashKey(const LCH_Buffer *const key) {
 
   size_t hash = 5381;
   for (size_t i = 0; i < length; i++) {
-    hash = ((hash << 5) + hash) + buffer[i];
+    hash = ((hash << 5) + hash) + (unsigned char)buffer[i];
   }
   return hash;
 }
@@ -78,15 +78,15 @@ static size_t ComputeIndex(const LCH_Dict *const dict,
 }
 
 static bool EnsureCapacity(LCH_Dict *const dict) {
-  if (dict->in_use < (dict->capacity * LCH_DICT_LOAD_FACTOR)) {
+  if ((float)dict->in_use < ((float)dict->capacity * LCH_DICT_LOAD_FACTOR)) {
     return true;
   }
 
   /* If we can free half of the capacity by removing invalidated items, there is
    * no need to expand the buffer. */
   assert(dict->in_use >= dict->length);
-  const bool expand =
-      ((dict->capacity / 100.f) * (dict->in_use - dict->length)) < 0.5f;
+  const bool expand = (((float)dict->capacity / 100.f) *
+                       (float)(dict->in_use - dict->length)) < 0.5f;
 
   const size_t new_capacity = (expand) ? dict->capacity * 2 : dict->capacity;
   DictElement **const new_buffer =

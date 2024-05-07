@@ -82,7 +82,7 @@ bool LCH_BlockStore(const LCH_Instance *const instance,
   }
 
   const size_t length = LCH_BufferLength(json);
-  const unsigned char *const data = (unsigned char *)LCH_BufferData(json);
+  const unsigned char *const data = (const unsigned char *)LCH_BufferData(json);
   if (!LCH_MessageDigest(data, length, digest)) {
     LCH_BufferDestroy(digest);
     LCH_BufferDestroy(json);

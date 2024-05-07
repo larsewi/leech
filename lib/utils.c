@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <math.h>
 
 #include "buffer.h"
@@ -160,7 +161,8 @@ bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
     return false;
   }
 
-  ret = SHA1Input(&ctx, message, length);
+  assert(length < UINT_MAX);
+  ret = SHA1Input(&ctx, message, (unsigned int)length);
   if (ret != shaSuccess) {
     return false;
   }
@@ -230,7 +232,7 @@ bool LCH_DoubleToSize(const double number, size_t *const size) {
     LCH_LOG_ERROR("%s: Number is not finite", msg, SIZE_MAX);
     return false;
   }
-  if (number > SIZE_MAX) {
+  if (number > (double)SIZE_MAX) {
     LCH_LOG_ERROR("%s: Out of bounds for size_t (%g > %zu)", msg, number,
                   SIZE_MAX);
     return false;
@@ -239,6 +241,6 @@ bool LCH_DoubleToSize(const double number, size_t *const size) {
     LCH_LOG_ERROR("%s: Out of bound for size_t (%g < 0)", msg, number);
     return false;
   }
-  *size = number;
+  *size = (size_t)number;
   return true;
 }

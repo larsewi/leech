@@ -1256,8 +1256,9 @@ static bool ParseToken(LCH_JsonParser *const parser, const char *const token) {
 
   for (size_t i = 0; i < length; i++) {
     if (parser->cursor[i] != token[i]) {
-      char *const truncated =
-          LCH_StringTruncate(parser->cursor, parser->end - parser->cursor, 64);
+      assert(parser->end >= parser->cursor);
+      char *const truncated = LCH_StringTruncate(
+          parser->cursor, (size_t)(parser->end - parser->cursor), 64);
       LCH_LOG_ERROR("Failed to parse JSON: Expected '%s', but found '%s'",
                     token, truncated);
       free(truncated);
@@ -1576,7 +1577,8 @@ static LCH_Json *ParseNumber(LCH_JsonParser *const parser) {
 
   /* We make a null-byte terminated copy in order to make sure we don't scan
    * beyond the buffer. */
-  const size_t max = parser->end - parser->cursor;
+  assert(parser->end >= parser->cursor);
+  const size_t max = (size_t)(parser->end - parser->cursor);
   char nt_copy[max + 1];
   strncpy(nt_copy, parser->cursor, max);
   nt_copy[max] = '\0';
@@ -1585,8 +1587,9 @@ static LCH_Json *ParseNumber(LCH_JsonParser *const parser) {
   double number;
   int ret = sscanf(nt_copy, "%le%n", &number, &n_chars);
   if (ret != 1) {
-    char *const truncated =
-        LCH_StringTruncate(parser->cursor, parser->end - parser->cursor, 64);
+    assert(parser->end >= parser->cursor);
+    char *const truncated = LCH_StringTruncate(
+        parser->cursor, (size_t)(parser->end - parser->cursor), 64);
     LCH_LOG_ERROR("Failed to parse JSON string: Expected NUMBER, found %s",
                   truncated);
     return NULL;
@@ -1638,12 +1641,13 @@ static LCH_Json *Parse(LCH_JsonParser *const parser) {
     return ParseArray(parser);
   }
 
-  if ((isdigit(parser->cursor[0]) != 0) || (parser->cursor[0] == '-')) {
+  if ((isdigit((int)parser->cursor[0]) != 0) || (parser->cursor[0] == '-')) {
     return ParseNumber(parser);
   }
 
-  char *const truncated =
-      LCH_StringTruncate(parser->cursor, parser->end - parser->cursor, 64);
+  assert(parser->end >= parser->cursor);
+  char *const truncated = LCH_StringTruncate(
+      parser->cursor, (size_t)(parser->end - parser->cursor), 64);
   LCH_LOG_ERROR(
       "Failed to parse JSON: Expected 'null', 'true', 'false', NUMBER, STRING,"
       "OBJECT, ARRAY; but found '%s'",
@@ -1668,8 +1672,9 @@ LCH_Json *LCH_JsonParse(const char *const str, const size_t len) {
   TrimLeadingWhitespace(&parser);
 
   if (parser.cursor < parser.end) {
-    char *const truncated =
-        LCH_StringTruncate(parser.cursor, parser.end - parser.cursor, 64);
+    assert(parser.end >= parser.cursor);
+    char *const truncated = LCH_StringTruncate(
+        parser.cursor, (size_t)(parser.end - parser.cursor), 64);
     LCH_LOG_ERROR("Failed to parse JSON: Expected End-of-File; but found '%s'",
                   truncated);
     free(truncated);
