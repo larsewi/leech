@@ -256,7 +256,7 @@ bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {
       return false;
     }
 
-    tot_written += n_written;
+    tot_written += (size_t)n_written;
   }
 
   close(fd);

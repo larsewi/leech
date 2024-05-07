@@ -33,7 +33,8 @@ LCH_List *LCH_StringSplit(const char *str, const char *del) {
   const char *end = strpbrk(str, del);
 
   while (end != NULL) {
-    char *tmp = LCH_StringNDuplicate(start, end - start);
+    assert(end >= start);
+    char *tmp = LCH_StringNDuplicate(start, (size_t)(end - start));
     if (tmp == NULL) {
       return NULL;
     }
