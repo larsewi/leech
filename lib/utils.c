@@ -196,22 +196,6 @@ bool LCH_MessageDigest(const unsigned char *const message, const size_t length,
 
 /******************************************************************************/
 
-bool LCH_ListInsertBufferDuplicate(LCH_List *const list, const size_t index,
-                                   const LCH_Buffer *const buffer) {
-  LCH_Buffer *const duplicate = LCH_BufferDuplicate(buffer);
-  if (duplicate == NULL) {
-    return false;
-  }
-
-  if (!LCH_ListInsert(list, index, duplicate, LCH_BufferDestroy)) {
-    LCH_BufferDestroy(duplicate);
-    return false;
-  }
-  return true;
-}
-
-/******************************************************************************/
-
 bool LCH_ListAppendBufferDuplicate(LCH_List *const list,
                                    const LCH_Buffer *const buffer) {
   LCH_Buffer *const duplicate = LCH_BufferDuplicate(buffer);
