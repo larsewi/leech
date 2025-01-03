@@ -8,14 +8,13 @@
 START_TEST(test_LCH_Delta) {
   LCH_List *const primary_fields = LCH_ListCreate();
   ck_assert_ptr_nonnull(primary_fields);
-  ck_assert(LCH_ListAppendBufferDuplicate(
-      primary_fields, LCH_BufferStaticFromString("lastname")));
-  ck_assert(LCH_ListAppendBufferDuplicate(
-      primary_fields, LCH_BufferStaticFromString("firstname")));
-
+  LCH_Buffer *field = LCH_BufferFromString("lastname");
+  ck_assert(LCH_ListAppend(primary_fields, field, LCH_BufferDestroy));
+  field = LCH_BufferFromString("firstname");
+  ck_assert(LCH_ListAppend(primary_fields, field, LCH_BufferDestroy));
   LCH_List *const subsidiary_fields = LCH_ListCreate();
-  ck_assert(LCH_ListAppendBufferDuplicate(subsidiary_fields,
-                                          LCH_BufferStaticFromString("born")));
+  field = LCH_BufferFromString("born");
+  ck_assert(LCH_ListAppend(subsidiary_fields, field, LCH_BufferDestroy));
 
   LCH_Json *new_state = NULL;
   {

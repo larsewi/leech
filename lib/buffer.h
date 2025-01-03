@@ -3,12 +3,27 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "leech.h"
 
 /**
  * Put private LCH_Buffer functions here:
  */
+
+struct LCH_Buffer {
+  size_t length;
+  size_t capacity;
+  char *buffer;
+};
+
+static inline LCH_Buffer LCH_BufferStaticFromString(const char *const str) {
+  LCH_Buffer buffer;
+  buffer.buffer = (char *)str;
+  buffer.length = strlen(str);
+  buffer.capacity = 0;
+  return buffer;
+}
 
 /**
  * @brief allocate memory in buffer.
@@ -36,8 +51,6 @@ void LCH_BufferSet(LCH_Buffer *buffer, size_t offset, const void *value,
  * @return True on success, false on error
  */
 bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
-
-const LCH_Buffer *LCH_BufferStaticFromString(const char *str);
 
 void LCH_BufferTrim(LCH_Buffer *buffer, char ch);
 

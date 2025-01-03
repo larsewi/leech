@@ -134,16 +134,19 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     return NULL;
   }
 
-  const LCH_Buffer *key = LCH_BufferStaticFromString("primary_fields");
-  const LCH_Json *const primary_array = LCH_JsonObjectGetArray(definition, key);
+  const LCH_Buffer primary_fields_key =
+      LCH_BufferStaticFromString("primary_fields");
+  const LCH_Json *const primary_array =
+      LCH_JsonObjectGetArray(definition, &primary_fields_key);
   if (primary_array == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  key = LCH_BufferStaticFromString("subsidiary_fields");
+  const LCH_Buffer subsidiary_fields_key =
+      LCH_BufferStaticFromString("subsidiary_fields");
   const LCH_Json *const subsidiary_array =
-      LCH_JsonObjectGetArray(definition, key);
+      LCH_JsonObjectGetArray(definition, &subsidiary_fields_key);
   if (subsidiary_array == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -188,17 +191,20 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   }
 
   LCH_LOG_VERBOSE("Loading callback functions for table '%s'", identifer);
+  const LCH_Buffer params_key = LCH_BufferStaticFromString("params");
+  const LCH_Buffer schema_key = LCH_BufferStaticFromString("schema");
+  const LCH_Buffer table_name_key = LCH_BufferStaticFromString("table_name");
+  const LCH_Buffer callbacks_key = LCH_BufferStaticFromString("callbacks");
 
   {
-    const LCH_Json *const src = LCH_JsonObjectGetObject(
-        definition, LCH_BufferStaticFromString("source"));
+    const LCH_Buffer source_key = LCH_BufferStaticFromString("source");
+    const LCH_Json *const src =
+        LCH_JsonObjectGetObject(definition, &source_key);
     if (src == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
     }
-
-    const LCH_Buffer *const params =
-        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("params"));
+    const LCH_Buffer *const params = LCH_JsonObjectGetString(src, &params_key);
     if (params == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
@@ -209,8 +215,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
       return NULL;
     }
 
-    const LCH_Buffer *const schema =
-        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("schema"));
+    const LCH_Buffer *const schema = LCH_JsonObjectGetString(src, &schema_key);
     if (schema == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
@@ -222,7 +227,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     }
 
     const LCH_Buffer *const table_name =
-        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("table_name"));
+        LCH_JsonObjectGetString(src, &table_name_key);
     if (table_name == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
@@ -234,7 +239,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     }
 
     const LCH_Buffer *const callbacks =
-        LCH_JsonObjectGetString(src, LCH_BufferStaticFromString("callbacks"));
+        LCH_JsonObjectGetString(src, &callbacks_key);
     if (callbacks == NULL) {
       LCH_TableInfoDestroy(info);
       return NULL;
@@ -280,15 +285,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     }
   }
 
-  const LCH_Json *const dst = LCH_JsonObjectGetObject(
-      definition, LCH_BufferStaticFromString("destination"));
+  const LCH_Buffer dst_key = LCH_BufferStaticFromString("destination");
+  const LCH_Json *const dst = LCH_JsonObjectGetObject(definition, &dst_key);
   if (dst == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
   }
 
-  const LCH_Buffer *const params =
-      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("params"));
+  const LCH_Buffer *const params = LCH_JsonObjectGetString(dst, &params_key);
   if (params == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -299,8 +303,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
     return NULL;
   }
 
-  const LCH_Buffer *const schema =
-      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("schema"));
+  const LCH_Buffer *const schema = LCH_JsonObjectGetString(dst, &schema_key);
   if (schema == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -312,7 +315,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   }
 
   const LCH_Buffer *const table_name =
-      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("table_name"));
+      LCH_JsonObjectGetString(dst, &table_name_key);
   if (table_name == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
@@ -324,7 +327,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   }
 
   const LCH_Buffer *const callbacks =
-      LCH_JsonObjectGetString(dst, LCH_BufferStaticFromString("callbacks"));
+      LCH_JsonObjectGetString(dst, &callbacks_key);
   const char *const dlib_path = LCH_BufferData(callbacks);
   if (dlib_path == NULL) {
     LCH_TableInfoDestroy(info);
@@ -510,8 +513,9 @@ static LCH_List *ConcatenateFields(const LCH_List *const left,
 
 static LCH_List *ParseConcatenateFields(const LCH_Buffer *const left_csv,
                                         const LCH_Buffer *const right_csv) {
+  const LCH_Buffer empty_str = LCH_BufferStaticFromString("");
   LCH_List *const left_lst =
-      (LCH_BufferEqual(left_csv, LCH_BufferStaticFromString("")))
+      (LCH_BufferEqual(left_csv, &empty_str))
           ? LCH_ListCreate()
           : LCH_CSVParseRecord(LCH_BufferData(left_csv),
                                LCH_BufferLength(left_csv));
@@ -561,11 +565,18 @@ static bool TablePatchInserts(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    if (!LCH_ListInsertBufferDuplicate(values, 0,
-                                       LCH_BufferStaticFromString(host_id))) {
+    LCH_Buffer *const buffer = LCH_BufferFromString(host_id);
+    if (buffer == NULL) {
       LCH_ListDestroy(values);
       LCH_ListDestroy(keys);
-      return NULL;
+      return false;
+    }
+
+    if (!LCH_ListInsert(values, 0, buffer, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(buffer);
+      LCH_ListDestroy(values);
+      LCH_ListDestroy(keys);
+      return false;
     }
 
     if (!table_info->dst_insert_record(conn, table_info->dst_table_name,
@@ -603,8 +614,15 @@ static bool TablePatchDeletes(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    if (!LCH_ListInsertBufferDuplicate(primary_values, 0,
-                                       LCH_BufferStaticFromString(host_id))) {
+    LCH_Buffer *const buffer = LCH_BufferFromString(host_id);
+    if (buffer == NULL) {
+      LCH_ListDestroy(primary_values);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    if (!LCH_ListInsert(primary_values, 0, buffer, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(buffer);
       LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
@@ -645,8 +663,15 @@ static bool TablePatchUpdates(const LCH_TableInfo *const table_info,
       return false;
     }
 
-    if (!LCH_ListInsertBufferDuplicate(
-            primary_values, 0, LCH_BufferStaticFromString(host_value))) {
+    LCH_Buffer *const buffer = LCH_BufferFromString(host_value);
+    if (buffer == NULL) {
+      LCH_ListDestroy(primary_values);
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
+    if (!LCH_ListInsert(primary_values, 0, buffer, LCH_BufferDestroy)) {
+      LCH_BufferDestroy(buffer);
       LCH_ListDestroy(primary_values);
       LCH_ListDestroy(keys);
       return false;
@@ -712,11 +737,20 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
     return false;
   }
 
-  const LCH_Buffer *const buffer = LCH_BufferStaticFromString(field);
-  if (!LCH_ListInsertBufferDuplicate(primary_fields, 0, buffer)) {
-    table_info->dst_disconnect(conn);
-    LCH_ListDestroy(primary_fields);
-    return false;
+  {
+    LCH_Buffer *const buffer = LCH_BufferFromString(field);
+    if (buffer == NULL) {
+      table_info->dst_disconnect(conn);
+      LCH_ListDestroy(primary_fields);
+      return false;
+    }
+
+    if (!LCH_ListInsert(primary_fields, 0, buffer, LCH_BufferDestroy)) {
+      table_info->dst_disconnect(conn);
+      LCH_BufferDestroy(buffer);
+      LCH_ListDestroy(primary_fields);
+      return false;
+    }
   }
 
   if (!table_info->dst_create_table(conn, table_info->dst_table_name,
@@ -779,9 +813,15 @@ bool LCH_TablePatch(const LCH_TableInfo *const table_info,
     return false;
   }
 
-  if (!LCH_ListInsertBufferDuplicate(all_fields, 0,
-                                     LCH_BufferStaticFromString(field))) {
+  LCH_Buffer *const buffer = LCH_BufferFromString(field);
+  if (buffer == NULL) {
     table_info->dst_disconnect(conn);
+    return false;
+  }
+
+  if (!LCH_ListInsert(all_fields, 0, buffer, LCH_BufferDestroy)) {
+    table_info->dst_disconnect(conn);
+    LCH_BufferDestroy(buffer);
     LCH_ListDestroy(all_fields);
     return false;
   }

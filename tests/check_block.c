@@ -26,16 +26,16 @@ START_TEST(test_LCH_BlockCreate) {
   LCH_Json *const block = LCH_BlockCreate(head, payload);
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
-    ck_assert(LCH_JsonObjectHasKey(block, key));
+    const LCH_Buffer key = LCH_BufferStaticFromString("timestamp");
+    ck_assert(LCH_JsonObjectHasKey(block, &key));
   }
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("parent");
-    ck_assert(LCH_JsonObjectHasKey(block, key));
+    const LCH_Buffer key = LCH_BufferStaticFromString("parent");
+    ck_assert(LCH_JsonObjectHasKey(block, &key));
   }
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("payload");
-    ck_assert(LCH_JsonObjectHasKey(block, key));
+    const LCH_Buffer key = LCH_BufferStaticFromString("payload");
+    ck_assert(LCH_JsonObjectHasKey(block, &key));
   }
 
   LCH_JsonDestroy(block);

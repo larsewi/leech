@@ -6,6 +6,10 @@
 
 #include "list.h"
 
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif /* PATH_MAX */
+
 bool LCH_FileSize(FILE *file, size_t *size);
 
 bool LCH_FileExists(const char *path);

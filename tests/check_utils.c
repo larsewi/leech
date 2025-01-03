@@ -65,20 +65,26 @@ START_TEST(test_LCH_TableToJsonObject) {
   LCH_ListDestroy(primary);
   LCH_ListDestroy(table);
 
-  const LCH_Buffer *str = LCH_JsonObjectGetString(
-      json, LCH_BufferStaticFromString("Paul,McCartney"));
-  ck_assert_str_eq(LCH_BufferData(str), "1942");
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("Paul,McCartney");
+    const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
+    ck_assert_str_eq(LCH_BufferData(str), "1942");
+  }
 
-  str =
-      LCH_JsonObjectGetString(json, LCH_BufferStaticFromString("Ringo,Starr"));
-  ck_assert_str_eq(LCH_BufferData(str), "1940");
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("Ringo,Starr");
+    const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
+    ck_assert_str_eq(LCH_BufferData(str), "1940");
+  }
 
-  str =
-      LCH_JsonObjectGetString(json, LCH_BufferStaticFromString("John,Lennon"));
-  ck_assert_str_eq(LCH_BufferData(str), "1940");
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("John,Lennon");
+    const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
+    ck_assert_str_eq(LCH_BufferData(str), "1940");
+  }
 
-  str = LCH_JsonObjectGetString(json,
-                                LCH_BufferStaticFromString("George,Harrison"));
+  const LCH_Buffer key = LCH_BufferStaticFromString("George,Harrison");
+  const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
   ck_assert_str_eq(LCH_BufferData(str), "1943");
 
   LCH_JsonDestroy(json);
@@ -116,20 +122,26 @@ START_TEST(test_LCH_TableToJsonObjectNoSubsidiary) {
   LCH_ListDestroy(primary);
   LCH_ListDestroy(table);
 
-  const LCH_Buffer *str = LCH_JsonObjectGetString(
-      json, LCH_BufferStaticFromString("Paul,McCartney,1942"));
-  ck_assert_str_eq(LCH_BufferData(str), "");
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("Paul,McCartney,1942");
+    const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
+    ck_assert_str_eq(LCH_BufferData(str), "");
+  }
 
-  str = LCH_JsonObjectGetString(json,
-                                LCH_BufferStaticFromString("Ringo,Starr,1940"));
-  ck_assert_str_eq(LCH_BufferData(str), "");
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("Ringo,Starr,1940");
+    const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
+    ck_assert_str_eq(LCH_BufferData(str), "");
+  }
 
-  str = LCH_JsonObjectGetString(json,
-                                LCH_BufferStaticFromString("John,Lennon,1940"));
-  ck_assert_str_eq(LCH_BufferData(str), "");
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("John,Lennon,1940");
+    const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
+    ck_assert_str_eq(LCH_BufferData(str), "");
+  }
 
-  str = LCH_JsonObjectGetString(
-      json, LCH_BufferStaticFromString("George,Harrison,1943"));
+  const LCH_Buffer key = LCH_BufferStaticFromString("George,Harrison,1943");
+  const LCH_Buffer *str = LCH_JsonObjectGetString(json, &key);
   ck_assert_str_eq(LCH_BufferData(str), "");
 
   LCH_JsonDestroy(json);

@@ -15,9 +15,6 @@ LCH_Json *LCH_TableToJsonObject(const LCH_List *table,
 bool LCH_MessageDigest(const unsigned char *message, size_t length,
                        LCH_Buffer *digest);
 
-bool LCH_ListInsertBufferDuplicate(LCH_List *list, size_t index,
-                                   const LCH_Buffer *buffer);
-
 bool LCH_ListAppendBufferDuplicate(LCH_List *list, const LCH_Buffer *buffer);
 
 /**

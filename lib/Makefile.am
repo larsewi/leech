@@ -1,7 +1,4 @@
-AM_CFLAGS = -Wall -Wextra -Wconversion -Wformat
-if !NDEBUG
-AM_CFLAGS += -Werror
-endif
+AM_CFLAGS = -Wall -Wextra -Werror
 AM_CPPFLAGS = -include config.h
 
 include_HEADERS = $(top_builddir)/lib/leech.h

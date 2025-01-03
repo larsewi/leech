@@ -24,8 +24,8 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("type");
-    if (!LCH_JsonObjectSetString(delta, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("type");
+    if (!LCH_JsonObjectSetString(delta, &key, value)) {
       LCH_BufferDestroy(value);
       LCH_JsonDestroy(delta);
       return NULL;
@@ -39,8 +39,8 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("id");
-    if (!LCH_JsonObjectSetString(delta, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("id");
+    if (!LCH_JsonObjectSetString(delta, &key, value)) {
       LCH_BufferDestroy(value);
       LCH_JsonDestroy(delta);
       return NULL;
@@ -54,8 +54,8 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("inserts");
-    if (!LCH_JsonObjectSet(delta, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("inserts");
+    if (!LCH_JsonObjectSet(delta, &key, value)) {
       LCH_JsonDestroy(value);
       LCH_JsonDestroy(delta);
       return NULL;
@@ -69,8 +69,8 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("deletes");
-    if (!LCH_JsonObjectSet(delta, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("deletes");
+    if (!LCH_JsonObjectSet(delta, &key, value)) {
       LCH_JsonDestroy(value);
       LCH_JsonDestroy(delta);
       return NULL;
@@ -86,8 +86,8 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("updates");
-    if (!LCH_JsonObjectSet(delta, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("updates");
+    if (!LCH_JsonObjectSet(delta, &key, value)) {
       LCH_JsonDestroy(value);
       LCH_JsonDestroy(delta);
       return NULL;
@@ -98,8 +98,8 @@ LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
 }
 
 const char *LCH_DeltaGetTableId(const LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("id");
-  const LCH_Buffer *const value = LCH_JsonObjectGetString(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("id");
+  const LCH_Buffer *const value = LCH_JsonObjectGetString(delta, &key);
   if (value == NULL) {
     return NULL;
   }
@@ -107,8 +107,8 @@ const char *LCH_DeltaGetTableId(const LCH_Json *const delta) {
 }
 
 const char *LCH_DeltaGetType(const LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("type");
-  const LCH_Buffer *const value = LCH_JsonObjectGetString(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("type");
+  const LCH_Buffer *const value = LCH_JsonObjectGetString(delta, &key);
   if (value == NULL) {
     return NULL;
   }
@@ -116,20 +116,20 @@ const char *LCH_DeltaGetType(const LCH_Json *const delta) {
 }
 
 const LCH_Json *LCH_DeltaGetInserts(const LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("inserts");
-  const LCH_Json *const value = LCH_JsonObjectGetObject(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("inserts");
+  const LCH_Json *const value = LCH_JsonObjectGetObject(delta, &key);
   return value;
 }
 
 const LCH_Json *LCH_DeltaGetDeletes(const LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("deletes");
-  const LCH_Json *const value = LCH_JsonObjectGetObject(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("deletes");
+  const LCH_Json *const value = LCH_JsonObjectGetObject(delta, &key);
   return value;
 }
 
 const LCH_Json *LCH_DeltaGetUpdates(const LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("updates");
-  const LCH_Json *const value = LCH_JsonObjectGetObject(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("updates");
+  const LCH_Json *const value = LCH_JsonObjectGetObject(delta, &key);
   return value;
 }
 
@@ -165,20 +165,20 @@ bool LCH_DeltaGetNumOperations(const LCH_Json *const delta,
 }
 
 static LCH_Json *DeltaRemoveInserts(LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("inserts");
-  LCH_Json *const value = LCH_JsonObjectRemoveObject(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("inserts");
+  LCH_Json *const value = LCH_JsonObjectRemoveObject(delta, &key);
   return value;
 }
 
 static LCH_Json *DeltaRemoveDeletes(LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("deletes");
-  LCH_Json *const value = LCH_JsonObjectRemoveObject(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("deletes");
+  LCH_Json *const value = LCH_JsonObjectRemoveObject(delta, &key);
   return value;
 }
 
 static LCH_Json *DeltaRemoveUpdates(LCH_Json *const delta) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("updates");
-  LCH_Json *const value = LCH_JsonObjectRemoveObject(delta, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("updates");
+  LCH_Json *const value = LCH_JsonObjectRemoveObject(delta, &key);
   return value;
 }
 

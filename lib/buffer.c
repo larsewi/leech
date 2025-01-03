@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdint.h>
-#include <string.h>
 #include <unistd.h>
 
 #ifdef _WIN32
@@ -18,12 +17,6 @@
 #include "definitions.h"
 #include "files.h"
 #include "logger.h"
-
-struct LCH_Buffer {
-  size_t length;
-  size_t capacity;
-  char *buffer;
-};
 
 static bool EnsureCapacity(LCH_Buffer *const self, const size_t needed) {
   assert(self != NULL);
@@ -221,14 +214,6 @@ LCH_Buffer *LCH_BufferFromString(const char *const str) {
   buffer->buffer[buffer->length] = '\0';
 
   return buffer;
-}
-
-const LCH_Buffer *LCH_BufferStaticFromString(const char *const str) {
-  static LCH_Buffer buffer;
-  buffer.buffer = (char *)str;
-  buffer.length = strlen(str);
-  buffer.capacity = 0;
-  return &buffer;
 }
 
 bool LCH_BufferWriteFile(const LCH_Buffer *buffer, const char *filename) {

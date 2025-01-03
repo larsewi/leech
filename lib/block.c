@@ -22,8 +22,8 @@ LCH_Json *LCH_BlockCreate(const char *const parent_id,
   }
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
-    if (!LCH_JsonObjectSetNumber(block, key, (double)LCH_BLOCK_VERSION)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("version");
+    if (!LCH_JsonObjectSetNumber(block, &key, (double)LCH_BLOCK_VERSION)) {
       LCH_JsonDestroy(block);
       return NULL;
     }
@@ -31,8 +31,8 @@ LCH_Json *LCH_BlockCreate(const char *const parent_id,
 
   {
     const time_t timestamp = time(NULL);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
-    if (!LCH_JsonObjectSetNumber(block, key, (double)timestamp)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("timestamp");
+    if (!LCH_JsonObjectSetNumber(block, &key, (double)timestamp)) {
       LCH_LOG_ERROR("Failed to set timestamp field in block");
       LCH_JsonDestroy(block);
       return NULL;
@@ -45,16 +45,18 @@ LCH_Json *LCH_BlockCreate(const char *const parent_id,
     return NULL;
   }
 
-  if (!LCH_JsonObjectSetString(block, LCH_BufferStaticFromString("parent"),
-                               parent)) {
-    LCH_LOG_ERROR("Failed to set parent block identifier field in block");
-    LCH_BufferDestroy(parent);
-    LCH_JsonDestroy(block);
-    return NULL;
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("parent");
+    if (!LCH_JsonObjectSetString(block, &key, parent)) {
+      LCH_LOG_ERROR("Failed to set parent block identifier field in block");
+      LCH_BufferDestroy(parent);
+      LCH_JsonDestroy(block);
+      return NULL;
+    }
   }
 
-  if (!LCH_JsonObjectSet(block, LCH_BufferStaticFromString("payload"),
-                         payload)) {
+  const LCH_Buffer key = LCH_BufferStaticFromString("payload");
+  if (!LCH_JsonObjectSet(block, &key, payload)) {
     LCH_LOG_ERROR("Failed to set payload field in block");
     LCH_JsonDestroy(block);
     return NULL;
@@ -117,8 +119,8 @@ bool LCH_BlockStore(const LCH_Instance *const instance,
 
 bool LCH_BlockGetVersion(const LCH_Json *const block, size_t *const version) {
   double value;
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
-  if (!LCH_JsonObjectGetNumber(block, key, &value)) {
+  const LCH_Buffer key = LCH_BufferStaticFromString("version");
+  if (!LCH_JsonObjectGetNumber(block, &key, &value)) {
     return false;
   }
 
@@ -159,8 +161,8 @@ LCH_Json *LCH_BlockLoad(const char *const work_dir,
 }
 
 const char *LCH_BlockGetParentId(const LCH_Json *const block) {
-  const LCH_Buffer *const parent =
-      LCH_JsonObjectGetString(block, LCH_BufferStaticFromString("parent"));
+  const LCH_Buffer key = LCH_BufferStaticFromString("parent");
+  const LCH_Buffer *const parent = LCH_JsonObjectGetString(block, &key);
   if (parent == NULL) {
     LCH_LOG_ERROR("Failed to retrieve parent block identifier");
     return NULL;
@@ -173,8 +175,8 @@ bool LCH_BlockIsGenisisId(const char *const block_id) {
 }
 
 const LCH_Json *LCH_BlockGetPayload(const LCH_Json *const block) {
-  const LCH_Json *const payload =
-      LCH_JsonObjectGetArray(block, LCH_BufferStaticFromString("payload"));
+  const LCH_Buffer key = LCH_BufferStaticFromString("payload");
+  const LCH_Json *const payload = LCH_JsonObjectGetArray(block, &key);
   if (payload == NULL) {
     LCH_LOG_ERROR("Failed to get payload from block");
     return NULL;
@@ -183,8 +185,8 @@ const LCH_Json *LCH_BlockGetPayload(const LCH_Json *const block) {
 }
 
 LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
-  LCH_Json *const payload_val =
-      LCH_JsonObjectRemoveArray(block, LCH_BufferStaticFromString("payload"));
+  const LCH_Buffer key = LCH_BufferStaticFromString("payload");
+  LCH_Json *const payload_val = LCH_JsonObjectRemoveArray(block, &key);
   if (payload_val == NULL) {
     LCH_LOG_ERROR("Failed to remove payload from block");
     return NULL;
@@ -194,8 +196,8 @@ LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
 
 bool LCH_BlockGetTimestamp(const LCH_Json *const block,
                            double *const timestamp) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
-  if (!LCH_JsonObjectGetNumber(block, key, timestamp)) {
+  const LCH_Buffer key = LCH_BufferStaticFromString("timestamp");
+  if (!LCH_JsonObjectGetNumber(block, &key, timestamp)) {
     return false;
   }
   return true;
