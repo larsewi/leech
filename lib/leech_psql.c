@@ -93,8 +93,8 @@ bool LCH_CallbackCreateTable(void *const _conn, const char *const table_name,
     return false;
   }
 
-  char *const table_name_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
+  const LCH_Buffer key = LCH_BufferStaticFromString(table_name);
+  char *const table_name_escaped = EscapeIdentifier(conn, &key);
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -185,23 +185,23 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
     return false;
   }
 
-  char *const table_name_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
+  const LCH_Buffer table_name_buf = LCH_BufferStaticFromString(table_name);
+  char *const table_name_escaped = EscapeIdentifier(conn, &table_name_buf);
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
   }
 
-  char *const column_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(column));
+  const LCH_Buffer column_buf = LCH_BufferStaticFromString(column);
+  char *const column_escaped = EscapeIdentifier(conn, &column_buf);
   if (column_escaped == NULL) {
     PQfreemem(table_name_escaped);
     LCH_BufferDestroy(query_buffer);
     return false;
   }
 
-  char *const value_escaped =
-      EscapeLiteral(conn, LCH_BufferStaticFromString(value));
+  const LCH_Buffer value_buf = LCH_BufferStaticFromString(value);
+  char *const value_escaped = EscapeLiteral(conn, &value_buf);
   if (value_escaped == NULL) {
     PQfreemem(column_escaped);
     PQfreemem(table_name_escaped);
@@ -261,8 +261,8 @@ LCH_List *LCH_CallbackGetTable(void *const _conn, const char *const table_name,
     PQfreemem(column_escaped);
   }
 
-  char *const table_name_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
+  const LCH_Buffer table_name_buf = LCH_BufferStaticFromString(table_name);
+  char *const table_name_escaped = EscapeIdentifier(conn, &table_name_buf);
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return NULL;
@@ -418,8 +418,8 @@ bool LCH_CallbackInsertRecord(void *const _conn, const char *const table_name,
     return false;
   }
 
-  char *const table_name_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
+  const LCH_Buffer table_name_buf = LCH_BufferStaticFromString(table_name);
+  char *const table_name_escaped = EscapeIdentifier(conn, &table_name_buf);
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -490,8 +490,8 @@ bool LCH_CallbackDeleteRecord(void *const _conn, const char *const table_name,
     return false;
   }
 
-  char *const table_name_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
+  const LCH_Buffer table_name_buf = LCH_BufferStaticFromString(table_name);
+  char *const table_name_escaped = EscapeIdentifier(conn, &table_name_buf);
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;
@@ -560,8 +560,8 @@ bool LCH_CallbackUpdateRecord(void *const _conn, const char *const table_name,
     return false;
   }
 
-  char *const table_name_escaped =
-      EscapeIdentifier(conn, LCH_BufferStaticFromString(table_name));
+  const LCH_Buffer table_name_buf = LCH_BufferStaticFromString(table_name);
+  char *const table_name_escaped = EscapeIdentifier(conn, &table_name_buf);
   if (table_name_escaped == NULL) {
     LCH_BufferDestroy(query_buffer);
     return false;

@@ -53,8 +53,8 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   instance->work_dir = work_dir;
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
-    const LCH_Buffer *const value = LCH_JsonObjectGetString(config, key);
+    const LCH_Buffer key = LCH_BufferStaticFromString("version");
+    const LCH_Buffer *const value = LCH_JsonObjectGetString(config, &key);
     if (value == NULL) {
       LCH_InstanceDestroy(instance);
       LCH_JsonDestroy(config);
@@ -73,10 +73,10 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
   }
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("chain_length");
-    if (LCH_JsonObjectHasKey(config, key)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("chain_length");
+    if (LCH_JsonObjectHasKey(config, &key)) {
       double number;
-      if (!LCH_JsonObjectGetNumber(config, key, &number)) {
+      if (!LCH_JsonObjectGetNumber(config, &key, &number)) {
         LCH_InstanceDestroy(instance);
         LCH_JsonDestroy(config);
         return NULL;
@@ -94,9 +94,9 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
 
   {
     instance->auto_purge = false;
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("auto_purge");
-    if (LCH_JsonObjectHasKey(config, key)) {
-      const LCH_Json *const json = LCH_JsonObjectGet(config, key);
+    const LCH_Buffer key = LCH_BufferStaticFromString("auto_purge");
+    if (LCH_JsonObjectHasKey(config, &key)) {
+      const LCH_Json *const json = LCH_JsonObjectGet(config, &key);
       if (LCH_JsonIsTrue(json)) {
         instance->auto_purge = true;
       }
@@ -107,9 +107,9 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
 
   {
     instance->pretty_print = false;  // False by default
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("pretty_print");
-    if (LCH_JsonObjectHasKey(config, key)) {
-      const LCH_Json *const pretty_print = LCH_JsonObjectGet(config, key);
+    const LCH_Buffer key = LCH_BufferStaticFromString("pretty_print");
+    if (LCH_JsonObjectHasKey(config, &key)) {
+      const LCH_Json *const pretty_print = LCH_JsonObjectGet(config, &key);
       if (pretty_print == NULL) {
         LCH_InstanceDestroy(instance);
         LCH_JsonDestroy(config);
@@ -132,8 +132,8 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
                   (instance->pretty_print) ? "true" : "false");
   }
 
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("tables");
-  const LCH_Json *const table_defs = LCH_JsonObjectGetObject(config, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("tables");
+  const LCH_Json *const table_defs = LCH_JsonObjectGetObject(config, &key);
   if (table_defs == NULL) {
     LCH_InstanceDestroy(instance);
     LCH_JsonDestroy(config);

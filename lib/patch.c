@@ -11,8 +11,8 @@
 
 bool LCH_PatchGetVersion(const LCH_Json *const patch, size_t *const version) {
   double value;
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
-  if (!LCH_JsonObjectGetNumber(patch, key, &value)) {
+  const LCH_Buffer key = LCH_BufferStaticFromString("version");
+  if (!LCH_JsonObjectGetNumber(patch, &key, &value)) {
     return false;
   }
 
@@ -59,8 +59,8 @@ LCH_Json *LCH_PatchCreate(const char *const lastknown) {
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("version");
-    if (!LCH_JsonObjectSet(patch, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("version");
+    if (!LCH_JsonObjectSet(patch, &key, value)) {
       LCH_JsonDestroy(value);
       LCH_JsonDestroy(patch);
       return NULL;
@@ -74,8 +74,8 @@ LCH_Json *LCH_PatchCreate(const char *const lastknown) {
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("lastknown");
-    if (!LCH_JsonObjectSetString(patch, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("lastknown");
+    if (!LCH_JsonObjectSetString(patch, &key, value)) {
       LCH_JsonDestroy(patch);
       return NULL;
     }
@@ -83,8 +83,8 @@ LCH_Json *LCH_PatchCreate(const char *const lastknown) {
 
   {
     const double value = (double)time(NULL);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
-    if (!LCH_JsonObjectSetNumber(patch, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("timestamp");
+    if (!LCH_JsonObjectSetNumber(patch, &key, value)) {
       LCH_JsonDestroy(patch);
       return NULL;
     }
@@ -97,8 +97,8 @@ LCH_Json *LCH_PatchCreate(const char *const lastknown) {
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("blocks");
-    if (!LCH_JsonObjectSet(patch, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("blocks");
+    if (!LCH_JsonObjectSet(patch, &key, value)) {
       LCH_JsonDestroy(value);
       LCH_JsonDestroy(patch);
       return NULL;
@@ -109,8 +109,8 @@ LCH_Json *LCH_PatchCreate(const char *const lastknown) {
 }
 
 bool LCH_PatchAppendBlock(const LCH_Json *const patch, LCH_Json *const block) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("blocks");
-  const LCH_Json *const blocks = LCH_JsonObjectGetArray(patch, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("blocks");
+  const LCH_Json *const blocks = LCH_JsonObjectGetArray(patch, &key);
   if (blocks == NULL) {
     return false;
   }
@@ -125,8 +125,8 @@ bool LCH_PatchAppendBlock(const LCH_Json *const patch, LCH_Json *const block) {
 bool LCH_PatchUpdateLastKnown(const LCH_Json *const patch,
                               const char *const work_dir,
                               const char *const identifier) {
-  const LCH_Buffer *const key = LCH_BufferStaticFromString("lastknown");
-  const LCH_Buffer *const value = LCH_JsonObjectGetString(patch, key);
+  const LCH_Buffer key = LCH_BufferStaticFromString("lastknown");
+  const LCH_Buffer *const value = LCH_JsonObjectGetString(patch, &key);
   if (value == NULL) {
     return false;
   }

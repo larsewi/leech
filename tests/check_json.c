@@ -152,14 +152,14 @@ START_TEST(test_LCH_JsonObjectChildIsXXXXX) {
 
   for (size_t i = 0; i < num_children; i++) {
     ck_assert_ptr_nonnull(children[i]);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(keys[i]);
-    ck_assert(LCH_JsonObjectSet(parent, key, children[i]));
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert(LCH_JsonObjectSet(parent, &key, children[i]));
 
     for (size_t j = 0; j < num_children; j++) {
       if (i == j) {
-        ck_assert(funcs[j](parent, key));
+        ck_assert(funcs[j](parent, &key));
       } else {
-        ck_assert(!funcs[j](parent, key));
+        ck_assert(!funcs[j](parent, &key));
       }
     }
   }
@@ -212,8 +212,8 @@ START_TEST(test_LCH_JsonObjectSet) {
   ck_assert_ptr_nonnull(parent);
   LCH_Json *const child = LCH_JsonNullCreate();
   ck_assert_ptr_nonnull(child);
-  ck_assert(
-      LCH_JsonObjectSet(parent, LCH_BufferStaticFromString("leech"), child));
+  const LCH_Buffer key = LCH_BufferStaticFromString("leech");
+  ck_assert(LCH_JsonObjectSet(parent, &key, child));
   LCH_JsonDestroy(parent);
 }
 END_TEST
@@ -223,8 +223,8 @@ START_TEST(test_LCH_JsonObjectSetString) {
   ck_assert_ptr_nonnull(json);
   LCH_Buffer *const buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
-  ck_assert(LCH_JsonObjectSetString(json, LCH_BufferStaticFromString("leech"),
-                                    buffer));
+  const LCH_Buffer key = LCH_BufferStaticFromString("leech");
+  ck_assert(LCH_JsonObjectSetString(json, &key, buffer));
   LCH_JsonDestroy(json);
 }
 END_TEST
@@ -234,8 +234,8 @@ START_TEST(test_LCH_JsonObjectSetStringDuplicate) {
   ck_assert_ptr_nonnull(json);
   LCH_Buffer *const buffer = LCH_BufferCreate();
   ck_assert_ptr_nonnull(buffer);
-  ck_assert(LCH_JsonObjectSetStringDuplicate(
-      json, LCH_BufferStaticFromString("leech"), buffer));
+  const LCH_Buffer key = LCH_BufferStaticFromString("leech");
+  ck_assert(LCH_JsonObjectSetStringDuplicate(json, &key, buffer));
   LCH_BufferDestroy(buffer);
   LCH_JsonDestroy(json);
 }
@@ -244,8 +244,8 @@ END_TEST
 START_TEST(test_LCH_JsonObjectSetNumber) {
   LCH_Json *const json = LCH_JsonObjectCreate();
   ck_assert_ptr_nonnull(json);
-  ck_assert(LCH_JsonObjectSetNumber(json, LCH_BufferStaticFromString("leech"),
-                                    1337.0));
+  const LCH_Buffer key = LCH_BufferStaticFromString("leech");
+  ck_assert(LCH_JsonObjectSetNumber(json, &key, 1337.0));
   LCH_JsonDestroy(json);
 }
 END_TEST
@@ -295,12 +295,13 @@ START_TEST(test_LCH_JsonObjectGet) {
   ck_assert_ptr_nonnull(parent);
   LCH_Json *const child = LCH_JsonNullCreate();
   ck_assert_ptr_nonnull(child);
-  ck_assert(
-      LCH_JsonObjectSet(parent, LCH_BufferStaticFromString("foo"), child));
-  ck_assert_ptr_eq(LCH_JsonObjectGet(parent, LCH_BufferStaticFromString("foo")),
-                   child);
-  ck_assert_ptr_null(
-      LCH_JsonObjectGet(parent, LCH_BufferStaticFromString("bar")));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("foo");
+    ck_assert(LCH_JsonObjectSet(parent, &key, child));
+    ck_assert_ptr_eq(LCH_JsonObjectGet(parent, &key), child);
+  }
+  const LCH_Buffer key = LCH_BufferStaticFromString("bar");
+  ck_assert_ptr_null(LCH_JsonObjectGet(parent, &key));
   LCH_JsonDestroy(parent);
 }
 END_TEST
@@ -349,17 +350,17 @@ START_TEST(test_LCH_JsonObjectGetString) {
 
   for (size_t i = 0; i < num_children; i++) {
     ck_assert_ptr_nonnull(children[i]);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(keys[i]);
-    ck_assert(LCH_JsonObjectSet(parent, key, children[i]));
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert(LCH_JsonObjectSet(parent, &key, children[i]));
 
     if (LCH_StringEqual(keys[i], "string")) {
-      ck_assert_ptr_eq(LCH_JsonObjectGetString(parent, key), buffer);
+      ck_assert_ptr_eq(LCH_JsonObjectGetString(parent, &key), buffer);
     } else {
-      ck_assert_ptr_null(LCH_JsonObjectGetString(parent, key));
+      ck_assert_ptr_null(LCH_JsonObjectGetString(parent, &key));
     }
   }
-  ck_assert_ptr_null(
-      LCH_JsonObjectGetString(parent, LCH_BufferStaticFromString("bogus")));
+  const LCH_Buffer key = LCH_BufferStaticFromString("bogus");
+  ck_assert_ptr_null(LCH_JsonObjectGetString(parent, &key));
 
   LCH_JsonDestroy(parent);
 }
@@ -418,17 +419,17 @@ START_TEST(test_LCH_JsonObjectGetObject) {
 
   for (size_t i = 0; i < num_children; i++) {
     ck_assert_ptr_nonnull(children[i]);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(keys[i]);
-    ck_assert(LCH_JsonObjectSet(parent, key, children[i]));
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert(LCH_JsonObjectSet(parent, &key, children[i]));
 
     if (i == 6) {
-      ck_assert_ptr_eq(LCH_JsonObjectGetObject(parent, key), children[i]);
+      ck_assert_ptr_eq(LCH_JsonObjectGetObject(parent, &key), children[i]);
     } else {
-      ck_assert_ptr_null(LCH_JsonObjectGetObject(parent, key));
+      ck_assert_ptr_null(LCH_JsonObjectGetObject(parent, &key));
     }
   }
-  ck_assert_ptr_null(
-      LCH_JsonObjectGetObject(parent, LCH_BufferStaticFromString("bogus")));
+  const LCH_Buffer key = LCH_BufferStaticFromString("bogus");
+  ck_assert_ptr_null(LCH_JsonObjectGetObject(parent, &key));
 
   LCH_JsonDestroy(parent);
 }
@@ -456,20 +457,20 @@ START_TEST(test_LCH_JsonObjectGetNumber) {
 
   for (size_t i = 0; i < num_children; i++) {
     ck_assert_ptr_nonnull(children[i]);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(keys[i]);
-    ck_assert(LCH_JsonObjectSet(parent, key, children[i]));
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert(LCH_JsonObjectSet(parent, &key, children[i]));
 
     double number = 42.0;
     if (i == 4) {
-      ck_assert(LCH_JsonObjectGetNumber(parent, key, &number));
+      ck_assert(LCH_JsonObjectGetNumber(parent, &key, &number));
       ck_assert_double_eq(number, 1337.0);
     } else {
-      ck_assert(!LCH_JsonObjectGetNumber(parent, key, &number));
+      ck_assert(!LCH_JsonObjectGetNumber(parent, &key, &number));
       ck_assert_double_eq(number, 42.0);
     }
   }
-  ck_assert_ptr_null(
-      LCH_JsonObjectGetObject(parent, LCH_BufferStaticFromString("bogus")));
+  const LCH_Buffer key = LCH_BufferStaticFromString("bogus");
+  ck_assert_ptr_null(LCH_JsonObjectGetObject(parent, &key));
 
   LCH_JsonDestroy(parent);
 }
@@ -528,17 +529,17 @@ START_TEST(test_LCH_JsonObjectGetArray) {
 
   for (size_t i = 0; i < num_children; i++) {
     ck_assert_ptr_nonnull(children[i]);
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(keys[i]);
-    ck_assert(LCH_JsonObjectSet(parent, key, children[i]));
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert(LCH_JsonObjectSet(parent, &key, children[i]));
 
     if (i == 5) {
-      ck_assert_ptr_eq(LCH_JsonObjectGetArray(parent, key), children[i]);
+      ck_assert_ptr_eq(LCH_JsonObjectGetArray(parent, &key), children[i]);
     } else {
-      ck_assert_ptr_null(LCH_JsonObjectGetArray(parent, key));
+      ck_assert_ptr_null(LCH_JsonObjectGetArray(parent, &key));
     }
   }
-  ck_assert_ptr_null(
-      LCH_JsonObjectGetArray(parent, LCH_BufferStaticFromString("bogus")));
+  const LCH_Buffer key = LCH_BufferStaticFromString("bogus");
+  ck_assert_ptr_null(LCH_JsonObjectGetArray(parent, &key));
 
   LCH_JsonDestroy(parent);
 }
@@ -552,10 +553,10 @@ START_TEST(test_LCH_JsonObjectGetKeys) {
   const size_t num_keys = sizeof(keys) / sizeof(char *);
 
   for (size_t i = 0; i < num_keys; i++) {
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
     LCH_Json *const child = LCH_JsonNullCreate();
     ck_assert_ptr_nonnull(child);
-    ck_assert(
-        LCH_JsonObjectSet(parent, LCH_BufferStaticFromString(keys[i]), child));
+    ck_assert(LCH_JsonObjectSet(parent, &key, child));
   }
 
   LCH_List *const actual = LCH_JsonObjectGetKeys(parent);
@@ -563,9 +564,10 @@ START_TEST(test_LCH_JsonObjectGetKeys) {
 
   ck_assert_int_eq(num_keys, LCH_ListLength(actual));
   for (size_t i = 0; i < num_keys; i++) {
-    ck_assert_int_lt(LCH_ListIndex(actual, LCH_BufferStaticFromString(keys[i]),
-                                   (LCH_CompareFn)LCH_BufferCompare),
-                     num_keys);
+    const LCH_Buffer key = LCH_BufferStaticFromString(keys[i]);
+    ck_assert_int_lt(
+        LCH_ListIndex(actual, &key, (LCH_CompareFn)LCH_BufferCompare),
+        num_keys);
   }
 
   LCH_ListDestroy(actual);
@@ -937,39 +939,53 @@ START_TEST(test_LCH_JsonCompose) {
   LCH_Json *const config = LCH_JsonObjectCreate();
   ck_assert_ptr_nonnull(config);
 
-  LCH_Buffer *const version = LCH_BufferFromString(PACKAGE_VERSION);
-  ck_assert_ptr_nonnull(version);
-  ck_assert(LCH_JsonObjectSetString(
-      config, LCH_BufferStaticFromString("version"), version));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("version");
+    LCH_Buffer *const version = LCH_BufferFromString(PACKAGE_VERSION);
+    ck_assert_ptr_nonnull(version);
+    ck_assert(LCH_JsonObjectSetString(config, &key, version));
+  }
 
-  const double chain_length = 64.0;
-  ck_assert(LCH_JsonObjectSetNumber(
-      config, LCH_BufferStaticFromString("chain_length"), 64.0));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("chain_length");
+    const double chain_length = 64.0;
+    ck_assert(LCH_JsonObjectSetNumber(config, &key, 64.0));
+  }
 
-  LCH_Json *const pretty_json = LCH_JsonTrueCreate();
-  ck_assert_ptr_nonnull(pretty_json);
-  ck_assert(LCH_JsonObjectSet(config, LCH_BufferStaticFromString("pretty_json"),
-                              pretty_json));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("pretty_json");
+    LCH_Json *const pretty_json = LCH_JsonTrueCreate();
+    ck_assert_ptr_nonnull(pretty_json);
+    ck_assert(LCH_JsonObjectSet(config, &key, pretty_json));
+  }
 
-  LCH_Json *const compression = LCH_JsonFalseCreate();
-  ck_assert_ptr_nonnull(compression);
-  ck_assert(LCH_JsonObjectSet(config, LCH_BufferStaticFromString("compression"),
-                              compression));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("compression");
+    LCH_Json *const compression = LCH_JsonFalseCreate();
+    ck_assert_ptr_nonnull(compression);
+    ck_assert(LCH_JsonObjectSet(config, &key, compression));
+  }
 
   LCH_Json *const tables = LCH_JsonObjectCreate();
   ck_assert_ptr_nonnull(tables);
-  ck_assert(
-      LCH_JsonObjectSet(config, LCH_BufferStaticFromString("tables"), tables));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("tables");
+    ck_assert(LCH_JsonObjectSet(config, &key, tables));
+  }
 
   LCH_Json *const beatles = LCH_JsonObjectCreate();
   ck_assert_ptr_nonnull(beatles);
-  ck_assert(
-      LCH_JsonObjectSet(tables, LCH_BufferStaticFromString("BTL"), beatles));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("BTL");
+    ck_assert(LCH_JsonObjectSet(tables, &key, beatles));
+  }
 
   LCH_Json *const primary_fields = LCH_JsonArrayCreate();
   ck_assert_ptr_nonnull(primary_fields);
-  ck_assert(LCH_JsonObjectSet(
-      beatles, LCH_BufferStaticFromString("primary_fields"), primary_fields));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("primary_fields");
+    ck_assert(LCH_JsonObjectSet(beatles, &key, primary_fields));
+  }
 
   LCH_Buffer *const first_name_buffer = LCH_BufferFromString("first_name");
   ck_assert_ptr_nonnull(first_name_buffer);
@@ -989,11 +1005,12 @@ START_TEST(test_LCH_JsonCompose) {
   ck_assert_ptr_nonnull(born);
   ck_assert(LCH_JsonArrayAppend(primary_fields, born));
 
-  LCH_Json *const subsidiary_fields = LCH_JsonNullCreate();
-  ck_assert_ptr_nonnull(subsidiary_fields);
-  ck_assert(LCH_JsonObjectSet(beatles,
-                              LCH_BufferStaticFromString("subsidiary_fields"),
-                              subsidiary_fields));
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("subsidiary_fields");
+    LCH_Json *const subsidiary_fields = LCH_JsonNullCreate();
+    ck_assert_ptr_nonnull(subsidiary_fields);
+    ck_assert(LCH_JsonObjectSet(beatles, &key, subsidiary_fields));
+  }
 
   LCH_Buffer *const actual = LCH_JsonCompose(config, true);
   ck_assert_ptr_nonnull(actual);

@@ -121,9 +121,9 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
   assert(num_records > 0);
 
   const LCH_List *const table_header = (LCH_List *)LCH_ListGet(conn->table, 0);
-  const size_t uq_col_idx =
-      LCH_ListIndex(table_header, LCH_BufferStaticFromString(uq_column),
-                    (LCH_CompareFn)LCH_BufferCompare);
+  const LCH_Buffer uk_col_key = LCH_BufferStaticFromString(uq_column);
+  const size_t uq_col_idx = LCH_ListIndex(table_header, &uk_col_key,
+                                          (LCH_CompareFn)LCH_BufferCompare);
 
   if (uq_col_idx >= LCH_ListLength(table_header)) {
     LCH_LOG_ERROR(
@@ -138,7 +138,8 @@ bool LCH_CallbackTruncateTable(void *const _conn, const char *const table_name,
     const LCH_Buffer *const field =
         (LCH_Buffer *)LCH_ListGet(record, uq_col_idx);
 
-    if (LCH_BufferEqual(LCH_BufferStaticFromString(uq_field), field)) {
+    const LCH_Buffer uk_field_key = LCH_BufferStaticFromString(uq_field);
+    if (LCH_BufferEqual(&uk_field_key, field)) {
       // Records with the unqiue host identifier are to be removed
       LCH_LOG_DEBUG(
           "Deleting record %zu form table \"%s\" because unique host "

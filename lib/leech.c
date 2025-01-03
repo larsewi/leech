@@ -59,8 +59,8 @@ static bool Purge(const LCH_Instance *const instance) {
       break;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(parent_id);
-    if (!LCH_DictSet(whitelist, key, NULL, NULL)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString(parent_id);
+    if (!LCH_DictSet(whitelist, &key, NULL, NULL)) {
       LCH_JsonDestroy(child);
       LCH_JsonDestroy(parent);
       LCH_DictDestroy(whitelist);
@@ -148,8 +148,8 @@ static bool Purge(const LCH_Instance *const instance) {
     // By now we're pretty certain that it is indeed a block.
     num_blocks += 1;
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString(filename);
-    if (LCH_DictHasKey(whitelist, key)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString(filename);
+    if (LCH_DictHasKey(whitelist, &key)) {
       LCH_LOG_DEBUG("Skipping deletion of file '%s': Block is whitelisted",
                     path);
       continue;
@@ -689,8 +689,8 @@ static bool HistoryAppendRecord(const LCH_Instance *const instance,
       return false;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("block_id");
-    if (!LCH_JsonObjectSetString(record, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("block_id");
+    if (!LCH_JsonObjectSetString(record, &key, value)) {
       LCH_BufferDestroy(value);
       LCH_JsonDestroy(record);
       return false;
@@ -698,8 +698,8 @@ static bool HistoryAppendRecord(const LCH_Instance *const instance,
   }
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("timestamp");
-    if (!LCH_JsonObjectSetNumber(record, key, timestamp)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("timestamp");
+    if (!LCH_JsonObjectSetNumber(record, &key, timestamp)) {
       LCH_JsonDestroy(record);
       return false;
     }
@@ -712,8 +712,8 @@ static bool HistoryAppendRecord(const LCH_Instance *const instance,
       return false;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("operation");
-    if (!LCH_JsonObjectSetString(record, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("operation");
+    if (!LCH_JsonObjectSetString(record, &key, value)) {
       LCH_BufferDestroy(value);
       LCH_JsonDestroy(record);
       return false;
@@ -760,8 +760,8 @@ static bool HistoryAppendRecord(const LCH_Instance *const instance,
     }
     LCH_ListDestroy(subsidiary_fields);
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("subsidiary");
-    if (!LCH_JsonObjectSet(record, key, subsidiary)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("subsidiary");
+    if (!LCH_JsonObjectSet(record, &key, subsidiary)) {
       LCH_JsonDestroy(subsidiary);
       LCH_JsonDestroy(record);
       return false;
@@ -851,8 +851,8 @@ static bool HistoryFindRecord(const LCH_Instance *const instance,
     }
 
     {  // Skip tables that does not match table identifier
-      const LCH_Buffer *const key = LCH_BufferStaticFromString("id");
-      const LCH_Buffer *const tid = LCH_JsonObjectGetString(delta, key);
+      const LCH_Buffer key = LCH_BufferStaticFromString("id");
+      const LCH_Buffer *const tid = LCH_JsonObjectGetString(delta, &key);
       if (tid == NULL) {
         LCH_JsonDestroy(block);
         return false;
@@ -955,8 +955,8 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
   }
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("history");
-    if (!LCH_JsonObjectSet(response, key, history)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("history");
+    if (!LCH_JsonObjectSet(response, &key, history)) {
       LCH_JsonDestroy(history);
       LCH_JsonDestroy(response);
       LCH_InstanceDestroy(instance);
@@ -994,8 +994,8 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
       }
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("primary");
-    if (!LCH_JsonObjectSet(response, key, primary)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("primary");
+    if (!LCH_JsonObjectSet(response, &key, primary)) {
       LCH_JsonDestroy(primary);
       LCH_JsonDestroy(response);
       LCH_InstanceDestroy(instance);
@@ -1004,8 +1004,8 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
   }
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("from");
-    if (!LCH_JsonObjectSetNumber(response, key, from)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("from");
+    if (!LCH_JsonObjectSetNumber(response, &key, from)) {
       LCH_JsonDestroy(response);
       LCH_InstanceDestroy(instance);
       return NULL;
@@ -1013,8 +1013,8 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
   }
 
   {
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("to");
-    if (!LCH_JsonObjectSetNumber(response, key, to)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("to");
+    if (!LCH_JsonObjectSetNumber(response, &key, to)) {
       LCH_JsonDestroy(response);
       LCH_InstanceDestroy(instance);
       return NULL;
@@ -1029,8 +1029,8 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
       return NULL;
     }
 
-    const LCH_Buffer *const key = LCH_BufferStaticFromString("table_id");
-    if (!LCH_JsonObjectSetString(response, key, value)) {
+    const LCH_Buffer key = LCH_BufferStaticFromString("table_id");
+    if (!LCH_JsonObjectSetString(response, &key, value)) {
       LCH_BufferDestroy(value);
       LCH_JsonDestroy(response);
       LCH_InstanceDestroy(instance);
@@ -1093,13 +1093,17 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
     return false;
   }
 
-  const LCH_Json *const blocks =
-      LCH_JsonObjectGetArray(patch, LCH_BufferStaticFromString("blocks"));
+  const LCH_Buffer blocks_key = LCH_BufferStaticFromString("blocks");
+  const LCH_Json *const blocks = LCH_JsonObjectGetArray(patch, &blocks_key);
   if (blocks == NULL) {
     LCH_LOG_ERROR("Failed to extract blocks from patch");
     LCH_JsonDestroy(patch);
     return false;
   }
+
+  const LCH_Buffer payload_key = LCH_BufferStaticFromString("payload");
+  const LCH_Buffer type_key = LCH_BufferStaticFromString("type");
+  const LCH_Buffer id_key = LCH_BufferStaticFromString("id");
 
   const size_t num_blocks = LCH_JsonArrayLength(blocks);
   for (size_t i = 0; i < num_blocks; i++) {
@@ -1112,8 +1116,7 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
       return false;
     }
 
-    const LCH_Json *const payload =
-        LCH_JsonObjectGetArray(block, LCH_BufferStaticFromString("payload"));
+    const LCH_Json *const payload = LCH_JsonObjectGetArray(block, &payload_key);
     if (payload == NULL) {
       LCH_LOG_ERROR("Failed to extract payload");
       LCH_JsonDestroy(patch);
@@ -1131,8 +1134,7 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
         return false;
       }
 
-      const LCH_Buffer *type_buf =
-          LCH_JsonObjectGetString(delta, LCH_BufferStaticFromString("type"));
+      const LCH_Buffer *type_buf = LCH_JsonObjectGetString(delta, &type_key);
       if (type_buf == NULL) {
         LCH_LOG_ERROR("Failed to extract type from delta");
         LCH_JsonDestroy(patch);
@@ -1141,7 +1143,7 @@ static bool Patch(const LCH_Instance *const instance, const char *const field,
       const char *const type = LCH_BufferData(type_buf);
 
       const LCH_Buffer *const table_id_buf =
-          LCH_JsonObjectGetString(delta, LCH_BufferStaticFromString("id"));
+          LCH_JsonObjectGetString(delta, &id_key);
       if (table_id_buf == NULL) {
         LCH_LOG_ERROR("Failed to extract table ID from delta");
         LCH_JsonDestroy(patch);
