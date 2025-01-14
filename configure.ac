@@ -7,8 +7,8 @@ AC_INIT([leech], [0.1.21], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 
-AC_DEFINE([LCH_DEFAULT_PREFERED_CHAIN_LENGTH], 2048,
-          [Default prefered chain length used when puring blocks])
+AC_DEFINE([LCH_DEFAULT_PREFERRED_CHAIN_LENGTH], 2048,
+          [Default preferred chain length used when pruning blocks])
 AC_DEFINE([LCH_JSON_PRETTY_INDENT_SIZE], 2,
           [Indent size used when composing pretty JSON])
 AC_DEFINE([LCH_BUFFER_SIZE], 1024,
