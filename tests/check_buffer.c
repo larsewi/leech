@@ -190,6 +190,46 @@ START_TEST(test_LCH_BufferBytesToHex) {
 }
 END_TEST
 
+START_TEST(test_LCH_BufferIsPrintable) {
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 0);
+    ck_assert(!LCH_BufferIsPrintable(buffer));
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 31);
+    ck_assert(!LCH_BufferIsPrintable(buffer));
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 32);
+    ck_assert(LCH_BufferIsPrintable(buffer));
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 126);
+    ck_assert(LCH_BufferIsPrintable(buffer));
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 127);
+    ck_assert(!LCH_BufferIsPrintable(buffer));
+    LCH_BufferDestroy(buffer);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 255);
+    ck_assert(!LCH_BufferIsPrintable(buffer));
+    LCH_BufferDestroy(buffer);
+  }
+}
+END_TEST
+
 Suite *BufferSuite(void) {
   Suite *s = suite_create("buffer.c");
   {
@@ -215,6 +255,11 @@ Suite *BufferSuite(void) {
   {
     TCase *tc = tcase_create("LCH_BufferBytesToHex");
     tcase_add_test(tc, test_LCH_BufferBytesToHex);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_BufferIsPrintable");
+    tcase_add_test(tc, test_LCH_BufferIsPrintable);
     suite_add_tcase(s, tc);
   }
   return s;

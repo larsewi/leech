@@ -56,4 +56,13 @@ void LCH_BufferTrim(LCH_Buffer *buffer, char ch);
 
 bool LCH_BufferAppendBuffer(LCH_Buffer *buffer, const LCH_Buffer *append);
 
+/**
+ * @brief Checks if buffer contains only printable characters. I.e., character
+ *        code 32 - 127 (not included).
+ * @param buffer Buffer to check
+ * @return True if all characters are printable, false if one or more
+ *         characters are non-printable.
+ */
+bool LCH_BufferIsPrintable(const LCH_Buffer *buffer);
+
 #endif  // _LEECH_BUFFER_H

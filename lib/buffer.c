@@ -94,7 +94,8 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR(
-        "Failed to calculate length needed to print formatted string to buffer: "
+        "Failed to calculate length needed to print formatted string to "
+        "buffer: "
         "%s",
         strerror(errno));
     self->buffer[self->length] = '\0';
@@ -369,4 +370,16 @@ LCH_Buffer *LCH_BufferDuplicate(const LCH_Buffer *const original) {
          original->length + 1 /* NULL-byte */);
   duplicate->length = original->length;
   return duplicate;
+}
+
+bool LCH_BufferIsPrintable(const LCH_Buffer *const self) {
+  assert(self != NULL);
+  assert(self->buffer != NULL);
+
+  for (size_t i = 0; i < self->length; i++) {
+    if ((self->buffer[i] < 32) || (self->buffer[i] >= 127)) {
+      return false;
+    }
+  }
+  return true;
 }
