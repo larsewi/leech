@@ -18,7 +18,7 @@ bool LCH_MessageDigest(const unsigned char *message, size_t length,
 bool LCH_ListAppendBufferDuplicate(LCH_List *list, const LCH_Buffer *buffer);
 
 /**
- * @brief Safily cast double to size_t.
+ * @brief Safely cast double to size_t.
  * @param number value to cast from
  * @param size value to cast to
  * @return True on success, false if value is out of bounds.
