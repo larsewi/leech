@@ -446,7 +446,7 @@ const LCH_Buffer *LCH_JsonArrayGetString(const LCH_Json *const json,
     const char *const type = LCH_JsonGetTypeAsString(child);
     LCH_LOG_ERROR(
         "Failed to get value from JSON array at index %zu: "
-        "Expected type string, type %s",
+        "Expected type string, but found type %s",
         index, type);
     return NULL;
   }
