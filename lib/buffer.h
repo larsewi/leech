@@ -46,8 +46,8 @@ void LCH_BufferSet(LCH_Buffer *buffer, size_t offset, const void *value,
 
 /**
  * @brief Converts bytes into its hexadecimal string representation
- * @param bytes Byte buffer
  * @param hex Hexadecimal buffer
+ * @param bytes Byte buffer
  * @return True on success, false on error
  */
 bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
