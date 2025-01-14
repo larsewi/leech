@@ -94,7 +94,7 @@ bool LCH_BufferPrintFormat(LCH_Buffer *const self, const char *const format,
   va_end(ap);
   if (length < 0) {
     LCH_LOG_ERROR(
-        "Failed to calulate length needed to print formatted string to buffer: "
+        "Failed to calculate length needed to print formatted string to buffer: "
         "%s",
         strerror(errno));
     self->buffer[self->length] = '\0';
