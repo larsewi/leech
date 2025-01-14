@@ -7,6 +7,9 @@ from datetime import datetime
 import os
 import json
 
+# If you want to run this as current user
+# sudo -u postgres createuser -s larsewi
+
 SEED = 1  # Seed used by random generator
 CHANCE = 20  # Percent chance of report collection
 HUB_ID = "SHA=b9353fd"
