@@ -25,7 +25,7 @@ const char *LCH_Version(void) { return PACKAGE_VERSION; }
 
 static bool Purge(const LCH_Instance *const instance) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
-  const size_t chain_length = LCH_InstanceGetPrefferedChainLength(instance);
+  const size_t chain_length = LCH_InstanceGetPreferredChainLength(instance);
 
   char *const head = LCH_HeadGet("HEAD", work_dir);
   if (head == NULL) {

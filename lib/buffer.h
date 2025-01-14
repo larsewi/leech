@@ -46,8 +46,8 @@ void LCH_BufferSet(LCH_Buffer *buffer, size_t offset, const void *value,
 
 /**
  * @brief Converts bytes into its hexadecimal string representation
- * @param bytes Byte buffer
  * @param hex Hexadecimal buffer
+ * @param bytes Byte buffer
  * @return True on success, false on error
  */
 bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
@@ -55,5 +55,14 @@ bool LCH_BufferBytesToHex(LCH_Buffer *hex, const LCH_Buffer *bytes);
 void LCH_BufferTrim(LCH_Buffer *buffer, char ch);
 
 bool LCH_BufferAppendBuffer(LCH_Buffer *buffer, const LCH_Buffer *append);
+
+/**
+ * @brief Checks if buffer contains only printable characters. I.e., character
+ *        code 32 - 127 (not included).
+ * @param buffer Buffer to check
+ * @return True if all characters are printable, false if one or more
+ *         characters are non-printable.
+ */
+bool LCH_BufferIsPrintable(const LCH_Buffer *buffer);
 
 #endif  // _LEECH_BUFFER_H

@@ -192,6 +192,49 @@ START_TEST(test_LCH_DoubleToSize) {
 }
 END_TEST
 
+START_TEST(test_LCH_BufferToPrintable) {
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    char *printable = LCH_BufferToPrintable(buffer);
+    ck_assert_str_eq(printable, "\"leech\"");
+    LCH_BufferDestroy(buffer);
+    free(printable);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 31);
+    char *printable = LCH_BufferToPrintable(buffer);
+    ck_assert_str_eq(printable, "b\"6c656563681f\"");
+    LCH_BufferDestroy(buffer);
+    free(printable);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 32);
+    char *printable = LCH_BufferToPrintable(buffer);
+    ck_assert_str_eq(printable, "\"leech \"");
+    LCH_BufferDestroy(buffer);
+    free(printable);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 126);
+    char *printable = LCH_BufferToPrintable(buffer);
+    ck_assert_str_eq(printable, "\"leech~\"");
+    LCH_BufferDestroy(buffer);
+    free(printable);
+  }
+  {
+    LCH_Buffer *buffer = LCH_BufferFromString("leech");
+    LCH_BufferAppend(buffer, 127);
+    char *printable = LCH_BufferToPrintable(buffer);
+    ck_assert_str_eq(printable, "b\"6c656563687f\"");
+    LCH_BufferDestroy(buffer);
+    free(printable);
+  }
+}
+END_TEST
+
 Suite *UtilsSuite(void) {
   Suite *s = suite_create("utils.c");
   {
@@ -212,6 +255,11 @@ Suite *UtilsSuite(void) {
   {
     TCase *tc = tcase_create("LCH_DoubleToSize");
     tcase_add_test(tc, test_LCH_DoubleToSize);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_BufferToPrintable");
+    tcase_add_test(tc, test_LCH_BufferToPrintable);
     suite_add_tcase(s, tc);
   }
   return s;

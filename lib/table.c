@@ -104,7 +104,7 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
 
   LCH_TableInfo *const info = (LCH_TableInfo *)malloc(sizeof(LCH_TableInfo));
   if (info == NULL) {
-    LCH_LOG_ERROR("malloc(3): Failed to allocate memeory: %s", strerror(errno));
+    LCH_LOG_ERROR("malloc(3): Failed to allocate memory: %s", strerror(errno));
     return NULL;
   }
 

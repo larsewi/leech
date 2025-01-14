@@ -7,9 +7,11 @@
 
 #include "buffer.h"
 #include "csv.h"
+#include "leech.h"
 #include "list.h"
 #include "logger.h"
 #include "sha1.h"
+#include "string_lib.h"
 
 /******************************************************************************/
 
@@ -227,4 +229,30 @@ bool LCH_DoubleToSize(const double number, size_t *const size) {
   }
   *size = (size_t)number;
   return true;
+}
+
+/******************************************************************************/
+
+char *LCH_BufferToPrintable(const LCH_Buffer *const buffer) {
+  assert(buffer != NULL);
+
+  char *str;
+  if (LCH_BufferIsPrintable(buffer)) {
+    str = LCH_StringFormat("\"%s\"", LCH_BufferData(buffer));
+  } else {
+    LCH_Buffer *hex = LCH_BufferCreate();
+    if (hex == NULL) {
+      return NULL;
+    }
+
+    if (!LCH_BufferBytesToHex(hex, buffer)) {
+      return NULL;
+    }
+
+    str = LCH_StringFormat("b\"%s\"", LCH_BufferData(hex));
+
+    LCH_BufferDestroy(hex);
+  }
+
+  return str;
 }

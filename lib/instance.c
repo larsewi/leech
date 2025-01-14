@@ -87,7 +87,7 @@ LCH_Instance *LCH_InstanceLoad(const char *const work_dir) {
         return NULL;
       }
     } else {
-      instance->chain_length = LCH_DEFAULT_PREFERED_CHAIN_LENGTH;
+      instance->chain_length = LCH_DEFAULT_PREFERRED_CHAIN_LENGTH;
     }
     LCH_LOG_DEBUG("config[\"chain_length\"] = %zu", instance->chain_length);
   }
@@ -220,7 +220,7 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
   return self->work_dir;
 }
 
-size_t LCH_InstanceGetPrefferedChainLength(const LCH_Instance *const instance) {
+size_t LCH_InstanceGetPreferredChainLength(const LCH_Instance *const instance) {
   assert(instance != NULL);
   return instance->chain_length;
 }
