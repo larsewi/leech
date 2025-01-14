@@ -140,10 +140,10 @@ LCH_Json *LCH_BlockLoad(const char *const work_dir,
 
   LCH_Json *const block = LCH_JsonParseFile(path);
   if (block == NULL) {
-    LCH_LOG_ERROR("Failed to parse block with identifer %.7s", block_id);
+    LCH_LOG_ERROR("Failed to parse block with identifier %.7s", block_id);
     return NULL;
   }
-  LCH_LOG_DEBUG("Parsed block with identifer %.7s", block_id);
+  LCH_LOG_DEBUG("Parsed block with identifier %.7s", block_id);
 
   size_t version;
   if (!LCH_BlockGetVersion(block, &version)) {
