@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "logger.h"
+#include "utils.h"
 
 LCH_Json *LCH_DeltaCreate(const char *const table_id, const char *const type,
                           const LCH_Json *const new_state,
@@ -211,6 +212,13 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
   for (size_t i = 0; i < num_keys; i++) {
     const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
 
+    char *const printable_key = LCH_BufferToPrintable(key);
+    if (printable_key == NULL) {
+      /* Error is already logged */
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
     if (LCH_JsonObjectHasKey(parent_inserts, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with insert operations into parent
@@ -218,8 +226,9 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
 
       // parent_insert(key, val) -> child_insert(key, val) => ERROR
       LCH_LOG_ERROR(
-          "Found two subsequent insert operations on the same key (key=\"%s\")",
-          LCH_BufferData(key));
+          "Found two subsequent insert operations on the same key (key=%s)",
+          printable_key);
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
@@ -231,6 +240,7 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
 
       LCH_Json *const parent_value = LCH_JsonObjectRemove(parent_deletes, key);
       if (parent_value == NULL) {
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
@@ -238,6 +248,7 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
       LCH_Json *const child_value = LCH_JsonObjectRemove(child_inserts, key);
       if (child_value == NULL) {
         LCH_JsonDestroy(parent_value);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
@@ -248,21 +259,24 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
       if (is_equal) {
         LCH_LOG_DEBUG(
             "Merging: delete(key, val) -> insert(key, val) => NOOP "
-            "(key=\"%s\")",
-            LCH_BufferData(key));
+            "(key=%s)",
+            printable_key);
         LCH_JsonDestroy(child_value);
       } else {
         LCH_LOG_DEBUG(
             "Merging: delete(key, val1) -> insert(key, val2) => update(key, "
-            "val2) (key=\"%s\")",
-            LCH_BufferData(key));
+            "val2) (key=%s)",
+            printable_key);
 
         if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
           LCH_JsonDestroy(child_value);
+          free(printable_key);
           LCH_ListDestroy(keys);
           return false;
         }
       }
+
+      free(printable_key);
       continue;
     }
 
@@ -274,26 +288,31 @@ static bool MergeInsertOperations(const LCH_Json *const parent,
       // parent_update(key, val) -> child_insert(key, val) => ERROR
       LCH_LOG_ERROR(
           "Found an update operation followed by an insert operation on the "
-          "same key (key=\"%s\")",
-          LCH_BufferData(key));
+          "same key (key=%s)",
+          printable_key);
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
 
     LCH_LOG_DEBUG(
-        "Merging: NOOP -> insert(key, val) => insert(key, val) (key=\"%s\")",
-        LCH_BufferData(key));
+        "Merging: NOOP -> insert(key, val) => insert(key, val) (key=%s)",
+        printable_key);
     LCH_Json *const child_value = LCH_JsonObjectRemove(child_inserts, key);
     if (child_value == NULL) {
-      LCH_JsonDestroy(keys);
+      free(printable_key);
+      LCH_ListDestroy(keys);
       return false;
     }
 
     if (!LCH_JsonObjectSet(parent_inserts, key, child_value)) {
       LCH_JsonDestroy(child_value);
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
+
+    free(printable_key);
   }
 
   LCH_ListDestroy(keys);
@@ -329,6 +348,12 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
   for (size_t i = 0; i < num_keys; i++) {
     const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
 
+    char *const printable_key = LCH_BufferToPrintable(key);
+    if (printable_key == NULL) {
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
     if (LCH_JsonObjectHasKey(parent_inserts, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with insert operations in parent
@@ -336,6 +361,7 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
 
       LCH_Json *const parent_value = LCH_JsonObjectRemove(parent_inserts, key);
       if (parent_value == NULL) {
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
@@ -343,6 +369,7 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
       LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
       if (child_value == NULL) {
         LCH_JsonDestroy(parent_value);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
@@ -356,22 +383,24 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
       if (is_equal) {
         LCH_LOG_DEBUG(
             "Merging: insert(key, val) -> delete(key, val) => NOOP "
-            "(key=\"%s\")",
-            LCH_BufferData(key));
+            "(key=%s)",
+            printable_key);
       } else if (!is_null) {
         // insert(key, val1) -> delete(key, val2) => ERROR
         LCH_LOG_ERROR(
             "Found insert operation followed by delete operation on the same "
-            "key, but with different values (key=\"%s\")",
-            LCH_BufferData(key));
+            "key, but with different values (key=%s)",
+            printable_key);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       } else {
         LCH_LOG_DEBUG(
             "Merging: insert(key, val) -> delete(key, null) => NOOP "
-            "(key=\"%s\")",
-            LCH_BufferData(key));
+            "(key=%s)",
+            printable_key);
       }
+      free(printable_key);
       continue;
     }
 
@@ -382,8 +411,9 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
 
       // parent_delete(key, val) -> child_delete(key, val) => ERROR
       LCH_LOG_ERROR(
-          "Found two subsequent delete operations on the same key (key='%s')",
-          LCH_BufferData(key));
+          "Found two subsequent delete operations on the same key (key=%s)",
+          printable_key);
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
@@ -395,6 +425,7 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
 
       LCH_Json *const parent_value = LCH_JsonObjectRemove(parent_updates, key);
       if (parent_value == NULL) {
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
@@ -402,6 +433,7 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
       LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
       if (child_value == NULL) {
         LCH_JsonDestroy(parent_value);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
@@ -415,22 +447,21 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
       if (is_equal) {
         LCH_LOG_DEBUG(
             "Merging: update(key, val) -> delete(key, val) => delete(key, "
-            "null) "
-            "(key=\"%s\")",
-            LCH_BufferData(key));
+            "null) (key=%s)",
+            printable_key);
       } else if (!is_null) {
         LCH_LOG_ERROR(
             "Found an update operation followed by a delete operation on the "
-            "same key, but with different values (key=\"%s\")",
-            LCH_BufferData(key));
+            "same key, but with different values (key=%s)",
+            printable_key);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       } else {
         LCH_LOG_DEBUG(
             "Merging: update(key, val) -> delete(key, null) => delete(key, "
-            "null) "
-            "(key=\"%s\")",
-            LCH_BufferData(key));
+            "null) (key=%s)",
+            printable_key);
       }
 
       /* We have to use null as place holder, because we have no clue what the
@@ -439,27 +470,33 @@ static bool MergeDeleteOperations(const LCH_Json *const parent,
        * does not matter, as only the key is required in a delete operation. */
       LCH_Json *const null = LCH_JsonNullCreate();
       if (null == NULL) {
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
 
       if (!LCH_JsonObjectSet(parent_deletes, key, null)) {
         LCH_JsonDestroy(null);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
 
+      free(printable_key);
       continue;
     }
 
     LCH_LOG_DEBUG(
-        "Merging: NOOP -> delete(key, val) => delete(key, val) (key=\"%s\")",
-        LCH_BufferData(key));
+        "Merging: NOOP -> delete(key, val) => delete(key, val) (key=%s)",
+        printable_key);
     LCH_Json *const child_value = LCH_JsonObjectRemove(child_deletes, key);
     if (!LCH_JsonObjectSet(parent_deletes, key, child_value)) {
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
+
+    free(printable_key);
   }
 
   LCH_ListDestroy(keys);
@@ -495,6 +532,13 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
   for (size_t i = 0; i < num_keys; i++) {
     const LCH_Buffer *const key = (LCH_Buffer *)LCH_ListGet(keys, i);
 
+    char *const printable_key = LCH_BufferToPrintable(key);
+    if (printable_key == NULL) {
+      /* Error already logged */
+      LCH_ListDestroy(keys);
+      return false;
+    }
+
     if (LCH_JsonObjectHasKey(parent_inserts, key)) {
       //////////////////////////////////////////////////////////////////////////
       // Merge with insert operations in parent
@@ -502,14 +546,17 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
 
       LCH_LOG_DEBUG(
           "Merging: insert(key, val1) -> update(key, val2) => insert(key, "
-          "val2) (key=\"%s\")",
-          LCH_BufferData(key));
+          "val2) (key=%s)",
+          printable_key);
 
       LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
       if (!LCH_JsonObjectSet(parent_inserts, key, child_value)) {
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
+
+      free(printable_key);
       continue;
     }
 
@@ -520,8 +567,9 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
 
       LCH_LOG_DEBUG(
           "Found a delete block followed by an update operation on the same "
-          "key (key=\"%s\")",
-          LCH_BufferData(key));
+          "key (key=%s)",
+          printable_key);
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
@@ -533,27 +581,33 @@ static bool MergeUpdateOperations(const LCH_Json *const parent,
 
       LCH_LOG_DEBUG(
           "Merging: update(key, val1) -> update(key, val2) => update(key, "
-          "val2) (key=\"%s\")",
-          LCH_BufferData(key));
+          "val2) (key=%s)",
+          printable_key);
 
       LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
       if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
         LCH_JsonDestroy(child_value);
+        free(printable_key);
         LCH_ListDestroy(keys);
         return false;
       }
+
+      free(printable_key);
       continue;
     }
 
     LCH_LOG_DEBUG(
-        "Merging: NOOP -> update(key, val) => update(key, val) (key=\"%s\")",
-        LCH_BufferData(key));
+        "Merging: NOOP -> update(key, val) => update(key, val) (key=%s)",
+        printable_key);
     LCH_Json *const child_value = LCH_JsonObjectRemove(child_updates, key);
     if (!LCH_JsonObjectSet(parent_updates, key, child_value)) {
       LCH_JsonDestroy(child_value);
+      free(printable_key);
       LCH_ListDestroy(keys);
       return false;
     }
+
+    free(printable_key);
   }
 
   LCH_ListDestroy(keys);
