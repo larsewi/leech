@@ -220,7 +220,7 @@ const char *LCH_InstanceGetWorkDirectory(const LCH_Instance *const self) {
   return self->work_dir;
 }
 
-size_t LCH_InstanceGetPrefferedChainLength(const LCH_Instance *const instance) {
+size_t LCH_InstanceGetPreferredChainLength(const LCH_Instance *const instance) {
   assert(instance != NULL);
   return instance->chain_length;
 }
