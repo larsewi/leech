@@ -77,17 +77,17 @@ START_TEST(test_LCH_BlockIdFromArgument) {
   LCH_BufferDestroy(buffer);
 
   char *block_id = LCH_BlockIdFromArgument(work_dir, "0820ee7");
-  ck_assert_ptr_nonnull(block_id);
+  ck_assert_str_eq(block_id, blocks[0]);
   free(block_id);
 
   block_id = LCH_BlockIdFromArgument(work_dir, "0957d946");
-  ck_assert_ptr_nonnull(block_id);
+  ck_assert_str_eq(block_id, blocks[1]);
   free(block_id);
 
   /* Try with the entire hash */
   block_id = LCH_BlockIdFromArgument(
       work_dir, "be3e991161dcde612b61be9562e08942e9a47903");
-  ck_assert_ptr_nonnull(block_id);
+  ck_assert_str_eq(block_id, blocks[2]);
   free(block_id);
 
   /* Try with more than the entire hash */
@@ -117,7 +117,7 @@ START_TEST(test_LCH_BlockIdFromArgument) {
   free(block_id);
 
   block_id = LCH_BlockIdFromArgument(work_dir, "3d28755d158b1");
-  ck_assert_ptr_nonnull(block_id);
+  ck_assert_str_eq(block_id, blocks[7]);
   free(block_id);
 
   ck_assert(LCH_FileDelete(work_dir));
