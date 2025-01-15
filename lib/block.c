@@ -202,3 +202,71 @@ bool LCH_BlockGetTimestamp(const LCH_Json *const block,
   }
   return true;
 }
+
+static bool IsValidBlockId(const char *const block_id) {
+  assert(block_id != NULL);
+
+  size_t i;
+  for (i = 0; block_id[i] != '\0'; i++) {
+    if (!(block_id[i] >= '0' && block_id[i] <= '9') &&
+        !(block_id[i] >= 'a' && block_id[i] <= 'f')) {
+      /* Character is not in range [0-9] or [a-f] */
+      return false;
+    }
+  }
+
+  /* Make sure block ID is 40 characters long */
+  const bool correct_length = (i == strlen(LCH_GENISIS_BLOCK_ID));
+  return correct_length;
+}
+
+char *LCH_BlockIdFromArgument(const char *const work_dir,
+                              const char *const argument) {
+  assert(work_dir != NULL);
+  assert(argument != NULL);
+
+  char path[PATH_MAX];
+  if (!LCH_FilePathJoin(path, PATH_MAX, 2, work_dir, "blocks")) {
+    /* Error already logged */
+    return NULL;
+  }
+
+  size_t index, num_matching = 0;
+
+  LCH_List *const blocks = LCH_FileListDirectory(path, true);
+
+  /* Add genesis block to the list */
+  if (!LCH_ListAppend(blocks, LCH_GENISIS_BLOCK_ID, NULL)) {
+    /* Error already logged */
+    LCH_ListDestroy(blocks);
+    return NULL;
+  }
+
+  const size_t num_blocks = LCH_ListLength(blocks);
+
+  for (size_t i = 0; i < num_blocks; i++) {
+    const char *const filename = LCH_ListGet(blocks, i);
+    if (!IsValidBlockId(filename)) {
+      LCH_LOG_WARNING(
+          "The file '%s%c%s' does not conform with the block naming convention "
+          "and will be ignored",
+          path, LCH_PATH_SEP, filename);
+    } else if (LCH_StringStartsWith(filename, argument)) {
+      index = i;
+      num_matching += 1;
+    }
+  }
+
+  char *block_id = NULL;
+  if (num_matching != 1) {
+    LCH_LOG_ERROR("%s block identifier '%s': %zu blocks found",
+                  (num_matching > 1) ? "Ambiguous" : "Unknown", argument,
+                  num_matching);
+  } else {
+    const char *const filename = LCH_ListGet(blocks, index);
+    block_id = LCH_StringDuplicate(filename);
+  }
+
+  LCH_ListDestroy(blocks);
+  return block_id;
+}
