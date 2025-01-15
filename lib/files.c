@@ -51,7 +51,8 @@ bool LCH_FileExists(const char *const path) {
 /******************************************************************************/
 
 bool LCH_FileIsRegular(const char *const path) {
-  struct stat sb = {0};
+  struct stat sb;
+  memset(&sb, 0, sizeof(struct stat));
   const bool is_regular =
       (lstat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
   return is_regular;
@@ -60,7 +61,8 @@ bool LCH_FileIsRegular(const char *const path) {
 /******************************************************************************/
 
 bool LCH_FileIsDirectory(const char *const path) {
-  struct stat sb = {0};
+  struct stat sb;
+  memset(&sb, 0, sizeof(struct stat));
   const bool is_directory =
       (lstat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
   return is_directory;
@@ -122,7 +124,7 @@ bool LCH_FileDelete(const char *const parent) {
     const size_t num_children = LCH_ListLength(children);
 
     for (size_t i = 0; i < num_children; i++) {
-      const char *const child = LCH_ListGet(children, i);
+      const char *const child = (char *)LCH_ListGet(children, i);
       assert(child != NULL);
 
       if (LCH_StringEqual(child, ".") || LCH_StringEqual(child, "..")) {
