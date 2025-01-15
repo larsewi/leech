@@ -16,4 +16,14 @@ const LCH_Json *LCH_BlockGetPayload(const LCH_Json *block);
 LCH_Json *LCH_BlockRemovePayload(const LCH_Json *block);
 bool LCH_BlockGetTimestamp(const LCH_Json *block, double *timestamp);
 
+/**
+ * @brief Get block ID from partial hash
+ * @param work_dir Leech work directory
+ * @param argument Argument containing partial hash matching the start of the
+ *                 identifier of an existing block
+ * @return Full block identifier or NULL in case of ambiguous/unknown blocks or
+ *         memory error
+ */
+char *LCH_BlockIdFromArgument(const char *work_dir, const char *argument);
+
 #endif  // _LEECH_BLOCK_H

@@ -117,6 +117,7 @@ config.h
 *.valgrind
 .vscode
 tests/tmp/*
+tests/tmp_??????
 .DS_Store
 
 config.guess~
