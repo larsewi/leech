@@ -236,8 +236,15 @@ char *LCH_BlockIdFromArgument(const char *const work_dir,
   LCH_List *const blocks = LCH_FileListDirectory(path, true);
 
   /* Add genesis block to the list */
-  if (!LCH_ListAppend(blocks, LCH_GENISIS_BLOCK_ID, NULL)) {
+  char *const genisis_id = LCH_StringDuplicate(LCH_GENISIS_BLOCK_ID);
+  if (genisis_id == NULL) {
+    LCH_ListDestroy(blocks);
+    return NULL;
+  }
+
+  if (!LCH_ListAppend(blocks, genisis_id, free)) {
     /* Error already logged */
+    free(genisis_id);
     LCH_ListDestroy(blocks);
     return NULL;
   }
@@ -245,7 +252,7 @@ char *LCH_BlockIdFromArgument(const char *const work_dir,
   const size_t num_blocks = LCH_ListLength(blocks);
 
   for (size_t i = 0; i < num_blocks; i++) {
-    const char *const filename = LCH_ListGet(blocks, i);
+    const char *const filename = (char *)LCH_ListGet(blocks, i);
     if (!IsValidBlockId(filename)) {
       LCH_LOG_WARNING(
           "The file '%s%c%s' does not conform with the block naming convention "
@@ -263,7 +270,7 @@ char *LCH_BlockIdFromArgument(const char *const work_dir,
                   (num_matching > 1) ? "Ambiguous" : "Unknown", argument,
                   num_matching);
   } else {
-    const char *const filename = LCH_ListGet(blocks, index);
+    const char *const filename = (char *)LCH_ListGet(blocks, index);
     block_id = LCH_StringDuplicate(filename);
   }
 

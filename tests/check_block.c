@@ -47,8 +47,8 @@ START_TEST(test_LCH_BlockCreate) {
 END_TEST
 
 START_TEST(test_LCH_BlockIdFromArgument) {
-  char template[] = "tmp_XXXXXX";
-  const char *work_dir = mkdtemp(template);
+  char tmpl[] = "tmp_XXXXXX";
+  const char *work_dir = mkdtemp(tmpl);
   ck_assert_ptr_nonnull(work_dir);
 
   const char *blocks[] = {
