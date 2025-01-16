@@ -44,9 +44,8 @@ bool LCH_FileSize(FILE *file, size_t *size) {
 /******************************************************************************/
 
 bool LCH_FileExists(const char *const path) {
-  struct stat sb;
-  memset(&sb, 0, sizeof(struct stat));
-  return stat(path, &sb) == 0;
+  const bool exists = LCH_FileIsRegular(path) || LCH_FileIsDirectory(path);
+  return exists;
 }
 
 /******************************************************************************/
@@ -54,7 +53,9 @@ bool LCH_FileExists(const char *const path) {
 bool LCH_FileIsRegular(const char *const path) {
   struct stat sb;
   memset(&sb, 0, sizeof(struct stat));
-  return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
+  const bool is_regular =
+      (lstat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
+  return is_regular;
 }
 
 /******************************************************************************/
@@ -62,7 +63,9 @@ bool LCH_FileIsRegular(const char *const path) {
 bool LCH_FileIsDirectory(const char *const path) {
   struct stat sb;
   memset(&sb, 0, sizeof(struct stat));
-  return (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
+  const bool is_directory =
+      (lstat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
+  return is_directory;
 }
 
 /******************************************************************************/
@@ -108,11 +111,62 @@ bool LCH_FilePathJoin(char *path, const size_t path_max, const size_t n_items,
 
 /******************************************************************************/
 
-bool LCH_FileDelete(const char *const filename) {
-  if (unlink(filename) != 0) {
-    LCH_LOG_ERROR("Failed to delete file '%s': %s", filename, strerror(errno));
+bool LCH_FileDelete(const char *const parent) {
+  assert(parent != NULL);
+
+  if (LCH_FileIsDirectory(parent)) {
+    LCH_List *const children = LCH_FileListDirectory(parent, false);
+    if (children == NULL) {
+      return false;
+    }
+
+    char path[PATH_MAX];
+    const size_t num_children = LCH_ListLength(children);
+
+    for (size_t i = 0; i < num_children; i++) {
+      const char *const child = (char *)LCH_ListGet(children, i);
+      assert(child != NULL);
+
+      if (LCH_StringEqual(child, ".") || LCH_StringEqual(child, "..")) {
+        continue;
+      }
+
+      if (!LCH_FilePathJoin(path, sizeof(path), 2, parent, child)) {
+        /* Error is already logged */
+        LCH_ListDestroy(children);
+        return false;
+      }
+
+      if (!LCH_FileDelete(path)) {
+        /* Error is already logged */
+        LCH_ListDestroy(children);
+        return false;
+      }
+    }
+
+    LCH_ListDestroy(children);
+
+    const int ret = rmdir(parent);
+    if (ret == -1) {
+      LCH_LOG_ERROR("Failed to remove directory '%s': %s", parent,
+                    strerror(errno));
+      return false;
+    }
+    LCH_LOG_DEBUG("Removed directory '%s'", parent);
+  } else if (LCH_FileIsRegular(parent)) {
+    const int ret = unlink(parent);
+    if (ret == -1) {
+      LCH_LOG_ERROR("Failed to delete regular file '%s': %s", parent,
+                    strerror(errno));
+      return false;
+    }
+    LCH_LOG_DEBUG("Deleted regular file '%s'", parent);
+  } else {
+    LCH_LOG_ERROR(
+        "Failed to delete file '%s': It's not a directory or regular file");
     return false;
   }
+
   return true;
 }
 
@@ -126,7 +180,7 @@ bool LCH_FileCreateParentDirectories(const char *const filename) {
   LCH_List *const dirs = LCH_ListCreate();
   struct stat sb;
 
-  while (stat(parent, &sb) == -1) {
+  while (lstat(parent, &sb) == -1) {
     char *const dir = LCH_StringDuplicate(parent);
     if (dir == NULL) {
       LCH_ListDestroy(dirs);

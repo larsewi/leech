@@ -7,9 +7,6 @@ from datetime import datetime
 import os
 import json
 
-# If you want to run this as current user
-# sudo -u postgres createuser -s larsewi
-
 SEED = 1  # Seed used by random generator
 CHANCE = 20  # Percent chance of report collection
 HUB_ID = "SHA=b9353fd"
@@ -168,7 +165,7 @@ class Event:
         execute(cmd)
 
     def generate_diff(self):
-        lastseen = "0000000000000000000000000000000000000000"
+        lastseen = "00000"
         path = Path(self.hub_workdir, self.id)
         if path.exists():
             with open(path, "r") as f:

@@ -478,13 +478,19 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   return merged;
 }
 
-LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
+LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const argument) {
   assert(work_dir != NULL);
-  assert(final_id != NULL);
+  assert(argument != NULL);
+
+  char *const final_id = LCH_BlockIdFromArgument(work_dir, argument);
+  if (final_id == NULL) {
+    return NULL;
+  }
 
   LCH_Instance *const instance = LCH_InstanceLoad(work_dir);
   if (instance == NULL) {
     LCH_LOG_ERROR("Failed to load instance from configuration file");
+    free(final_id);
     return NULL;
   }
 
@@ -496,6 +502,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
         "Failed to get block identifier from the head of the chain. "
         "Maybe there has not been any commits yet?");
     LCH_InstanceDestroy(instance);
+    free(final_id);
     return NULL;
   }
 
@@ -504,6 +511,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
     LCH_LOG_ERROR("Failed to create patch");
     free(block_id);
     LCH_InstanceDestroy(instance);
+    free(final_id);
     return NULL;
   }
 
@@ -513,6 +521,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
     LCH_LOG_ERROR("Failed to create empty block");
     LCH_JsonDestroy(patch);
     LCH_InstanceDestroy(instance);
+    free(final_id);
     return NULL;
   }
 
@@ -521,9 +530,11 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const final_id) {
     LCH_LOG_ERROR("Failed to generate patch file");
     LCH_JsonDestroy(patch);
     LCH_InstanceDestroy(instance);
+    free(final_id);
     return NULL;
   }
   LCH_InstanceDestroy(instance);
+  free(final_id);
 
   if (!LCH_PatchAppendBlock(patch, block)) {
     LCH_LOG_ERROR("Failed to append block to patch");
