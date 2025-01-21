@@ -127,9 +127,8 @@ bool LCH_FileDelete(const char *const parent) {
       const char *const child = (char *)LCH_ListGet(children, i);
       assert(child != NULL);
 
-      if (LCH_StringEqual(child, ".") || LCH_StringEqual(child, "..")) {
-        continue;
-      }
+      /* LCH_FileListDirectory should always exclude these files */
+      assert(!LCH_StringEqual(child, ".") && !LCH_StringEqual(child, ".."));
 
       if (!LCH_FilePathJoin(path, sizeof(path), 2, parent, child)) {
         /* Error is already logged */
@@ -235,6 +234,12 @@ LCH_List *LCH_FileListDirectory(const char *const path,
   struct dirent *entry = NULL;
   while ((entry = readdir(dir)) != NULL) {
     if (filter_hidden && LCH_StringStartsWith(entry->d_name, ".")) {
+      continue;
+    }
+
+    /* Never include the '.' and '..' files */
+    if (LCH_StringEqual(entry->d_name, ".") ||
+        LCH_StringEqual(entry->d_name, "..")) {
       continue;
     }
 
