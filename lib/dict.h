@@ -8,74 +8,76 @@
 #include "list.h"
 #include "logger.h"
 
+/**
+ * @brief Dictionary (hash map) containing key-value pairs
+ */
 typedef struct LCH_Dict LCH_Dict;
 
 /**
- * @brief Create a dictionary.
- * @return Pointer to dictionary or NULL in case of memory errors.
- * @note Returned dictionary must be freed with LCH_DictDestroy().
+ * @brief Create a dictionary
+ * @return The dictionary or NULL in case of failure
  */
 LCH_Dict *LCH_DictCreate(void);
 
 /**
- * @brief Get number of entries in dictionary.
- * @param dict Pointer to dictionary.
- * @return Number of dictionary entries.
+ * @brief Get the number of key-value pairs the dictionary
+ * @param dict The dictionary
+ * @return The number of key-value pairs
  */
 size_t LCH_DictLength(const LCH_Dict *dict);
 
 /**
- * @brief Check for existance of entry with key in dictionary.
- * @param dict Pointer to dictionary.
- * @param key Key to check.
- * @return True if entry with key exists.
+ * @brief Check for existence of an entry with the given key in dictionary
+ * @param dict The dictionary
+ * @param key The key
+ * @return False in case of failure
  */
 bool LCH_DictHasKey(const LCH_Dict *dict, const LCH_Buffer *key);
 
 /**
- * @brief Get list of existing keys in dictionary.
- * @param dict Pointer to dictionary.
- * @return List of existing keys or NULL in case of memory errors.
- * @note List must be freed with LCH_ListDestroy().
+ * @brief Get a list of the existing keys in the dictionary
+ * @param dict The dictionary
+ * @return List of existing keys or NULL in case of failure
  */
 LCH_List *LCH_DictGetKeys(const LCH_Dict *dict);
 
 /**
- * @brief Create/update entry in dictionary.
- * @param dict Pointer to dictionary.
- * @param key Key of entry.
- * @param value Value of entry.
- * @param destroy Function called to free value upon destruction if not NULL.
- * @note This function takes ownership of passed value.
- * @return True on success or false in case of memory errors.
+ * @brief Add or update a key-value pair in the dictionary
+ * @param dict The dictionary
+ * @param key The key
+ * @param value The value
+ * @param destroy The function to destroy the new value or NULL
+ * @return False in case of failure
+ * @warning If the key already exists, the previous value is destroyed unless
+ *          the destroy argument was NULL when it was added
  */
 bool LCH_DictSet(LCH_Dict *dict, const LCH_Buffer *key, void *value,
                  void (*destroy)(void *));
 
 /**
- * @brief Remove entry from dictionary.
- * @param dict Pointer to dictionary.
- * @param key Key of entry.
- * @return Value of entry.
- * @note This function relieves ownership of returned value and cannot fail.
+ * @brief Remove a key-value pair from the dictionary
+ * @param dict The dictionary
+ * @param key The key
+ * @return The value
+ * @note The caller takes ownership of the returned value
  */
 void *LCH_DictRemove(LCH_Dict *dict, const LCH_Buffer *key);
 
 /**
- * @brief Get value of entry with key in dictionary.
- * @param dict Pointer to dictionary.
- * @param key Key of entry.
- * @return Value of entry.
- * @note This function does not relieve ownership of returned value and cannot
- *       fail.
+ * @brief Get the value of a key-value pair in the dictionary given the key
+ * @param dict The Dictionary
+ * @param key The key
+ * @return The value
+ * @note The caller takes ownership of the returned value
+ * @warning Make sure the key exists before calling this function
  */
 const void *LCH_DictGet(const LCH_Dict *dict, const LCH_Buffer *key);
 
 /**
- * @brief Destroy dictionary and all entries.
- * @param dict Pointer to dictionary.
+ * @brief Destroy dictionary and all it's key-value pairs
+ * @param dict The dictionary
  * @note The value of each entry is free'd using their appointed destroy
- *       function unless destroy function was set to NULL.
+ *       function unless destroy function was set to NULL
  */
 void LCH_DictDestroy(void *dict);
 
