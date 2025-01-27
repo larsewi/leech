@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([leech], [0.1.21], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.1.22], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 
@@ -53,8 +53,6 @@ AC_CHECK_LIB([dl], [dlopen])
 AC_CHECK_LIB([m], [floor])
 
 # Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strpbrk strtol strndup mkdir rmdir])
 
 # Enable debugging
