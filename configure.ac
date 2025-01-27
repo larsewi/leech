@@ -53,8 +53,6 @@ AC_CHECK_LIB([dl], [dlopen])
 AC_CHECK_LIB([m], [floor])
 
 # Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memmove memset strchr strspn strdup strerror strpbrk strtol strndup mkdir rmdir])
 
 # Enable debugging
