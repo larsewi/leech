@@ -54,7 +54,13 @@ bool LCH_FileIsRegular(const char *const path) {
   struct stat sb;
   memset(&sb, 0, sizeof(struct stat));
   const bool is_regular =
+#ifdef _WIN32
+      /* There are no symbolic links on NT, Windows stat and UNIX lstat are
+       * equivalent */
+      (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
+#else
       (lstat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
+#endif
   return is_regular;
 }
 
@@ -64,7 +70,13 @@ bool LCH_FileIsDirectory(const char *const path) {
   struct stat sb;
   memset(&sb, 0, sizeof(struct stat));
   const bool is_directory =
+#ifdef _WIN32
+      /* There are no symbolic links on NT, Windows stat and UNIX lstat are
+       * equivalent */
+      (stat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFREG);
+#else
       (lstat(path, &sb) == 0) && ((sb.st_mode & S_IFMT) == S_IFDIR);
+#endif
   return is_directory;
 }
 
@@ -179,7 +191,15 @@ bool LCH_FileCreateParentDirectories(const char *const filename) {
   LCH_List *const dirs = LCH_ListCreate();
   struct stat sb;
 
-  while (lstat(parent, &sb) == -1) {
+  while
+#ifdef _WIN32
+      /* There are no symbolic links on NT, Windows stat and UNIX lstat are
+       * equivalent */
+      (stat(parent, &sb) == -1)
+#else
+      (lstat(parent, &sb) == -1)
+#endif
+  {
     char *const dir = LCH_StringDuplicate(parent);
     if (dir == NULL) {
       LCH_ListDestroy(dirs);
