@@ -231,7 +231,7 @@ char *LCH_BlockIdFromArgument(const char *const work_dir,
     return NULL;
   }
 
-  size_t index, num_matching = 0;
+  size_t index = 0, num_matching = 0;
 
   LCH_List *const blocks = LCH_FileListDirectory(path, true);
 
