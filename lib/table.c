@@ -43,6 +43,7 @@ struct LCH_TableInfo {
   LCH_List *all_fields;
   LCH_List *primary_fields;
   LCH_List *subsidiary_fields;
+  bool merge_blocks;
 
   void *src_dlib_handle;
   char *src_params;
@@ -132,6 +133,14 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *const identifer,
   if (info->subsidiary_fields == NULL) {
     LCH_TableInfoDestroy(info);
     return NULL;
+  }
+
+  info->merge_blocks = true;
+  {
+    const LCH_Buffer key = LCH_BufferStaticFromString("merge_blocks");
+    if (LCH_JsonObjectHasKey(definition, &key)) {
+      info->merge_blocks = LCH_JsonObjectChildIsTrue(definition, &key);
+    }
   }
 
   const LCH_Buffer primary_fields_key =
