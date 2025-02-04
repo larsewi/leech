@@ -660,35 +660,3 @@ bool LCH_CallbackUpdateRecord(void *conn, const char *table_name,
                               const LCH_List *subsidiary_columns,
                               const LCH_List *subsidiary_values);
 ```
-
-## Contributing
-
-### Dependencies:
-
-**On Debian:**
-```
-sudo apt-get install autoconf automake build-essential libtool-bin check \
-clang-format pkg-config libpq-dev
-```
-
-**On macOS:**
-```
-brew install autoconf automake libtool check clang-format pkg-config libpq
-```
-
-### Build:
-```
-./bootstrap.sh
-./configure --enable-debug \
-    --with-check-framework \
-    --with-test-binary \
-    --with-csv-module \
-    --with-psql-module
-make
-```
-
-### Run unit tests with GDB:
-```
-cd tests/
-libtool --mode=execute gdb --args ./unit_test no-fork
-```
