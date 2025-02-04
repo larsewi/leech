@@ -330,6 +330,9 @@ table `foo` could look something like this:
 }
 ```
 
+If you however want intermediate changes for an entire table, please check out
+the section on [disabling merging of blocks](#disable-merging-blocks).
+
 ## LCH_Purge()
 
 For each block created by a call to [`LCH_Commit()`](#lch_commit), a new file is
@@ -425,6 +428,7 @@ is an object containing multiple configuration parameters.
   "BTL": {
     "primary_fields": ["first_name", "last_name"],
     "subsidiary_fields": ["born"],
+    "merge_blocks": false, // Optional (default: true)
     "source": {
       "params": "beatles.csv",
       "schema": "leech",
@@ -453,6 +457,16 @@ composite primary key.
 The `"subsidiary_fields"` parameter should contain the column names of the
 remaining fields to be loaded by **leech**. This can be the empty list, in case
 all fields make up the primary composite key.
+
+### Disable merging blocks
+
+In some situations it's important to keep track of intermediate values. We
+already know that we can get an intermediate value from a specific record using
+[`LCH_History()`](#lch_history). However, you may want this for an entire table.
+In this case, you can set the `"merge_blocks"` parameter to `false` (it defaults
+to `true`) in the respective table definition. This completly disables [merging
+of blocks](#merging-blocks) for that table. Causing multiple blocks to be
+included in the patch. Other tables are however, merged into the last block.
 
 ### Source / Destination parameters
 
