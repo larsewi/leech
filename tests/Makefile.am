@@ -7,18 +7,18 @@ EXTRA_DIST = leak_test
 check_PROGRAMS = unit_test
 
 unit_test_SOURCES = unit_test.c \
-    check_block.c \
-    check_buffer.c \
-    check_csv.c \
-    check_json.c \
-    check_delta.c \
-    check_dict.c \
-    check_head.c \
-    check_list.c \
-    check_table.c \
-    check_utils.c \
-    check_instance.c \
-    check_patch.c
+    unit/check_block.c \
+    unit/check_buffer.c \
+    unit/check_csv.c \
+    unit/check_json.c \
+    unit/check_delta.c \
+    unit/check_dict.c \
+    unit/check_head.c \
+    unit/check_list.c \
+    unit/check_table.c \
+    unit/check_utils.c \
+    unit/check_instance.c \
+    unit/check_patch.c
 unit_test_CFLAGS = @CHECK_CFLAGS@
 unit_test_LDADD = @CHECK_LIBS@ $(top_builddir)/lib/libleech.la
 endif
