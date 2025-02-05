@@ -194,6 +194,19 @@ LCH_Json *LCH_BlockRemovePayload(const LCH_Json *const block) {
   return payload_val;
 }
 
+bool LCH_BlockAppendPayload(const LCH_Json *const block,
+                            LCH_Json *const payload) {
+  assert(block != NULL);
+  assert(payload != NULL);
+
+  const LCH_Buffer key = LCH_BufferStaticFromString("payload");
+  if (!LCH_JsonObjectSet(block, &key, payload)) {
+    LCH_LOG_ERROR("Failed to append payload to block");
+    return false;
+  }
+  return true;
+}
+
 bool LCH_BlockGetTimestamp(const LCH_Json *const block,
                            double *const timestamp) {
   const LCH_Buffer key = LCH_BufferStaticFromString("timestamp");
