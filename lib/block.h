@@ -68,6 +68,14 @@ const LCH_Json *LCH_BlockGetPayload(const LCH_Json *block);
 LCH_Json *LCH_BlockRemovePayload(const LCH_Json *block);
 
 /**
+ * @brief Append payload to block
+ * @param block The block
+ * @param payload The payload
+ * @return False in case of failure
+ */
+bool LCH_BlockAppendPayload(const LCH_Json *block, LCH_Json *payload);
+
+/**
  * @brief Get the timestamp from whence the block was created
  * @param block The block
  * @param timestamp The variable in which to store the timestamp

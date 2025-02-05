@@ -355,8 +355,12 @@ static LCH_Json *CreateEmptyBlock(const char *const parent_id) {
 
 static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
                              const char *const final_id,
-                             LCH_Json *const child) {
+                             LCH_Json *const child,
+                             const LCH_Json *const patch) {
   assert(instance != NULL);
+  assert(final_id != NULL);
+  assert(child != NULL);
+  assert(patch != NULL);
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
   const char *const parent_id = LCH_BlockGetParentId(child);
@@ -382,8 +386,8 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   }
 
   LCH_Json *const child_payload = LCH_BlockRemovePayload(child);
-  LCH_JsonDestroy(child);  // We don't need the child block anymore
   if (child_payload == NULL) {
+    LCH_JsonDestroy(child);
     LCH_JsonDestroy(parent);
     return NULL;
   }
@@ -391,6 +395,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
   LCH_Buffer *const key = LCH_BufferFromString("id");
   if (key == NULL) {
     LCH_JsonDestroy(child_payload);
+    LCH_JsonDestroy(child);
     LCH_JsonDestroy(parent);
     return NULL;
   }
@@ -401,6 +406,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
     if (child_delta == NULL) {
       LCH_BufferDestroy(key);
       LCH_JsonDestroy(child_payload);
+      LCH_JsonDestroy(child);
       LCH_JsonDestroy(parent);
       return NULL;
     }
@@ -411,6 +417,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
       LCH_JsonDestroy(child_delta);
       LCH_BufferDestroy(key);
       LCH_JsonDestroy(child_payload);
+      LCH_JsonDestroy(child);
       LCH_JsonDestroy(parent);
       return NULL;
     }
@@ -424,6 +431,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
         LCH_JsonDestroy(child_delta);
         LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
@@ -434,6 +442,7 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
         LCH_JsonDestroy(child_delta);
         LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
@@ -453,10 +462,47 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
         LCH_JsonDestroy(child_delta);
         LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
+
+      // Check if child delta is empty
+      size_t num_inserts, num_deletes, num_updates;
+      if (!LCH_DeltaGetNumOperations(child_delta, &num_inserts, &num_deletes, &num_updates)) {
+        LCH_LOG_ERROR(
+            "Failed to get numer of remaining delta operations in table '%s' after merging blocks",
+            child_table_id);
+        LCH_JsonDestroy(child_delta);
+        LCH_BufferDestroy(key);
+        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
+        LCH_JsonDestroy(parent);
+        return NULL;
+      }
+
+      if (num_inserts + num_deletes + num_updates > 0) {
+        /* There is still stuff left in child delta. Most likely due the merging
+         * of blocks being disabled for some tables. Let's put it back to the
+         * child payload. */
+        if (!LCH_JsonArrayAppend(child_payload, child_delta)) {
+          LCH_LOG_ERROR("Failed to add delta for table '%s' back to child block", child_table_id);
+          LCH_JsonDestroy(child_delta);
+          LCH_BufferDestroy(key);
+          LCH_JsonDestroy(child_payload);
+          LCH_JsonDestroy(child);
+          LCH_JsonDestroy(parent);
+          return NULL;
+        }
+      }
+      else {
+        /* Nothing left in child delta, we can delete it */
+        LCH_JsonDestroy(child_delta);
+      }
     } else {
+      /* Even though some tables can have disabled merging of blocks, it's still
+       * fine to move deltas from one block to the next as long as it does not
+       * hide any intermediary states. This is one of those cases. */
       if (!LCH_JsonArrayAppend(parent, child_delta)) {
         LCH_LOG_ERROR(
             "Failed to append child block delta for table '%s' to parent block "
@@ -465,16 +511,40 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
         LCH_JsonDestroy(child_delta);
         LCH_BufferDestroy(key);
         LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
     }
-    LCH_JsonDestroy(child_delta);
   }
 
   LCH_BufferDestroy(key);
-  LCH_JsonDestroy(child_payload);
-  LCH_Json *const merged = MergeBlocks(instance, final_id, parent);
+
+  if (LCH_JsonArrayLength(child_payload) > 0) {
+    /* Child payload did not get fully merged. Most likely due to merging being
+     * disabled for some tables. We'll add it back to the block and append the
+     * block to the patch payload. */
+    if (!LCH_BlockAppendPayload(child, child_payload)) {
+        LCH_LOG_ERROR("Failed to append payload to child block");
+        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
+        LCH_JsonDestroy(parent);
+        return NULL;
+    }
+
+    if (!LCH_JsonArrayAppend(patch, child)) {
+        LCH_LOG_ERROR("Failed to child block to patch");
+        LCH_JsonDestroy(child);
+        LCH_JsonDestroy(parent);
+        return NULL;
+    }
+  }
+  else {
+    LCH_JsonDestroy(child_payload);
+    LCH_JsonDestroy(child);
+  }
+
+  LCH_Json *const merged = MergeBlocks(instance, final_id, parent, patch);
   return merged;
 }
 
@@ -525,7 +595,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const argument) {
     return NULL;
   }
 
-  LCH_Json *const block = MergeBlocks(instance, final_id, empty);
+  LCH_Json *const block = MergeBlocks(instance, final_id, empty, patch);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to generate patch file");
     LCH_JsonDestroy(patch);
