@@ -97,18 +97,18 @@ START_TEST(test_LCH_ListReverse) {
 
   LCH_ListReverse(list);
 
-  ck_assert_str_eq(LCH_ListGet(list, 0), "four");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "three");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 3), "one");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "four");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "three");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 3), "one");
 
   ck_assert(LCH_ListRemove(list, 0));
 
   LCH_ListReverse(list);
 
-  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
-  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
-  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq((char *)LCH_ListGet(list, 2), "three");
 
   LCH_ListDestroy(list);
 }

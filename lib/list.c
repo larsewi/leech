@@ -271,7 +271,7 @@ void LCH_ListReverse(LCH_List *const list) {
   assert(list != NULL);
 
   for (size_t i = 0; i < (list->length / 2); i++) {
-    void *tmp = list->buffer[i];
+    ListElement *tmp = list->buffer[i];
     list->buffer[i] = list->buffer[list->length - 1 - i];
     list->buffer[list->length - 1 - i] = tmp;
   }
