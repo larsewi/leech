@@ -13,6 +13,8 @@ LCH_Json *LCH_PatchCreate(const char *lastseen);
 
 bool LCH_PatchAppendBlock(const LCH_Json *patch, LCH_Json *block);
 
+bool LCH_PatchReverseBlocks(const LCH_Json *patch);
+
 bool LCH_PatchUpdateLastKnown(const LCH_Json *patch, const char *work_dir,
                               const char *identifier);
 

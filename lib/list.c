@@ -266,3 +266,13 @@ bool LCH_ListInsert(LCH_List *const list, const size_t index, void *const value,
   list->length += 1;
   return true;
 }
+
+void LCH_ListReverse(LCH_List *const list) {
+  assert(list != NULL);
+
+  for (size_t i = 0; i < (list->length / 2); i++) {
+    ListElement *tmp = list->buffer[i];
+    list->buffer[i] = list->buffer[list->length - 1 - i];
+    list->buffer[list->length - 1 - i] = tmp;
+  }
+}

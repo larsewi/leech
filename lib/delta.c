@@ -139,27 +139,36 @@ bool LCH_DeltaGetNumOperations(const LCH_Json *const delta,
                                size_t *const num_deletes,
                                size_t *const num_updates) {
   if (num_inserts != NULL) {
-    const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
-    if (inserts == NULL) {
-      return false;
+    LCH_Buffer key = LCH_BufferStaticFromString("inserts");
+    if (LCH_JsonObjectHasKey(delta, &key)) {
+      const LCH_Json *const inserts = LCH_DeltaGetInserts(delta);
+      assert(inserts != NULL);
+      *num_inserts = LCH_JsonObjectLength(inserts);
+    } else {
+      *num_inserts = 0;
     }
-    *num_inserts = LCH_JsonObjectLength(inserts);
   }
 
   if (num_deletes != NULL) {
-    const LCH_Json *const deletes = LCH_DeltaGetDeletes(delta);
-    if (deletes == NULL) {
-      return false;
+    LCH_Buffer key = LCH_BufferStaticFromString("deletes");
+    if (LCH_JsonObjectHasKey(delta, &key)) {
+      const LCH_Json *const deletes = LCH_DeltaGetDeletes(delta);
+      assert(deletes != NULL);
+      *num_deletes = LCH_JsonObjectLength(deletes);
+    } else {
+      *num_deletes = 0;
     }
-    *num_deletes = LCH_JsonObjectLength(deletes);
   }
 
   if (num_updates != NULL) {
-    const LCH_Json *const updates = LCH_DeltaGetUpdates(delta);
-    if (updates == NULL) {
-      return false;
+    LCH_Buffer key = LCH_BufferStaticFromString("updates");
+    if (LCH_JsonObjectHasKey(delta, &key)) {
+      const LCH_Json *const updates = LCH_DeltaGetUpdates(delta);
+      assert(updates != NULL);
+      *num_updates = LCH_JsonObjectLength(updates);
+    } else {
+      *num_deletes = 0;
     }
-    *num_updates = LCH_JsonObjectLength(updates);
   }
 
   return true;

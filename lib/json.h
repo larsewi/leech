@@ -554,6 +554,8 @@ size_t LCH_JsonObjectLength(const LCH_Json *json);
  */
 size_t LCH_JsonArrayLength(const LCH_Json *json);
 
+void LCH_JsonArrayReverse(const LCH_Json *json);
+
 /****************************************************************************/
 
 /**

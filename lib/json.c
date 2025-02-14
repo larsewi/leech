@@ -830,6 +830,14 @@ size_t LCH_JsonArrayLength(const LCH_Json *const json) {
   return length;
 }
 
+void LCH_JsonArrayReverse(const LCH_Json *const json) {
+  assert(json != NULL);
+  assert(LCH_JsonIsArray(json));
+  assert(json->array != NULL);
+
+  LCH_ListReverse(json->array);
+}
+
 /****************************************************************************/
 
 LCH_Json *LCH_JsonObjectKeysSetMinus(const LCH_Json *const left,

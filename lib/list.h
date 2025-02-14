@@ -10,4 +10,10 @@
  * Put private LCH_List functions here:
  */
 
+/**
+ * @brief Reverese the order of elements in the list
+ * @param list The list
+ */
+void LCH_ListReverse(LCH_List *list);
+
 #endif  // _LEECH_LIST_H

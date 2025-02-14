@@ -354,9 +354,12 @@ static LCH_Json *CreateEmptyBlock(const char *const parent_id) {
 }
 
 static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
-                             const char *const final_id,
-                             LCH_Json *const child) {
+                             const char *const final_id, LCH_Json *const child,
+                             const LCH_Json *const patch) {
   assert(instance != NULL);
+  assert(final_id != NULL);
+  assert(child != NULL);
+  assert(patch != NULL);
 
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
   const char *const parent_id = LCH_BlockGetParentId(child);
@@ -381,36 +384,29 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
     return NULL;
   }
 
-  LCH_Json *const child_payload = LCH_BlockRemovePayload(child);
-  LCH_JsonDestroy(child);  // We don't need the child block anymore
+  const LCH_Json *child_payload = LCH_BlockGetPayload(child);
   if (child_payload == NULL) {
+    LCH_JsonDestroy(child);
     LCH_JsonDestroy(parent);
     return NULL;
   }
 
-  LCH_Buffer *const key = LCH_BufferFromString("id");
-  if (key == NULL) {
-    LCH_JsonDestroy(child_payload);
-    LCH_JsonDestroy(parent);
-    return NULL;
-  }
-
+  size_t num_keep = 0; /* Number of child deltas to keep after merge */
+  LCH_Buffer id_key = LCH_BufferStaticFromString("id");
   const size_t num_parent_deltas = LCH_JsonArrayLength(parent_payload);
-  while (LCH_JsonArrayLength(child_payload) > 0) {
+  while (LCH_JsonArrayLength(child_payload) > num_keep) {
     LCH_Json *const child_delta = LCH_JsonArrayRemoveObject(child_payload, 0);
     if (child_delta == NULL) {
-      LCH_BufferDestroy(key);
-      LCH_JsonDestroy(child_payload);
+      LCH_JsonDestroy(child);
       LCH_JsonDestroy(parent);
       return NULL;
     }
 
     const LCH_Buffer *const child_table_id =
-        LCH_JsonObjectGetString(child_delta, key);
+        LCH_JsonObjectGetString(child_delta, &id_key);
     if (child_table_id == NULL) {
       LCH_JsonDestroy(child_delta);
-      LCH_BufferDestroy(key);
-      LCH_JsonDestroy(child_payload);
+      LCH_JsonDestroy(child);
       LCH_JsonDestroy(parent);
       return NULL;
     }
@@ -422,18 +418,16 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
       parent_delta = LCH_JsonArrayGetObject(parent_payload, i);
       if (parent_delta == NULL) {
         LCH_JsonDestroy(child_delta);
-        LCH_BufferDestroy(key);
-        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
 
       const LCH_Buffer *const parent_table_id =
-          LCH_JsonObjectGetString(parent_delta, key);
+          LCH_JsonObjectGetString(parent_delta, &id_key);
       if (parent_table_id == NULL) {
         LCH_JsonDestroy(child_delta);
-        LCH_BufferDestroy(key);
-        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
@@ -445,36 +439,73 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
     }
 
     if (found) {
-      if (!LCH_DeltaMerge(parent_delta, child_delta)) {
-        LCH_LOG_ERROR(
-            "Failed to merge parent block delta with child block delta for "
-            "table '%s'",
-            child_table_id);
+      const LCH_TableInfo *const table =
+          LCH_InstanceGetTable(instance, LCH_BufferData(child_table_id));
+      if (table == NULL) {
+        LCH_LOG_ERROR("Could not find table definition for table '%s'",
+                      child_table_id);
         LCH_JsonDestroy(child_delta);
-        LCH_BufferDestroy(key);
-        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
+
+      if (LCH_TableInfoShouldMergeTable(table)) {
+        if (!LCH_DeltaMerge(parent_delta, child_delta)) {
+          LCH_LOG_ERROR(
+              "Failed to merge parent block delta with child block delta for "
+              "table '%s'",
+              child_table_id);
+          LCH_JsonDestroy(child_delta);
+          LCH_JsonDestroy(child);
+          LCH_JsonDestroy(parent);
+          return NULL;
+        }
+        LCH_JsonDestroy(child_delta);
+      } else {
+        if (!LCH_JsonArrayAppend(child_payload, child_delta)) {
+          LCH_LOG_ERROR(
+              "Failed to add delta for table '%s' back to child block",
+              child_table_id);
+          LCH_JsonDestroy(child_delta);
+          LCH_JsonDestroy(child);
+          LCH_JsonDestroy(parent);
+          return NULL;
+        }
+        num_keep += 1;
+      }
     } else {
+      /* Even though some tables may have disabled merging of blocks, it's still
+       * fine to move deltas from one block to the next as long as it does not
+       * hide any intermediary states. This is one of those cases. */
       if (!LCH_JsonArrayAppend(parent, child_delta)) {
         LCH_LOG_ERROR(
             "Failed to append child block delta for table '%s' to parent block "
             "payload",
             child_table_id);
         LCH_JsonDestroy(child_delta);
-        LCH_BufferDestroy(key);
-        LCH_JsonDestroy(child_payload);
+        LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
     }
-    LCH_JsonDestroy(child_delta);
   }
 
-  LCH_BufferDestroy(key);
-  LCH_JsonDestroy(child_payload);
-  LCH_Json *const merged = MergeBlocks(instance, final_id, parent);
+  if (LCH_JsonArrayLength(child_payload) > 0) {
+    /* Child payload did not get fully merged. Most likely due to merging being
+     * disabled for some tables. We'll add the block back to the patch payload.
+     */
+    if (!LCH_PatchAppendBlock(patch, child)) {
+      LCH_LOG_ERROR("Failed to child block to patch");
+      LCH_JsonDestroy(child);
+      LCH_JsonDestroy(parent);
+      return NULL;
+    }
+  } else {
+    LCH_JsonDestroy(child);
+  }
+
+  LCH_Json *const merged = MergeBlocks(instance, final_id, parent, patch);
   return merged;
 }
 
@@ -525,7 +556,7 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const argument) {
     return NULL;
   }
 
-  LCH_Json *const block = MergeBlocks(instance, final_id, empty);
+  LCH_Json *const block = MergeBlocks(instance, final_id, empty, patch);
   if (block == NULL) {
     LCH_LOG_ERROR("Failed to generate patch file");
     LCH_JsonDestroy(patch);
@@ -539,6 +570,14 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const argument) {
   if (!LCH_PatchAppendBlock(patch, block)) {
     LCH_LOG_ERROR("Failed to append block to patch");
     LCH_JsonDestroy(block);
+    LCH_JsonDestroy(patch);
+    return NULL;
+  }
+
+  /* After merging the blocks, they will appear in the wrong order in the
+   * payload. We will fix that now. */
+  if (!LCH_PatchReverseBlocks(patch)) {
+    LCH_LOG_ERROR("Failed to reverse order of blocks in patch");
     LCH_JsonDestroy(patch);
     return NULL;
   }
