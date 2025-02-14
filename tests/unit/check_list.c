@@ -83,6 +83,37 @@ START_TEST(test_LCH_ListIndex) {
 }
 END_TEST
 
+START_TEST(test_LCH_ListReverse) {
+  LCH_List *list = LCH_ListCreate();
+  ck_assert_ptr_nonnull(list);
+
+  LCH_ListReverse(list);
+
+  const char *strs[] = {"one", "two", "three", "four"};
+
+  for (size_t i = 0; i < LCH_LENGTH(strs); i++) {
+    ck_assert(LCH_ListAppend(list, (void *)strs[i], NULL));
+  }
+
+  LCH_ListReverse(list);
+
+  ck_assert_str_eq(LCH_ListGet(list, 0), "four");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "three");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 3), "one");
+
+  ck_assert(LCH_ListRemove(list, 0));
+
+  LCH_ListReverse(list);
+
+  ck_assert_str_eq(LCH_ListGet(list, 0), "one");
+  ck_assert_str_eq(LCH_ListGet(list, 1), "two");
+  ck_assert_str_eq(LCH_ListGet(list, 2), "three");
+
+  LCH_ListDestroy(list);
+}
+END_TEST
+
 Suite *ListSuite(void) {
   Suite *s = suite_create("list.c");
   {
@@ -103,6 +134,11 @@ Suite *ListSuite(void) {
   {
     TCase *tc = tcase_create("LCH_ListIndex");
     tcase_add_test(tc, test_LCH_ListIndex);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_ListReverse");
+    tcase_add_test(tc, test_LCH_ListReverse);
     suite_add_tcase(s, tc);
   }
   return s;

@@ -16,6 +16,13 @@ LCH_TableInfo *LCH_TableInfoLoad(const char *identifer,
 
 const char *LCH_TableInfoGetIdentifier(const LCH_TableInfo *table_info);
 
+/**
+ * @brief Whether or not the "merge_blocks" field is set for this table
+ * @param table_info The table definition
+ * @return True if table should be merged, otherwise false
+ */
+bool LCH_TableInfoShouldMergeTable(const LCH_TableInfo *table_info);
+
 LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *table_info);
 
 LCH_Json *LCH_TableInfoLoadOldState(const LCH_TableInfo *table_info,

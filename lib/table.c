@@ -427,6 +427,11 @@ const char *LCH_TableInfoGetIdentifier(const LCH_TableInfo *const table_info) {
   return table_info->identifier;
 }
 
+bool LCH_TableInfoShouldMergeTable(const LCH_TableInfo *const table_info) {
+  assert(table_info != NULL);
+  return table_info->merge_blocks;
+}
+
 LCH_Json *LCH_TableInfoLoadNewState(const LCH_TableInfo *const table_info) {
   assert(table_info != NULL);
 

@@ -439,35 +439,30 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
     }
 
     if (found) {
-      if (!LCH_DeltaMerge(parent_delta, child_delta)) {
-        LCH_LOG_ERROR(
-            "Failed to merge parent block delta with child block delta for "
-            "table '%s'",
-            child_table_id);
+      const LCH_TableInfo *const table =
+          LCH_InstanceGetTable(instance, LCH_BufferData(child_table_id));
+      if (table == NULL) {
+        LCH_LOG_ERROR("Could not find table definition for table '%s'",
+                      child_table_id);
         LCH_JsonDestroy(child_delta);
         LCH_JsonDestroy(child);
         LCH_JsonDestroy(parent);
         return NULL;
       }
 
-      // Check if child delta is empty
-      size_t num_inserts = 0, num_deletes = 0, num_updates = 0;
-      if (!LCH_DeltaGetNumOperations(child_delta, &num_inserts, &num_deletes,
-                                     &num_updates)) {
-        LCH_LOG_ERROR(
-            "Failed to get numer of remaining delta operations in table '%s' "
-            "after merging blocks",
-            child_table_id);
+      if (LCH_TableInfoShouldMergeTable(table)) {
+        if (!LCH_DeltaMerge(parent_delta, child_delta)) {
+          LCH_LOG_ERROR(
+              "Failed to merge parent block delta with child block delta for "
+              "table '%s'",
+              child_table_id);
+          LCH_JsonDestroy(child_delta);
+          LCH_JsonDestroy(child);
+          LCH_JsonDestroy(parent);
+          return NULL;
+        }
         LCH_JsonDestroy(child_delta);
-        LCH_JsonDestroy(child);
-        LCH_JsonDestroy(parent);
-        return NULL;
-      }
-
-      if (num_inserts + num_deletes + num_updates > 0) {
-        /* There is still stuff left in child delta. Most likely due the merging
-         * of blocks being disabled for some tables. Let's put it back to the
-         * child payload. */
+      } else {
         if (!LCH_JsonArrayAppend(child_payload, child_delta)) {
           LCH_LOG_ERROR(
               "Failed to add delta for table '%s' back to child block",
@@ -478,12 +473,9 @@ static LCH_Json *MergeBlocks(const LCH_Instance *const instance,
           return NULL;
         }
         num_keep += 1;
-      } else {
-        /* Nothing left in child delta, we can delete it */
-        LCH_JsonDestroy(child_delta);
       }
     } else {
-      /* Even though some tables can have disabled merging of blocks, it's still
+      /* Even though some tables may have disabled merging of blocks, it's still
        * fine to move deltas from one block to the next as long as it does not
        * hide any intermediary states. This is one of those cases. */
       if (!LCH_JsonArrayAppend(parent, child_delta)) {
@@ -578,6 +570,14 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const argument) {
   if (!LCH_PatchAppendBlock(patch, block)) {
     LCH_LOG_ERROR("Failed to append block to patch");
     LCH_JsonDestroy(block);
+    LCH_JsonDestroy(patch);
+    return NULL;
+  }
+
+  /* After merging the blocks, they will appear in the wrong order in the
+   * payload. We will fix that now. */
+  if (!LCH_PatchReverseBlocks(patch)) {
+    LCH_LOG_ERROR("Failed to reverse order of blocks in patch");
     LCH_JsonDestroy(patch);
     return NULL;
   }

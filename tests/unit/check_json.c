@@ -1,5 +1,6 @@
 #include <check.h>
 
+#include "../lib/definitions.h"
 #include "../lib/json.h"
 #include "../lib/string_lib.h"
 
@@ -1066,6 +1067,27 @@ START_TEST(test_LCH_JsonObjectKeysSetIntersectAndValuesSetMinus) {
 }
 END_TEST
 
+START_TEST(test_LCH_JsonArrayReverse) {
+  LCH_Json *const array = LCH_JsonArrayCreate();
+  const char *strs[] = {"one", "two", "three"};
+  for (size_t i = 0; i < LCH_LENGTH(strs); i++) {
+    LCH_Buffer *const buffer = LCH_BufferFromString(strs[i]);
+    ck_assert_ptr_nonnull(buffer);
+    ck_assert(LCH_JsonArrayAppendString(array, buffer));
+  }
+
+  LCH_JsonArrayReverse(array);
+
+  for (size_t i = 0; i < LCH_LENGTH(strs); i++) {
+    const LCH_Buffer *const buffer = LCH_JsonArrayGetString(array, i);
+    ck_assert_ptr_nonnull(buffer);
+    ck_assert_str_eq(LCH_BufferData(buffer), strs[LCH_LENGTH(strs) - 1 - i]);
+  }
+
+  LCH_JsonDestroy(array);
+}
+END_TEST
+
 Suite *JSONSuite(void) {
   Suite *s = suite_create("json.c");
   {
@@ -1345,6 +1367,11 @@ Suite *JSONSuite(void) {
   {
     TCase *tc = tcase_create("LCH_JsonObjectKeysSetIntersectAndValuesSetMinus");
     tcase_add_test(tc, test_LCH_JsonObjectKeysSetIntersectAndValuesSetMinus);
+    suite_add_tcase(s, tc);
+  }
+  {
+    TCase *tc = tcase_create("LCH_JsonArrayReverse");
+    tcase_add_test(tc, test_LCH_JsonArrayReverse);
     suite_add_tcase(s, tc);
   }
   return s;

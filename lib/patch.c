@@ -122,6 +122,17 @@ bool LCH_PatchAppendBlock(const LCH_Json *const patch, LCH_Json *const block) {
   return true;
 }
 
+bool LCH_PatchReverseBlocks(const LCH_Json *patch) {
+  const LCH_Buffer key = LCH_BufferStaticFromString("blocks");
+  const LCH_Json *const blocks = LCH_JsonObjectGetArray(patch, &key);
+  if (blocks == NULL) {
+    return false;
+  }
+
+  LCH_JsonArrayReverse(blocks);
+  return true;
+}
+
 bool LCH_PatchUpdateLastKnown(const LCH_Json *const patch,
                               const char *const work_dir,
                               const char *const identifier) {
