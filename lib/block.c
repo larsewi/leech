@@ -7,6 +7,7 @@
 #include "definitions.h"
 #include "files.h"
 #include "head.h"
+#include "leech.h"
 #include "logger.h"
 #include "string_lib.h"
 #include "utils.h"
@@ -245,8 +246,21 @@ char *LCH_BlockIdFromArgument(const char *const work_dir,
   }
 
   size_t index = 0, num_matching = 0;
-
-  LCH_List *const blocks = LCH_FileListDirectory(path, true);
+  LCH_List *blocks;
+  if (LCH_FileIsDirectory(path)) {
+       blocks = LCH_FileListDirectory(path, true);
+       if (blocks == NULL) {
+           LCH_LOG_ERROR("Failed to list directory '%s'", path);
+           return NULL;
+       }
+  }
+  else {
+      blocks = LCH_ListCreate();
+      if (blocks == NULL) {
+          LCH_LOG_ERROR("Failed to create list of blocks");
+          return NULL;
+      }
+  }
 
   /* Add genesis block to the list */
   char *const genisis_id = LCH_StringDuplicate(LCH_GENISIS_BLOCK_ID);
