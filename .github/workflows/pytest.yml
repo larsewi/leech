@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +19,7 @@ jobs:
     - name: Start PostgreSQL server
       run: sudo systemctl start postgresql.service
     - name: Create PostgreSQL user
-      run: sudo -u postgres createuser --superuser `whoami`
+      run: sudo -u postgres createuser --superuser $(whoami)
     - name: Bootstrap project
       run: ./bootstrap.sh
     - name: Configure project
