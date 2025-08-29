@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([leech], [0.1.24], [https://github.com/larsewi/leech/issues], [leech],
+AC_INIT([leech], [0.2.0], [https://github.com/larsewi/leech/issues], [leech],
         [https://github.com/larsewi/leech])
 AC_CONFIG_SRCDIR([lib/leech.h])
 
