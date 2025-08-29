@@ -323,6 +323,7 @@ bool LCH_Commit(const char *work_dir);
  * @brief Compute deltas containing the changes between the latest block and a
  *        given block
  * @param work_dir The leech working directory
+ * @param block_id The given (last known) block
  * @return A byte buffer containing the computed delta or NULL in case of
  *         failure
  */

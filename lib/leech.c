@@ -20,6 +20,7 @@
 #include "patch.h"
 #include "string_lib.h"
 #include "table.h"
+#include "utils.h"
 
 const char *LCH_Version(void) { return PACKAGE_VERSION; }
 
@@ -582,13 +583,46 @@ LCH_Buffer *LCH_Diff(const char *const work_dir, const char *const argument) {
     return NULL;
   }
 
-  LCH_Buffer *buffer = LCH_JsonCompose(patch, pretty_print);
+  LCH_Buffer *patch_buffer = LCH_JsonCompose(patch, pretty_print);
   LCH_JsonDestroy(patch);
-  if (buffer == NULL) {
+  if (patch_buffer == NULL) {
     LCH_LOG_ERROR("Failed to compose patch into JSON");
     return NULL;
   }
-  return buffer;
+
+  LCH_Buffer *digest_buffer = LCH_BufferCreate();
+  if (digest_buffer == NULL) {
+    LCH_LOG_ERROR("Failed to create buffer for message digest");
+    LCH_BufferDestroy(patch_buffer);
+    return NULL;
+  }
+
+  /* In the future we might support different algorithms */
+  if (!LCH_BufferPrintFormat(digest_buffer, "SHA1=")) {
+    LCH_LOG_ERROR("Failed to write message digest algorithm to buffer");
+    LCH_BufferDestroy(patch_buffer);
+    LCH_BufferDestroy(digest_buffer);
+    return NULL;
+  }
+
+  if (!LCH_MessageDigest((const unsigned char *)LCH_BufferData(patch_buffer),
+                         LCH_BufferLength(patch_buffer), digest_buffer)) {
+    LCH_LOG_ERROR("Failed to compute message digest");
+    LCH_BufferDestroy(patch_buffer);
+    LCH_BufferDestroy(digest_buffer);
+    return NULL;
+  }
+
+  if (!LCH_BufferAppendBuffer(digest_buffer, patch_buffer)) {
+    LCH_LOG_ERROR("Failed concatenate message digest with patch buffer");
+    LCH_BufferDestroy(patch_buffer);
+    LCH_BufferDestroy(digest_buffer);
+    return NULL;
+  }
+
+  LCH_BufferDestroy(patch_buffer);
+
+  return digest_buffer;
 }
 
 LCH_Buffer *LCH_Rebase(const char *const work_dir) {
@@ -1127,9 +1161,34 @@ LCH_Buffer *LCH_History(const char *const work_dir, const char *const table_id,
 }
 
 static bool Patch(const LCH_Instance *const instance, const char *const field,
-                  const char *const value, const char *const buffer,
-                  const size_t size) {
+                  const char *const value, const char *buffer, size_t size) {
   const char *const work_dir = LCH_InstanceGetWorkDirectory(instance);
+
+  if (LCH_StringStartsWith(buffer, "SHA1=")) {
+    LCH_LOG_DEBUG("This patch has a SHA1 checksum attached");
+    LCH_Buffer *const checksum = LCH_BufferCreate();
+    if (checksum == NULL) {
+      LCH_LOG_ERROR("Failed to create a message digest buffer");
+      return false;
+    }
+
+    if (!LCH_MessageDigest((const unsigned char *)buffer + strlen("SHA1=") + 40,
+                           size - strlen("SHA1=") - 40, checksum)) {
+      LCH_LOG_ERROR("Failed to compute message digest for payload");
+      LCH_BufferDestroy(checksum);
+      return false;
+    }
+
+    if (strncmp(buffer + strlen("SHA1="), LCH_BufferData(checksum),
+                LCH_BufferLength(checksum)) != 0) {
+      LCH_LOG_ERROR("Bad checksum for payload");
+      LCH_BufferDestroy(checksum);
+      return false;
+    }
+    LCH_BufferDestroy(checksum);
+    buffer += strlen("SHA1=") + 40;
+    size -= strlen("SHA1=") + 40;
+  }
 
   LCH_Json *const patch = LCH_PatchParse(buffer, size);
   if (patch == NULL) {
