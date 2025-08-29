@@ -54,7 +54,10 @@ Maintainer will (hopefully) continue the release process from here
 ```
 git checkout latest
 git fetch --all
-git rebase upstream/master
+git rebase origin/master
+git push
+git clean -fxd
+./bootstrap.sh
 ./configure
 make dist
 sha256sum leech-0.1.24.tar.gz # Add output to release notes later
@@ -62,8 +65,10 @@ sha256sum leech-0.1.24.tar.gz # Add output to release notes later
 
 - Try compiling the tarball and run tests
 - Goto https://github.com/larsewi/leech/releases and click `Draft a new release`
-- In chose tag, write `v0.1.24`
+- In chose tag, write `v0.1.24`, target `latest`
 - Click `Generate release notes`
 - Upload tarball `leech-0.1.24.tar.gz`
+- Try to unpack tarball `tar -xf leech-0.1.24.tar.gz`
+    * Run `make check` after configuring with non and all configure options
 - Click publish release
 - Done!
