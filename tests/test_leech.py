@@ -1347,3 +1347,80 @@ def test_disable_merging_blocks(tmp_path):
         f"--file={patchfile}",
     ]
     assert execute(command, True) == 0
+
+
+def test_message_digest(tmp_path):
+    ##########################################################################
+    # Create config
+    ##########################################################################
+
+    bin_path = os.path.join("bin", "leech")
+    leech_conf_path = os.path.join(tmp_path, "leech.json")
+    table_src_path = os.path.join(tmp_path, "beatles.src.csv")
+    table_dst_path = os.path.join(tmp_path, "beatles.dst.csv")
+
+    config = {
+        "version": "0.1.0",
+        "tables": {
+            "BTL": {
+                "primary_fields": ["first_name", "last_name"],
+                "subsidiary_fields": ["born"],
+                "source": {
+                    "params": table_src_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+                "destination": {
+                    "params": table_dst_path,
+                    "schema": "leech",
+                    "table_name": "beatles",
+                    "callbacks": "lib/.libs/leech_csv.so",
+                },
+            }
+        },
+    }
+    with open(leech_conf_path, "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"Created leech config '{leech_conf_path}' with content:")
+    with open(leech_conf_path, "r") as f:
+        print(f.read())
+
+    ##########################################################################
+    # Create delta patch file
+    ##########################################################################
+
+    lastknown = "0000000000000000000000000000000000000000"
+    patchfile = os.path.join(tmp_path, "patchfile")
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "diff",
+        f"--block={lastknown}",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 0
+
+    ##########################################################################
+    # Modify to bad checksum
+    ##########################################################################
+    with open(patchfile, "a") as f:
+        f.seek(0, 0)
+        f.write("SHA1=0000000000000000000000000000000000000000")
+        pass
+
+    ##########################################################################
+    # Apply delta patch file
+    ##########################################################################
+
+    command = [
+        bin_path,
+        "--debug",
+        f"--workdir={tmp_path}",
+        "patch",
+        "--field=host_id",
+        "--value=SHA=123",
+        f"--file={patchfile}",
+    ]
+    assert execute(command, True) == 1
