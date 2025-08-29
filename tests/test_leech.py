@@ -1232,7 +1232,7 @@ def test_leech_history(tmp_path):
     assert history["history"][1]["subsidiary"]["born"] == "1944"
 
 
-def test_disable_mering_blocks(tmp_path):
+def test_disable_merging_blocks(tmp_path):
     ##########################################################################
     # Create config
     ##########################################################################
