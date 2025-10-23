@@ -1,0 +1,4 @@
+MAKE=/usr/local/bin/gmake LDFLAGS=-L/usr/local/lib CPPFLAGS=-I/usr/local/include AUTOMAKE_VERSION=1.17 AUTOCONF_VERSION=2.72 ./bootstrap.sh
+./configure --enable-debug
+gmake
+doas gmake install
