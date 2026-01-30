@@ -1,12 +1,10 @@
 #include <assert.h>
-#include <errno.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "buffer.h"
 #include "libpq-fe.h"
-#include "list.h"
 #include "logger.h"
 
 #ifdef __cplusplus
