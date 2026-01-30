@@ -2,7 +2,6 @@
 #define _LEECH_LIST_H
 
 #include <stdbool.h>
-#include <stdlib.h>
 
 #include "leech.h"
 
