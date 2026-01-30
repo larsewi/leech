@@ -7,10 +7,17 @@
 #include "buffer.h"
 #include "list.h"
 
+/**
+ * @breif JSON structure with a type and value. Members are kept "private" to
+ * avoid direct access.
+ */
 typedef struct LCH_Json LCH_Json;
 
 /****************************************************************************/
 
+/**
+ * @brief Used to specify the type of a JSON element.
+ */
 typedef enum {
   LCH_JSON_TYPE_NULL = 0,
   LCH_JSON_TYPE_TRUE,
