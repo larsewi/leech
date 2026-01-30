@@ -248,18 +248,17 @@ char *LCH_BlockIdFromArgument(const char *const work_dir,
   size_t index = 0, num_matching = 0;
   LCH_List *blocks;
   if (LCH_FileIsDirectory(path)) {
-       blocks = LCH_FileListDirectory(path, true);
-       if (blocks == NULL) {
-           LCH_LOG_ERROR("Failed to list directory '%s'", path);
-           return NULL;
-       }
-  }
-  else {
-      blocks = LCH_ListCreate();
-      if (blocks == NULL) {
-          LCH_LOG_ERROR("Failed to create list of blocks");
-          return NULL;
-      }
+    blocks = LCH_FileListDirectory(path, true);
+    if (blocks == NULL) {
+      LCH_LOG_ERROR("Failed to list directory '%s'", path);
+      return NULL;
+    }
+  } else {
+    blocks = LCH_ListCreate();
+    if (blocks == NULL) {
+      LCH_LOG_ERROR("Failed to create list of blocks");
+      return NULL;
+    }
   }
 
   /* Add genesis block to the list */
