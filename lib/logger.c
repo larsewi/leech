@@ -1,10 +1,11 @@
+#include <config.h>
+
 #include "logger.h"
 
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "definitions.h"
 #include "leech.h"
 
 #ifdef LCH_ENABLE_COLOR
