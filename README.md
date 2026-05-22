@@ -534,7 +534,7 @@ void LCH_CallbackDisconnect(void *conn);
  * @param conn Database connection object.
  * @param table_name C-string containing the "table_name" in the respective
  *                   table definition.
- * @param primary_columns List of LCH_Buffer's contating the column names of the
+ * @param primary_columns List of LCH_Buffer's containing the column names of the
  *                        primary fields.
  * @param subsidiary_columns List of LCH_Buffer's containing the column names of
  *                           the subsidiary fields.
@@ -569,7 +569,7 @@ bool LCH_CallbackTruncateTable(void *conn, const char *table_name,
  * @param conn Database connection object.
  * @param table_name C-string containing the "table_name" in the respective
  *                   table definition.
- * @param columns List of LCH_Buffer's contating all column names.
+ * @param columns List of LCH_Buffer's containing all column names.
  * @return A row-based two-dimensional list of LCH_Buffer's. The first row must
  *         contain the passed columns names. NULL should be returned in case of
  *         error.
@@ -623,7 +623,7 @@ bool LCH_CallbackRollbackTransaction(void *conn);
  * @param conn Database connection object.
  * @param table_name C-string containing the "table_name" in the respective
  *                   table definition.
- * @param columns List of LCH_Buffer's contating the column names.
+ * @param columns List of LCH_Buffer's containing the column names.
  * @param values List of LCH_Buffer's the record values.
  * @return True on success, otherwise false.
  */
@@ -640,7 +640,7 @@ bool LCH_CallbackInsertRecord(void *conn, const char *table_name,
  * @param conn Database connection object.
  * @param table_name C-string containing the "table_name" in the respective
  *                   table definition.
- * @param columns List of LCH_Buffer's contating the column names of the primary
+ * @param columns List of LCH_Buffer's containing the column names of the primary
  *                fields.
  * @param values List of LCH_Buffer's the record values of the primary fields.
  * @return True on success, otherwise false.
@@ -658,11 +658,11 @@ bool LCH_CallbackDeleteRecord(void *conn, const char *table_name,
  * @param conn Database connection object.
  * @param table_name C-string containing the "table_name" in the respective
  *                   table definition.
- * @param primary_columns List of LCH_Buffer's contating the column names of the
+ * @param primary_columns List of LCH_Buffer's containing the column names of the
  *                        primary fields.
  * @param primary_values List of LCH_Buffer's the record values of the primary
  *                       fields.
- * @param subsidiary_columns List of LCH_Buffer's contating the column names of
+ * @param subsidiary_columns List of LCH_Buffer's containing the column names of
  *                           the subsidiary fields.
  * @param subsidiary_values List of LCH_Buffer's the record values of the
  *                          subsidiary fields.
